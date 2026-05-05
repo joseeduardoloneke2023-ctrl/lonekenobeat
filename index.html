@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LONEKE BEAT | Premium Production</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050505;
+            color: white;
+            scroll-behavior: smooth;
+        }
+
+     
+        .hero-pulse {
+            animation: pulse-slow 8s infinite;
+        }
+
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1.05); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+        }
+
+        /* Esconder scrollbar mas manter funcionalidade */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #dc2626;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="pt-[130px] md:pt-[150px]"> <div class="fixed top-0 left-0 w-full z-[200]">
+        
+        <div id="countdown-bar" class="w-full bg-red-600 text-white py-2 text-center font-black tracking-widest text-[10px] md:text-sm shadow-xl">
+            OFERTA TERMINA EM: <span id="countdown"></span>
+        </div>
+
+        <nav class="w-full bg-black/95 backdrop-blur-xl border-b border-white/10">
+            <div class="max-w-[1400px] mx-auto px-6 h-20 md:h-24 flex justify-between items-center">
+                <h1 class="text-xl md:text-3xl font-black italic tracking-tighter uppercase">
+                    LONEKE NO <span class="text-red-600">BEAT</span>
+                </h1>
+
+                <div class="hidden xl:flex items-center space-x-8 text-[11px] font-black uppercase tracking-[0.2em]">
+                    <a href="#home" class="hover:text-red-600 transition-colors border-b-2 border-transparent hover:border-red-600 pb-1">Home</a>
+                    <a href="#serviços" class="hover:text-red-600 transition-colors border-b-2 border-transparent hover:border-red-600 pb-1">Serviços</a>
+                    <a href="#drumkits" class="hover:text-red-600 transition-colors border-b-2 border-transparent hover:border-red-600 pb-1">Drumkits</a>
+                    <a href="#flp" class="hover:text-red-600 transition-colors border-b-2 border-transparent hover:border-red-600 pb-1">FLP</a>
+                    <a href="#cursos" class="hover:text-red-600 transition-colors border-b-2 border-transparent hover:border-red-600 pb-1">Cursos</a>
+                    
+                    <a href="#sobre" class="hover:text-red-600 transition-colors border-b-2 border-transparent hover:border-red-600 pb-1">Sobre</a>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div onclick="goToCheckout()" class="relative cursor-pointer p-3 bg-red-600 rounded-xl hover:scale-105 transition-transform">
+                        <i data-lucide="shopping-cart" class="w-5 h-5 text-white"></i>
+                        <span id="cart-count" class="absolute -top-1 -right-1 bg-white text-black text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-black">0</span>
+                    </div>
+
+                    <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="xl:hidden text-white p-2">
+                        <i data-lucide="menu"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="mobile-menu" class="hidden xl:hidden bg-black/98 border-t border-white/10 px-6 py-8 space-y-6 text-center font-black uppercase text-xs tracking-widest">
+                <a href="#home" onclick="document.getElementById('mobile-menu').classList.add('hidden')" class="block py-2 border-b border-white/5">Home</a>
+                <a href="#serviços" onclick="document.getElementById('mobile-menu').classList.add('hidden')" class="block py-2 border-b border-white/5">Serviços</a>
+                <a href="#drumkits" onclick="document.getElementById('mobile-menu').classList.add('hidden')" class="block py-2 border-b border-white/5">Drumkits</a>
+                <a href="#cursos" onclick="document.getElementById('mobile-menu').classList.add('hidden')" class="block py-2 border-b border-white/5">Cursos</a>
+           
+                <a href="#sobre" onclick="document.getElementById('mobile-menu').classList.add('hidden')" class="block py-2">Sobre</a>
+            </div>
+        </nav>
+    </div>
+
+
+    <!-- HERO SECTION -->
+    <section id="home" class="relative h-screen flex items-center justify-center text-center overflow-hidden bg-black">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1600" 
+                 class="w-full h-full object-cover grayscale hero-pulse" alt="Studio">
+            <div class="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black"></div>
+            <div class="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+        </div>
+
+        <div class="relative z-10 max-w-5xl px-6">
+            <div class="flex justify-center mb-6">
+                 <div class="bg-red-600/10 border border-red-600/30 px-6 py-2 rounded-full backdrop-blur-md">
+                    <p class="text-red-500 text-[10px] font-black uppercase tracking-[0.5em]">The Production Standard</p>
+                 </div>
+            </div>
+
+            <h2 class="text-5xl md:text-8xl lg:text-[110px] font-black leading-[0.9] tracking-tighter uppercase italic mb-8 drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
+                TRANSFORME SUA <br /> 
+                <span class="text-red-600">PRODUÇÃO</span>
+            </h2>
+
+            <p class="text-gray-300 text-sm md:text-xl font-medium max-w-2xl mx-auto mb-12 uppercase tracking-widest leading-relaxed">
+                Acesso exclusivo aos melhores Beats, Drumkits e cursos de Angola. Eleve seu som ao nível profissional agora.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+               <a href="pages/catalogo.html"><button class="w-full sm:w-auto bg-red-600 hover:bg-white hover:text-black text-white px-12 py-6 rounded-sm font-black uppercase text-xs tracking-[0.4em] transition-all duration-300 shadow-[0_10px_30px_rgba(220,38,38,0.3)]">
+                    Explorar Catálogo
+                </button> </a> 
+                
+            </div>
+        </div>
+
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-40">
+           <div class="w-[2px] h-12 bg-gradient-to-b from-red-600 to-transparent"></div>
+        </div>
+    </section>
+
+    <!-- SERVIÇOS -->
+    <section id="serviços" class="py-32 bg-[#080808] border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6" id="services-container">
+                <!-- Inserido via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- LOJA (SEÇÕES DINÂMICAS) -->
+    <div id="store-content" class="space-y-20 pb-32">
+        <!-- Inserido via JS -->
+    </div>
+
+    <!-- SOBRE -->
+    <section id="sobre" class="py-40 bg-[#080808] relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-24 items-center">
+            <div class="relative group">
+                <div class="absolute -inset-4 border-2 border-red-600 opacity-20 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
+                <img src="https://images.unsplash.com/photo-1557683316-973673baf926?w=800" class="rounded-xl grayscale filter hover:grayscale-0 transition-all duration-1000 shadow-2xl" alt="Sobre">
+            </div>
+            <div>
+                <h3 class="text-6xl font-black italic uppercase tracking-tighter mb-10 leading-none">O LEGADO <br/><span class="text-red-600">LONEKE</span></h3>
+                <p class="text-gray-400 text-xl leading-relaxed font-medium mb-12">
+                    Não entregamos apenas arquivos. Entregamos o combustível para o seu sucesso. Loneke no Beat é o padrão de excelência em Angola.
+                </p>
+                <div class="grid grid-cols-2 gap-10">
+                    <div class="p-8 bg-[#0d0d0d] rounded-2xl border border-white/5">
+                        <p class="text-5xl font-black text-red-600 mb-2">10K+</p>
+                        <p class="text-xs font-black uppercase tracking-widest text-gray-500">Downloads</p>
+                    </div>
+                    <div class="p-8 bg-[#0d0d0d] rounded-2xl border border-white/5">
+                        <p class="text-5xl font-black text-red-600 mb-2">500+</p>
+                        <p class="text-xs font-black uppercase tracking-widest text-gray-500">Alunos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER / CONTATO -->
+    <footer class="bg-[#080808] pt-40 pb-16 px-6 border-t border-white/10">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-32 mb-40">
+            <div>
+                <h3 class="text-8xl font-black italic uppercase tracking-tighter mb-10 leading-none">VAMOS <br/> <span class="text-red-600">CRIAR.</span></h3>
+                <div class="space-y-6 text-gray-400 text-lg font-bold uppercase tracking-widest">
+                    <p class="flex items-center gap-4 hover:text-white transition cursor-pointer"><i data-lucide="arrow-right" class="text-red-600"></i> Luanda, Angola</p>
+                    <p class="flex items-center gap-4 hover:text-white transition cursor-pointer"><i data-lucide="arrow-right" class="text-red-600"></i> loneke62@gmail.com</p>
+                </div>
+            </div>
+            <form class="bg-[#0d0d0d] p-10 rounded-3xl border border-white/10 space-y-6">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <input type="text" placeholder="SEU NOME" class="bg-[#050505] border border-white/10 p-6 rounded-xl text-sm font-bold text-white outline-none focus:border-red-600 transition-all">
+                    <input type="email" placeholder="SEU EMAIL" class="bg-[#050505] border border-white/10 p-6 rounded-xl text-sm font-bold text-white outline-none focus:border-red-600 transition-all">
+                </div>
+                <textarea placeholder="SUA MENSAGEM" class="bg-[#050505] border border-white/10 p-6 rounded-xl text-sm font-bold text-white outline-none focus:border-red-600 h-40 w-full resize-none transition-all"></textarea>
+                <button type="button" class="w-full bg-red-600 py-6 font-black uppercase text-sm tracking-[0.4em] hover:bg-white hover:text-black transition-all rounded-xl">Enviar Mensagem</button>
+            </form>
+        </div>
+        <div class="max-w-7xl mx-auto pt-16 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-8">
+            <p class="text-sm font-black text-gray-600 uppercase tracking-widest">© 2026 LONEKE BEAT - ALL RIGHTS RESERVED</p>
+            <h1 class="text-4xl font-black italic tracking-tighter">LONEKE</h1>
+        </div>
+    </footer>
+<script src="produtos.js"></script>
+
+<script>
+// --- NOTIFICAÇÕES FAKE ATUALIZADAS ---
+const fakeNames = ["Delson", "Mauro", "Cláudio", "Aline", "Filipe", "Gelson", "Sandra", "Yuri"];
+const pagamentos = ["Express", "Transferência Bancária"];
+
+function showFakeNotification() {
+    const container = document.getElementById("fake-notifications");
+    if(!container) return;
+
+    const nome = fakeNames[Math.floor(Math.random() * fakeNames.length)];
+    const pagamento = pagamentos[Math.floor(Math.random() * pagamentos.length)];
+    // Valores exatos comuns em Kz (Ex: 5000, 7500, 10000, 15000)
+    const valoresExatos = [5000, 7000, 10000, 12500, 15000, 20000, 25000, 30000];
+    const valor = valoresExatos[Math.floor(Math.random() * valoresExatos.length)];
+
+    const div = document.createElement("div");
+    div.className = "bg-black/90 border border-red-600/30 p-4 rounded-xl shadow-2xl text-xs backdrop-blur-md animate-bounce-short";
+    div.innerHTML = `
+        <div class="flex items-center gap-3">
+            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <div>
+                <p class="font-bold"><strong>${nome}</strong> confirmou pagamento</p>
+                <p class="text-red-500 font-black text-sm">${valor.toLocaleString()} Kz</p>
+                <p class="text-gray-400 text-[10px] uppercase tracking-tighter italic">${pagamento}</p>
+            </div>
+        </div>
+    `;
+
+    container.appendChild(div);
+    setTimeout(() => {
+        div.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+        setTimeout(() => div.remove(), 500);
+    }, 5000);
+}
+setInterval(showFakeNotification, 6000);
+
+document.querySelectorAll("nav a").forEach(link => {
+    link.addEventListener("click", function(e) {
+        e.preventDefault();
+        const id = this.getAttribute("href");
+        const target = document.querySelector(id);
+
+        if (target) {
+            window.scrollTo({
+                top: target.offsetTop - 100,
+                behavior: "smooth"
+            });
+        }
+    });
+});
+
+    // COUNTDOWN TIMER
+function startCountdown() {
+    const countdownElement = document.getElementById("countdown");
+    if (!countdownElement) return;
+
+    // Recupera o tempo final salvo ou cria um novo de 5 horas
+    let endTime = localStorage.getItem('loneke_promo_end');
+
+    if (!endTime) {
+        endTime = new Date().getTime() + (5 * 60 * 60 * 1000);
+        localStorage.setItem('loneke_promo_end', endTime);
+    }
+
+    function updateTimer() {
+        const now = new Date().getTime();
+        const diff = endTime - now;
+
+        if (diff <= 0) {
+            document.getElementById("countdown-bar").innerHTML = "A OFERTA EXPIROU! APROVEITE OS PREÇOS ATUAIS";
+            return;
+        }
+
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        countdownElement.innerText = 
+            `${h.toString().padStart(2, '0')}h ${m.toString().padStart(2, '0')}m ${s.toString().padStart(2, '0')}s`;
+    }
+
+    updateTimer();
+    setInterval(updateTimer, 1000);
+}
+    
+
+startCountdown();
+    // --- CONFIGURAÇÃO INICIAL ---
+let cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
+
+// Organiza os produtos por categoria
+const storeData = {
+    beats: produtos.filter(p => p.categoria.toLowerCase() === 'beats'),
+    drumkits: produtos.filter(p => p.categoria.toLowerCase() === 'drumkit'),
+    cursos: produtos.filter(p => p.categoria.toLowerCase() === 'cursos'),
+    flps: produtos.filter(p => p.categoria.toLowerCase() === 'flp'),
+   
+    packs: produtos.filter(p => p.categoria.toLowerCase() === 'packs')
+};
+
+const services = [
+    { icon: "music", title: "Beats", desc: "Produção Exclusiva" },
+    { icon: "layers", title: "Mix/Master", desc: "Qualidade de Estúdio" },
+    { icon: "book-open", title: "Cursos", desc: "Aprenda com Expert" },
+    { icon: "zap", title: "Presencial", desc: "Mentoria em Luanda" },
+    { icon: "shopping-cart", title: "Material", desc: "Hardware Premium" },
+];
+
+// --- FUNÇÕES DE INTERFACE ---
+
+function updateCartBadge() {
+    const badge = document.getElementById('cart-count');
+    if (badge) badge.innerText = cart.length;
+    localStorage.setItem('loneke_cart', JSON.stringify(cart));
+}
+
+function addToCart(productId) {
+    const isAlreadyInCart = cart.some(item => item.id === productId);
+    if (isAlreadyInCart) {
+        Swal.fire({
+            title: 'JÁ NO CARRINHO',
+            text: 'Este item já foi selecionado.',
+            icon: 'warning',
+            background: '#0d0d0d',
+            color: '#fff',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 2000
+        });
+        return;
+    }
+
+    const product = produtos.find(p => p.id === productId);
+    if (product) {
+        cart.push(product);
+        updateCartBadge();
+        Swal.fire({
+            title: 'ADICIONADO!',
+            text: `${product.nome} está no seu arsenal.`,
+            icon: 'success',
+            background: '#0d0d0d',
+            color: '#fff',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 2000,
+            iconColor: '#dc2626'
+        });
+    }
+}
+
+function renderStoreSection(title, items, sectionId) {
+    if (items.length === 0) return '';
+    let itemsHtml = items.map(item => `
+        <div class="group relative bg-[#0d0d0d] border border-white/10 rounded-2xl overflow-hidden transition-all duration-500 hover:border-red-600/50">
+            <div onclick="openProductPage(${item.id})" class="relative aspect-[4/5] overflow-hidden cursor-pointer">
+                <img src="${item.imagem}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="${item.nome}">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-transparent to-transparent"></div>
+            </div>
+            <div class="p-8 relative mt-[-60px] bg-[#0d0d0d] rounded-t-3xl border-t border-white/5">
+                <span class="text-red-600 font-bold text-[10px] tracking-widest uppercase mb-2 block">${item.categoria}</span>
+                <h4 onclick="openProductPage(${item.id})" class="text-xl font-black uppercase italic mb-3 cursor-pointer hover:text-red-600 transition-colors">
+                    ${item.nome}
+                </h4>
+                <div class="flex items-center justify-between mt-6">
+                    <span class="text-gray-500 line-through text-sm">
+        ${item.precoAntigo || item.preco + 5000} Kz
+    </span>
+    <span class="text-xl font-black text-white">
+        ${item.preco} Kz
+    </span>
+                    <button onclick="addToCart(${item.id})" class="bg-white text-black p-3 rounded-xl hover:bg-red-600 hover:text-white transition-all">
+                        <i data-lucide="shopping-cart"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+
+    return `
+        <section id="${sectionId}" class="max-w-7xl mx-auto px-6 py-12">
+            <div class="flex items-end justify-between mb-10">
+                <h3 class="text-4xl font-black uppercase italic tracking-tighter">${title}</h3>
+                <a href="pages/catalogo.html" class="text-red-600 font-bold uppercase text-xs tracking-widest hover:text-white transition-colors">Ver Tudo</a>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">${itemsHtml}</div>
+        </section>
+    `;
+}
+
+function openProductPage(id) {
+    const product = produtos.find(p => p.id === id);
+    if (!product) return;
+
+    // Preços: Novo e Antigo (Cálculo automático se não existir no objeto)
+    const precoNovo = product.preco;
+    const precoAntigo = product.precoAntigo || (product.preco + 5000);
+
+    document.getElementById('prod-title').innerText = product.nome;
+    document.getElementById('prod-full-desc').innerText = product.descricao || "Produto de alta qualidade para sua produção.";
+    
+    // Injeção de dois preços no detalhe
+    document.getElementById('prod-price').innerHTML = `
+        <span class="text-gray-500 line-through text-lg block">${precoAntigo.toLocaleString()} Kz</span>
+        <span class="text-white font-black text-4xl">${precoNovo.toLocaleString()} Kz</span>
+    `;
+
+    document.getElementById('prod-img-1').src = product.imagem;
+    document.getElementById('prod-tag').innerText = product.categoria;
+    
+    const ytId = product.videoID || 'dQw4w9WgXcQ';
+    document.getElementById('prod-video').src = `https://www.youtube.com/embed/${ytId}`;
+
+    const detalhesContainer = document.querySelector('#product-page .grid.grid-cols-2.gap-6.border-t');
+    if (product.detalhes) {
+        detalhesContainer.innerHTML = product.detalhes.map(detalhe => `
+            <div class="flex items-center gap-3">
+                <i data-lucide="check-circle" class="w-4 h-4 text-red-600"></i>
+                <span class="text-[10px] text-zinc-400 font-black uppercase">${detalhe}</span>
+            </div>
+        `).join('');
+    }
+
+    renderRecommendations(product.categoria, product.id);
+    document.getElementById('prod-add-btn').onclick = () => addToCart(product.id);
+
+    const page = document.getElementById('product-page');
+    page.classList.remove('hidden');
+    page.scrollTo(0,0);
+    document.body.style.overflow = 'hidden';
+    
+    lucide.createIcons();
+}
+
+
+function renderRecommendations(categoria, currentId) {
+    const grid = document.getElementById('recommendations-grid');
+    let sugeridos = produtos.filter(p => p.categoria === categoria && p.id !== currentId);
+    
+    if (sugeridos.length < 8) {
+        const outros = produtos.filter(p => p.id !== currentId && !sugeridos.includes(p));
+        sugeridos = [...sugeridos, ...outros];
+    }
+
+    const finalSelection = sugeridos.slice(0, 8);
+
+    grid.innerHTML = finalSelection.map(item => `
+        <div class="group cursor-pointer" onclick="openProductPage(${item.id})">
+            <div class="relative aspect-square rounded-xl overflow-hidden border border-white/5 mb-4">
+                <img src="${item.imagem}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span class="bg-white text-black text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest">Ver Detalhes</span>
+                </div>
+            </div>
+            <h4 class="text-xs font-black uppercase tracking-tighter truncate">${item.nome}</h4>
+            <p class="text-red-500 text-[10px] font-bold mt-1">${item.preco} Kz</p>
+        </div>
+    `).join('');
+}
+
+function closeProductPage() {
+    document.getElementById('product-page').classList.add('hidden');
+    document.getElementById('prod-video').src = "";
+    document.body.style.overflow = 'auto';
+}
+
+function goToCheckout() {
+    if (cart.length === 0) {
+        Swal.fire({ text: "Seu carrinho está vazio", icon: "info", background: "#0d0d0d", color: "#fff" });
+        return;
+    }
+    window.location.href = 'pages/checkout.html';
+}
+
+window.onload = () => {
+    const servicesContainer = document.getElementById('services-container');
+    servicesContainer.innerHTML = services.map(s => `
+        <div class="p-10 bg-[#0d0d0d] border border-white/5 rounded-2xl hover:border-red-600 transition-all">
+            <div class="text-red-600 mb-6"><i data-lucide="${s.icon}" size="32"></i></div>
+            <h4 class="text-lg font-black uppercase mb-2">${s.title}</h4>
+            <p class="text-gray-500 text-[10px] font-black uppercase tracking-widest">${s.desc}</p>
+        </div>
+    `).join('');
+
+    const storeContent = document.getElementById('store-content');
+    storeContent.innerHTML = '';
+    storeContent.innerHTML += renderStoreSection("Drumkits em Destaque", storeData.drumkits, "drumkits");
+    storeContent.innerHTML += renderStoreSection("Cursos em Destaque", storeData.cursos, "cursos");
+
+    storeContent.innerHTML += renderStoreSection("FLPs e Projetos", storeData.flps, "flp");
+    storeContent.innerHTML += renderStoreSection("Packs Especiais", storeData.packs, "packs");
+
+    lucide.createIcons();
+    updateCartBadge();
+};
+</script>
+
+<div id="product-page" class="fixed inset-0 bg-zinc-950 z-[200] hidden overflow-y-auto pb-20 custom-scrollbar text-white">
+    <!-- Header Minimalista -->
+    <div class="sticky top-0 z-50 flex justify-between items-center px-8 py-6 bg-zinc-950/80 backdrop-blur-md border-b border-white/5">
+        <span class="text-xs font-black tracking-[0.3em] uppercase opacity-50">Detalhes do Produto</span>
+        <button onclick="closeProductPage()" class="group flex items-center gap-2 hover:text-red-500 transition-colors">
+            <span class="text-xs font-bold uppercase tracking-widest">Fechar</span>
+            <div class="bg-white/10 p-2 rounded-full group-hover:bg-white/20 transition-all">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </div>
+        </button>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-6 mt-12">
+        <!-- SEÇÃO PRINCIPAL: Grid 40/60 para não sufocar o olhar -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20">
+            
+            <!-- Coluna da Esquerda: Imagem (40%) -->
+            <div class="md:col-span-5">
+                <div class="sticky top-32">
+                    <div class="aspect-[3/4] rounded-2xl overflow-hidden border border-white/10 bg-zinc-900 shadow-2xl">
+                        <img id="prod-img-1" src="" class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna da Direita: Info (60%) -->
+            <div class="md:col-span-7 flex flex-col justify-start py-4">
+                <div id="prod-tag" class="inline-block bg-red-600/10 text-red-500 text-[10px] font-black tracking-[0.2em] uppercase px-3 py-1 rounded-full w-max mb-6">
+                    Categoria
+                </div>
+                
+                <h1 id="prod-title" class="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4 leading-tight">
+                    Nome do Produto
+                </h1>
+
+                <div class="flex items-center gap-4 mb-8">
+                    <span id="prod-price" class="text-3xl font-light text-zinc-100">€0,00</span>
+                    <div class="h-4 w-[1px] bg-white/20"></div>
+                    <span class="text-zinc-500 text-sm font-medium">IVA incluído</span>
+                </div>
+                
+                <p id="prod-full-desc" class="text-zinc-400 text-base leading-relaxed mb-10 max-w-lg">
+                    Descrição do produto aqui...
+                </p>
+
+                <!-- Ações -->
+                <div class="flex flex-col sm:flex-row gap-4 mb-12">
+                    <button id="prod-add-btn" class="flex-1 bg-white text-black hover:bg-red-600 hover:text-white px-8 py-5 rounded-xl font-bold uppercase text-sm transition-all duration-300 flex items-center justify-center gap-3 shadow-lg shadow-white/5">
+                        <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                        Adicionar ao Carrinho
+                    </button>
+                    <button class="p-5 border border-white/10 rounded-xl hover:bg-white/5 transition-colors">
+                        <i data-lucide="heart" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- Detalhes Extras Mini -->
+               <div class="grid grid-cols-2 gap-6 border-t border-white/5 pt-8">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="truck" class="w-5 h-5 text-zinc-500"></i>
+                        <span class="text-xs text-zinc-400 font-medium">Envio Expresso em 24h</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="shield-check" class="w-5 h-5 text-zinc-500"></i>
+                        <span class="text-xs text-zinc-400 font-medium">Garantia de Autenticidade</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEÇÃO VÍDEO: Centralizada e com tamanho controlado -->
+        <div class="mt-32 max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <h3 class="text-xl font-bold uppercase tracking-widest mb-2">Review de Especialista</h3>
+                <div class="w-12 h-1 bg-red-600 mx-auto"></div>
+            </div>
+            <div class="aspect-video rounded-3xl overflow-hidden bg-zinc-900 border border-white/5 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+                <iframe id="prod-video" class="w-full h-full" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <!-- SEÇÃO RECOMENDAÇÕES: Cards Modernos -->
+        <div class="mt-40">
+            <div class="flex items-center justify-between mb-10">
+                <h2 class="text-2xl font-black uppercase tracking-tighter italic">Recomendações <span class="text-red-600">Premium</span></h2>
+                <div class="h-[1px] flex-1 bg-white/5 mx-8 hidden md:block"></div>
+                <span class="text-zinc-500 text-xs font-bold uppercase tracking-widest">8 Sugestões</span>
+            </div>
+
+            <!-- Grid de 8 produtos (ajustado para 4 por linha no desktop) -->
+            <div id="recommendations-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8">
+                <!-- Injetado via JS -->
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
