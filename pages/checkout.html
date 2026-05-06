@@ -151,50 +151,70 @@
             document.getElementById('upload-icon').style.color = "#22c55e"; // Ícone fica verde ao anexar
         });
 
-        function renderCart() {
-            const container = document.getElementById('cart-items-container');
-            const subtotalEl = document.getElementById('subtotal-val');
-            const totalEl = document.getElementById('total-val');
-            
-            if (cart.length === 0) {
-                container.innerHTML = `
-                    <div class="py-16 text-center border border-dashed border-white/10 rounded-3xl">
-                        <i data-lucide="shopping-cart" class="mx-auto mb-4 text-gray-800" size="40"></i>
-                        <p class="text-gray-500 uppercase font-black text-xs tracking-widest">Seu carrinho está vazio</p>
-                        <a href="../index.html" class="inline-block mt-4 text-red-600 font-bold uppercase text-[10px] border-b border-red-600">Voltar para Beats</a>
-                    </div>`;
-                return;
-            }
+    function renderCart() {
+    const container = document.getElementById('cart-items-container');
+    const subtotalEl = document.getElementById('subtotal-val');
+    const totalEl = document.getElementById('total-val');
+    
+    if (cart.length === 0) {
+        container.innerHTML = `
+            <div class="py-16 text-center border border-dashed border-white/10 rounded-3xl">
+                <i data-lucide="shopping-cart" class="mx-auto mb-4 text-gray-800" size="40"></i>
+                <p class="text-gray-500 uppercase font-black text-xs tracking-widest">Seu carrinho está vazio</p>
+                <a href="../index.html" class="inline-block mt-4 text-red-600 font-bold uppercase text-[10px] border-b border-red-600">Voltar para Beats</a>
+            </div>`;
+        return;
+    }
 
-            let totalSum = 0;
-            container.innerHTML = cart.map((item, index) => {
-                totalSum += parseInt(item.preco.toString().replace(/[^0-9]/g, '')) || 0;
-                const imgSrc = item.imagem.startsWith('http') ? item.imagem : `../${item.imagem}`;
+    let totalSumKz = 0;
+    container.innerHTML = cart.map((item, index) => {
+        totalSumKz += parseInt(item.preco.toString().replace(/[^0-9]/g, '')) || 0;
+        const imgSrc = item.imagem.startsWith('http') ? item.imagem : `../${item.imagem}`;
 
-                return `
-                    <div class="cart-item bg-[#0d0d0d] p-5 rounded-2xl border border-white/5 flex justify-between items-center hover:border-white/10 transition-all">
-                        <div class="flex items-center gap-5">
-                            <div class="relative">
-                                <img src="${imgSrc}" class="w-14 h-14 rounded-xl object-cover border border-white/10 shadow-lg">
-                                <div class="absolute -top-2 -left-2 bg-red-600 text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center">1</div>
-                            </div>
-                            <div>
-                                <h4 class="font-black uppercase text-xs italic tracking-tight">${item.nome}</h4>
-                                <p class="text-red-600 font-bold text-[10px] mt-1">${item.preco} KZ</p>
-                            </div>
-                        </div>
-                        <button onclick="removeItem(${index})" class="text-gray-600 hover:text-red-600 transition-colors p-2">
-                            <i data-lucide="trash-2" size="18"></i>
-                        </button>
-                    </div>`;
-            }).join('');
+        return `
+            <div class="cart-item bg-[#0d0d0d] p-5 rounded-2xl border border-white/5 flex justify-between items-center hover:border-white/10 transition-all">
+                <div class="flex items-center gap-5">
+                    <div class="relative">
+                        <img src="${imgSrc}" class="w-14 h-14 rounded-xl object-cover border border-white/10 shadow-lg">
+                        <div class="absolute -top-2 -left-2 bg-red-600 text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center">1</div>
+                    </div>
+                    <div>
+                        <h4 class="font-black uppercase text-xs italic tracking-tight text-white">${item.nome}</h4>
+                        <p class="text-red-600 font-bold text-[10px] mt-1">${item.preco} KZ</p>
+                    </div>
+                </div>
+                <button onclick="removeItem(${index})" class="text-gray-600 hover:text-red-600 transition-colors p-2">
+                    <i data-lucide="trash-2" size="18"></i>
+                </button>
+            </div>`;
+    }).join('');
 
-            const formattedTotal = new Intl.NumberFormat('pt-AO').format(totalSum) + " Kz";
-            subtotalEl.innerText = formattedTotal;
-            totalEl.innerText = formattedTotal;
-            lucide.createIcons();
-        }
-
+    // CÁLCULO DE CÂMBIO (1000kz = 1.25)
+    const totalUSD = (totalSumKz / 1000) * 1.25;
+    const totalEUR = (totalSumKz / 1000) * 1.25;
+    const formattedKz = new Intl.NumberFormat('pt-AO').format(totalSumKz) + " Kz";
+    
+    subtotalEl.innerText = formattedKz;
+    
+    // EXIBIÇÃO DOS 3 VALORES EM DESTAQUE
+    totalEl.innerHTML = `
+        <div class="flex flex-col gap-2 mt-4">
+            <div class="flex justify-between items-center border-b border-white/5 pb-2">
+                <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Total Kwanza</span>
+                <p class="text-3xl font-black text-white tracking-tighter">${formattedKz}</p>
+            </div>
+            <div class="flex justify-between items-center border-b border-white/5 pb-2">
+                <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Total Dólar</span>
+                <p class="text-3xl font-black text-red-600 tracking-tighter">$ ${totalUSD.toFixed(2)}</p>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Total Euro</span>
+                <p class="text-3xl font-black text-red-600 tracking-tighter">€ ${totalEUR.toFixed(2)}</p>
+            </div>
+        </div>
+    `;
+    lucide.createIcons();
+}
         function removeItem(index) {
             cart.splice(index, 1);
             localStorage.setItem('loneke_cart', JSON.stringify(cart));
@@ -214,46 +234,78 @@
             });
         }
 
-        function selectPayment(method) {
-            selectedMethod = method;
-            document.querySelectorAll('.payment-card').forEach(el => el.classList.remove('active', 'border-red-600', 'bg-red-600/5'));
-            document.getElementById(`btn-${method}`).classList.add('active', 'border-red-600', 'bg-red-600/5');
-            document.getElementById('payment-details').classList.remove('hidden');
-            
-            const content = document.getElementById('detail-content');
-            if(method === 'express') {
-                content.innerHTML = `
-                    <div class="flex justify-between items-center bg-black p-4 rounded-xl border border-white/5">
-                        <div>
-                            <p class="text-[9px] text-gray-500 uppercase font-bold tracking-widest">Entidade Express (AOA)</p>
-                            <span class="text-xl font-black tracking-tighter">936 380 720</span>
-                        </div>
-                        <button id="cp-exp" onclick="copyText('936380720', 'cp-exp')" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg text-[10px] font-black transition-all">COPIAR</button>
-                    </div>`;
-            } else if(method === 'bank') {
-                content.innerHTML = `
-                    <div class="bg-black p-4 rounded-xl border border-white/5 space-y-4">
-                        <div>
-                            <p class="text-[9px] text-gray-500 uppercase font-bold tracking-widest">IBAN AO (BIC / AOA)</p>
-                            <div class="flex justify-between items-center mt-1">
-                                <span class="text-[11px] font-black break-all uppercase tracking-tighter">AO06 0051 0000 0538 9050 1411 8</span>
-                                <button id="cp-iban" onclick="copyText('AO06005100000538905014118', 'cp-iban')" class="bg-white/10 px-4 py-2 rounded-lg text-[10px] font-black shrink-0 ml-2">COPIAR</button>
-                            </div>
-                        </div>
-                    </div>`;
-            } else {
-                content.innerHTML = `
-                    <div class="bg-black p-4 rounded-xl border border-white/5">
-                        <p class="text-[9px] text-gray-500 uppercase font-bold tracking-widest">IBAN EUR (Europa)</p>
-                        <div class="flex justify-between items-center font-black text-[11px] mt-1">
-                            <span>LU16 4080 0000 4422 5147</span>
-                            <button onclick="copyText('LU164080000044225147', 'cp-eur')" id="cp-eur" class="bg-white/10 px-4 py-2 rounded-lg">COPIAR</button>
-                        </div>
-                    </div>`;
-            }
-        }
+      function selectPayment(method) {
+    selectedMethod = method;
+    document.querySelectorAll('.payment-card').forEach(el => el.classList.remove('active', 'border-red-600', 'bg-red-600/5'));
+    document.getElementById(`btn-${method}`).classList.add('active', 'border-red-600', 'bg-red-600/5');
+    document.getElementById('payment-details').classList.remove('hidden');
+    
+    const content = document.getElementById('detail-content');
+    
+    if(method === 'express') {
+        content.innerHTML = `
+            <div class="flex justify-between items-center bg-black p-4 rounded-xl border border-white/5">
+                <div>
+                    <p class="text-[9px] text-gray-500 uppercase font-bold tracking-widest">Entidade Express (AOA)</p>
+                    <span class="text-xl font-black tracking-tighter text-white">936 380 720</span>
+                </div>
+                <button onclick="copyText('936380720', 'cp-exp')" id="cp-exp" class="bg-red-600/10 text-red-600 px-4 py-2 rounded-lg text-[10px] font-black">COPIAR</button>
+            </div>`;
+    } else if(method === 'bank') {
+        content.innerHTML = `
+            <div class="space-y-4">
+                <p class="text-[10px] font-black uppercase text-gray-400 mb-2">Escolha o seu banco para transferência rápida:</p>
+                <select id="bank-selector" onchange="updateBankIban()" class="w-full bg-black border border-white/10 rounded-xl p-4 text-xs font-bold uppercase text-white outline-none">
+                    <option value="">SELECIONE SEU BANCO...</option>
+                    <option value="BAI">MEU BANCO É O BAI</option>
+                    <option value="BFA">MEU BANCO É O BFA</option>
+                    <option value="BCI">MEU BANCO É O BCI</option>
+                    <option value="BIC">MEU BANCO É O BIC</option>
+                </select>
+                <div id="iban-display" class="hidden animate-in fade-in duration-500 bg-black p-4 rounded-xl border border-red-600/20">
+                    <!-- IBAN aparece aqui via updateBankIban() -->
+                </div>
+            </div>`;
+    } else {
+        content.innerHTML = `<p class="text-xs font-bold text-gray-400">IBAN EUR (Europa): <br><span class="text-white">LU16 4080 0000 4422 5147</span></p>`;
+    }
+}
 
+function updateBankIban() {
+    const bank = document.getElementById('bank-selector').value;
+    const display = document.getElementById('iban-display');
+    const ibans = {
+        'BAI': 'AO06 0040 0000 6562 1494 1028 9',
+        'BFA': 'AO06 0006 0000 6591 4448 3010 9',
+        'BCI': 'AO06 0005 0000 6474 4882 1019 7',
+        'BIC': 'AO06 0051 0000 0538 9050 1411 8'
+    };
 
+    if(bank) {
+        // Remove espaços e o AO06 para a função de copiar
+        const ibanParaCopiar = ibans[bank].replace(/\s/g, '').replace('AO06', '');
+        
+        display.classList.remove('hidden');
+        display.innerHTML = `
+            <div class="space-y-2">
+                <div>
+                    <p class="text-[9px] text-red-600 uppercase font-black tracking-widest mb-1">IBAN PARA TRANSFERÊNCIA (${bank})</p>
+                    <div class="flex justify-between items-center bg-black/50 p-2 rounded-lg border border-white/5">
+                        <span class="text-[11px] font-black text-white">${ibans[bank]}</span>
+                        <button onclick="copyText('${ibanParaCopiar}', 'cp-bank')" id="cp-bank" class="bg-white text-black px-3 py-1 rounded text-[9px] font-black uppercase hover:bg-red-600 hover:text-white transition-colors">Copiar</button>
+                    </div>
+                </div>
+                <div class="pt-2 border-t border-white/5">
+                    <p class="text-[9px] text-gray-500 uppercase font-black tracking-widest">Beneficiário:</p>
+                    <p class="text-xs font-bold text-white uppercase italic">José Eduardo Loneke</p>
+                </div>
+                <p class="text-[8px] text-gray-600 font-bold italic">* O prefixo AO06 será removido automaticamente ao copiar.</p>
+            </div>
+        `;
+    } else {
+        display.classList.add('hidden');
+    }
+}
         async function submitOrder() {
             const name = document.getElementById('cus-name').value.trim();
             const email = document.getElementById('cus-email').value.trim();
@@ -296,21 +348,28 @@
                     headers: { 'Accept': 'application/json' }
                 });
 
-                if (response.ok) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'PEDIDO EM ANÁLISE!',
-                        html: 'Recebemos seu comprovativo. Suas licenças serão enviadas para o e-mail <b>' + email + '</b> em até 1 hora.',
-                        background: '#0d0d0d',
-                        color: '#fff',
-                        confirmButtonColor: '#dc2626'
-                    }).then(() => {
-                        localStorage.removeItem('loneke_cart');
-                        window.location.href = '../index.html';
-                    });
-                } else {
-                    throw new Error("Erro no servidor");
-                }
+               if (response.ok) {
+    Swal.fire({
+        icon: 'success',
+        title: 'RECEBIDO COM SUCESSO!',
+        html: `
+            <div class="text-left space-y-3 text-sm">
+                <p>Estamos verificando o seu comprovativo agora.</p>
+                <p><b>Dentro de 5 minutos</b> vamos enviar os produtos no seu WhatsApp e no seu E-mail (<b>${email}</b>).</p>
+                <p class="text-xs text-gray-400 border-t border-white/10 pt-2 text-center">
+                    Qualquer coisa podes contactar: <br>
+                    <span class="text-red-600 font-black">+244 924 034 159</span>
+                </p>
+            </div>`,
+        background: '#0d0d0d',
+        color: '#fff',
+        confirmButtonColor: '#dc2626',
+        confirmButtonText: 'OK, VOU AGUARDAR'
+    }).then(() => {
+        localStorage.removeItem('loneke_cart');
+        window.location.href = '../index.html';
+    });
+}
             } catch (e) {
                 console.error("Erro detalhado:", e);
                 Swal.fire({ 
@@ -326,7 +385,7 @@
                 }).then((res) => {
                     if (res.isConfirmed) {
                         const msg = `Olá Loneke! Fiz um pedido no site de ${total}. Meu nome é ${name}. Aqui está o comprovativo.`;
-                        window.open(`https://wa.me/244936380720?text=${encodeURIComponent(msg)}`);
+                        window.open(`https://wa.me/244924034159?text=${encodeURIComponent(msg)}`);
                     }
                 });
                 
