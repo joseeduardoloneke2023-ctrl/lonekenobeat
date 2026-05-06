@@ -277,15 +277,22 @@
                 </div>
             </div>`;
     } else {
-        content.innerHTML = `<p class="text-xs font-bold text-gray-400">IBAN EUR (Europa): <br><span class="text-white">LU16 4080 0000 4422 5147</span></p>`;
-    }
+    content.innerHTML = `
+        <div class="flex justify-between items-center bg-black p-4 rounded-xl border border-white/5">
+            <div>
+                <p class="text-[9px] text-gray-500 uppercase font-bold tracking-widest">IBAN EUROPA (EUR)</p>
+                <span class="text-xl font-black tracking-tighter text-white">LU16 4080 0000 4422 5147</span>
+            </div>
+            <button onclick="copyText('LU164080000044225147', 'cp-eur')" id="cp-eur" class="bg-red-600/10 text-red-600 px-4 py-2 rounded-lg text-[10px] font-black">COPIAR</button>
+        </div>`;
+}
 }
 
 function updateBankIban() {
     const bank = document.getElementById('bank-selector').value;
     const display = document.getElementById('iban-display');
     const ibans = {
-        'BAI': 'AO06 0040 0000 6562 1494 1028 9',
+        'BAI': 'AO06 0040 0000 6562 1494 1019 2',
         'BFA': 'AO06 0006 0000 6591 4448 3010 9',
         'BCI': 'AO06 0005 0000 6474 4882 1019 7',
         'BIC': 'AO06 0051 0000 0538 9050 1411 8'
