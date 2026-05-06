@@ -92,10 +92,10 @@
                             <p class="font-black uppercase text-[10px] tracking-widest">MCX Express</p>
                         </div>
                         <div onclick="selectPayment('bank')" id="btn-bank" class="payment-card border border-white/10 p-5 rounded-2xl cursor-pointer hover:border-red-600 transition-all text-center">
-                            <p class="font-black uppercase text-[10px] tracking-widest">Transf. Angola</p>
+                            <p class="font-black uppercase text-[10px] tracking-widest">Transferência Bancaria Angola</p>
                         </div>
                         <div onclick="selectPayment('europa')" id="btn-europa" class="payment-card border border-white/10 p-5 rounded-2xl cursor-pointer hover:border-red-600 transition-all text-center">
-                            <p class="font-black uppercase text-[10px] tracking-widest">Transf. Europa</p>
+                            <p class="font-black uppercase text-[10px] tracking-widest">Transferência Bancaria Europa</p>
                         </div>
                     </div>
 
@@ -166,18 +166,15 @@
         return;
     }
 
-    let totalSumKz = 0;
+    let subtotalKz = 0;
     container.innerHTML = cart.map((item, index) => {
-        totalSumKz += parseInt(item.preco.toString().replace(/[^0-9]/g, '')) || 0;
+        subtotalKz += parseInt(item.preco.toString().replace(/[^0-9]/g, '')) || 0;
         const imgSrc = item.imagem.startsWith('http') ? item.imagem : `../${item.imagem}`;
 
         return `
             <div class="cart-item bg-[#0d0d0d] p-5 rounded-2xl border border-white/5 flex justify-between items-center hover:border-white/10 transition-all">
                 <div class="flex items-center gap-5">
-                    <div class="relative">
-                        <img src="${imgSrc}" class="w-14 h-14 rounded-xl object-cover border border-white/10 shadow-lg">
-                        <div class="absolute -top-2 -left-2 bg-red-600 text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center">1</div>
-                    </div>
+                    <img src="${imgSrc}" class="w-14 h-14 rounded-xl object-cover border border-white/10 shadow-lg">
                     <div>
                         <h4 class="font-black uppercase text-xs italic tracking-tight text-white">${item.nome}</h4>
                         <p class="text-red-600 font-bold text-[10px] mt-1">${item.preco} KZ</p>
@@ -189,19 +186,32 @@
             </div>`;
     }).join('');
 
-    // CÁLCULO DE CÂMBIO (1000kz = 1.25)
-    const totalUSD = (totalSumKz / 1000) * 1.25;
-    const totalEUR = (totalSumKz / 1000) * 1.25;
-    const formattedKz = new Intl.NumberFormat('pt-AO').format(totalSumKz) + " Kz";
+    // LÓGICA DE DESCONTO (10% para mais de 12 produtos)
+    let totalFinalKz = subtotalKz;
+    let descontoHtml = '';
+
+    if (cart.length > 12) {
+        const valorDesconto = subtotalKz * 0.10;
+        totalFinalKz = subtotalKz - valorDesconto;
+        descontoHtml = `
+            <div class="flex justify-between items-center text-green-500 mb-2 animate-pulse">
+                <span class="text-[9px] font-black uppercase tracking-widest">Desconto Bulk (10% OFF)</span>
+                <p class="text-lg font-black">- ${new Intl.NumberFormat('pt-AO').format(valorDesconto)} Kz</p>
+            </div>
+        `;
+    }
+
+    const totalUSD = (totalFinalKz / 1000) * 1.55;
+    const totalEUR = (totalFinalKz / 1000) * 1.55;
     
-    subtotalEl.innerText = formattedKz;
+    subtotalEl.innerText = new Intl.NumberFormat('pt-AO').format(subtotalKz) + " Kz";
     
-    // EXIBIÇÃO DOS 3 VALORES EM DESTAQUE
     totalEl.innerHTML = `
         <div class="flex flex-col gap-2 mt-4">
+            ${descontoHtml}
             <div class="flex justify-between items-center border-b border-white/5 pb-2">
                 <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Total Kwanza</span>
-                <p class="text-3xl font-black text-white tracking-tighter">${formattedKz}</p>
+                <p class="text-3xl font-black text-white tracking-tighter">${new Intl.NumberFormat('pt-AO').format(totalFinalKz)} Kz</p>
             </div>
             <div class="flex justify-between items-center border-b border-white/5 pb-2">
                 <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Total Dólar</span>
