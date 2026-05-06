@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo | LONEKE BEAT Premium</title>
+    <title>Catálogo | LONEKE NO BEAT Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -20,28 +20,26 @@
         
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
 
-        /* Estilo para Notificações Fakes */
         #fake-notification {
             transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             transform: translateY(150%);
         }
         #fake-notification.show { transform: translateY(0); }
 
-        /* Estilo para a categoria ativa */
+        
 .active-category {
-    border-color: #dc2626 !important; /* Borda vermelha */
-    background-color: #dc2626 !important; /* Fundo vermelho */
+    border-color: #dc2626 !important; 
+    background-color: #dc2626 !important; 
     transform: scale(1.05);
 }
 
 .active-category i, .active-category h4, .active-category p {
-    color: white !important; /* Texto e ícones brancos quando ativo */
+    color: white !important; 
 }
     </style>
 </head>
-<body class="pt-32"> <!-- Ajustado para dar espaço ao relógio fixo -->
+<body class="pt-32"> 
 
-    <!-- CRONÔMETRO REGRESSIVO (IGUAL AO INDEX) -->
     <div class="fixed top-0 w-full z-[110] bg-red-600 text-white py-2 overflow-hidden">
         <div class="max-w-[1400px] mx-auto px-6 flex justify-center items-center gap-4">
             <span class="text-[10px] font-black uppercase tracking-[0.3em] animate-pulse">Oferta de Tempo Limitado:</span>
@@ -49,11 +47,11 @@
         </div>
     </div>
 
-    <!-- NAVBAR -->
+   
     <nav class="fixed top-10 w-full z-[100] bg-black/90 backdrop-blur-xl border-b border-white/10">
         <div class="max-w-[1400px] mx-auto px-6 h-24 flex justify-between items-center">
             <h1 class="text-3xl font-black italic tracking-tighter uppercase cursor-pointer" onclick="window.location.href='../index.html'">
-                LONEKE<span class="text-red-600">BEAT</span>
+                LONEKE NO<span class="text-red-600">BEAT</span>
             </h1>
 
             <div class="hidden xl:flex items-center space-x-8 text-[12px] font-black uppercase tracking-[0.2em]">
@@ -72,7 +70,7 @@
         </div>
     </nav>
 
-    <!-- HEADER -->
+    
     <header class="py-20 bg-gradient-to-b from-red-600/10 to-transparent border-b border-white/5">
         <div class="max-w-7xl mx-auto px-6 text-center">
             <h2 class="text-6xl md:text-7xl font-black uppercase italic tracking-tighter mb-4">O NOSSO <span class="text-red-600">ARSENAL</span></h2>
@@ -80,7 +78,7 @@
         </div>
     </header>
 
-    <!-- FILTROS -->
+    
     <section class="sticky top-[136px] z-40 bg-black/80 backdrop-blur-md border-b border-white/5 py-6">
         <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row gap-6 justify-between items-center">
             <div class="relative w-full md:w-96">
@@ -99,14 +97,13 @@
         </div>
     </section>
 
-    <!-- GRID DE PRODUTOS -->
     <main class="max-w-7xl mx-auto px-6 py-16">
         <div id="catalog-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <!-- Cards via JS -->
+
         </div>
     </main>
 
-    <!-- NOTIFICAÇÃO FAKE COMPRA (IGUAL AO INDEX) -->
+
     <div id="fake-notification" class="fixed bottom-10 left-10 z-[300] bg-white text-black p-4 rounded-2xl flex items-center gap-4 shadow-2xl min-w-[300px]">
         <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white">
             <i data-lucide="check"></i>
@@ -120,12 +117,12 @@
 
     <footer class="bg-[#080808] pt-20 pb-16 px-6 border-t border-white/10">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-            <p class="text-sm font-black text-gray-600 uppercase tracking-widest">© 2026 LONEKE BEAT - ALL RIGHTS RESERVED</p>
-            <h1 class="text-4xl font-black italic tracking-tighter uppercase">LONEKE<span class="text-red-600">BEAT</span></h1>
+            <p class="text-sm font-black text-gray-600 uppercase tracking-widest">© 2026 LONEKE NO BEAT - ALL RIGHTS RESERVED</p>
+            <h1 class="text-4xl font-black italic tracking-tighter uppercase">LONEKE NO <span class="text-red-600">BEAT</span></h1>
         </div>
     </footer>
 
-    <!-- OVERLAY DETALHE DO PRODUTO -->
+
     <div id="product-page" class="fixed inset-0 bg-zinc-950 z-[200] hidden overflow-y-auto pb-20 custom-scrollbar text-white">
         <div class="sticky top-0 z-50 flex justify-between items-center px-8 py-6 bg-zinc-950/80 backdrop-blur-md border-b border-white/5">
             <span class="text-xs font-black tracking-[0.3em] uppercase opacity-50">Detalhes do Produto</span>
@@ -151,7 +148,7 @@
                     <div id="prod-tag" class="inline-block bg-red-600/10 text-red-500 text-[10px] font-black tracking-[0.2em] uppercase px-3 py-1 rounded-full w-max mb-6">Categoria</div>
                     <h1 id="prod-title" class="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4 leading-tight italic">Nome</h1>
                     
-                    <!-- Preço Duplo Detalhe -->
+              
                     <div class="flex items-center gap-6 mb-8">
                         <div class="flex flex-col">
                             <span id="prod-price-old" class="text-sm text-zinc-500 line-through">0 Kz</span>
@@ -170,7 +167,7 @@
                     </div>
 
                     <div id="prod-details-list" class="grid grid-cols-2 gap-6 border-t border-white/5 pt-8">
-                        <!-- Detalhes via JS -->
+                
                     </div>
                 </div>
             </div>
@@ -200,14 +197,13 @@
     let cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
     let currentCategory = 'all';
 
-    // --- CRONÔMETRO ---
     function startCountdown() {
     const countdownElement = document.getElementById("countdown");
     if (!countdownElement) return;
 
     let endTime = localStorage.getItem('loneke_promo_end');
 
-    // Se não houver tempo salvo, define 5 horas a partir de agora
+
     if (!endTime) {
         endTime = new Date().getTime() + (5 * 60 * 60 * 1000);
         localStorage.setItem('loneke_promo_end', endTime);
@@ -234,7 +230,7 @@
     updateTimer();
     setInterval(updateTimer, 1000);
 }
-    // --- NOTIFICAÇÕES FAKES ---
+
     const buyers = ["Tiago S.", "Gelson Production", "Beat Master", "Fábio K.", "Música Luanda", "Dj Mix"];
     const methods = ["Multicaixa Express", "Transferência", "Unitel Money"];
 
@@ -266,13 +262,12 @@
 
     container.appendChild(div);
     
-    // Animação de entrada
+
     setTimeout(() => {
         div.classList.remove('translate-y-10', 'opacity-0');
         lucide.createIcons();
     }, 100);
 
-    // Remove após 5 segundos
     setTimeout(() => {
         div.classList.add('translate-x-full', 'opacity-0');
         setTimeout(() => div.remove(), 500);
@@ -280,7 +275,6 @@
 }
 
 
-    // --- RENDERIZAÇÃO DE PRODUTOS ---
     function renderProducts() {
         const grid = document.getElementById('catalog-grid');
         const searchText = document.getElementById('search-input').value.toLowerCase();
@@ -293,7 +287,7 @@
         });
 
         filtered.forEach(item => {
-            // Lógica de Preço Antigo (se não existir no seu produtos.js, ele simula 40% a mais)
+           
             const precoAntigo = item.precoAntigo || Math.floor(item.preco * 1.4);
 
             grid.innerHTML += `
@@ -324,7 +318,7 @@
         lucide.createIcons();
     }
 
-    // --- DETALHES DO PRODUTO ---
+
     function openProductPage(id) {
         const product = produtos.find(p => p.id === id);
         if (!product) return;
@@ -339,7 +333,6 @@
         const ytId = product.videoID || 'dQw4w9WgXcQ';
         document.getElementById('prod-video').src = `https://www.youtube.com/embed/${ytId}`;
 
-        // Renderizar detalhes extras
         const detalhesList = document.getElementById('prod-details-list');
         detalhesList.innerHTML = `
             <div class="flex items-center gap-3">
@@ -407,7 +400,6 @@
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.classList.remove('active');
         
-        // Compara o texto do botão ou o parâmetro para aplicar a classe 'active'
         const btnText = btn.innerText.toLowerCase();
         const isAll = (category === 'all' && btnText === 'todos');
         const isMatch = btnText.includes(category.toLowerCase());
@@ -429,19 +421,18 @@
     document.getElementById('search-input').addEventListener('input', renderProducts);
     
 window.onload = () => {
-    // 1. Inicia o relógio sincronizado com o Index
+   
     startCountdown(); 
     
-    // 2. Renderiza todos os produtos inicialmente
+
     renderProducts(); 
     
-    // 3. Atualiza o ícone do carrinho
+   
     updateCartBadge(); 
     
-    // 4. Inicializa os ícones da biblioteca Lucide
+
     lucide.createIcons();
 
-    // 5. Configura o intervalo para notificações fake (Opcional)
     setInterval(showFakeNotification, 8000);
 };
     </script>
