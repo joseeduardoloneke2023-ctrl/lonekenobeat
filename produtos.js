@@ -6,7 +6,7 @@ const produtos = [
         "preco": 600,
         "precoAntigo": 2000,
         "videoID": "",
-        "imagem": "img/Beats/DRUMKIT 3FINER.jpg",
+        "imagem": "img/Drumkits/Drumkits de Artistas/DRUMKIT 3FINER.jpg",
         "descricao": "",
         "detalhes": [],
         "linkCheckout": ""
