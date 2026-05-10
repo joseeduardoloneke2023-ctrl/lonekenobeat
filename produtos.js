@@ -1,12 +1,12 @@
 const produtos = [
     {
-        "id": 1,
-        "nome": "DRUMKIT 3FINER",
-        "categoria": "Beats",
+        "id": 1778403560,
+        "nome": "DRUMKIT 3FINER.JPG",
+        "categoria": "Drumkits",
         "preco": 600,
         "precoAntigo": 2000,
         "videoID": "",
-        "imagem": "img/Drumkits/Drumkits de Artistas/DRUMKIT 3FINER.jpg",
+        "imagem": "img/Drumkits/DRUMKIT 3FINER.jpg",
         "descricao": "",
         "detalhes": [],
         "linkCheckout": ""
