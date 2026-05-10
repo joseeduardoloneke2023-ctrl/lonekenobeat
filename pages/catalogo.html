@@ -88,13 +88,29 @@
             </div>
 
             <div class="flex flex-wrap justify-center gap-3">
-                <button onclick="filterProducts('all')" class="filter-btn active px-6 py-3 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Todos</button>
-                <button onclick="filterProducts('beats')" class="filter-btn px-6 py-3 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Beats</button>
-                <button onclick="filterProducts('drumkit')" class="filter-btn px-6 py-3 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Drumkits</button>
-                <button onclick="filterProducts('flp')" class="filter-btn px-6 py-3 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">FLPs</button>
-                <button onclick="filterProducts('cursos')" class="filter-btn px-6 py-3 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Cursos</button>
-            </div>
+    <button onclick="filterProducts('all')" class="filter-btn active px-6 py-3 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Todos</button>
+    <button onclick="filterProducts('drumkit')" class="filter-btn px-6 py-3 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Drumkits</button>
+    <button onclick="filterProducts('flp')" class="filter-btn px-6 py-3 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">FLPs</button>
+    <button onclick="filterProducts('cursos')" class="filter-btn px-6 py-3 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Cursos</button>
+    <button onclick="filterProducts('packs')" class="filter-btn px-6 py-3 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Packs</button>
+</div>
+       <select id="price-filter" onchange="renderProducts()" 
+    class="bg-[#0d0d0d] border border-white/10 px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest outline-none focus:border-red-600 transition-all text-white cursor-pointer">
+    <option value="all">Preços: Todos</option>
+    <option value="200">200 Kz</option>
+    <option value="600">600 Kz</option>
+    <option value="700">7000 Kz</option>
+    <option value="1000">1.000 Kz</option>
+    <option value="2000">2.000 Kz</option> <option value="2000">2.000 Kz</option>
+    <option value="7000">7.000 Kz</option>
+    <option value="10000">10.000 Kz</option>
+    <option value="12500">12.500 Kz</option>
+    <option value="30000">30.000 Kz</option>
+    <option value="max">Acima de 30.000 Kz</option>
+</select>
         </div>
+        <!-- Adicione isso após o botão de Cursos -->
+
     </section>
 
     <main class="max-w-7xl mx-auto px-6 py-16">
@@ -274,49 +290,78 @@
     }, 5000);
 }
 
+   function renderProducts() {
+    const grid = document.getElementById('catalog-grid');
+    const searchText = document.getElementById('search-input').value.toLowerCase();
+    const priceFilter = document.getElementById('price-filter').value;
+    
+    grid.innerHTML = '';
 
-    function renderProducts() {
-        const grid = document.getElementById('catalog-grid');
-        const searchText = document.getElementById('search-input').value.toLowerCase();
-        grid.innerHTML = '';
+    const filtered = produtos.filter(p => {
+        // --- LOGICA DE LIMPEZA DO PREÇO ---
+        // Remove tudo que não é número (espaços, pontos, "kz")
+        const precoLimpo = parseFloat(p.preco.toString().replace(/\D/g, ''));
 
-        const filtered = produtos.filter(p => {
-            const matchesCategory = (currentCategory === 'all' || p.categoria.toLowerCase() === currentCategory.toLowerCase());
-            const matchesSearch = p.nome.toLowerCase().includes(searchText);
-            return matchesCategory && matchesSearch;
-        });
+        // 1. Filtro de Categoria
+        const matchesCategory = (currentCategory === 'all' || p.categoria.toLowerCase() === currentCategory.toLowerCase());
+        
+        // 2. Filtro de Pesquisa
+        const matchesSearch = p.nome.toLowerCase().includes(searchText);
+        
+        // 3. Filtro de Preço EXATO
+        let matchesPrice = true;
+        if (priceFilter !== 'all') {
+            if (priceFilter === 'max') {
+                matchesPrice = precoLimpo > 30000;
+            } else {
+                // MUDANÇA AQUI: Agora usamos === para valor exato
+                matchesPrice = precoLimpo === parseFloat(priceFilter);
+            }
+        }
 
-        filtered.forEach(item => {
-           
-            const precoAntigo = item.precoAntigo || Math.floor(item.preco * 1.4);
+        return matchesCategory && matchesSearch && matchesPrice;
+    });
 
-            grid.innerHTML += `
-                <div class="product-card group bg-[#0d0d0d] border border-white/10 rounded-2xl overflow-hidden flex flex-col hover:border-red-600/50">
-                    <div onclick="openProductPage(${item.id})" class="relative aspect-[4/5] overflow-hidden cursor-pointer">
-                        <img src="${item.imagem}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="${item.nome}">
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-transparent to-transparent"></div>
-                        <div class="absolute top-4 left-4 bg-red-600 text-[9px] font-black px-2 py-1 rounded uppercase">-40% OFF</div>
-                    </div>
-                    <div class="p-8 relative mt-[-60px] bg-[#0d0d0d] rounded-t-3xl border-t border-white/5 flex flex-col flex-grow">
-                        <span class="text-red-600 font-bold text-[10px] tracking-widest uppercase mb-2 block">${item.categoria}</span>
-                        <h4 onclick="openProductPage(${item.id})" class="text-xl font-black uppercase italic mb-3 cursor-pointer hover:text-red-600 transition-colors line-clamp-1">
-                            ${item.nome}
-                        </h4>
-                        <div class="flex items-center justify-between mt-auto">
-                            <div class="flex flex-col">
-                                <span class="text-[10px] text-gray-500 line-through">${precoAntigo} Kz</span>
-                                <span class="text-xl font-black text-white">${item.preco} Kz</span>
-                            </div>
-                            <button onclick="addToCart(${item.id})" class="bg-white text-black p-3 rounded-xl hover:bg-red-600 hover:text-white transition-all">
-                                <i data-lucide="shopping-cart"></i>
-                            </button>
-                        </div>
+    // --- SE NÃO HOUVER PRODUTOS (Ficará vazio com mensagem) ---
+    if (filtered.length === 0) {
+        grid.innerHTML = `
+            <div class="col-span-full py-20 text-center">
+                <i data-lucide="package-search" class="mx-auto w-12 h-12 text-gray-700 mb-4"></i>
+                <p class="text-gray-500 uppercase tracking-widest font-black text-xs">Nenhum item encontrado com este valor.</p>
+            </div>
+        `;
+        lucide.createIcons();
+        return;
+    }
+
+    // Renderização dos cards
+    filtered.forEach(item => {
+        // Garante que o preço exiba "Kz" corretamente
+        const precoExibicao = item.preco.toString().toLowerCase().includes('kz') ? item.preco : item.preco + " Kz";
+
+        grid.innerHTML += `
+            <div class="product-card group bg-[#0d0d0d] border border-white/10 rounded-2xl overflow-hidden flex flex-col hover:border-red-600/50">
+                <div onclick="openProductPage(${item.id})" class="relative aspect-[4/5] overflow-hidden cursor-pointer">
+                    <img src="${item.imagem}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="${item.nome}">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-transparent to-transparent"></div>
+                </div>
+                <div class="p-8 relative mt-[-60px] bg-[#0d0d0d] rounded-t-3xl border-t border-white/5 flex flex-col flex-grow">
+                    <span class="text-red-600 font-bold text-[10px] tracking-widest uppercase mb-2 block">${item.categoria}</span>
+                    <h4 onclick="openProductPage(${item.id})" class="text-xl font-black uppercase italic mb-3 cursor-pointer hover:text-red-600 transition-colors line-clamp-1">
+                        ${item.nome}
+                    </h4>
+                    <div class="flex items-center justify-between mt-auto">
+                        <span class="text-xl font-black text-white">${precoExibicao}</span>
+                        <button onclick="addToCart(${item.id})" class="bg-white text-black p-3 rounded-xl hover:bg-red-600 hover:text-white transition-all">
+                            <i data-lucide="shopping-cart"></i>
+                        </button>
                     </div>
                 </div>
-            `;
-        });
-        lucide.createIcons();
-    }
+            </div>
+        `;
+    });
+    lucide.createIcons();
+}
 
 
     function openProductPage(id) {
