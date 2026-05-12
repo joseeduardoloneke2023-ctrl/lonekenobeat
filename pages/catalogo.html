@@ -290,7 +290,7 @@
     }, 5000);
 }
 
-   function renderProducts() {
+  function renderProducts() {
     const grid = document.getElementById('catalog-grid');
     const searchText = document.getElementById('search-input').value.toLowerCase();
     const priceFilter = document.getElementById('price-filter').value;
@@ -298,31 +298,21 @@
     grid.innerHTML = '';
 
     const filtered = produtos.filter(p => {
-        // --- LOGICA DE LIMPEZA DO PREÇO ---
-        // Remove tudo que não é número (espaços, pontos, "kz")
         const precoLimpo = parseFloat(p.preco.toString().replace(/\D/g, ''));
-
-        // 1. Filtro de Categoria
         const matchesCategory = (currentCategory === 'all' || p.categoria.toLowerCase() === currentCategory.toLowerCase());
-        
-        // 2. Filtro de Pesquisa
         const matchesSearch = p.nome.toLowerCase().includes(searchText);
         
-        // 3. Filtro de Preço EXATO
         let matchesPrice = true;
         if (priceFilter !== 'all') {
             if (priceFilter === 'max') {
                 matchesPrice = precoLimpo > 30000;
             } else {
-                // MUDANÇA AQUI: Agora usamos === para valor exato
                 matchesPrice = precoLimpo === parseFloat(priceFilter);
             }
         }
-
         return matchesCategory && matchesSearch && matchesPrice;
     });
 
-    // --- SE NÃO HOUVER PRODUTOS (Ficará vazio com mensagem) ---
     if (filtered.length === 0) {
         grid.innerHTML = `
             <div class="col-span-full py-20 text-center">
@@ -334,10 +324,10 @@
         return;
     }
 
-    // Renderização dos cards
     filtered.forEach(item => {
-        // Garante que o preço exiba "Kz" corretamente
         const precoExibicao = item.preco.toString().toLowerCase().includes('kz') ? item.preco : item.preco + " Kz";
+        // Lógica para o preço antigo (usa o do JS ou gera um automático 40% maior)
+        const precoAntigoExibicao = (item.precoAntigo || Math.floor(item.preco * 1.4)) + " Kz";
 
         grid.innerHTML += `
             <div class="product-card group bg-[#0d0d0d] border border-white/10 rounded-2xl overflow-hidden flex flex-col hover:border-red-600/50">
@@ -350,8 +340,11 @@
                     <h4 onclick="openProductPage(${item.id})" class="text-xl font-black uppercase italic mb-3 cursor-pointer hover:text-red-600 transition-colors line-clamp-1">
                         ${item.nome}
                     </h4>
-                    <div class="flex items-center justify-between mt-auto">
-                        <span class="text-xl font-black text-white">${precoExibicao}</span>
+                    <div class="flex items-end justify-between mt-auto">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-zinc-500 line-through decoration-red-600/50">${precoAntigoExibicao}</span>
+                            <span class="text-xl font-black text-white">${precoExibicao}</span>
+                        </div>
                         <button onclick="addToCart(${item.id})" class="bg-white text-black p-3 rounded-xl hover:bg-red-600 hover:text-white transition-all">
                             <i data-lucide="shopping-cart"></i>
                         </button>
@@ -362,7 +355,6 @@
     });
     lucide.createIcons();
 }
-
 
     function openProductPage(id) {
         const product = produtos.find(p => p.id === id);
