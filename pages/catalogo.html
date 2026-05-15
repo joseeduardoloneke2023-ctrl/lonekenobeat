@@ -131,6 +131,13 @@
         </div>
     </div>
 
+    <!-- Controles de Paginação -->
+<div class="max-w-7xl mx-auto px-6 pb-12 flex justify-center items-center gap-4">
+    <button onclick="changePage(-1)" id="prev-btn" class="px-6 py-3 bg-[#0d0d0d] border border-white/10 rounded-xl text-[10px] font-black uppercase hover:border-red-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all">Anterior</button>
+    <span id="page-info" class="text-[10px] font-black uppercase tracking-widest text-gray-500">Página 1</span>
+    <button onclick="changePage(1)" id="next-btn" class="px-6 py-3 bg-[#0d0d0d] border border-white/10 rounded-xl text-[10px] font-black uppercase hover:border-red-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all">Próximo</button>
+</div>
+
     <footer class="bg-[#080808] pt-20 pb-16 px-6 border-t border-white/10">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
             <p class="text-sm font-black text-gray-600 uppercase tracking-widest">© 2026 LONEKE NO BEAT - ALL RIGHTS RESERVED</p>
@@ -209,269 +216,282 @@
     </div>
 
     <script src="../produtos.js"></script>
-    <script>
+
+<script>
+    // --- CONFIGURAÇÃO INICIAL ---
     let cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
     let currentCategory = 'all';
+    const itemsPerPage = 20;
+    let currentPage = 1;
+    const fakeNames = ["Delson", "Mauro", "Cláudio", "Aline", "Filipe", "Gelson", "Sandra", "Yuri", "Belson", "Edna"];
+    const pagamentos = ["Express", "Transferência Bancária"];
 
-    function startCountdown() {
-    const countdownElement = document.getElementById("countdown");
-    if (!countdownElement) return;
+    // Função auxiliar para tratar preços (converte "2.000" ou "2000" em número real)
+    const parsePrice = (val) => {
+        if (typeof val === 'number') return val;
+        return parseFloat(val.replace(/\./g, '').replace(',', '.'));
+    };
 
-    let endTime = localStorage.getItem('loneke_promo_end');
+    const createSlug = (text) => {
+        return text.toString().toLowerCase()
+            .replace(/\s+/g, '-')           
+            .replace(/[^\w\-]+/g, '')       
+            .replace(/\-\-+/g, '-')         
+            .replace(/^-+/, '')             
+            .replace(/-+$/, '');            
+    };
 
+    // --- SISTEMA DE NOTIFICAÇÕES FAKE ---
+    function showFakeNotification() {
+        const container = document.getElementById("fake-notifications") || (() => {
+            const div = document.createElement("div");
+            div.id = "fake-notifications";
+            div.className = "fixed bottom-6 left-6 z-[300] space-y-4";
+            document.body.appendChild(div);
+            return div;
+        })();
 
-    if (!endTime) {
-        endTime = new Date().getTime() + (5 * 60 * 60 * 1000);
-        localStorage.setItem('loneke_promo_end', endTime);
+        const nome = fakeNames[Math.floor(Math.random() * fakeNames.length)];
+        const pagamento = pagamentos[Math.floor(Math.random() * pagamentos.length)];
+        const valoresExatos = [5000, 10000, 15000, 25000, 50000];
+        const valor = valoresExatos[Math.floor(Math.random() * valoresExatos.length)];
+
+        const div = document.createElement("div");
+        div.className = "bg-[#0d0d0d] border border-red-600/30 p-5 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] min-w-[280px] transform transition-all duration-500 translate-y-10 opacity-0 backdrop-blur-xl";
+        div.innerHTML = `
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-red-600/20 rounded-full flex items-center justify-center">
+                    <i data-lucide="check" class="text-red-600 w-5 h-5"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-1">Pagamento Confirmado</p>
+                    <p class="text-sm font-black uppercase italic text-white">${nome} <span class="text-red-600 text-[10px] not-italic">via ${pagamento}</span></p>
+                    <p class="text-xs font-bold text-gray-400 mt-1">${valor.toLocaleString()} Kz recebidos</p>
+                </div>
+            </div>`;
+        
+        container.appendChild(div);
+        setTimeout(() => { div.classList.remove('translate-y-10', 'opacity-0'); lucide.createIcons(); }, 100);
+        setTimeout(() => { div.classList.add('opacity-0', '-translate-x-10'); setTimeout(() => div.remove(), 500); }, 5000);
     }
 
-    function updateTimer() {
-        const now = new Date().getTime();
-        const diff = endTime - now;
-
-        if (diff <= 0) {
-            countdownElement.innerText = "OFERTA EXPIRADA";
-            localStorage.removeItem('loneke_promo_end'); // Reseta para a próxima visita se desejar
-            return;
-        }
-
-        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const s = Math.floor((diff % (1000 * 60)) / 1000);
-
-        countdownElement.innerText = 
-            `${h.toString().padStart(2, '0')}H ${m.toString().padStart(2, '0')}M ${s.toString().padStart(2, '0')}S`;
-    }
-
-    updateTimer();
-    setInterval(updateTimer, 1000);
-}
-
-    const buyers = ["Tiago S.", "Gelson Production", "Beat Master", "Fábio K.", "Música Luanda", "Dj Mix"];
-    const methods = ["Multicaixa Express", "Transferência", "Unitel Money"];
-
- function showFakeNotification() {
-    const container = document.getElementById("fake-notifications");
-    if(!container) return;
-
-    const nome = fakeNames[Math.floor(Math.random() * fakeNames.length)];
-    const pagamento = pagamentos[Math.floor(Math.random() * pagamentos.length)];
-    const valoresExatos = [5000, 10000, 15000, 25000, 50000];
-    const valor = valoresExatos[Math.floor(Math.random() * valoresExatos.length)];
-
-    const div = document.createElement("div");
-    // Classes do Index: bg-[#0d0d0d], border-white/10, font-black, uppercase
-    div.className = "bg-[#0d0d0d] border border-white/10 p-5 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] min-w-[250px] transform transition-all duration-500 translate-y-10 opacity-0";
-    
-    div.innerHTML = `
-        <div class="flex items-center gap-4">
-            <div class="w-10 h-10 bg-red-600/20 rounded-full flex items-center justify-center">
-                <i data-lucide="check" class="text-red-600 w-5 h-5"></i>
-            </div>
-            <div>
-                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-1">Novo Pagamento</p>
-                <p class="text-sm font-black uppercase italic">${nome} <span class="text-red-600">via ${pagamento}</span></p>
-                <p class="text-xs font-medium text-gray-400 mt-1">${valor.toLocaleString()} Kz confirmado</p>
-            </div>
-        </div>
-    `;
-
-    container.appendChild(div);
-    
-
-    setTimeout(() => {
-        div.classList.remove('translate-y-10', 'opacity-0');
-        lucide.createIcons();
-    }, 100);
-
-    setTimeout(() => {
-        div.classList.add('translate-x-full', 'opacity-0');
-        setTimeout(() => div.remove(), 500);
-    }, 5000);
-}
-
-  function renderProducts() {
+    // --- RENDERIZAÇÃO E FILTROS ---
+    function renderProducts() {
     const grid = document.getElementById('catalog-grid');
     const searchText = document.getElementById('search-input').value.toLowerCase();
     const priceFilter = document.getElementById('price-filter').value;
-    
-    grid.innerHTML = '';
 
     const filtered = produtos.filter(p => {
-        const precoLimpo = parseFloat(p.preco.toString().replace(/\D/g, ''));
-        const matchesCategory = (currentCategory === 'all' || p.categoria.toLowerCase() === currentCategory.toLowerCase());
-        const matchesSearch = p.nome.toLowerCase().includes(searchText);
-        
-        let matchesPrice = true;
+        const matchCat = (currentCategory === 'all' || p.categoria.toLowerCase() === currentCategory.toLowerCase());
+        const matchSearch = p.nome.toLowerCase().includes(searchText);
+        let matchPrice = true;
+        const itemPrice = parsePrice(p.preco);
+
         if (priceFilter !== 'all') {
             if (priceFilter === 'max') {
-                matchesPrice = precoLimpo > 30000;
+                matchPrice = itemPrice >= 30000;
             } else {
-                matchesPrice = precoLimpo === parseFloat(priceFilter);
+                matchPrice = itemPrice === parseInt(priceFilter);
             }
         }
-        return matchesCategory && matchesSearch && matchesPrice;
+        return matchCat && matchSearch && matchPrice;
     });
 
-    if (filtered.length === 0) {
-        grid.innerHTML = `
-            <div class="col-span-full py-20 text-center">
-                <i data-lucide="package-search" class="mx-auto w-12 h-12 text-gray-700 mb-4"></i>
-                <p class="text-gray-500 uppercase tracking-widest font-black text-xs">Nenhum item encontrado com este valor.</p>
-            </div>
-        `;
-        lucide.createIcons();
-        return;
-    }
+    const start = (currentPage - 1) * itemsPerPage;
+    const paginated = filtered.slice(start, start + itemsPerPage);
 
-    filtered.forEach(item => {
-        const precoExibicao = item.preco.toString().toLowerCase().includes('kz') ? item.preco : item.preco + " Kz";
-        // Lógica para o preço antigo (usa o do JS ou gera um automático 40% maior)
-        const precoAntigoExibicao = (item.precoAntigo || Math.floor(item.preco * 1.4)) + " Kz";
-
-        grid.innerHTML += `
-            <div class="product-card group bg-[#0d0d0d] border border-white/10 rounded-2xl overflow-hidden flex flex-col hover:border-red-600/50">
-                <div onclick="openProductPage(${item.id})" class="relative aspect-[4/5] overflow-hidden cursor-pointer">
-                    <img src="${item.imagem}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="${item.nome}">
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-transparent to-transparent"></div>
-                </div>
-                <div class="p-8 relative mt-[-60px] bg-[#0d0d0d] rounded-t-3xl border-t border-white/5 flex flex-col flex-grow">
-                    <span class="text-red-600 font-bold text-[10px] tracking-widest uppercase mb-2 block">${item.categoria}</span>
-                    <h4 onclick="openProductPage(${item.id})" class="text-xl font-black uppercase italic mb-3 cursor-pointer hover:text-red-600 transition-colors line-clamp-1">
-                        ${item.nome}
-                    </h4>
-                    <div class="flex items-end justify-between mt-auto">
-                        <div class="flex flex-col">
-                            <span class="text-[10px] text-zinc-500 line-through decoration-red-600/50">${precoAntigoExibicao}</span>
-                            <span class="text-xl font-black text-white">${precoExibicao}</span>
-                        </div>
-                        <button onclick="addToCart(${item.id})" class="bg-white text-black p-3 rounded-xl hover:bg-red-600 hover:text-white transition-all">
-                            <i data-lucide="shopping-cart"></i>
-                        </button>
+    if (paginated.length === 0) {
+        grid.innerHTML = `<div class="col-span-full py-20 text-center opacity-50 uppercase font-black tracking-widest text-xs">Nenhum produto encontrado.</div>`;
+    } else {
+        grid.innerHTML = paginated.map(item => {
+            // Lógica de preço antigo (se não houver no JS, gera um 40% maior)
+            const oldPrice = item.precoAntigo || Math.floor(parsePrice(item.preco) * 1.4).toLocaleString();
+            
+            return `
+                <div class="product-card group bg-[#0d0d0d] border border-white/10 rounded-2xl overflow-hidden hover:border-red-600">
+                    <div onclick="openProductPage(${item.id})" class="relative aspect-[4/5] cursor-pointer overflow-hidden">
+                        <img src="${item.imagem}" class="w-full h-full object-cover transition-transform group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-transparent to-transparent"></div>
                     </div>
-                </div>
-            </div>
-        `;
-    });
+                    <div class="p-6 bg-[#0d0d0d] relative mt-[-40px]">
+                        <span class="text-red-600 font-bold text-[9px] uppercase tracking-widest">${item.categoria}</span>
+                        <h4 onclick="openProductPage(${item.id})" class="text-lg font-black uppercase italic truncate cursor-pointer">${item.nome}</h4>
+                        
+                        <div class="mt-4 flex flex-col">
+                            <span class="text-[10px] text-gray-500 line-through">${oldPrice} Kz</span>
+                            <div class="flex justify-between items-center">
+                                <span class="font-black text-white text-xl">${item.preco} Kz</span>
+                                <button onclick="addToCart(${item.id})" class="bg-white text-black p-3 rounded-xl hover:bg-red-600 hover:text-white transition-all">
+                                    <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        }).join('');
+    }
+    
+    document.getElementById('page-info').innerText = `Página ${currentPage}`;
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    if(prevBtn) prevBtn.disabled = currentPage === 1;
+    if(nextBtn) nextBtn.disabled = (start + itemsPerPage) >= filtered.length;
+
     lucide.createIcons();
 }
 
-    function openProductPage(id) {
-        const product = produtos.find(p => p.id === id);
-        if (!product) return;
 
-        document.getElementById('prod-title').innerText = product.nome;
-        document.getElementById('prod-full-desc').innerText = product.descricao || "Qualidade premium Loneke Beat para sua produção.";
-        document.getElementById('prod-price').innerText = product.preco + " Kz";
-        document.getElementById('prod-price-old').innerText = (product.precoAntigo || Math.floor(product.preco * 1.4)) + " Kz";
-        document.getElementById('prod-img-1').src = product.imagem;
-        document.getElementById('prod-tag').innerText = product.categoria;
-        
-        const ytId = product.videoID || 'dQw4w9WgXcQ';
-        document.getElementById('prod-video').src = `https://www.youtube.com/embed/${ytId}`;
 
-        const detalhesList = document.getElementById('prod-details-list');
-        detalhesList.innerHTML = `
-            <div class="flex items-center gap-3">
-                <i data-lucide="zap" class="w-4 h-4 text-red-600"></i>
-                <span class="text-xs text-zinc-400 font-medium uppercase">Download Imediato</span>
-            </div>
-            <div class="flex items-center gap-3">
-                <i data-lucide="shield-check" class="w-4 h-4 text-red-600"></i>
-                <span class="text-xs text-zinc-400 font-medium uppercase">100% Seguro</span>
-            </div>
-        `;
-
-        renderRecommendations(product.categoria, product.id);
-        document.getElementById('prod-add-btn').onclick = () => addToCart(product.id);
-
-        const page = document.getElementById('product-page');
-        page.classList.remove('hidden');
-        page.scrollTo(0,0);
-        document.body.style.overflow = 'hidden';
-        lucide.createIcons();
+    function filterProducts(cat) { 
+        currentCategory = cat; 
+        currentPage = 1; 
+        // Atualiza visual dos botões
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if(btn.getAttribute('onclick').includes(`'${cat}'`)) btn.classList.add('active');
+        });
+        renderProducts(); 
     }
+
+    function changePage(dir) { 
+    currentPage += dir; 
+    
+    // Atualiza a URL sem recarregar a página
+    const url = new URL(window.location);
+    url.searchParams.set('page', currentPage);
+    window.history.pushState({}, '', url);
+
+    renderProducts(); 
+    window.scrollTo({ top: 500, behavior: 'smooth' }); 
+}
+
+
+// --- VERSÃO MELHORADA DAS FUNÇÕES DE PRODUTO ---
+
+function openProductPage(id) {
+    const product = produtos.find(p => p.id === id);
+    if (!product) return;
+    
+    const slug = createSlug(product.nome);
+    const url = new URL(window.location);
+    
+    // Adicionamos o slug do produto sem apagar o parâmetro 'page'
+    url.searchParams.set('produto', slug);
+    window.history.pushState({path: slug}, '', url);
+
+    document.getElementById('prod-title').innerText = product.nome;
+    document.getElementById('prod-full-desc').innerText = product.descricao || "Arsenal Premium Loneke no Beat.";
+    document.getElementById('prod-price').innerText = product.preco + " Kz";
+    document.getElementById('prod-price-old').innerText = (product.precoAntigo || Math.floor(parsePrice(product.preco) * 1.4)) + " Kz";
+    document.getElementById('prod-img-1').src = product.imagem;
+    document.getElementById('prod-tag').innerText = product.categoria;
+    document.getElementById('prod-video').src = `https://www.youtube.com/embed/${product.videoID || 'dQw4w9WgXcQ'}`;
+    
+    document.getElementById('product-page').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    
+    renderRecommendations(product.categoria, product.id);
+    lucide.createIcons();
+}
+
+function closeProductPage() {
+    document.getElementById('product-page').classList.add('hidden');
+    document.getElementById('prod-video').src = "";
+    document.body.style.overflow = 'auto';
+
+    // REMOÇÃO INTELIGENTE: Remove o parâmetro 'produto' mas mantém o 'page'
+    const url = new URL(window.location);
+    url.searchParams.delete('produto');
+    window.history.replaceState({}, document.title, url);
+}
+
+
 
     function renderRecommendations(categoria, currentId) {
         const grid = document.getElementById('recommendations-grid');
-        const sugeridos = produtos.filter(p => p.id !== currentId).slice(0, 8);
-
-        grid.innerHTML = sugeridos.map(item => `
-            <div class="group cursor-pointer" onclick="openProductPage(${item.id})">
-                <div class="relative aspect-square rounded-xl overflow-hidden border border-white/5 mb-4">
-                    <img src="${item.imagem}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                </div>
-                <h4 class="text-xs font-black uppercase tracking-tighter truncate">${item.nome}</h4>
-                <p class="text-red-500 text-[10px] font-bold mt-1">${item.preco} Kz</p>
-            </div>
-        `).join('');
+        const sugeridos = produtos.filter(p => p.categoria === categoria && p.id !== currentId).slice(0, 4);
+        grid.innerHTML = (sugeridos.length ? sugeridos : produtos.slice(0, 4)).map(item => `
+            <div class="group cursor-pointer bg-white/5 p-4 rounded-xl border border-white/5 hover:border-red-600 transition-all" onclick="openProductPage(${item.id})">
+                <img src="${item.imagem}" class="aspect-square object-cover rounded-lg mb-3">
+                <h4 class="text-[10px] font-black uppercase truncate">${item.nome}</h4>
+                <p class="text-red-600 font-bold text-[10px] mt-1">${item.preco} Kz</p>
+            </div>`).join('');
     }
 
-    function closeProductPage() {
-        document.getElementById('product-page').classList.add('hidden');
-        document.getElementById('prod-video').src = "";
-        document.body.style.overflow = 'auto';
-    }
-
-    function addToCart(productId) {
-        const product = produtos.find(p => p.id === productId);
-        if (cart.some(item => item.id === productId)) {
-            Swal.fire({ title: 'JÁ NO ARSENAL', icon: 'warning', background: '#0d0d0d', color: '#fff', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
-            return;
-        }
-        cart.push(product);
+    function addToCart(id) {
+        const prod = produtos.find(p => p.id === id);
+        if (cart.some(i => i.id === id)) return;
+        cart.push(prod);
         localStorage.setItem('loneke_cart', JSON.stringify(cart));
         updateCartBadge();
-        Swal.fire({ title: 'ADICIONADO!', text: product.nome, icon: 'success', background: '#0d0d0d', color: '#fff', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000, iconColor: '#dc2626' });
+        Swal.fire({ title: 'ADICIONADO!', text: prod.nome, icon: 'success', background: '#0d0d0d', color: '#fff', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
     }
 
-    function updateCartBadge() {
-        const badge = document.getElementById('cart-count');
-        if (badge) badge.innerText = cart.length;
+    function updateCartBadge() { document.getElementById('cart-count').innerText = cart.length; }
+
+    function startCountdown() {
+        const countdownElement = document.getElementById("countdown");
+        if (!countdownElement) return;
+        let endTime = localStorage.getItem('loneke_promo_end') || (new Date().getTime() + (5 * 60 * 60 * 1000));
+        localStorage.setItem('loneke_promo_end', endTime);
+        setInterval(() => {
+            const diff = endTime - new Date().getTime();
+            if (diff <= 0) { countdownElement.innerText = "EXPIRADO"; return; }
+            const h = Math.floor(diff / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
+            countdownElement.innerText = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }, 1000);
     }
 
-    function filterProducts(category) {
-    currentCategory = category;
-
-    // Remove o destaque de todos os botões de filtro
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('active');
-        
-        const btnText = btn.innerText.toLowerCase();
-        const isAll = (category === 'all' && btnText === 'todos');
-        const isMatch = btnText.includes(category.toLowerCase());
-
-        if (isAll || isMatch) {
-            btn.classList.add('active');
-        }
-    });
+    // --- INICIALIZAÇÃO ---
+   window.onload = () => {
+    // Verificar se existe página na URL ao carregar
+    const urlParams = new URLSearchParams(window.location.search);
+    const pageFromUrl = urlParams.get('page');
+    if (pageFromUrl) {
+        currentPage = parseInt(pageFromUrl);
+    }
 
     renderProducts();
+    updateCartBadge();
+    startCountdown();
+    setInterval(showFakeNotification, 8000);
+    
+    // Lógica do produto individual (já existente no seu código)
+    const prodSlug = urlParams.get('produto');
+    if (prodSlug) {
+        const product = produtos.find(p => createSlug(p.nome) === prodSlug);
+        if (product) setTimeout(() => openProductPage(product.id), 500);
+    }
+    lucide.createIcons();
+};
+
+    document.getElementById('search-input').addEventListener('input', () => { 
+        currentPage = 1; 
+        renderProducts(); 
+    });
+
+    document.getElementById('price-filter').addEventListener('change', () => {
+        currentPage = 1;
+        renderProducts();
+    });
+// Substitua ou adicione esta função no seu <script>
+function goToCheckout() {
+    if (cart.length === 0) {
+        Swal.fire({
+            title: 'CARRINHO VAZIO',
+            text: 'Adicione pelo menos um item antes de finalizar a compra.',
+            icon: 'warning',
+            background: '#0d0d0d',
+            color: '#fff',
+            confirmButtonColor: '#dc2626'
+        });
+        return;
+    }
+    window.location.href = 'checkout.html';
 }
 
 
-    function goToCheckout() {
-        if (cart.length === 0) return;
-        window.location.href = 'checkout.html';
-    }
+</script>
 
-    document.getElementById('search-input').addEventListener('input', renderProducts);
-    
-window.onload = () => {
-   
-    startCountdown(); 
-    
-
-    renderProducts(); 
-    
-   
-    updateCartBadge(); 
-    
-
-    lucide.createIcons();
-
-    setInterval(showFakeNotification, 8000);
-};
-    </script>
 </body>
 </html>
