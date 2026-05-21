@@ -57,7 +57,7 @@
                     <a href="#serviços" class="hover:text-red-600 transition-colors border-b-2 border-transparent hover:border-red-600 pb-1">Serviços</a>
                     <a href="#drumkits" class="hover:text-red-600 transition-colors border-b-2 border-transparent hover:border-red-600 pb-1">Drumkits</a>
                     <a href="#flp" class="hover:text-red-600 transition-colors border-b-2 border-transparent hover:border-red-600 pb-1">FLP</a>
-                    <a href="#cursos" class="hover:text-red-600 transition-colors border-b-2 border-transparent hover:border-red-600 pb-1">Cursos</a>
+                    <a href="plataforma/index.html" class="hover:text-red-600 transition-colors border-b-2 border-transparent hover:border-red-600 pb-1">Cursos</a>
                     
                     <a href="#sobre" class="hover:text-red-600 transition-colors border-b-2 border-transparent hover:border-red-600 pb-1">Sobre</a>
                 </div>
@@ -78,7 +78,7 @@
                 <a href="#home" onclick="document.getElementById('mobile-menu').classList.add('hidden')" class="block py-2 border-b border-white/5">Home</a>
                 <a href="#serviços" onclick="document.getElementById('mobile-menu').classList.add('hidden')" class="block py-2 border-b border-white/5">Serviços</a>
                 <a href="#drumkits" onclick="document.getElementById('mobile-menu').classList.add('hidden')" class="block py-2 border-b border-white/5">Drumkits</a>
-                <a href="#cursos" onclick="document.getElementById('mobile-menu').classList.add('hidden')" class="block py-2 border-b border-white/5">Cursos</a>
+                <a href="plataforma/index.html" onclick="document.getElementById('mobile-menu').classList.add('hidden')" class="block py-2 border-b border-white/5">Cursos</a>
            
                 <a href="#sobre" onclick="document.getElementById('mobile-menu').classList.add('hidden')" class="block py-2">Sobre</a>
             </div>
@@ -428,14 +428,14 @@ const createSlug = (text) => {
 const storeData = {
     drumkits: produtos.filter(p => p.categoria.toLowerCase() === 'drumkit').slice(0, 10),
     flps: produtos.filter(p => p.categoria.toLowerCase() === 'flp').slice(0, 10),
-    cursos: produtos.filter(p => p.categoria.toLowerCase() === 'cursos').slice(0, 10),
+    ebook: produtos.filter(p => p.categoria.toLowerCase() === 'ebook').slice(0, 10),
     packs: produtos.filter(p => p.categoria.toLowerCase() === 'packs').slice(0, 10)
 };
 
 const services = [
     { icon: "music", title: "Beats", desc: "Produção Exclusiva" },
     { icon: "layers", title: "Mix/Master", desc: "Qualidade de Estúdio" },
-    { icon: "book-open", title: "Cursos", desc: "Aprenda com Expert" },
+    { icon: "book-open", title: "Ebook", desc: "Aprenda com Expert" },
     { icon: "zap", title: "Presencial", desc: "Mentoria em Luanda" },
     { icon: "shopping-cart", title: "Material", desc: "Hardware Premium" },
 ];
@@ -633,7 +633,7 @@ window.onload = () => {
         storeContent.innerHTML = 
             renderStoreSection("Drumkits em Destaque", storeData.drumkits, "drumkits") +
             renderStoreSection("FLPs e Projetos", storeData.flps, "flp") +
-            renderStoreSection("Cursos em Destaque", storeData.cursos, "cursos") +
+            renderStoreSection("Ebook em Destaque", storeData.ebook, "ebook") +
             renderStoreSection("Packs Especiais", storeData.packs, "packs");
     }
 
