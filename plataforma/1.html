@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEMA INTERNO | LONEKE ACADEMY</title>
+    <!-- Tailwind CSS, Lucide Icons e SweetAlert2 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #09090b;
+            color: #fafafa;
+        }
+        .font-display { font-family: 'Space Grotesk', sans-serif; }
+        
+        .studio-grid {
+            background-size: 30px 30px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+        }
+        .premium-panel {
+            background: #121216;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .minimal-input {
+            background: #1c1c24;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.25s ease;
+        }
+        .minimal-input:focus {
+            border-color: #ef4444;
+            background: #22222a;
+        }
+    </style>
+</head>
+<body class="studio-grid min-h-screen antialiased">
+
+    <!-- SELETOR DE AMBIENTE INTERNO (Apenas para desenvolvimento/teste local fácil) -->
+    <div class="bg-zinc-900 border-b border-white/5 px-4 py-2 flex justify-between items-center text-xs">
+        <span class="text-zinc-400 font-mono">MODO DESENVOLVIMENTO (Simulação Local)</span>
+        <div class="flex gap-2">
+            <button onclick="alternarAmbiente('admin')" id="env-admin-btn" class="bg-red-600 text-white px-3 py-1 rounded font-bold uppercase tracking-wider">Visão Admin</button>
+            <button onclick="alternarAmbiente('aluno')" id="env-aluno-btn" class="bg-zinc-800 text-zinc-400 px-3 py-1 rounded font-bold uppercase tracking-wider">Visão Aluno</button>
+        </div>
+    </div>
+
+    <!-- ================================================================================= -->
+    <!-- PANEL DO ADMINISTRADOR -->
+    <!-- ================================================================================= -->
+    <div id="view-admin" class="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+        
+        <!-- Header Admin -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/5 pb-6">
+            <div>
+                <h1 class="text-2xl font-black font-display uppercase tracking-wider text-white">Painel de Controle Geral</h1>
+                <p class="text-zinc-400 text-xs mt-0.5">Gestão de faturamento, credenciais e liberação de travas de segurança.</p>
+            </div>
+            <div class="bg-red-500/10 border border-red-500/20 px-4 py-2 rounded-xl flex items-center gap-2">
+                <i data-lucide="shield-check" class="text-red-500 w-4 h-4"></i>
+                <span class="text-xs font-bold text-red-400 uppercase tracking-widest">Admin Session</span>
+            </div>
+        </div>
+
+        <!-- INDICADORES METRICOS (Relatório de Vendas) -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="premium-panel rounded-2xl p-5 flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">Faturamento Bruto</span>
+                    <h3 id="m-faturamento" class="text-2xl font-bold font-display text-white mt-1">450.000 Kz</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500"><i data-lucide="trending-up" class="w-5 h-5"></i></div>
+            </div>
+            <div class="premium-panel rounded-2xl p-5 flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">Matrículas Ativas</span>
+                    <h3 id="m-alunos" class="text-2xl font-bold font-display text-white mt-1">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500"><i data-lucide="users" class="w-5 h-5"></i></div>
+            </div>
+            <div class="premium-panel rounded-2xl p-5 flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">Planos Parcelados</span>
+                    <h3 id="m-parcelados" class="text-2xl font-bold font-display text-white mt-1">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500"><i data-lucide="pie-chart" class="w-5 h-5"></i></div>
+            </div>
+        </div>
+
+        <!-- DIVISOR GESTÃO -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- FORMULÁRIO: MATRICULAR ESTUDANTE (Criar Credenciais) -->
+            <div class="lg:col-span-5 premium-panel rounded-2xl p-6 space-y-5">
+                <div>
+                    <h3 class="font-bold text-sm uppercase font-display text-white tracking-wider flex items-center gap-2">
+                        <i data-lucide="user-plus" class="w-4 h-4 text-red-500"></i> Emitir Novo Acesso
+                    </h3>
+                    <p class="text-[11px] text-zinc-400 mt-0.5">Gere o login do aluno e aplique as travas financeiras de aula.</p>
+                </div>
+
+                <form id="form-criar-aluno" onsubmit="criarEstudanteLocal(event)" class="space-y-4">
+                    <div class="space-y-1">
+                        <label class="text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Nome Completo do Aluno</label>
+                        <input type="text" id="adm-nome" required class="minimal-input w-full rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none" placeholder="Ex: Hamilton Loneke">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Username (Login)</label>
+                            <input type="text" id="adm-user" required class="minimal-input w-full rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none" placeholder="Ex: hamilton10">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Senha de Entrada</label>
+                            <input type="text" id="adm-pass" required class="minimal-input w-full rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none" placeholder="Ex: @mudar123">
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Nível de Liberação (Status de Pagamento)</label>
+                        <select id="adm-tipo-liberacao" class="minimal-input w-full rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none appearance-none">
+                            <option value="completo" selected>Acesso Completo (Valor Total Pago - Libera Tudo)</option>
+                            <option value="parcelado">Acesso Parcelado (Libera apenas Módulos Iniciais)</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Valor Cobrado (Kz)</label>
+                        <input type="number" id="adm-valor" required class="minimal-input w-full rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none" placeholder="Ex: 45000">
+                    </div>
+
+                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold uppercase text-[10px] tracking-widest py-3 rounded-xl transition-all">
+                        Salvar e Ativar Credenciais
+                    </button>
+                </form>
+            </div>
+
+            <!-- TABELA: BASE DE DADOS DE MATRÍCULAS -->
+            <div class="lg:col-span-7 premium-panel rounded-2xl p-6 space-y-4">
+                <div>
+                    <h3 class="font-bold text-sm uppercase font-display text-white tracking-wider">Lista de Alunos e Auditoria</h3>
+                    <p class="text-[11px] text-zinc-400 mt-0.5">Monitore os acessos gerados e os valores liquidados.</p>
+                </div>
+
+                <div class="overflow-x-auto w-full">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-white/5 text-[9px] font-black text-zinc-400 uppercase tracking-wider">
+                                <th class="pb-3">Aluno</th>
+                                <th class="pb-3">Credenciais (User/Pass)</th>
+                                <th class="pb-3">Tipo Liberação</th>
+                                <th class="pb-3 text-right">Valor Pago</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-alunos" class="text-xs divide-y divide-white/[0.02]">
+                            <!-- Injetado dinamicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================================================================================= -->
+    <!-- ÁREA DO ESTUDANTE (ALUNO) -->
+    <!-- ================================================================================= -->
+    <div id="view-aluno" class="hidden max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+        
+        <!-- Header Aluno -->
+        <div class="premium-panel rounded-2xl p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-red-600/10 border border-red-500/20 rounded-2xl flex items-center justify-center text-red-500">
+                    <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <span class="text-[9px] font-bold text-red-400 uppercase tracking-widest bg-red-500/10 px-2 py-0.5 rounded">Área do Estudante</span>
+                    <h2 id="lbl-aluno-nome" class="text-lg font-bold text-white uppercase tracking-wide mt-0.5">Aluno Demonstrativo</h2>
+                </div>
+            </div>
+            
+            <!-- Botão Fictício de Logout -->
+            <button onclick="simularLogout()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold uppercase text-[10px] tracking-wider px-4 py-2 rounded-xl transition-colors flex items-center gap-2">
+                <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Sair do Sistema
+            </button>
+        </div>
+
+        <!-- AMBIENTE DE ESTUDO DIVIDIDO -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- PLAYER DE VÍDEO & INFRAESTRUTURA -->
+            <div class="lg:col-span-8 space-y-4">
+                <!-- Simulador de Player de Vídeo -->
+                <div class="aspect-video w-full bg-zinc-950 rounded-2xl border border-white/5 flex flex-col items-center justify-center relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10"></div>
+                    <i data-lucide="play-circle" class="w-16 h-16 text-red-500 animate-pulse z-20 cursor-pointer hover:scale-105 transition-transform"></i>
+                    <p class="text-xs text-zinc-400 tracking-wide mt-2 font-mono z-20">Clique para reproduzir conteúdo protegido por token de segurança</p>
+                    <div class="absolute bottom-4 left-4 z-20">
+                        <span id="lbl-modulo-video" class="text-[9px] font-bold bg-red-500/20 text-red-400 px-2 py-0.5 rounded uppercase tracking-wider">Módulo 1</span>
+                        <h4 id="lbl-aula-titulo" class="text-sm font-bold text-white uppercase mt-1">01. Configuração do Ambiente e Workflow</h4>
+                    </div>
+                    <!-- Aviso de proteção contra download de vídeo -->
+                    <span class="absolute top-4 right-4 text-[9px] bg-black/60 backdrop-blur text-zinc-500 font-mono px-2 py-1 rounded border border-white/5 z-20">
+                         Protegido contra Download
+                    </span>
+                </div>
+
+                <!-- DOWNLOAD DE RECURSOS (Apostilas e Drumkits) -->
+                <div class="premium-panel rounded-2xl p-5 space-y-3">
+                    <h3 class="font-bold text-xs uppercase tracking-wider text-white flex items-center gap-2">
+                        <i data-lucide="download-cloud" class="w-4 h-4 text-red-500"></i> Arquivos e Materiais de Apoio (Downloads Permitidos)
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <a href="#" onclick="dispararDownloadFalso('Apostila_Avançada_Produção.pdf')" class="bg-zinc-950 p-3.5 rounded-xl border border-white/5 hover:border-red-500/20 flex justify-between items-center group transition-all">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="file-text" class="text-zinc-400 group-hover:text-red-500 w-5 h-5 transition-colors"></i>
+                                <div>
+                                    <h5 class="text-xs font-bold text-white">Manual do Produtor Épico</h5>
+                                    <span class="text-[9px] text-zinc-500 font-mono uppercase">Apostila Completa .PDF</span>
+                                </div>
+                            </div>
+                            <i data-lucide="download" class="w-4 h-4 text-zinc-500 group-hover:text-white transition-colors"></i>
+                        </a>
+
+                        <a href="#" onclick="dispararDownloadFalso('Loneke_Secret_DrumKit_V1.zip')" class="bg-zinc-950 p-3.5 rounded-xl border border-white/5 hover:border-red-500/20 flex justify-between items-center group transition-all">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="folder-archive" class="text-zinc-400 group-hover:text-red-500 w-5 h-5 transition-colors"></i>
+                                <div>
+                                    <h5 class="text-xs font-bold text-white">Loneke Secret Kit Vol. 1</h5>
+                                    <span class="text-[9px] text-zinc-500 font-mono uppercase">Drumkit Exclusivo .ZIP</span>
+                                </div>
+                            </div>
+                            <i data-lucide="download" class="w-4 h-4 text-zinc-500 group-hover:text-white transition-colors"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PLAYLIST DINÂMICA DE AULAS (Com Bloqueio) -->
+            <div class="lg:col-span-4 premium-panel rounded-2xl p-4 space-y-3">
+                <div class="border-b border-white/5 pb-2">
+                    <h3 class="font-bold text-xs uppercase tracking-wide text-white">Grade Curricular</h3>
+                    <p class="text-[10px] text-zinc-500">Seu plano de parcelamento dita sua liberação de módulos.</p>
+                </div>
+
+                <div id="grade-aulas-container" class="space-y-2 max-h-[380px] overflow-y-auto pr-1">
+                    <!-- Injetado Dinamicamente baseando-se nas regras de liberação -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ================================================================================= -->
+    <!-- MOTOR LOGICO EM JAVASCRIPT (Simulador Local Pré-Firebase) -->
+    <!-- ================================================================================= -->
+    <script>
+        // Simulação da Base de Dados de Aulas Estruturada da Loneke Academy
+        const GRADE_AULAS_MASTER = [
+            { id: 1, modulo: "Módulo 1", titulo: "01. Configuração de Workflow", tipo: "inicial" },
+            { id: 2, modulo: "Módulo 1", titulo: "02. Teoria Musical Aplicada", tipo: "inicial" },
+            { id: 3, modulo: "Módulo 2", titulo: "03. Engenharia de Beats Avançada", tipo: "inicial" },
+            { id: 4, modulo: "Módulo 3", titulo: "04. Arquitetura de Mixagem Vocal", tipo: "avançado" },
+            { id: 5, modulo: "Módulo 4", titulo: "05. Masterização de Alta Performance", tipo: "avançado" }
+        ];
+
+        // Memória Local de alunos
+        let alunosDatabase = JSON.stringify(localStorage.getItem('loneke_alunos')) || [];
+        try {
+            alunosDatabase = JSON.parse(localStorage.getItem('loneke_alunos')) || [];
+        } catch(e) {
+            alunosDatabase = [];
+        }
+
+        // Aluno que está logado simulado no momento
+        let alunoLogadoAtual = {
+            nome: "Hamilton Loneke",
+            usuario: "demo",
+            liberacao: "parcelado" // completo ou parcelado
+        };
+
+        // Salva alguns dados fictícios iniciais caso a tabela esteja limpa
+        if(alunosDatabase.length === 0) {
+            alunosDatabase = [
+                { nome: "Hamilton Loneke", usuario: "hamilton10", senha: "123", liberacao: "parcelado", valor: 25000 },
+                { nome: "José Eduardo", usuario: "jose99", senha: "123", liberacao: "completo", valor: 45000 }
+            ];
+            localStorage.setItem('loneke_alunos', JSON.stringify(alunosDatabase));
+        }
+
+        // Função para alternar o ambiente de desenvolvimento (Admin <-> Aluno)
+        function alternarAmbiente(ambiente) {
+            if(ambiente === 'admin') {
+                document.getElementById('view-admin').classList.remove('hidden');
+                document.getElementById('view-aluno').classList.add('hidden');
+                document.getElementById('env-admin-btn').className = "bg-red-600 text-white px-3 py-1 rounded font-bold uppercase tracking-wider";
+                document.getElementById('env-aluno-btn').className = "bg-zinc-800 text-zinc-400 px-3 py-1 rounded font-bold uppercase tracking-wider";
+            } else {
+                document.getElementById('view-admin').classList.add('hidden');
+                document.getElementById('view-aluno').classList.remove('hidden');
+                document.getElementById('env-admin-btn').className = "bg-zinc-800 text-zinc-400 px-3 py-1 rounded font-bold uppercase tracking-wider";
+                document.getElementById('env-aluno-btn').className = "bg-red-600 text-white px-3 py-1 rounded font-bold uppercase tracking-wider";
+                renderizarAreaEstudante();
+            }
+        }
+
+        // CONTROLADOR ADMIN: Criar Novo Estudante
+        function criarEstudanteLocal(event) {
+            event.preventDefault();
+            
+            const nome = document.getElementById('adm-nome').value;
+            const usuario = document.getElementById('adm-user').value.trim().toLowerCase();
+            const senha = document.getElementById('adm-pass').value;
+            const liberacao = document.getElementById('adm-tipo-liberacao').value;
+            const valor = parseFloat(document.getElementById('adm-valor').value || 0);
+
+            // Evitar duplicações de login
+            if(alunosDatabase.some(a => a.usuario === usuario)) {
+                Swal.fire({ icon: 'error', title: 'Erro', text: 'Esse nome de usuário já está em uso.', background: '#121216', color: '#fff' });
+                return;
+            }
+
+            const novoAluno = { nome, usuario, senha, liberacao, valor };
+            alunosDatabase.push(novoAluno);
+            localStorage.setItem('loneke_alunos', JSON.stringify(alunosDatabase));
+
+            // Atualiza o aluno simulado atual para vermos a alteração na aba Aluno na hora
+            alunoLogadoAtual = novoAluno;
+
+            Swal.fire({
+                icon: 'success',
+                title: 'MATRÍCULA CONCLUÍDA!',
+                text: `Credenciais ativas para ${nome}.`,
+                background: '#121216',
+                color: '#fff',
+                confirmButtonColor: '#ef4444'
+            });
+
+            document.getElementById('form-criar-aluno').reset();
+            renderizarPainelAdmin();
+        }
+
+        // RENDEREZAR DADOS DO ADMIN (Tabela + Métricas Financeiras)
+        function renderizarPainelAdmin() {
+            const tbody = document.getElementById('tbody-alunos');
+            tbody.innerHTML = "";
+
+            let totalFaturado = 0;
+            let totalParcelados = 0;
+
+            alunosDatabase.forEach(aluno => {
+                totalFaturado += aluno.valor;
+                if(aluno.liberacao === 'parcelado') totalParcelados++;
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-white/[0.01] transition-colors">
+                        <td class="py-3 font-bold text-white uppercase tracking-wide">${aluno.nome}</td>
+                        <td class="py-3 font-mono text-zinc-400">user: <span class="text-white">${aluno.usuario}</span><br>pass: <span class="text-zinc-500">${aluno.senha}</span></td>
+                        <td class="py-3">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${aluno.liberacao === 'completo' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}">
+                                ${aluno.liberacao.toUpperCase()}
+                            </span>
+                        </td>
+                        <td class="py-3 text-right font-bold font-display text-zinc-300">${aluno.valor.toLocaleString('pt-AO')} Kz</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('m-faturamento').innerText = `${totalFaturado.toLocaleString('pt-AO')} Kz`;
+            document.getElementById('m-alunos').innerText = alunosDatabase.length;
+            document.getElementById('m-parcelados').innerText = totalParcelados;
+        }
+
+        // RENDERIZAR ÁREA DO ALUNO (Com bloqueio condicional de aulas avançadas)
+        function renderizarAreaEstudante() {
+            document.getElementById('lbl-aluno-nome').innerText = alunoLogadoAtual.nome;
+            const container = document.getElementById('grade-aulas-container');
+            container.innerHTML = "";
+
+            GRADE_AULAS_MASTER.forEach(aula => {
+                // REGRA DE NEGÓCIO DA LONEKE ACADEMY:
+                // Se for "parcelado" e a aula for do tipo "avançado", ela ficará BLOQUEADA!
+                const bloqueada = (alunoLogadoAtual.liberacao === 'parcelado' && aula.tipo === 'avançado');
+
+                if(bloqueada) {
+                    container.innerHTML += `
+                        <div class="bg-zinc-950/40 border border-white/5 opacity-40 p-3 rounded-xl flex items-center justify-between cursor-not-allowed">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-8 h-8 rounded-lg bg-zinc-900 flex items-center justify-center text-zinc-600"><i data-lucide="lock" class="w-4 h-4"></i></div>
+                                <div class="min-w-0">
+                                    <span class="text-[8px] font-mono text-zinc-500 uppercase block">${aula.modulo}</span>
+                                    <h5 class="text-xs text-zinc-400 uppercase truncate tracking-wide">${aula.titulo}</h5>
+                                </div>
+                            </div>
+                            <span class="text-[8px] font-bold bg-amber-500/10 text-amber-500 px-1.5 py-0.5 rounded uppercase shrink-0">Pagar Parcela</span>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML += `
+                        <div onclick="carregarVideo(${aula.id}, '${aula.modulo}', '${aula.titulo}')" class="bg-zinc-950 border border-white/5 hover:border-red-500/30 p-3 rounded-xl flex items-center justify-between cursor-pointer transition-all group">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-8 h-8 rounded-lg bg-zinc-900 border border-white/5 flex items-center justify-center text-zinc-400 group-hover:bg-red-500/10 group-hover:text-red-500 transition-colors">
+                                    <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <span class="text-[8px] font-mono text-zinc-400 uppercase block">${aula.modulo}</span>
+                                    <h5 class="text-xs text-white uppercase truncate tracking-wide font-medium group-hover:text-red-400 transition-colors">${aula.titulo}</h5>
+                                </div>
+                            </div>
+                            <span class="text-[8px] font-bold bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded uppercase shrink-0">Liberada</span>
+                        </div>
+                    `;
+                }
+            });
+
+            lucide.createIcons();
+        }
+
+        // Carregar Aula selecionada no Monitor do Player
+        function carregarVideo(id, modulo, titulo) {
+            document.getElementById('lbl-modulo-video').innerText = modulo;
+            document.getElementById('lbl-aula-titulo').innerText = titulo;
+            
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'info',
+                title: `Reproduzindo Aula ${id}`,
+                background: '#121216',
+                color: '#fff',
+                showConfirmButton: false,
+                timer: 2000
+            });
+        }
+
+        function dispararDownloadFalso(arquivo) {
+            Swal.fire({
+                icon: 'success',
+                title: 'DOWNLOAD INICIADO',
+                text: `O download de "${arquivo}" foi autenticado e iniciado com sucesso.`,
+                background: '#121216',
+                color: '#fff',
+                confirmButtonColor: '#ef4444'
+            });
+        }
+
+        function simularLogout() {
+            Swal.fire({
+                title: 'Fazer Logout?',
+                text: "Isso simulará a saída do utilizador.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#1c1c24',
+                confirmButtonText: 'Sim, Sair',
+                background: '#121216',
+                color: '#fff'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    alternarAmbiente('admin');
+                }
+            });
+        }
+
+        // Inicialização Inicial
+        window.onload = () => {
+            renderitm = renderizarPainelAdmin();
+            lucide.createIcons();
+        };
+    </script>
+</body>
+</html>

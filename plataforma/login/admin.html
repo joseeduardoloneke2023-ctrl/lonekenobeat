@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEMA CONTROL MASTER | LONEKE ACADEMY</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #070709; color: #fafafa; }
+        .font-display { font-family: 'Space Grotesk', sans-serif; }
+        .premium-card { background: #0e0e12; border: 1px solid rgba(255, 255, 255, 0.03); }
+        .minimal-input { background: #14141c; border: 1px solid rgba(255, 255, 255, 0.06); transition: all 0.2s; }
+        .minimal-input:focus { border-color: #ef4444; background: #181824; outline: none; }
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.05); border-radius: 4px; }
+    </style>
+</head>
+<body class="flex min-h-screen antialiased">
+
+    <!-- SIDEBAR PREMIUM -->
+    <aside class="w-64 bg-[#0c0c10] border-r border-white/5 flex flex-col justify-between p-4 shrink-0 fixed h-full z-50">
+        <div class="space-y-6">
+            <div class="px-2 py-3 border-b border-white/5 flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                <div>
+                    <span class="text-xs font-black tracking-widest text-white font-display">LONEKE CORE</span>
+                    <span class="block text-[8px] text-zinc-500 uppercase font-bold tracking-wider">Painel Admin v2.4</span>
+                </div>
+            </div>
+
+            <!-- Navegação Avançada -->
+            <nav class="space-y-1">
+                <button onclick="mudarAbaAdmin('dashboard')" id="btn-tab-dashboard" class="w-full flex items-center justify-between text-red-400 bg-red-500/10 font-bold text-[11px] uppercase tracking-wider px-3 py-3 rounded-xl transition-all">
+                    <span class="flex items-center gap-3"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard Geral</span>
+                </button>
+                <button onclick="mudarAbaAdmin('usuarios')" id="btn-tab-usuarios" class="w-full flex items-center justify-between text-zinc-400 hover:text-white font-medium text-[11px] uppercase tracking-wider px-3 py-3 rounded-xl transition-all">
+                    <span class="flex items-center gap-3"><i data-lucide="user-plus" class="w-4 h-4"></i> Matricular Usuário</span>
+                </button>
+                <button onclick="mudarAbaAdmin('comunicacao')" id="btn-tab-comunicacao" class="w-full flex items-center justify-between text-zinc-400 hover:text-white font-medium text-[11px] uppercase tracking-wider px-3 py-3 rounded-xl transition-all">
+                    <span class="flex items-center gap-3"><i data-lucide="message-square" class="w-4 h-4"></i> Mensagens & Chat</span>
+                    <span class="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">3</span>
+                </button>
+                <button onclick="mudarAbaAdmin('notificacoes')" id="btn-tab-notificacoes" class="w-full flex items-center justify-between text-zinc-400 hover:text-white font-medium text-[11px] uppercase tracking-wider px-3 py-3 rounded-xl transition-all">
+                    <span class="flex items-center gap-3"><i data-lucide="bell" class="w-4 h-4"></i> Notificações</span>
+                </button>
+                <a href="aluno.html" class="w-full flex items-center gap-3 text-zinc-500 hover:text-zinc-300 font-medium text-[11px] uppercase tracking-wider px-3 py-3 rounded-xl transition-all border-t border-white/5 pt-4 mt-2">
+                    <i data-lucide="log-out" class="w-4 h-4"></i> Visão do Aluno
+                </a>
+            </nav>
+        </div>
+
+        <!-- Perfil Logado Admin -->
+        <div class="bg-zinc-950 p-3 rounded-xl border border-white/5 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-lg bg-red-600 flex items-center justify-center text-white font-black text-xs">A</div>
+                <div>
+                    <h5 class="text-xs font-bold text-white">Direção</h5>
+                    <span class="text-[8px] text-zinc-500 font-mono block">Nível Administrativo</span>
+                </div>
+            </div>
+            <button onclick="window.location.reload()" class="text-zinc-500 hover:text-white"><i data-lucide="power" class="w-3.5 h-3.5"></i></button>
+        </div>
+    </aside>
+
+    <!-- ÁREA DE CONTEÚDO -->
+    <main class="flex-1 pl-64">
+        <div class="p-8 max-w-6xl mx-auto space-y-6">
+
+            <!-- SEÇÃO: DASHBOARD -->
+            <div id="panel-dashboard" class="space-y-6 runtime-tab">
+                <div class="flex justify-between items-center border-b border-white/5 pb-4">
+                    <div>
+                        <h1 class="text-xl font-bold font-display uppercase tracking-wider text-white">Métricas Analíticas de Vendas</h1>
+                        <p class="text-zinc-400 text-xs">Visão global e integridade de faturamento da Loneke Academy.</p>
+                    </div>
+                </div>
+
+                <!-- CARDS DE MÉTRICA -->
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    <div class="premium-card rounded-2xl p-4 flex items-center justify-between">
+                        <div>
+                            <span class="text-[9px] font-bold text-zinc-400 uppercase tracking-widest block">Faturamento Total</span>
+                            <h3 id="m-faturamento" class="text-lg font-bold font-display text-white mt-1">0 Kz</h3>
+                        </div>
+                        <div class="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500"><i data-lucide="dollar-sign" class="w-4 h-4"></i></div>
+                    </div>
+                    <div class="premium-card rounded-2xl p-4 flex items-center justify-between">
+                        <div>
+                            <span class="text-[9px] font-bold text-zinc-400 uppercase tracking-widest block">Alunos Matriculados</span>
+                            <h3 id="m-alunos" class="text-lg font-bold font-display text-white mt-1">0</h3>
+                        </div>
+                        <div class="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500"><i data-lucide="users" class="w-4 h-4"></i></div>
+                    </div>
+                    <div class="premium-card rounded-2xl p-4 flex items-center justify-between">
+                        <div>
+                            <span class="text-[9px] font-bold text-zinc-400 uppercase tracking-widest block">Acessos Travados</span>
+                            <h3 id="m-parcelados" class="text-lg font-bold font-display text-white mt-1">0</h3>
+                        </div>
+                        <div class="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500"><i data-lucide="lock" class="w-4 h-4"></i></div>
+                    </div>
+                    <div class="premium-card rounded-2xl p-4 flex items-center justify-between">
+                        <div>
+                            <span class="text-[9px] font-bold text-zinc-400 uppercase tracking-widest block">Valores em Dívida</span>
+                            <h3 id="m-divida" class="text-lg font-bold font-display text-red-400 mt-1">0 Kz</h3>
+                        </div>
+                        <div class="w-8 h-8 rounded-xl bg-red-500/10 flex items-center justify-center text-red-500"><i data-lucide="alert-circle" class="w-4 h-4"></i></div>
+                    </div>
+                </div>
+
+                <!-- TABELA CENTRAL -->
+                <div class="premium-card rounded-2xl p-5 space-y-4">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-white">Auditoria e Ledger de Alunos</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-white/5 text-[9px] font-black text-zinc-500 uppercase tracking-wider">
+                                    <th class="pb-3">Estudante</th>
+                                    <th class="pb-3">Credenciais</th>
+                                    <th class="pb-3">Status Liberação</th>
+                                    <th class="pb-3 text-right">Dívida Ativa</th>
+                                    <th class="pb-3 text-right">Total Pago</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-alunos" class="text-xs divide-y divide-white/[0.02]">
+                                <!-- Injetado dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO: CRIAR USUÁRIO -->
+            <div id="panel-usuarios" class="hidden space-y-6 runtime-tab">
+                <div class="border-b border-white/5 pb-4">
+                    <h1 class="text-xl font-bold font-display uppercase tracking-wider text-white">Criar Contas e Credenciais</h1>
+                    <p class="text-zinc-400 text-xs">Gere novos acessos criptografados locais para a base de estudantes.</p>
+                </div>
+
+                <div class="max-w-xl premium-card rounded-2xl p-6">
+                    <form id="form-criar-aluno" onsubmit="criarEstudanteAdmin(event)" class="space-y-4">
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Nome do Aluno</label>
+                            <input type="text" id="adm-nome" required class="minimal-input w-full rounded-xl px-4 py-2.5 text-xs text-white" placeholder="Ex: Hamilton Loneke">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="space-y-1">
+                                <label class="text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Username de Acesso</label>
+                                <input type="text" id="adm-user" required class="minimal-input w-full rounded-xl px-4 py-2.5 text-xs text-white" placeholder="hamilton10">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Senha Provisória</label>
+                                <input type="text" id="adm-pass" required class="minimal-input w-full rounded-xl px-4 py-2.5 text-xs text-white" placeholder="123456">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="space-y-1">
+                                <label class="text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Regra de Liberação</label>
+                                <select id="adm-tipo-liberacao" class="minimal-input w-full rounded-xl px-4 py-2.5 text-xs text-white appearance-none">
+                                    <option value="completo">Acesso Completo (Total Pago)</option>
+                                    <option value="parcelado">Acesso Parcelado (Bloquear Curso)</option>
+                                </select>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Data Expiração</label>
+                                <input type="text" id="adm-expira" class="minimal-input w-full rounded-xl px-4 py-2.5 text-xs text-white" value="21 Mai 2027">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="space-y-1">
+                                <label class="text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Valor Pago Inicial (Kz)</label>
+                                <input type="number" id="adm-valor" required class="minimal-input w-full rounded-xl px-4 py-2.5 text-xs text-white" placeholder="45000">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Valor em Falta / Dívida (Kz)</label>
+                                <!-- ID Corrigido aqui para evitar colisão com o painel de métricas de exibição -->
+                                <input type="number" id="adm-divida-input" class="minimal-input w-full rounded-xl px-4 py-2.5 text-xs text-white" value="0">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold uppercase text-[10px] tracking-widest py-3 rounded-xl transition-all">
+                            Emitir Licença de Acesso
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- SEÇÃO: MENSAGENS & CHAT SIMULADO -->
+            <div id="panel-comunicacao" class="hidden space-y-6 runtime-tab">
+                <div class="border-b border-white/5 pb-4">
+                    <h1 class="text-xl font-bold font-display uppercase tracking-wider text-white">Central de Suporte Interno</h1>
+                    <p class="text-zinc-400 text-xs">Responda a dúvidas sobre produção, drumkits e parcelas pendentes.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 h-[450px]">
+                    <div class="lg:col-span-4 premium-card rounded-2xl p-4 space-y-2 overflow-y-auto custom-scroll">
+                        <div class="bg-white/5 p-3 rounded-xl border border-white/10 cursor-pointer">
+                            <div class="flex justify-between text-[10px] text-zinc-400 font-bold"><span class="text-red-400 font-display uppercase">Hamilton Loneke</span><span>Agora mesmo</span></div>
+                            <p class="text-xs text-white truncate mt-1">Enviei o comprovativo da segunda parcela...</p>
+                        </div>
+                        <div class="p-3 rounded-xl hover:bg-white/[0.02] cursor-pointer">
+                            <div class="flex justify-between text-[10px] text-zinc-500"><span class="font-bold text-zinc-300">José Eduardo</span><span>Ontem</span></div>
+                            <p class="text-xs text-zinc-400 truncate mt-1">O link do drumkit deu erro no zip?</p>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-8 premium-card rounded-2xl flex flex-col justify-between p-4 bg-zinc-950/50">
+                        <div class="border-b border-white/5 pb-2 text-xs font-bold text-white uppercase tracking-wider">Atendimento: Hamilton Loneke</div>
+                        <div class="flex-1 py-4 text-xs space-y-3 overflow-y-auto custom-scroll">
+                            <div class="bg-zinc-900 p-3 rounded-xl max-w-xs border border-white/5"><p class="text-zinc-300">Professor, quando liberam o Módulo de Mixagem Vocal? Fiz o pagamento parcelado.</p></div>
+                            <div class="bg-red-500/10 border border-red-500/20 p-3 rounded-xl max-w-xs ml-auto text-right"><p class="text-red-300">Olá Hamilton! Assim que o sistema validar a liquidação da próxima fatura, as aulas abrem automaticamente.</p></div>
+                        </div>
+                        <div class="flex gap-2">
+                            <input type="text" class="minimal-input flex-1 text-xs rounded-xl px-4 text-white" placeholder="Escreva a resposta de suporte master...">
+                            <button class="bg-zinc-800 text-white px-4 rounded-xl text-xs font-bold uppercase tracking-wider">Enviar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO: NOTIFICAÇÕES -->
+            <div id="panel-notificacoes" class="hidden space-y-6 runtime-tab">
+                <div class="border-b border-white/5 pb-4">
+                    <h1 class="text-xl font-bold font-display uppercase tracking-wider text-white">Disparador de Avisos Globais</h1>
+                    <p class="text-zinc-400 text-xs">Envie pop-ups informativos diretamente para a tela dos alunos.</p>
+                </div>
+                <div class="max-w-lg premium-card rounded-2xl p-5 space-y-4">
+                    <div class="space-y-1">
+                        <label class="text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Título da Notificação</label>
+                        <input type="text" id="notif-titulo" class="minimal-input w-full rounded-xl px-4 py-2.5 text-xs text-white" value="Novo Drumkit Secreto Disponível!">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Corpo do Aviso</label>
+                        <textarea id="notif-corpo" class="minimal-input w-full h-24 rounded-xl px-4 py-2 text-xs text-white resize-none">Baixem agora o novo pacote Loneke Secret Kit V2 adicionado na aba de downloads da vossa área de estudante.</textarea>
+                    </div>
+                    <button onclick="dispararNotificacaoFicticia()" class="w-full bg-zinc-100 hover:bg-white text-black font-black uppercase text-[10px] tracking-widest py-3 rounded-xl transition-all">
+                        Disparar Alerta na Plataforma
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Fallbacks Locais da Engine Core para autonomia de execução -->
+    <script>
+        // Funções de proteção caso o "sistema.js" externo falte ou não possua os métodos instalados
+        if (typeof obterAlunos !== 'function') {
+            window.obterAlunos = function() {
+                return JSON.parse(localStorage.getItem('loneke_database_alunos') || '[]');
+            }
+        }
+        if (typeof salvarAluno !== 'function') {
+            window.salvarAluno = function(alunoObj) {
+                let atual = window.obterAlunos();
+                atual.push(alunoObj);
+                localStorage.setItem('loneke_database_alunos', JSON.stringify(atual));
+            }
+        }
+    </script>
+    
+    <script src="sistema.js"></script>
+    
+    <script>
+        function mudarAbaAdmin(abaId) {
+            document.querySelectorAll('.runtime-tab').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`panel-${abaId}`).classList.remove('hidden');
+            
+            // Estilo dos botões da sidebar
+            const botoes = ['dashboard', 'usuarios', 'comunicacao', 'notificacoes'];
+            botoes.forEach(b => {
+                const btn = document.getElementById(`btn-tab-${b}`);
+                if(btn) {
+                    if(b === abaId) {
+                        btn.className = "w-full flex items-center justify-between text-red-400 bg-red-500/10 font-bold text-[11px] uppercase tracking-wider px-3 py-3 rounded-xl transition-all";
+                    } else {
+                        btn.className = "w-full flex items-center justify-between text-zinc-400 hover:text-white font-medium text-[11px] uppercase tracking-wider px-3 py-3 rounded-xl transition-all";
+                    }
+                }
+            });
+        }
+
+        function criarEstudanteAdmin(event) {
+            event.preventDefault();
+            const nome = document.getElementById('adm-nome').value;
+            const usuario = document.getElementById('adm-user').value.trim().toLowerCase();
+            const senha = document.getElementById('adm-pass').value;
+            const liberacao = document.getElementById('adm-tipo-liberacao').value;
+            const expira = document.getElementById('adm-expira').value;
+            const valor = parseFloat(document.getElementById('adm-valor').value || 0);
+            // Referência atualizada para capturar do ID corrigido
+            const divida = parseFloat(document.getElementById('adm-divida-input').value || 0);
+
+            let lista = obterAlunos();
+            if(lista.some(a => a.usuario === usuario)) {
+                Swal.fire({ icon: 'error', title: 'Atenção', text: 'Username já cadastrado no sistema!', background: '#0e0e12', color: '#fff' });
+                return;
+            }
+
+            const novo = { nome, usuario, senha, liberacao, valor, divida, expira };
+            salvarAluno(novo);
+            localStorage.setItem('loneke_aluno_logado', JSON.stringify(novo));
+
+            Swal.fire({ icon: 'success', title: 'LICENÇA EMITIDA', text: 'Estudante criado. Vá para o painel de aluno para testar o bloqueio.', background: '#0e0e12', color: '#fff', confirmButtonColor: '#ef4444' });
+            document.getElementById('form-criar-aluno').reset();
+            atualizarLedgerAdmin();
+            mudarAbaAdmin('dashboard');
+        }
+
+        function atualizarLedgerAdmin() {
+            const alunos = obterAlunos();
+            const tbody = document.getElementById('tbody-alunos');
+            if(!tbody) return;
+            
+            tbody.innerHTML = "";
+
+            let totalFaturamento = 0, totalDivida = 0, totalParcelados = 0;
+
+            if(alunos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-zinc-600 uppercase tracking-widest text-[10px]">Nenhum estudante matriculado</td></tr>`;
+            }
+
+            alunos.forEach(aluno => {
+                totalFaturamento += aluno.valor;
+                totalDivida += (aluno.divida || 0);
+                if(aluno.liberacao === 'parcelado') totalParcelados++;
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-white/[0.01]">
+                        <td class="py-3 font-bold text-white uppercase tracking-wide">${aluno.nome}</td>
+                        <td class="py-3 font-mono text-zinc-400">@${aluno.usuario} / <span class="text-zinc-600">${aluno.senha}</span></td>
+                        <td class="py-3">
+                            <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase ${aluno.liberacao === 'completo' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}">
+                                ${aluno.liberacao}
+                            </span>
+                        </td>
+                        <td class="py-3 text-right font-bold text-red-400 font-display">${(aluno.divida || 0).toLocaleString('pt-AO')} Kz</td>
+                        <td class="py-3 text-right font-bold text-zinc-200 font-display">${aluno.valor.toLocaleString('pt-AO')} Kz</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('m-faturamento').innerText = `${totalFaturamento.toLocaleString('pt-AO')} Kz`;
+            document.getElementById('m-alunos').innerText = alunos.length;
+            document.getElementById('m-parcelados').innerText = totalParcelados;
+            document.getElementById('m-divida').innerText = `${totalDivida.toLocaleString('pt-AO')} Kz`;
+        }
+
+        function dispararNotificacaoFicticia() {
+            Swal.fire({ icon: 'success', title: 'BROADCAST ENVIADO', text: 'O alerta foi enviado para o barramento da plataforma.', background: '#0e0e12', color: '#fff', confirmButtonColor: '#ef4444' });
+        }
+
+        window.onload = () => {
+            atualizarLedgerAdmin();
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        };
+    </script>
+</body>
+</html>
