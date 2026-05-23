@@ -38,7 +38,6 @@
 </head>
 <body class="studio-mesh pt-[110px]">
 
-    <!-- CABEÇALHO -->
     <nav class="fixed top-0 left-0 w-full bg-[#141417] border-b-4 border-[#ff1e27] z-[300] h-20 flex items-center shadow-xl">
         <div class="max-w-7xl mx-auto w-full px-6 flex justify-between items-center">
             <div class="flex items-center gap-4">
@@ -57,32 +56,29 @@
         </div>
     </nav>
 
-    <!-- HEADER DO CATÁLOGO -->
     <header class="py-12 px-6 max-w-7xl mx-auto text-center space-y-2">
         <h2 class="text-3xl md:text-5xl font-black tracking-tight uppercase font-display text-white">
             EXPLORE NOSSO <span class="text-[#ff1e27]">ARSENAL DE TREINAMENTOS</span>
         </h2>
         <p class="text-zinc-400 text-xs md:text-sm max-w-xl mx-auto font-bold">
-            Filtre por software ou faça uma busca direta para encontrar o módulo ideal para elevar sua engenharia musical.
+            Filtre por categoria ou faça uma busca direta para encontrar o módulo ideal para elevar sua engenharia musical.
         </p>
     </header>
 
-    <!-- BARRA DE FILTROS & PESQUISA -->
     <section class="max-w-7xl mx-auto px-6 mb-8">
-        <div class="bg-[#141417] border-2 border-[#27272a] p-4 rounded-xl flex flex-col md:flex-row gap-4 items-center justify-between shadow-lg">
+        <div class="bg-[#141417] border-2 border-[#27272a] p-4 rounded-xl flex flex-col lg:flex-row gap-4 items-center justify-between shadow-lg">
             
-            <div class="relative w-full md:w-80">
+            <div class="relative w-full lg:w-80 shrink-0">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <i data-lucide="search" class="w-4 h-4 text-zinc-400"></i>
                 </span>
                 <input type="text" id="search-input" oninput="resetarParaPaginaUmEFiltrar()" placeholder="Procurar curso..." class="w-full bg-black text-white placeholder-zinc-500 text-xs font-bold rounded-md pl-10 pr-4 py-3 border-2 border-[#27272a] focus:outline-none focus:border-[#ff1e27] transition-all">
             </div>
 
-            <div id="wrapper-categorias" class="flex flex-wrap gap-2 w-full md:w-auto justify-start md:justify-end"></div>
+            <div id="wrapper-categorias" class="flex flex-wrap gap-2 w-full justify-start lg:justify-end"></div>
         </div>
     </section>
 
-    <!-- GRID DE CURSOS -->
     <main class="max-w-7xl mx-auto px-6 py-4 min-h-[400px]">
         <div id="wrapper-cursos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         
@@ -91,11 +87,9 @@
             <p class="text-zinc-400 font-black uppercase text-xs tracking-wider">Nenhum módulo corresponde aos critérios selecionados.</p>
         </div>
 
-        <!-- PAGINAÇÃO -->
         <div id="wrapper-paginacao" class="flex justify-center items-center gap-2 mt-12 pb-12"></div>
     </main>
 
-    <!-- MODAL VSL -->
     <div id="modal-vsl" class="fixed inset-0 bg-black/95 z-[600] hidden flex items-center justify-center p-4 backdrop-blur-md transition-all duration-300 opacity-0 overflow-y-auto">
         <button onclick="fecharVsl()" class="absolute top-4 right-4 z-[700] bg-[#27272a] hover:bg-[#ff1e27] text-white border-2 border-white/10 px-4 py-2 rounded-md text-[10px] font-black uppercase tracking-widest transition-all">
             Fechar <i data-lucide="x" class="w-3.5 h-3.5 inline ml-1"></i>
@@ -117,6 +111,12 @@
                     <iframe id="iframe-video" class="absolute inset-0 w-full h-full" src="" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
                 </div>
             </div>
+
+            <div class="flex items-center justify-center gap-2 text-[11px] font-black uppercase tracking-wider text-red-500 bg-[#ff1e27]/10 py-2 border border-[#ff1e27]/20 rounded-md">
+                <i data-lucide="shield-alert" class="w-4 h-4 animate-pulse text-[#ff1e27]"></i>
+                <span id="vsl-vagas-texto">Últimas Vagas Disponíveis</span>
+            </div>
+
             <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
                 <a id="vsl-direct-buy" href="#" class="w-full sm:w-auto bg-[#ff1e27] hover:bg-[#e0121a] text-white font-black uppercase text-[11px] tracking-widest px-8 py-4 rounded-md transition-all text-center border-b-4 border-red-900 shadow-lg">
                     Garantir Acesso Direto
@@ -128,7 +128,6 @@
         </div>
     </div>
 
-    <!-- CARRINHO DRAWER -->
     <div id="carrinho-drawer" class="fixed inset-0 z-[800] bg-black/80 hidden transition-all duration-300 opacity-0">
         <div class="absolute right-0 top-0 h-full w-full max-w-sm bg-[#141417] border-l-4 border-[#ff1e27] p-6 flex flex-col justify-between shadow-2xl transform translate-x-full transition-transform duration-300" id="carrinho-content">
             <div class="flex justify-between items-center pb-4 border-b-2 border-[#27272a]">
@@ -152,7 +151,6 @@
         <p>© 2026 LONEKE ACADEMY • Luanda, Angola.</p>
     </footer>
 
-    <!-- ENGINE DE OPERAÇÃO DO CATÁLOGO (COM DEFER PARA ASSEGURAR CARREGAMENTO) -->
     <script src="cursos.js" defer></script>
     <script>
         let carrinho = [];
@@ -161,20 +159,32 @@
         const itensPorPagina = 15;
         let cursosFiltradosGlobais = [];
 
+        // MAPEAMENTO ESTÉTICO DOS FILTROS E DAS TAGS DOS CARDS
+        const NOMES_CATEGORIAS = {
+            "TODOS": "TODOS",
+            "CURSOS-SOBRE-GANHAR-DINHEIRO": "GANHAR DINHEIRO",
+            "CURSOS-COMPLETO-DE-PRODUÇÃO-NO-FL-STUDIO": "PRODUÇÃO MUSICAL",
+            "CURSOS-DE-DOWNLOAD-E-INSTALACAO": "DOWNLOAD & INSTALAÇÃO",
+            "INICIANTE": "INICIANTE",
+            "CURSOS-DE-MIX-MASTER": "MIX & MASTER",
+            "CURSOS-DE-PRODUCAO-DE-BEAT": "PRODUÇÃO DE BEATS"
+        };
+
         function inicializarFiltros() {
             if (typeof PLATAFORMA_DATA === 'undefined' || !PLATAFORMA_DATA.cursos) {
-                console.error("Erro: Banco de dados 'PLATAFORMA_DATA' não foi detectado. Verifique o arquivo cursos.js");
+                console.error("Erro: Banco de dados 'PLATAFORMA_DATA' não foi detectado no arquivo cursos.js.");
                 return;
             }
-            const dawsExistentes = PLATAFORMA_DATA.cursos.map(c => c.daw.toUpperCase());
-            const categoriasUnicas = ["TODOS", ...new Set(dawsExistentes)];
+            const categoriasExistentes = PLATAFORMA_DATA.cursos.map(c => c.id.toUpperCase());
+            const categoriasUnicas = ["TODOS", ...new Set(categoriasExistentes)];
             const wrapperCategorias = document.getElementById('wrapper-categorias');
             wrapperCategorias.innerHTML = "";
 
             categoriasUnicas.forEach(cat => {
+                const nomeExibicao = NOMES_CATEGORIAS[cat] || cat;
                 wrapperCategorias.innerHTML += `
                     <button onclick="setCategoria('${cat}')" id="btn-cat-${cat}" class="btn-filtro text-[10px] font-black uppercase tracking-wider px-3.5 py-2 rounded-md transition-all border-2">
-                        ${cat}
+                        ${nomeExibicao}
                     </button>
                 `;
             });
@@ -211,9 +221,8 @@
 
             cursosFiltradosGlobais = PLATAFORMA_DATA.cursos.filter(curso => {
                 const correspondeTexto = curso.titulo.toLowerCase().includes(termoPesquisa) || 
-                                         curso.descricao.toLowerCase().includes(termoPesquisa) ||
-                                         curso.daw.toLowerCase().includes(termoPesquisa);
-                const correspondeCategoria = categoriaAtiva === "TODOS" || curso.daw.toUpperCase() === categoriaAtiva;
+                                         (curso.descricao && curso.descricao.toLowerCase().includes(termoPesquisa));
+                const correspondeCategoria = categoriaAtiva === "TODOS" || curso.id.toUpperCase() === categoriaAtiva;
                 return correspondeTexto && correspondeCategoria;
             });
 
@@ -231,26 +240,48 @@
 
             wrapper.innerHTML = "";
             itensDaPagina.forEach(curso => {
+                const tagExibicao = NOMES_CATEGORIAS[curso.id.toUpperCase()] || "MÓDULO";
+                
+                const precoAntesFormatado = curso.precoAntes ? `${curso.precoAntes.toLocaleString('pt-AO')} Kz` : '';
+                const precoAtualFormatado = `${curso.preco.toLocaleString('pt-AO')} Kz`;
+
                 wrapper.innerHTML += `
                     <div class="card-premium rounded-xl p-5 flex flex-col justify-between">
                         <div class="space-y-4">
-                            <div class="relative aspect-[16/10] rounded-md overflow-hidden bg-black border border-[#27272a]">
+                            <div class="relative aspect-square rounded-md overflow-hidden border border-[#27272a]">
                                 <img src="${curso.imagem}" class="w-full h-full object-cover opacity-85 hover:opacity-100 transition-all duration-300">
-                                <span class="absolute top-3 left-3 bg-[#ff1e27] text-white text-[9px] font-black px-2.5 py-1 rounded-sm uppercase">${curso.daw}</span>
+                                <span class="absolute top-3 left-3 bg-[#ff1e27] text-white text-[9px] font-black px-2.5 py-1 rounded-sm uppercase tracking-wider shadow-md">${tagExibicao}</span>
                             </div>
-                            <div class="space-y-1">
+                            
+                            <div class="space-y-2">
                                 <h3 class="text-sm font-black uppercase text-white leading-tight">${curso.titulo}</h3>
-                                <p class="text-zinc-300 text-[11px] leading-relaxed font-bold">${curso.descricao}</p>
+                                <p class="text-zinc-400 text-[11px] leading-relaxed font-bold">${curso.descricao || 'Módulo avançado focado em engenharia de alta performance.'}</p>
+                            </div>
+
+                            <div class="flex items-center justify-between border-t border-b border-[#27272a] py-2 text-[10px] font-black uppercase tracking-wider">
+                                <div class="flex items-center gap-1.5 text-zinc-400">
+                                    <i data-lucide="users" class="w-3.5 h-3.5 text-zinc-500"></i>
+                                    <span>${curso.estudantesAtivos || 0} Operacionais</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 text-red-500 font-bold">
+                                    <i data-lucide="shield-alert" class="w-3.5 h-3.5 animate-pulse text-[#ff1e27]"></i>
+                                    <span>Últimas ${curso.vagasPendentes || 0} Vagas</span>
+                                </div>
                             </div>
                         </div>
+
                         <div class="pt-4 space-y-3">
-                            <div class="flex justify-between items-baseline">
-                                <span class="text-[9px] font-black text-zinc-400 uppercase">Investimento</span>
-                                <p class="text-base font-black text-[#ff1e27]">${curso.preco.toLocaleString('pt-AO')} Kz</p>
+                            <div class="flex justify-between items-end">
+                                <span class="text-[9px] font-black text-zinc-500 uppercase tracking-widest pb-0.5">Acesso Vitalício</span>
+                                <div class="text-right">
+                                    ${precoAntesFormatado ? `<span class="text-[11px] font-bold text-zinc-500 line-through block leading-none">${precoAntesFormatado}</span>` : ''}
+                                    <p class="text-lg font-black text-[#ff1e27] leading-none mt-1">${precoAtualFormatado}</p>
+                                </div>
                             </div>
+                            
                             <div class="grid grid-cols-2 gap-2">
-                                <button onclick="configurarUrlVsl('${curso.slug || curso.id}')" class="bg-[#27272a] hover:bg-[#3f3f46] text-white text-[9px] font-black uppercase py-3 rounded-md transition-all">Ver VSL</button>
-                                <button onclick="adicionarAoCarrinho('${curso.id}')" class="bg-[#ff1e27] hover:bg-[#e0121a] text-white text-[9px] font-black uppercase py-3 rounded-md transition-all shadow-md border-b-2 border-red-900 active:border-b-0">Matricular-se</button>
+                                <button onclick="configurarUrlVsl('${curso.slug || curso.id}')" class="bg-[#27272a] hover:bg-[#3f3f46] text-white text-[9px] font-black uppercase py-3 rounded-md transition-all tracking-wider">Ver VSL</button>
+                                <button onclick="adicionarAoCarrinho('${curso.id}')" class="bg-[#ff1e27] hover:bg-[#e0121a] text-white text-[9px] font-black uppercase py-3 rounded-md transition-all shadow-md border-b-2 border-red-900 active:border-b-0 tracking-wider">Matricular-se</button>
                             </div>
                         </div>
                     </div>
@@ -300,7 +331,9 @@
             const modal = document.getElementById('modal-vsl');
             const preloader = document.getElementById('vsl-preloader');
             
-            document.getElementById('vsl-dynamic-headline').innerText = curso.vslHeadline;
+            // Injeta os dados da VSL incluindo as vagas dinâmicas do banco
+            document.getElementById('vsl-dynamic-headline').innerText = curso.vslHeadline || curso.titulo;
+            document.getElementById('vsl-vagas-texto').innerText = `ATENÇÃO: RESTAM APENAS ${curso.vagasPendentes || 0} VAGAS PARA ESTE MÓDULO`;
             document.getElementById('vsl-direct-buy').href = `checkout.html?cursos=${curso.id}`;
             document.getElementById('vsl-add-cart').setAttribute('onclick', `adicionarAoCarrinho('${curso.id}'); fecharVsl();`);
             document.getElementById('iframe-video').src = `https://www.youtube.com/embed/${curso.vslVideoId}?autoplay=1&modestbranding=1&rel=0`;
@@ -314,6 +347,8 @@
                 preloader.classList.add('hidden');
                 document.getElementById('vsl-content-box').classList.remove('scale-95');
             }, 1000);
+            
+            if (window.lucide) lucide.createIcons();
         }
 
         function fecharVsl() {
@@ -383,7 +418,6 @@
             window.location.href = `checkout.html?cursos=${carrinho.map(c => c.id).join(',')}`;
         }
 
-        // Executa ao carregar e também monitora caso o arquivo cursos.js demore na rede
         function executarInicializacao() {
             inicializarFiltros();
             processarFiltragemERenderizacao();
@@ -394,7 +428,6 @@
         }
 
         window.onload = executarInicializacao;
-        // Caso o defer termine milissegundos após o window.onload
         document.addEventListener("DOMContentLoaded", executarInicializacao);
     </script>
 </body>
