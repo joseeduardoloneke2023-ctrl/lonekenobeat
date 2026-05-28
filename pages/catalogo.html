@@ -26,16 +26,15 @@
         }
         #fake-notification.show { transform: translateY(0); }
 
-        
-.active-category {
-    border-color: #dc2626 !important; 
-    background-color: #dc2626 !important; 
-    transform: scale(1.05);
-}
+        .active-category {
+            border-color: #dc2626 !important; 
+            background-color: #dc2626 !important; 
+            transform: scale(1.05);
+        }
 
-.active-category i, .active-category h4, .active-category p {
-    color: white !important; 
-}
+        .active-category i, .active-category h4, .active-category p {
+            color: white !important; 
+        }
     </style>
 </head>
 <body class="pt-32"> 
@@ -47,7 +46,6 @@
         </div>
     </div>
 
-   
     <nav class="fixed top-10 w-full z-[100] bg-black/90 backdrop-blur-xl border-b border-white/10">
         <div class="max-w-[1400px] mx-auto px-6 h-24 flex justify-between items-center">
             <h1 class="text-3xl font-black italic tracking-tighter uppercase cursor-pointer" onclick="window.location.href='../index.html'">
@@ -70,7 +68,6 @@
         </div>
     </nav>
 
-    
     <header class="py-20 bg-gradient-to-b from-red-600/10 to-transparent border-b border-white/5">
         <div class="max-w-7xl mx-auto px-6 text-center">
             <h2 class="text-6xl md:text-7xl font-black uppercase italic tracking-tighter mb-4">O NOSSO <span class="text-red-600">ARSENAL</span></h2>
@@ -78,45 +75,34 @@
         </div>
     </header>
 
-    
     <section class="sticky top-[136px] z-40 bg-black/80 backdrop-blur-md border-b border-white/5 py-6">
-        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row gap-6 justify-between items-center">
-            <div class="relative w-full md:w-96">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col gap-6 justify-center items-center">
+            <div class="relative w-full max-w-xl">
                 <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size="18"></i>
                 <input type="text" id="search-input" placeholder="PESQUISAR PRODUTO..." 
                     class="w-full bg-[#0d0d0d] border border-white/10 py-4 pl-12 pr-4 rounded-xl text-xs font-black uppercase tracking-widest outline-none focus:border-red-600 transition-all">
             </div>
 
-            <div class="flex flex-wrap justify-center gap-3">
-    <button onclick="filterProducts('all')" class="filter-btn active px-6 py-3 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Todos</button>
-    <button onclick="filterProducts('drumkit')" class="filter-btn px-6 py-3 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Drumkits</button>
-    <button onclick="filterProducts('flp')" class="filter-btn px-6 py-3 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">FLPs</button>
-    <button onclick="filterProducts('ebook')" class="filter-btn px-6 py-3 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">ebook</button>
-    <button onclick="filterProducts('packs')" class="filter-btn px-6 py-3 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Packs</button>
-</div>
-       <select id="price-filter" onchange="renderProducts()" 
-    class="bg-[#0d0d0d] border border-white/10 px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest outline-none focus:border-red-600 transition-all text-white cursor-pointer">
-    <option value="all">Preços: Todos</option>
-    <option value="600">600 Kz</option>
-    <option value="1000">1.000 Kz</option>
-    <option value="2000">2.000 Kz</option> <option value="2000">2.000 Kz</option>
-    <option value="7000">7.000 Kz</option>
-    <option value="10000">10.000 Kz</option>
-    <option value="12500">15.000 Kz</option>
-    <option value="30000">30.000 Kz</option>
-    <option value="max">Acima de 30.000 Kz</option>
-</select>
+            <div class="flex flex-wrap justify-center gap-2">
+                <button onclick="filterProducts('all')" class="filter-btn active px-4 py-2.5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all">Todos</button>
+                <button onclick="filterProducts('drumkits artista')" class="filter-btn px-4 py-2.5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all">Drumkits Artista</button>
+                <button onclick="filterProducts('drumkits estilo')" class="filter-btn px-4 py-2.5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all">Drumkits Estilo</button>
+                
+                <button onclick="filterProducts('flp')" class="filter-btn px-4 py-2.5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all">FLPs</button>
+                <button onclick="filterProducts('midis')" class="filter-btn px-4 py-2.5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all">Midis</button>
+                <button onclick="filterProducts('preset')" class="filter-btn px-4 py-2.5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all">Presets</button>
+                <button onclick="filterProducts('beats')" class="filter-btn px-4 py-2.5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all">Beats</button>
+                <button onclick="filterProducts('ebook')" class="filter-btn px-4 py-2.5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all">eBook</button>
+                <button onclick="filterProducts('packs de plugins')" class="filter-btn px-4 py-2.5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all">Packs de Plugins</button>
+                <button onclick="filterProducts('packs de tutorial')" class="filter-btn px-4 py-2.5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all">Packs de Tutorial</button>
+                <button onclick="filterProducts('cursos')" class="filter-btn px-4 py-2.5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all">Cursos</button>
+            </div>
         </div>
-        <!-- Adicione isso após o botão de ebook -->
-
     </section>
 
     <main class="max-w-7xl mx-auto px-6 py-16">
-        <div id="catalog-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-
-        </div>
+        <div id="catalog-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"></div>
     </main>
-
 
     <div id="fake-notification" class="fixed bottom-10 left-10 z-[300] bg-white text-black p-4 rounded-2xl flex items-center gap-4 shadow-2xl min-w-[300px]">
         <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white">
@@ -129,12 +115,11 @@
         </div>
     </div>
 
-    <!-- Controles de Paginação -->
-<div class="max-w-7xl mx-auto px-6 pb-12 flex justify-center items-center gap-4">
-    <button onclick="changePage(-1)" id="prev-btn" class="px-6 py-3 bg-[#0d0d0d] border border-white/10 rounded-xl text-[10px] font-black uppercase hover:border-red-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all">Anterior</button>
-    <span id="page-info" class="text-[10px] font-black uppercase tracking-widest text-gray-500">Página 1</span>
-    <button onclick="changePage(1)" id="next-btn" class="px-6 py-3 bg-[#0d0d0d] border border-white/10 rounded-xl text-[10px] font-black uppercase hover:border-red-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all">Próximo</button>
-</div>
+    <div class="max-w-7xl mx-auto px-6 pb-12 flex justify-center items-center gap-4">
+        <button onclick="changePage(-1)" id="prev-btn" class="px-6 py-3 bg-[#0d0d0d] border border-white/10 rounded-xl text-[10px] font-black uppercase hover:border-red-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all">Anterior</button>
+        <span id="page-info" class="text-[10px] font-black uppercase tracking-widest text-gray-500">Página 1</span>
+        <button onclick="changePage(1)" id="next-btn" class="px-6 py-3 bg-[#0d0d0d] border border-white/10 rounded-xl text-[10px] font-black uppercase hover:border-red-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all">Próximo</button>
+    </div>
 
     <footer class="bg-[#080808] pt-20 pb-16 px-6 border-t border-white/10">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
@@ -142,7 +127,6 @@
             <h1 class="text-4xl font-black italic tracking-tighter uppercase">LONEKE NO <span class="text-red-600">BEAT</span></h1>
         </div>
     </footer>
-
 
     <div id="product-page" class="fixed inset-0 bg-zinc-950 z-[200] hidden overflow-y-auto pb-20 custom-scrollbar text-white">
         <div class="sticky top-0 z-50 flex justify-between items-center px-8 py-6 bg-zinc-950/80 backdrop-blur-md border-b border-white/5">
@@ -155,7 +139,7 @@
             </button>
         </div>
 
-        <div class="max-w-6xl mx-auto px-6 mt-12">
+        <div id="layout-standard-product" class="max-w-6xl mx-auto px-6 mt-12">
             <div class="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20">
                 <div class="md:col-span-5">
                     <div class="sticky top-32">
@@ -169,7 +153,6 @@
                     <div id="prod-tag" class="inline-block bg-red-600/10 text-red-500 text-[10px] font-black tracking-[0.2em] uppercase px-3 py-1 rounded-full w-max mb-6">Categoria</div>
                     <h1 id="prod-title" class="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4 leading-tight italic">Nome</h1>
                     
-              
                     <div class="flex items-center gap-6 mb-8">
                         <div class="flex flex-col">
                             <span id="prod-price-old" class="text-sm text-zinc-500 line-through">0 Kz</span>
@@ -186,10 +169,6 @@
                             <i data-lucide="shopping-bag" class="w-5 h-5"></i> Adicionar ao Carrinho
                         </button>
                     </div>
-
-                    <div id="prod-details-list" class="grid grid-cols-2 gap-6 border-t border-white/5 pt-8">
-                
-                    </div>
                 </div>
             </div>
 
@@ -202,21 +181,44 @@
                     <iframe id="prod-video" class="w-full h-full" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                 </div>
             </div>
+        </div>
 
-            <div class="mt-40">
-                <div class="flex items-center justify-between mb-10">
-                    <h2 class="text-2xl font-black uppercase tracking-tighter italic">Recomendações <span class="text-red-600">Premium</span></h2>
-                    <div class="h-[1px] flex-1 bg-white/5 mx-8 hidden md:block"></div>
-                </div>
-                <div id="recommendations-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8"></div>
+        <div id="layout-course-product" class="max-w-4xl mx-auto px-6 mt-12 hidden">
+            <div class="text-center space-y-6 mb-10">
+                <div id="course-tag" class="inline-block bg-red-600/20 text-red-500 text-xs font-black tracking-[0.3em] uppercase px-4 py-1.5 rounded-full">CURSO PREMIUM</div>
+                <h1 id="course-headline" class="text-4xl md:text-6xl font-black uppercase tracking-tight italic text-white leading-none">HEADLINE</h1>
+                <p id="course-subheadline" class="text-zinc-400 text-lg md:text-xl font-medium max-w-2xl mx-auto">Subheadline</p>
             </div>
+
+            <div class="aspect-video rounded-3xl overflow-hidden bg-zinc-900 border-2 border-red-600/30 shadow-[0_0_60px_rgba(220,38,38,0.15)] mb-12">
+                <iframe id="course-video" class="w-full h-full" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
+
+            <div class="bg-[#0d0d0d] border border-white/10 rounded-2xl p-8 flex flex-col md:flex-row justify-between items-center gap-6 max-w-2xl mx-auto shadow-2xl">
+                <div class="text-center md:text-left">
+                    <span id="course-price-old" class="text-zinc-500 line-through text-sm block">0 Kz</span>
+                    <span id="course-price" class="text-4xl font-black text-white">0 Kz</span>
+                    <span class="text-emerald-500 text-[10px] font-bold block uppercase tracking-wider mt-1">Acesso vitalício</span>
+                </div>
+                
+                <button id="course-add-btn" class="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white px-10 py-5 rounded-xl font-black uppercase text-sm tracking-wider transition-all duration-300 flex items-center justify-center gap-3 shadow-xl shadow-red-600/20 animate-bounce">
+                    <i data-lucide="shopping-cart" class="w-5 h-5"></i> Adicionar ao Carrinho
+                </button>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto px-6 mt-40">
+            <div class="flex items-center justify-between mb-10">
+                <h2 class="text-2xl font-black uppercase tracking-tighter italic">Recomendações <span class="text-red-600">Premium</span></h2>
+                <div class="h-[1px] flex-1 bg-white/5 mx-8 hidden md:block"></div>
+            </div>
+            <div id="recommendations-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8"></div>
         </div>
     </div>
 
     <script src="../produtos.js"></script>
 
 <script>
-    // --- CONFIGURAÇÃO INICIAL ---
     let cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
     let currentCategory = 'all';
     const itemsPerPage = 20;
@@ -224,22 +226,15 @@
     const fakeNames = ["Delson", "Mauro", "Cláudio", "Aline", "Filipe", "Gelson", "Sandra", "Yuri", "Belson", "Edna"];
     const pagamentos = ["Express", "Transferência Bancária"];
 
-    // Função auxiliar para tratar preços (converte "2.000" ou "2000" em número real)
     const parsePrice = (val) => {
         if (typeof val === 'number') return val;
-        return parseFloat(val.replace(/\./g, '').replace(',', '.'));
+        return parseFloat(val.toString().replace(/\./g, '').replace(',', '.'));
     };
 
     const createSlug = (text) => {
-        return text.toString().toLowerCase()
-            .replace(/\s+/g, '-')           
-            .replace(/[^\w\-]+/g, '')       
-            .replace(/\-\-+/g, '-')         
-            .replace(/^-+/, '')             
-            .replace(/-+$/, '');            
+        return text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
     };
 
-    // --- SISTEMA DE NOTIFICAÇÕES FAKE ---
     function showFakeNotification() {
         const container = document.getElementById("fake-notifications") || (() => {
             const div = document.createElement("div");
@@ -251,16 +246,13 @@
 
         const nome = fakeNames[Math.floor(Math.random() * fakeNames.length)];
         const pagamento = pagamentos[Math.floor(Math.random() * pagamentos.length)];
-        const valoresExatos = [5000, 10000, 15000, 25000, 50000];
-        const valor = valoresExatos[Math.floor(Math.random() * valoresExatos.length)];
+        const valor = [5000, 10000, 15000, 25000, 50000][Math.floor(Math.random() * 5)];
 
         const div = document.createElement("div");
-        div.className = "bg-[#0d0d0d] border border-red-600/30 p-5 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] min-w-[280px] transform transition-all duration-500 translate-y-10 opacity-0 backdrop-blur-xl";
+        div.className = "bg-[#0d0d0d] border border-red-600/30 p-5 rounded-2xl shadow-2xl transform transition-all duration-500 translate-y-10 opacity-0 backdrop-blur-xl min-w-[280px]";
         div.innerHTML = `
             <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-red-600/20 rounded-full flex items-center justify-center">
-                    <i data-lucide="check" class="text-red-600 w-5 h-5"></i>
-                </div>
+                <div class="w-10 h-10 bg-red-600/20 rounded-full flex items-center justify-center"><i data-lucide="check" class="text-red-600 w-5 h-5"></i></div>
                 <div>
                     <p class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-1">Pagamento Confirmado</p>
                     <p class="text-sm font-black uppercase italic text-white">${nome} <span class="text-red-600 text-[10px] not-italic">via ${pagamento}</span></p>
@@ -273,77 +265,58 @@
         setTimeout(() => { div.classList.add('opacity-0', '-translate-x-10'); setTimeout(() => div.remove(), 500); }, 5000);
     }
 
-    // --- RENDERIZAÇÃO E FILTROS ---
     function renderProducts() {
-    const grid = document.getElementById('catalog-grid');
-    const searchText = document.getElementById('search-input').value.toLowerCase();
-    const priceFilter = document.getElementById('price-filter').value;
+        const grid = document.getElementById('catalog-grid');
+        const searchText = document.getElementById('search-input').value.toLowerCase();
 
-    const filtered = produtos.filter(p => {
-        const matchCat = (currentCategory === 'all' || p.categoria.toLowerCase() === currentCategory.toLowerCase());
-        const matchSearch = p.nome.toLowerCase().includes(searchText);
-        let matchPrice = true;
-        const itemPrice = parsePrice(p.preco);
+        const filtered = produtos.filter(p => {
+            const matchCat = (currentCategory === 'all' || p.categoria.toLowerCase() === currentCategory.toLowerCase());
+            const matchSearch = p.nome.toLowerCase().includes(searchText);
+            return matchCat && matchSearch;
+        });
 
-        if (priceFilter !== 'all') {
-            if (priceFilter === 'max') {
-                matchPrice = itemPrice >= 30000;
-            } else {
-                matchPrice = itemPrice === parseInt(priceFilter);
-            }
-        }
-        return matchCat && matchSearch && matchPrice;
-    });
+        const start = (currentPage - 1) * itemsPerPage;
+        const paginated = filtered.slice(start, start + itemsPerPage);
 
-    const start = (currentPage - 1) * itemsPerPage;
-    const paginated = filtered.slice(start, start + itemsPerPage);
-
-    if (paginated.length === 0) {
-        grid.innerHTML = `<div class="col-span-full py-20 text-center opacity-50 uppercase font-black tracking-widest text-xs">Nenhum produto encontrado.</div>`;
-    } else {
-        grid.innerHTML = paginated.map(item => {
-            // Lógica de preço antigo (se não houver no JS, gera um 40% maior)
-            const oldPrice = item.precoAntigo || Math.floor(parsePrice(item.preco) * 1.4).toLocaleString();
-            
-            return `
-                <div class="product-card group bg-[#0d0d0d] border border-white/10 rounded-2xl overflow-hidden hover:border-red-600">
-                    <div onclick="openProductPage(${item.id})" class="relative aspect-[4/5] cursor-pointer overflow-hidden">
-                        <img src="${item.imagem}" class="w-full h-full object-cover transition-transform group-hover:scale-110">
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-transparent to-transparent"></div>
-                    </div>
-                    <div class="p-6 bg-[#0d0d0d] relative mt-[-40px]">
-                        <span class="text-red-600 font-bold text-[9px] uppercase tracking-widest">${item.categoria}</span>
-                        <h4 onclick="openProductPage(${item.id})" class="text-lg font-black uppercase italic truncate cursor-pointer">${item.nome}</h4>
-                        
-                        <div class="mt-4 flex flex-col">
-                            <span class="text-[10px] text-gray-500 line-through">${oldPrice} Kz</span>
-                            <div class="flex justify-between items-center">
-                                <span class="font-black text-white text-xl">${item.preco} Kz</span>
-                                <button onclick="addToCart(${item.id})" class="bg-white text-black p-3 rounded-xl hover:bg-red-600 hover:text-white transition-all">
-                                    <i data-lucide="shopping-cart" class="w-5 h-5"></i>
-                                </button>
+        if (paginated.length === 0) {
+            grid.innerHTML = `<div class="col-span-full py-20 text-center opacity-50 uppercase font-black tracking-widest text-xs">Nenhum produto encontrado.</div>`;
+        } else {
+            grid.innerHTML = paginated.map(item => {
+                const oldPrice = item.precoAntigo || Math.floor(parsePrice(item.preco) * 1.4).toLocaleString();
+                return `
+                    <div class="product-card group bg-[#0d0d0d] border border-white/10 rounded-2xl overflow-hidden hover:border-red-600 flex flex-col justify-between h-full">
+                        <div onclick="openProductPage(${item.id})" class="relative aspect-[4/5] cursor-pointer overflow-hidden">
+                            <img src="${item.imagem}" class="w-full h-full object-cover transition-transform group-hover:scale-110">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-transparent to-transparent"></div>
+                        </div>
+                        <div class="p-6 bg-[#0d0d0d] relative mt-[-40px] flex-grow flex flex-col justify-between">
+                            <div class="space-y-1">
+                                <span class="text-red-600 font-bold text-[9px] uppercase tracking-widest block">${item.categoria}</span>
+                                <h4 onclick="openProductPage(${item.id})" class="text-base font-black uppercase italic cursor-pointer text-white break-words min-h-[3rem] flex items-center leading-tight">${item.nome}</h4>
+                            </div>
+                            <div class="mt-4 flex flex-col pt-2">
+                                <span class="text-[10px] text-gray-500 line-through">${oldPrice} Kz</span>
+                                <div class="flex justify-between items-center mt-1">
+                                    <span class="font-black text-white text-xl">${item.preco} Kz</span>
+                                    <button onclick="addToCart(${item.id})" class="bg-white text-black p-3 rounded-xl hover:bg-red-600 hover:text-white transition-all">
+                                        <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>`;
-        }).join('');
+                    </div>`;
+            }).join('');
+        }
+        
+        document.getElementById('page-info').innerText = `Página ${currentPage}`;
+        document.getElementById('prev-btn').disabled = currentPage === 1;
+        document.getElementById('next-btn').disabled = (start + itemsPerPage) >= filtered.length;
+        lucide.createIcons();
     }
-    
-    document.getElementById('page-info').innerText = `Página ${currentPage}`;
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
-    if(prevBtn) prevBtn.disabled = currentPage === 1;
-    if(nextBtn) nextBtn.disabled = (start + itemsPerPage) >= filtered.length;
-
-    lucide.createIcons();
-}
-
-
 
     function filterProducts(cat) { 
         currentCategory = cat; 
         currentPage = 1; 
-        // Atualiza visual dos botões
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.classList.remove('active');
             if(btn.getAttribute('onclick').includes(`'${cat}'`)) btn.classList.add('active');
@@ -352,62 +325,67 @@
     }
 
     function changePage(dir) { 
-    currentPage += dir; 
-    
-    // Atualiza a URL sem recarregar a página
-    const url = new URL(window.location);
-    url.searchParams.set('page', currentPage);
-    window.history.pushState({}, '', url);
+        currentPage += dir; 
+        const url = new URL(window.location);
+        url.searchParams.set('page', currentPage);
+        window.history.pushState({}, '', url);
+        renderProducts(); 
+        window.scrollTo({ top: 500, behavior: 'smooth' }); 
+    }
 
-    renderProducts(); 
-    window.scrollTo({ top: 500, behavior: 'smooth' }); 
-}
+    function openProductPage(id) {
+        const product = produtos.find(p => p.id === id);
+        if (!product) return;
+        
+        const url = new URL(window.location);
+        url.searchParams.set('produto', createSlug(product.nome));
+        window.history.pushState({}, '', url);
 
+        const isCurso = product.categoria.toLowerCase() === 'cursos' || product.categoria.toLowerCase() === 'curso';
+        const layoutStandard = document.getElementById('layout-standard-product');
+        const layoutCourse = document.getElementById('layout-course-product');
 
-// --- VERSÃO MELHORADA DAS FUNÇÕES DE PRODUTO ---
+        if (isCurso) {
+            layoutStandard.classList.add('hidden');
+            layoutCourse.classList.remove('hidden');
+            document.getElementById('course-headline').innerText = product.headline || product.nome;
+            document.getElementById('course-subheadline').innerText = product.subheadline || "Aprenda com Loneke No Beat.";
+            document.getElementById('course-price').innerText = product.preco + " Kz";
+            document.getElementById('course-price-old').innerText = (product.precoAntigo || Math.floor(parsePrice(product.preco) * 1.4)) + " Kz";
+            document.getElementById('course-video').src = `https://www.youtube.com/embed/${product.videoID || 'dQw4w9WgXcQ'}`;
+            document.getElementById('course-add-btn').setAttribute('onclick', `addToCart(${product.id})`);
+        } else {
+            layoutCourse.classList.add('hidden');
+            layoutStandard.classList.remove('hidden');
+            document.getElementById('prod-title').innerText = product.nome;
+            document.getElementById('prod-full-desc').innerText = product.descricao || "Arsenal Premium Loneke no Beat.";
+            document.getElementById('prod-price').innerText = product.preco + " Kz";
+            document.getElementById('prod-price-old').innerText = (product.precoAntigo || Math.floor(parsePrice(product.preco) * 1.4)) + " Kz";
+            document.getElementById('prod-img-1').src = product.imagem;
+            document.getElementById('prod-tag').innerText = product.categoria;
+            document.getElementById('prod-video').src = `https://www.youtube.com/embed/${product.videoID || 'dQw4w9WgXcQ'}`;
+            document.getElementById('prod-add-btn').setAttribute('onclick', `addToCart(${product.id})`);
+        }
+        
+        document.getElementById('product-page').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        renderRecommendations(product.categoria, product.id);
+        lucide.createIcons();
+    }
 
-function openProductPage(id) {
-    const product = produtos.find(p => p.id === id);
-    if (!product) return;
-    
-    const slug = createSlug(product.nome);
-    const url = new URL(window.location);
-    
-    // Adicionamos o slug do produto sem apagar o parâmetro 'page'
-    url.searchParams.set('produto', slug);
-    window.history.pushState({path: slug}, '', url);
-
-    document.getElementById('prod-title').innerText = product.nome;
-    document.getElementById('prod-full-desc').innerText = product.descricao || "Arsenal Premium Loneke no Beat.";
-    document.getElementById('prod-price').innerText = product.preco + " Kz";
-    document.getElementById('prod-price-old').innerText = (product.precoAntigo || Math.floor(parsePrice(product.preco) * 1.4)) + " Kz";
-    document.getElementById('prod-img-1').src = product.imagem;
-    document.getElementById('prod-tag').innerText = product.categoria;
-    document.getElementById('prod-video').src = `https://www.youtube.com/embed/${product.videoID || 'dQw4w9WgXcQ'}`;
-    
-    document.getElementById('product-page').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-    
-    renderRecommendations(product.categoria, product.id);
-    lucide.createIcons();
-}
-
-function closeProductPage() {
-    document.getElementById('product-page').classList.add('hidden');
-    document.getElementById('prod-video').src = "";
-    document.body.style.overflow = 'auto';
-
-    // REMOÇÃO INTELIGENTE: Remove o parâmetro 'produto' mas mantém o 'page'
-    const url = new URL(window.location);
-    url.searchParams.delete('produto');
-    window.history.replaceState({}, document.title, url);
-}
-
-
+    function closeProductPage() {
+        document.getElementById('product-page').classList.add('hidden');
+        document.getElementById('prod-video').src = "";
+        document.getElementById('course-video').src = "";
+        document.body.style.overflow = 'auto';
+        const url = new URL(window.location);
+        url.searchParams.delete('produto');
+        window.history.replaceState({}, document.title, url);
+    }
 
     function renderRecommendations(categoria, currentId) {
         const grid = document.getElementById('recommendations-grid');
-        const sugeridos = produtos.filter(p => p.categoria === categoria && p.id !== currentId).slice(0, 4);
+        const sugeridos = produtos.filter(p => p.categoria.toLowerCase() === categoria.toLowerCase() && p.id !== currentId).slice(0, 4);
         grid.innerHTML = (sugeridos.length ? sugeridos : produtos.slice(0, 4)).map(item => `
             <div class="group cursor-pointer bg-white/5 p-4 rounded-xl border border-white/5 hover:border-red-600 transition-all" onclick="openProductPage(${item.id})">
                 <img src="${item.imagem}" class="aspect-square object-cover rounded-lg mb-3">
@@ -425,11 +403,11 @@ function closeProductPage() {
         Swal.fire({ title: 'ADICIONADO!', text: prod.nome, icon: 'success', background: '#0d0d0d', color: '#fff', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
     }
 
+    type = 'text/javascript';
     function updateCartBadge() { document.getElementById('cart-count').innerText = cart.length; }
 
     function startCountdown() {
         const countdownElement = document.getElementById("countdown");
-        if (!countdownElement) return;
         let endTime = localStorage.getItem('loneke_promo_end') || (new Date().getTime() + (5 * 60 * 60 * 1000));
         localStorage.setItem('loneke_promo_end', endTime);
         setInterval(() => {
@@ -440,55 +418,36 @@ function closeProductPage() {
         }, 1000);
     }
 
-    // --- INICIALIZAÇÃO ---
-   window.onload = () => {
-    // Verificar se existe página na URL ao carregar
-    const urlParams = new URLSearchParams(window.location.search);
-    const pageFromUrl = urlParams.get('page');
-    if (pageFromUrl) {
-        currentPage = parseInt(pageFromUrl);
-    }
+    window.onload = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const pageFromUrl = urlParams.get('page');
+        if (pageFromUrl) currentPage = parseInt(pageFromUrl);
 
-    renderProducts();
-    updateCartBadge();
-    startCountdown();
-    setInterval(showFakeNotification, 8000);
-    
-    // Lógica do produto individual (já existente no seu código)
-    const prodSlug = urlParams.get('produto');
-    if (prodSlug) {
-        const product = produtos.find(p => createSlug(p.nome) === prodSlug);
-        if (product) setTimeout(() => openProductPage(product.id), 500);
-    }
-    lucide.createIcons();
-};
+        renderProducts();
+        updateCartBadge();
+        startCountdown();
+        setInterval(showFakeNotification, 8000);
+        
+        const prodSlug = urlParams.get('produto');
+        if (prodSlug) {
+            const product = produtos.find(p => createSlug(p.nome) === prodSlug);
+            if (product) setTimeout(() => openProductPage(product.id), 500);
+        }
+        lucide.createIcons();
+    };
 
     document.getElementById('search-input').addEventListener('input', () => { 
         currentPage = 1; 
         renderProducts(); 
     });
 
-    document.getElementById('price-filter').addEventListener('change', () => {
-        currentPage = 1;
-        renderProducts();
-    });
-// Substitua ou adicione esta função no seu <script>
-function goToCheckout() {
-    if (cart.length === 0) {
-        Swal.fire({
-            title: 'CARRINHO VAZIO',
-            text: 'Adicione pelo menos um item antes de finalizar a compra.',
-            icon: 'warning',
-            background: '#0d0d0d',
-            color: '#fff',
-            confirmButtonColor: '#dc2626'
-        });
-        return;
+    function goToCheckout() {
+        if (cart.length === 0) {
+            Swal.fire({ title: 'CARRINHO VAZIO', text: 'Adicione itens antes de finalizar.', icon: 'warning', background: '#0d0d0d', color: '#fff', confirmButtonColor: '#dc2626' });
+            return;
+        }
+        window.location.href = 'checkout.html';
     }
-    window.location.href = 'checkout.html';
-}
-
-
 </script>
 
 </body>
