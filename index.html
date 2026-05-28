@@ -23,6 +23,77 @@
             animation: pulse-slow 8s infinite;
         }
 
+        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&display=swap');
+
+.font-syncopate {
+    font-family: 'Syncopate', sans-serif;
+}
+
+/* Transições fluidas de fundo líquido */
+.slide-glow-bg {
+    transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.cyber-slide {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+.cyber-slide.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    z-index: 10;
+}
+
+/* Efeito Parallax/Flutuação 3D nas suas Imagens */
+.floating-art {
+    animation: cyber-float 6s ease-in-out infinite;
+    filter: drop-shadow(0 0 40px rgba(255, 255, 255, 0.15));
+    transition: all 1s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+@keyframes cyber-float {
+    0%, 100% { transform: translateY(0px) scale(1) rotate(0deg); }
+    50% { transform: translateY(-25px) scale(1.03) rotate(2deg); }
+}
+
+/* Texto Entrando Rotacionando Levemente (High-End Effect) */
+.cyber-slide .text-reveal {
+    transform: translateY(50px) skewY(3deg);
+    opacity: 0;
+    transition: transform 0.9s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.9s ease;
+}
+
+.cyber-slide.active .text-reveal {
+    transform: translateY(0) skewY(0deg);
+    opacity: 1;
+}
+
+/* Imagem surgindo da direita com escala */
+.cyber-slide .img-reveal {
+    transform: translateX(60px) scale(0.9);
+    opacity: 0;
+    transition: transform 1.1s cubic-bezier(0.19, 1, 0.22, 1), opacity 1.1s ease;
+}
+
+.cyber-slide.active .img-reveal {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+}
+
+/* Mesh Gradients Dinâmicos */
+.mesh-orange { background: radial-gradient(circle at 70% 30%, #ff5e00 0%, transparent 60%); }
+.mesh-yellow { background: radial-gradient(circle at 70% 30%, #ffe600 0%, transparent 60%); }
+.mesh-cyan { background: radial-gradient(circle at 70% 30%, #00f3ff 0%, transparent 60%); }
+.mesh-purple { background: radial-gradient(circle at 70% 30%, #b600ff 0%, transparent 60%); }
+
+.cyber-dot.active {
+    background-color: white !important;
+}
+
         @keyframes pulse-slow {
             0%, 100% { transform: scale(1.05); opacity: 0.5; }
             50% { transform: scale(1.1); opacity: 0.7; }
@@ -56,9 +127,7 @@
                     <a href="#home" class="hover:text-red-600 transition-colors border-b-2 border-transparent hover:border-red-600 pb-1">Home</a>
                     <a href="#serviços" class="hover:text-red-600 transition-colors border-b-2 border-transparent hover:border-red-600 pb-1">Serviços</a>
                     <a href="#drumkits" class="hover:text-red-600 transition-colors border-b-2 border-transparent hover:border-red-600 pb-1">Drumkits</a>
-                    <a href="#flp" class="hover:text-red-600 transition-colors border-b-2 border-transparent hover:border-red-600 pb-1">FLP</a>
-                    <a href="plataforma/index.html" class="hover:text-red-600 transition-colors border-b-2 border-transparent hover:border-red-600 pb-1">Cursos</a>
-                    
+                    <a href="#flp" class="hover:text-red-600 transition-colors border-b-2 border-transparent hover:border-red-600 pb-1">FLP</a>                    
                     <a href="#sobre" class="hover:text-red-600 transition-colors border-b-2 border-transparent hover:border-red-600 pb-1">Sobre</a>
                 </div>
 
@@ -87,41 +156,131 @@
 
 
 
-    <section id="home" class="relative h-screen flex items-center justify-center text-center overflow-hidden bg-black">
-        <div class="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1600" 
-                 class="w-full h-full object-cover grayscale hero-pulse" alt="Studio">
-            <div class="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black"></div>
-            <div class="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
-        </div>
+   <section id="home" class="relative h-screen w-full overflow-hidden bg-[#040406] flex items-center">
+    
+    <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div id="mesh-glow-1" class="absolute inset-0 opacity-40 mix-blend-screen slide-glow-bg mesh-orange"></div>
+        <div id="mesh-glow-2" class="absolute -top-[20%] -left-[10%] w-[60vw] h-[60vw] bg-purple-600/10 rounded-full blur-[140px]"></div>
+    </div>
 
-        <div class="relative z-10 max-w-5xl px-6">
-            <div class="flex justify-center mb-6">
-                 <div class="bg-red-600/10 border border-red-600/30 px-6 py-2 rounded-full backdrop-blur-md">
-                    <p class="text-red-500 text-[10px] font-black uppercase tracking-[0.5em]">O MELHOR SITE PARA COMPRA DE DRUMKITS DE QUALIDADES</p>
-                 </div>
+    <div id="cyber-slider" class="relative h-full w-full z-10 flex items-center">
+        
+        <div class="cyber-slide active absolute inset-0 flex items-center" data-mesh="mesh-orange">
+            <div class="max-w-7xl mx-auto px-6 md:px-12 w-full grid md:grid-cols-12 items-center gap-8 md:gap-12">
+                <div class="md:col-span-7 space-y-6 md:space-y-8 text-left z-20">
+                    <div class="text-reveal inline-flex items-center gap-2 bg-gradient-to-r from-[#ff2a5f] to-[#ff5e00] text-white font-extrabold px-5 py-1.5 rounded-full text-xs uppercase tracking-[0.25em] shadow-[0_0_30px_rgba(255,42,95,0.4)]">
+                        <i data-lucide="zap" class="w-3.5 h-3.5 fill-white animate-pulse"></i> Level Up Ativado
+                    </div>
+                    <h2 class="text-reveal font-syncopate text-5xl md:text-[5.5rem] font-black uppercase tracking-tight leading-[0.9] text-white">
+                        CHEGASTE NA <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#ff2a5f] via-[#ff7300] to-[#ffe600]">FONTE DA FONTE.</span>
+                    </h2>
+                    <p class="text-reveal text-zinc-400 text-sm md:text-xl font-medium max-w-xl leading-relaxed">
+                        Se seus beats ou mixagem não soam profissional, tem uma sonoridade amadora e desejas melhorar isso, estas no lugar certo, aqui encontras muito material de qualidade, a preço de banana. <br> 
+                    </p>
+                    <br>
+                    <br>
+                </div>
+                <div class="md:col-span-5 flex justify-center img-reveal relative mt-6 md:mt-0">
+                    <div class="absolute w-[120%] h-[120%] bg-[#ff2a5f]/5 rounded-full blur-3xl pointer-events-none"></div>
+                    <img src="https://www.image2url.com/r2/default/images/1779905026563-256c4c05-67de-4e80-aaa6-73468eca8b9f.png" 
+                         class="w-full max-w-[340px] md:max-w-[480px] object-contain floating-art drop-shadow-[0_25px_60px_rgba(255,42,95,0.45)]">
+                </div>
             </div>
+        </div>
 
-            <h2 class="text-5xl md:text-8xl lg:text-[110px] font-black leading-[0.9] tracking-tighter uppercase italic mb-8 drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
-    ELEVE SUA <br /> 
-    <span class="text-red-600">PRODUÇÃO</span>
-</h2>
-
-<p class="text-gray-300 text-sm md:text-xl font-medium max-w-2xl mx-auto mb-12 uppercase tracking-widest leading-relaxed">
-    DRUMKITS, BEATS, FLPS, PLUGINS E CURSOS PROFISSIONAIS. TUDO QUE VOCÊ PRECISA PARA CRIAR, EVOLUIR E MONETIZAR SUA MÚSICA EM UM SÓ LUGAR. USADO POR PRODUTORES QUE LEVAM RESULTADOS A SÉRIO.
-</p>
-            <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
-               <a href="pages/catalogo.html"><button class="w-full sm:w-auto bg-red-600 hover:bg-white hover:text-black text-white px-12 py-6 rounded-sm font-black uppercase text-xs tracking-[0.4em] transition-all duration-300 shadow-[0_10px_30px_rgba(220,38,38,0.3)]">
-                    Explorar Catálogo
-                </button> </a> 
-                
+        <div class="cyber-slide absolute inset-0 flex items-center" data-mesh="mesh-yellow">
+            <div class="max-w-7xl mx-auto px-6 md:px-12 w-full grid md:grid-cols-12 items-center gap-8 md:gap-12">
+                <div class="md:col-span-7 space-y-6 md:space-y-8 text-left z-20">
+                    <div class="text-reveal inline-flex items-center gap-2 bg-[#ffe600] text-black font-extrabold px-5 py-1.5 rounded-full text-xs uppercase tracking-[0.25em] shadow-[0_0_30px_rgba(255,230,0,0.3)]">
+                        <i data-lucide="flame" class="w-3.5 h-3.5 fill-black"></i> Quebra de Preço
+                    </div>
+                    <h2 class="text-reveal font-syncopate text-5xl md:text-[5.5rem] font-black uppercase tracking-tight leading-[0.9] text-white">
+                        DRUMKITS <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#ffe600] to-[#ffaa00]">500 KZ.</span>
+                    </h2>
+                    <p class="text-reveal text-zinc-300 text-sm md:text-xl font-medium max-w-xl leading-relaxed">
+                        Drumkits com qualidade do mercado, mesmo sem mix e master o resultado já é pesado e comercial. Temos pacotes de diversos estilos musicais incluindo plugins, midis e o melhor de tudo sons prontos para criar hits.
+                    </p>
+                </div>
+                <div class="md:col-span-5 flex justify-center img-reveal relative mt-6 md:mt-0">
+                    <div class="absolute w-[120%] h-[120%] bg-[#ffe600]/5 rounded-full blur-3xl pointer-events-none"></div>
+                    <img src="https://www.image2url.com/r2/default/images/1779905433483-64566f3b-b35d-4822-8fa4-0538d74b2cd4.png" 
+                         class="w-full max-w-[380px] md:max-w-[530px] object-contain floating-art drop-shadow-[0_25px_60px_rgba(234,179,8,0.5)]">
+                </div>
             </div>
         </div>
 
-        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-40">
-           <div class="w-[2px] h-12 bg-gradient-to-b from-red-600 to-transparent"></div>
+        <div class="cyber-slide absolute inset-0 flex items-center" data-mesh="mesh-cyan">
+            <div class="max-w-7xl mx-auto px-6 md:px-12 w-full grid md:grid-cols-12 items-center gap-8 md:gap-12">
+                <div class="md:col-span-7 space-y-6 md:space-y-8 text-left z-20">
+                    <div class="text-reveal inline-flex items-center gap-2 bg-[#00f3ff] text-black font-extrabold px-5 py-1.5 rounded-full text-xs uppercase tracking-[0.25em] shadow-[0_0_30px_rgba(0,243,255,0.4)]">
+                        <i data-lucide="graduation-cap" class="w-3.5 h-3.5"></i> Conhecimento de Elite
+                    </div>
+                    <h2 class="text-reveal font-syncopate text-5xl md:text-[5.5rem] font-black uppercase tracking-tight leading-[0.9] text-white">
+                        CURSOS <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#00f3ff] to-[#0077ff]">7.500 KZ.</span>
+                    </h2>
+                    <p class="text-reveal text-zinc-400 text-sm md:text-xl font-medium max-w-xl leading-relaxed">
+                        Se desejas aprender a fazer beats que vendem, produção musical, mix e master, remakes ou até mesmo facturar no minimo 50.000kz todos os meses criando artes que vendem ou distribuição de musicas, os nossos cursos tornam isso tudo possivel, com acompanhamento personalizado, didática simples e fácil de aplicar e o melhor de tudo, num orçamento que cabe no seu bolço.              </p>
+                </div>
+                <div class="md:col-span-5 flex justify-center img-reveal relative mt-6 md:mt-0">
+                    <div class="absolute w-[120%] h-[120%] bg-[#00f3ff]/5 rounded-full blur-3xl pointer-events-none"></div>
+                    <img src="https://www.image2url.com/r2/default/images/1779905373129-6d7467aa-6ff0-4e28-a916-5c4436f0b491.png" 
+                         class="w-full max-w-[340px] md:max-w-[480px] object-contain floating-art drop-shadow-[0_25px_60px_rgba(0,243,255,0.45)]">
+                </div>
+            </div>
         </div>
-    </section>
+
+        <div class="cyber-slide absolute inset-0 flex items-center" data-mesh="mesh-purple">
+            <div class="max-w-7xl mx-auto px-6 md:px-12 w-full grid md:grid-cols-12 items-center gap-8 md:gap-12">
+                <div class="md:col-span-7 space-y-6 md:space-y-8 text-left z-20">
+                    <div class="text-reveal inline-flex items-center gap-2 bg-[#b600ff] text-white font-extrabold px-5 py-1.5 rounded-full text-xs uppercase tracking-[0.25em] shadow-[0_0_30px_rgba(182,0,255,0.4)]">
+                        <i data-lucide="folder" class="w-3.5 h-3.5"></i> Workflow Instantâneo
+                    </div>
+                    <h2 class="text-reveal font-syncopate text-5xl md:text-[5.5rem] font-black uppercase tracking-tight leading-[0.9] text-white">
+                        FLPS, PLUGINS <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#b600ff] via-[#ff00a0] to-[#ff2a5f]">& TUTORIAIS.</span>
+                    </h2>
+                    <p class="text-reveal text-zinc-400 text-sm md:text-xl font-medium max-w-xl leading-relaxed">
+                        Projectos de melodias, de mix e master e de beats finalizados e profissionais para estudar e recriar outros beats. Proibido revender esses projectos.
+                    </p>
+                </div>
+                <div class="md:col-span-5 flex justify-center img-reveal mt-6 md:mt-0">
+                    <div class="grid grid-cols-2 gap-4 w-full max-w-[340px] md:max-w-[400px]">
+                        <div class="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl p-6 md:p-8 rounded-3xl border border-white/10 flex flex-col items-center justify-center shadow-2xl transition-transform duration-500 hover:scale-105">
+                            <div class="p-4 bg-[#b600ff]/20 rounded-2xl mb-3 shadow-[0_0_30px_rgba(182,0,255,0.2)]">
+                                <i data-lucide="folder-git-2" class="w-8 h-8 text-[#b600ff]"></i>
+                            </div>
+                            <span class="text-xs font-black uppercase tracking-widest text-white">Projetos FLPs</span>
+                        </div>
+                        <div class="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl p-6 md:p-8 rounded-3xl border border-white/10 flex flex-col items-center justify-center shadow-2xl transition-transform duration-500 hover:scale-105">
+                            <div class="p-4 bg-[#ff2a5f]/20 rounded-2xl mb-3 shadow-[0_0_30px_rgba(255,42,95,0.2)]">
+                                <i data-lucide="cpu" class="w-8 h-8 text-[#ff2a5f]"></i>
+                            </div>
+                            <span class="text-xs font-black uppercase tracking-widest text-white">Plugins Pro</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="absolute bottom-10 left-0 w-full z-30 flex flex-col md:flex-row items-center justify-between px-6 md:px-12 gap-6">
+        <div class="flex gap-3" id="cyber-dots">
+            <div class="cyber-dot w-12 md:w-20 h-[3px] bg-white/20 cursor-pointer transition-all active"></div>
+            <div class="cyber-dot w-12 md:w-20 h-[3px] bg-white/20 cursor-pointer transition-all"></div>
+            <div class="cyber-dot w-12 md:w-20 h-[3px] bg-white/20 cursor-pointer transition-all"></div>
+            <div class="cyber-dot w-12 md:w-20 h-[3px] bg-white/20 cursor-pointer transition-all"></div>
+        </div>
+
+        <a href="pages/catalogo.html" class="w-full md:w-auto">
+            <button class="w-full md:w-auto group relative bg-white text-black font-black uppercase text-xs md:text-sm tracking-[0.25em] px-10 py-5 rounded-xl transition-all duration-300 hover:bg-[#ff2a5f] hover:text-white shadow-[0_20px_40px_rgba(0,0,0,0.6)] hover:shadow-[0_15px_40px_rgba(255,42,95,0.4)] flex items-center justify-center gap-3 overflow-hidden">
+                <span class="relative z-10 flex items-center gap-2">
+                    VER TODOS OS PRODUTOS <i data-lucide="arrow-up-right" class="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"></i>
+                </span>
+            </button>
+        </a>
+    </div>
+
+</section>
 
    
     <section id="serviços" class="py-32 bg-[#080808] border-y border-white/5">
@@ -142,7 +301,7 @@
         <div class="relative group">
             <div class="absolute -inset-4 border-2 border-red-600 opacity-20 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
            
-            <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=800" class="rounded-xl grayscale filter hover:grayscale-0 transition-all duration-1000 shadow-2xl" alt="Sobre Loneke">
+            <img src="https://www.image2url.com/r2/default/images/1779905026563-256c4c05-67de-4e80-aaa6-73468eca8b9f.png" class="rounded-xl grayscale filter hover:grayscale-0 transition-all duration-1000 shadow-2xl" alt="Sobre Loneke">
         </div>
         <div>
             <h3 class="text-6xl font-black italic uppercase tracking-tighter mb-10 leading-none">
@@ -326,7 +485,7 @@
                 <h3 class="text-8xl font-black italic uppercase tracking-tighter mb-10 leading-none">VAMOS <br/> <span class="text-red-600">CRIAR.</span></h3>
                 <div class="space-y-6 text-gray-400 text-lg font-bold uppercase tracking-widest">
                     <p class="flex items-center gap-4 hover:text-white transition cursor-pointer"><i data-lucide="arrow-right" class="text-red-600"></i> Luanda, Angola</p>
-                    <p class="flex items-center gap-4 hover:text-white transition cursor-pointer"><i data-lucide="arrow-right" class="text-red-600"></i> loneke62@gmail.com</p>
+                    <p class="flex items-center gap-4 hover:text-white transition cursor-pointer"><i data-lucide="arrow-right" class="text-red-600"></i> contacto@lonekenobeat.com</p>
                 </div>
             </div>
             <form class="bg-[#0d0d0d] p-6 md:p-10 rounded-3xl border border-white/10 space-y-6">
@@ -703,7 +862,56 @@ function goToCheckout() {
     window.location.href = 'pages/checkout.html';
 }
 
+function initCyberSlider() {
+    const slides = document.querySelectorAll('.cyber-slide');
+    const dots = document.querySelectorAll('.cyber-dot');
+    const glowBg = document.getElementById('mesh-glow-1');
+    let currentIdx = 0;
+    let slideTimer;
 
+    const meshes = {
+        'mesh-orange': 'radial-gradient(circle at 70% 30%, #ff5e00 0%, transparent 60%)',
+        'mesh-yellow': 'radial-gradient(circle at 70% 30%, #ffe600 0%, transparent 55%)',
+        'mesh-cyan': 'radial-gradient(circle at 70% 30%, #00f3ff 0%, transparent 60%)',
+        'mesh-purple': 'radial-gradient(circle at 70% 30%, #b600ff 0%, transparent 60%)'
+    };
+
+    function changeSlide(nextIdx) {
+        slides.forEach(s => s.classList.remove('active'));
+        dots.forEach(d => d.classList.remove('active'));
+
+        slides[nextIdx].classList.add('active');
+        dots[nextIdx].classList.add('active');
+
+        // Altera o Gradiente de Fundo Líquido Dinamicamente
+        const meshKey = slides[nextIdx].getAttribute('data-mesh');
+        if(glowBg && meshes[meshKey]) {
+            glowBg.style.background = meshes[meshKey];
+        }
+
+        currentIdx = nextIdx;
+    }
+
+    function startTimer() {
+        slideTimer = setInterval(() => {
+            let next = (currentIdx + 1) % slides.length;
+            changeSlide(next);
+        }, 6000); // Muda a cada 6 segundos de forma suave
+    }
+
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            clearInterval(slideTimer);
+            changeSlide(index);
+            startTimer();
+        });
+    });
+
+    startTimer();
+    lucide.createIcons();
+}
+
+window.addEventListener('DOMContentLoaded', initCyberSlider);
 
 </script>
 
