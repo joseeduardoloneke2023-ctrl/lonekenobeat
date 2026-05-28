@@ -499,67 +499,7 @@
         </div>
        
 
-<section class="py-32 bg-[#0d0d0d]">
-    <div class="max-w-5xl mx-auto px-6 text-center mb-16">
-        <h3 class="text-4xl md:text-6xl font-black uppercase">
-            MENSAGENS DO <span class="text-green-500">WHATSAP EM TEMPO REAL</span>
-        </h3>
-        <p class="text-gray-500 mt-4">Mensagens reais de alunos e clientes</p>
-    </div>
 
-    <div class="max-w-3xl mx-auto space-y-6">
-
-        <div class="bg-black p-5 rounded-2xl border border-green-500/20">
-            <p class="text-green-400 text-sm mb-2">Hoje 09:14</p>
-            <p class="text-white">
-                “Mano, não vou mentir 😭🔥  
-                antes eu fazia tipo 2 ou 3 beats por semana…  
-                agora estou a fazer 3 por dia fácil com o Afro House Fariento!”
-            </p>
-        </div>
-
-        <div class="bg-black p-5 rounded-2xl border border-green-500/20">
-            <p class="text-green-400 text-sm mb-2">Hoje 11:32</p>
-            <p class="text-white">
-                “Acabei de fechar 120.000 KZ com venda de drumkits 🙏🏾  
-                apliquei exatamente o que ensinaste no curso.”
-            </p>
-        </div>
-
-        <div class="bg-black p-5 rounded-2xl border border-green-500/20">
-            <p class="text-green-400 text-sm mb-2">Ontem 18:47</p>
-            <p class="text-white">
-                “Os mids do Guetho Zouk Fariento são outro nível 😳🔥  
-                meus beats agora já parecem profissionais.”
-            </p>
-        </div>
-
-        <div class="bg-black p-5 rounded-2xl border border-green-500/20">
-            <p class="text-green-400 text-sm mb-2">Ontem 21:03</p>
-            <p class="text-white">
-                “Mano consegui instalar todos plugins sozinho 😭  
-                nunca pensei… curso top mesmo!”
-            </p>
-        </div>
-
-        <div class="bg-black p-5 rounded-2xl border border-green-500/20">
-            <p class="text-green-400 text-sm mb-2">Hoje 07:55</p>
-            <p class="text-white">
-                “Já comprei quase todos teus packs 😂🔥  
-                sempre que lanças algo eu entro sem pensar.”
-            </p>
-        </div>
-
-        <div class="bg-black p-5 rounded-2xl border border-green-500/20">
-            <p class="text-green-400 text-sm mb-2">Hoje 13:10</p>
-            <p class="text-white">
-                “Meu som mudou completamente depois do curso de mix e master…  
-                agora está limpo e profissional.”
-            </p>
-        </div>
-
-    </div>
-</section>
  <div class="max-w-7xl mx-auto pt-16 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-8">
             <p class="text-sm font-black text-gray-600 uppercase tracking-widest">© 2026 LONEKE NO BEAT - ALL RIGHTS RESERVED</p>
             <h1 class="text-4xl font-black italic tracking-tighter">LONEKE NO BEAT</h1>
@@ -573,7 +513,13 @@
 // --- CONFIGURAÇÃO INICIAL ---
 const fakeNames = ["Delson", "Mauro", "Cláudio", "Aline", "Filipe", "Gelson", "Sandra", "Yuri", "Belson", "Edna"];
 const pagamentos = ["Express", "Transferência Bancária"];
-const valoresExatos = [5000, 10000, 15000, 25000, 50000];
+const valoresExatos = [7500, 12000, 500, 10000, 15000, 25000, 50000];
+
+// Fallback de segurança caso o array global 'produtos' não tenha sido carregado antes
+if (typeof produtos === 'undefined') {
+    window.produtos = [];
+    console.error("Aviso: O array global 'produtos' não foi encontrado. Certifique-se de que o ficheiro de dados foi importado antes deste script.");
+}
 
 const createSlug = (text) => {
     return text.toString().toLowerCase()
@@ -584,12 +530,13 @@ const createSlug = (text) => {
         .replace(/-+$/, '');
 };
 
-const storeData = {
-    drumkits: produtos.filter(p => p.categoria.toLowerCase() === 'drumkit').slice(0, 10),
-    flps: produtos.filter(p => p.categoria.toLowerCase() === 'flp').slice(0, 10),
-    ebook: produtos.filter(p => p.categoria.toLowerCase() === 'ebook').slice(0, 10),
-    packs: produtos.filter(p => p.categoria.toLowerCase() === 'packs').slice(0, 10)
-};
+// Gerado de forma dinâmica para evitar erros de leitura imediata
+const getStoreData = () => ({
+    drumkits: produtos.filter(p => p.categoria && p.categoria.toLowerCase() === 'drumkit').slice(0, 10),
+    flps: produtos.filter(p => p.categoria && p.categoria.toLowerCase() === 'flp').slice(0, 10),
+    ebook: produtos.filter(p => p.categoria && p.categoria.toLowerCase() === 'ebook').slice(0, 10),
+    packs: produtos.filter(p => p.categoria && p.categoria.toLowerCase() === 'packs').slice(0, 10)
+});
 
 const services = [
     { icon: "music", title: "Beats", desc: "Produção Exclusiva" },
@@ -641,19 +588,16 @@ function openProductPage(id) {
 
     const modal = document.getElementById('product-page');
     if (!modal) {
-        // Se não houver modal no index, tenta levar ao catálogo
         window.location.href = `pages/catalogo.html?produto=${createSlug(product.nome)}`;
         return;
     }
 
-    // Preencher dados
     document.getElementById('prod-title').innerText = product.nome;
     document.getElementById('prod-full-desc').innerText = product.descricao || "Material de alta qualidade para produtores profissionais.";
     document.getElementById('prod-price').innerText = product.preco.toLocaleString() + " Kz";
     document.getElementById('prod-img-1').src = product.imagem;
     document.getElementById('prod-tag').innerText = product.categoria;
     
-    // Configurar botão de partilha
     const shareLink = `${window.location.origin}${window.location.pathname}?produto=${createSlug(product.nome)}`;
     const detalhesContainer = document.getElementById('prod-details-list');
     if (detalhesContainer) {
@@ -669,8 +613,9 @@ function openProductPage(id) {
     renderRecommendations(product.categoria, product.id);
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
-    lucide.createIcons();
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
+
 function closeProductPage() {
     const modal = document.getElementById('product-page');
     if (modal) {
@@ -683,8 +628,6 @@ function closeProductPage() {
     }
 }
 
-
-
 function openProductByName(slug) {
     const product = produtos.find(p => createSlug(p.nome) === slug);
     if (product) {
@@ -695,13 +638,14 @@ function openProductByName(slug) {
 }
 
 // --- RECOMENDAÇÕES ---
+// --- RECOMENDAÇÕES (CORRIGIDO) ---
 function renderRecommendations(categoria, currentId) {
     const grid = document.getElementById('recommendations-grid');
     if (!grid) return;
 
     const sugeridos = produtos
         .filter(p => p.categoria === categoria && p.id !== currentId)
-        .sort(() => 0.5 - Math.random()) // Embaralha
+        .sort(() => 0.5 - Math.random())
         .slice(0, 4);
 
     grid.innerHTML = sugeridos.map(item => `
@@ -709,32 +653,36 @@ function renderRecommendations(categoria, currentId) {
             <div class="relative aspect-square rounded-xl overflow-hidden mb-4">
                 <img src="${item.imagem}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
             </div>
-            <h4 class="text-[10px] font-black uppercase truncate text-zinc-400 group-hover:text-white">${item.nome}</h4>
+            <h4 class="text-[10px] font-black uppercase text-zinc-400 group-hover:text-white">${item.nome}</h4>
             <p class="text-red-500 text-[11px] font-black mt-1">${item.preco.toLocaleString()} Kz</p>
         </div>
     `).join('');
-    lucide.createIcons();
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
+
 
 // --- PARTILHA ---
 function copyShareLink(link) {
     navigator.clipboard.writeText(link).then(() => {
-        Swal.fire({
-            title: 'LINK COPIADO!',
-            icon: 'success',
-            background: '#0d0d0d',
-            color: '#fff',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-        });
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'LINK COPIADO!',
+                icon: 'success',
+                background: '#0d0d0d',
+                color: '#fff',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+        }
     });
 }
 
 // --- RENDER SEÇÕES DA LOJA ---
+// --- RENDER SEÇÕES DA LOJA (CORRIGIDO) ---
 function renderStoreSection(title, items, sectionId) {
-    if (items.length === 0) return '';
+    if (!items || items.length === 0) return '';
     let itemsHtml = items.map(item => `
         <div class="group relative bg-[#0d0d0d] border border-white/10 rounded-2xl overflow-hidden transition-all duration-500 hover:border-red-600/50">
             <div onclick="openProductByName('${createSlug(item.nome)}')" class="relative aspect-[4/5] overflow-hidden cursor-pointer">
@@ -743,9 +691,11 @@ function renderStoreSection(title, items, sectionId) {
             </div>
             <div class="p-8 relative mt-[-60px] bg-[#0d0d0d] rounded-t-3xl border-t border-white/5">
                 <span class="text-red-600 font-bold text-[10px] tracking-widest uppercase mb-2 block">${item.categoria}</span>
-                <h4 onclick="openProductByName('${createSlug(item.nome)}')" class="text-xl font-black uppercase italic mb-3 cursor-pointer hover:text-red-600 transition-colors line-clamp-1">
+                
+                <h4 onclick="openProductByName('${createSlug(item.nome)}')" class="text-xl font-black uppercase italic mb-3 cursor-pointer hover:text-red-600 transition-colors">
                     ${item.nome}
                 </h4>
+                
                 <div class="flex items-center justify-between mt-6">
                     <div class="flex flex-col">
                         <span class="text-gray-500 line-through text-[10px]">${(item.precoAntigo || item.preco + 5000).toLocaleString()} Kz</span>
@@ -767,45 +717,7 @@ function renderStoreSection(title, items, sectionId) {
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">${itemsHtml}</div>
         </section>`;
 }
-
-// --- CARREGAMENTO ---
-window.onload = () => {
-    // Inicia Notificações
-    setInterval(showFakeNotification, 8000);
-
-    // Renderiza Serviços
-    const servicesContainer = document.getElementById('services-container');
-    if(servicesContainer) {
-        servicesContainer.innerHTML = services.map(s => `
-            <div class="p-10 bg-[#0d0d0d] border border-white/5 rounded-2xl hover:border-red-600 transition-all text-center group">
-                <div class="text-red-600 mb-6 group-hover:scale-110 transition-transform flex justify-center">
-                    <i data-lucide="${s.icon}" size="32"></i>
-                </div>
-                <h4 class="text-lg font-black uppercase mb-2">${s.title}</h4>
-                <p class="text-gray-500 text-[10px] font-black uppercase tracking-widest">${s.desc}</p>
-            </div>`).join('');
-    }
-
-    // Renderiza Seções
-    const storeContent = document.getElementById('store-content');
-    if(storeContent) {
-        storeContent.innerHTML = 
-            renderStoreSection("Drumkits em Destaque", storeData.drumkits, "drumkits") +
-            renderStoreSection("FLPs e Projetos", storeData.flps, "flp") +
-            renderStoreSection("Ebook em Destaque", storeData.ebook, "ebook") +
-            renderStoreSection("Packs Especiais", storeData.packs, "packs");
-    }
-
-    startCountdown();
-    updateCartBadge();
-    lucide.createIcons();
-
-    // Checar URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const prodSlug = urlParams.get('produto');
-    if (prodSlug) setTimeout(() => openProductByName(prodSlug), 500);
-};
-
+// --- INTEGRAÇÃO DO CARRINHO ---
 function updateCartBadge() {
     const badge = document.getElementById('cart-count');
     if (badge) badge.innerText = cart.length;
@@ -813,7 +725,7 @@ function updateCartBadge() {
 
 function addToCart(productId) {
     if (cart.some(item => item.id === productId)) {
-        Swal.fire({ text: 'Já está no carrinho', icon: 'warning', background: '#0d0d0d', color: '#fff', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
+        if (typeof Swal !== 'undefined') Swal.fire({ text: 'Já está no carrinho', icon: 'warning', background: '#0d0d0d', color: '#fff', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
         return;
     }
     const product = produtos.find(p => p.id === productId);
@@ -821,51 +733,74 @@ function addToCart(productId) {
         cart.push(product);
         localStorage.setItem('loneke_cart', JSON.stringify(cart));
         updateCartBadge();
-        Swal.fire({ title: 'ADICIONADO!', icon: 'success', background: '#0d0d0d', color: '#fff', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
+        if (typeof Swal !== 'undefined') Swal.fire({ title: 'ADICIONADO!', icon: 'success', background: '#0d0d0d', color: '#fff', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
     }
 }
 
+function goToCheckout() {
+    if (cart.length === 0) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'CARRINHO VAZIO',
+                text: 'Adicione produtos antes de finalizar a compra.',
+                icon: 'warning',
+                background: '#0d0d0d',
+                color: '#fff',
+                confirmButtonColor: '#dc2626'
+            });
+        }
+        return;
+    }
+    window.location.href = 'pages/checkout.html';
+}
+
+// --- CONTADOR REGRESSIVO ---
 function startCountdown() {
     const countdownElement = document.getElementById("countdown");
     if (!countdownElement) return;
+    
     let endTime = localStorage.getItem('loneke_promo_end') || (new Date().getTime() + (5 * 60 * 60 * 1000));
     localStorage.setItem('loneke_promo_end', endTime);
+    
     setInterval(() => {
         const diff = endTime - new Date().getTime();
-        if (diff <= 0) { document.getElementById("countdown-bar").innerText = "OFERTA TERMINADA"; return; }
-        const h = Math.floor(diff / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
+        
+        // Proteção contra quebra se o elemento de barra sumir
+        if (diff <= 0) { 
+            const bar = document.getElementById("countdown-bar");
+            if(bar) bar.innerText = "OFERTA TERMINADA"; 
+            return; 
+        }
+        
+        const h = Math.floor(diff / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
         countdownElement.innerText = `${h}h ${m}m ${s}s`;
     }, 1000);
 }
 
+// --- CONTATO WHATSAPP ---
 function enviarWhatsApp() {
-    const nome = document.getElementById('wa-nome').value;
-    const msg = document.getElementById('wa-mensagem').value;
-    if (!nome || !msg) return Swal.fire({ text: "Por favor, preencha todos os campos", icon: "warning" });
+    const nomeEl = document.getElementById('wa-nome');
+    const msgEl = document.getElementById('wa-mensagem');
+    if(!nomeEl || !msgEl) return;
+
+    const nome = nomeEl.value;
+    const msg = msgEl.value;
+    if (!nome || !msg) {
+        if (typeof Swal !== 'undefined') Swal.fire({ text: "Por favor, preencha todos os campos", icon: "warning" });
+        return;
+    }
     window.open(`https://wa.me/244924034159?text=Olá Loneke! Meu nome é ${nome}. ${msg}`, '_blank');
 }
 
-// Função para redirecionar ao checkout
-function goToCheckout() {
-    if (cart.length === 0) {
-        Swal.fire({
-            title: 'CARRINHO VAZIO',
-            text: 'Adicione produtos antes de finalizar a compra.',
-            icon: 'warning',
-            background: '#0d0d0d',
-            color: '#fff',
-            confirmButtonColor: '#dc2626'
-        });
-        return;
-    }
-    // Redireciona para a pasta pages
-    window.location.href = 'pages/checkout.html';
-}
-
+// --- CYBER SLIDER CONFIG ---
 function initCyberSlider() {
     const slides = document.querySelectorAll('.cyber-slide');
     const dots = document.querySelectorAll('.cyber-dot');
     const glowBg = document.getElementById('mesh-glow-1');
+    if (slides.length === 0) return; // Segurança caso não esteja na Home
+
     let currentIdx = 0;
     let slideTimer;
 
@@ -881,9 +816,8 @@ function initCyberSlider() {
         dots.forEach(d => d.classList.remove('active'));
 
         slides[nextIdx].classList.add('active');
-        dots[nextIdx].classList.add('active');
+        if(dots[nextIdx]) dots[nextIdx].classList.add('active');
 
-        // Altera o Gradiente de Fundo Líquido Dinamicamente
         const meshKey = slides[nextIdx].getAttribute('data-mesh');
         if(glowBg && meshes[meshKey]) {
             glowBg.style.background = meshes[meshKey];
@@ -896,7 +830,7 @@ function initCyberSlider() {
         slideTimer = setInterval(() => {
             let next = (currentIdx + 1) % slides.length;
             changeSlide(next);
-        }, 6000); // Muda a cada 6 segundos de forma suave
+        }, 6000);
     }
 
     dots.forEach((dot, index) => {
@@ -908,11 +842,50 @@ function initCyberSlider() {
     });
 
     startTimer();
-    lucide.createIcons();
 }
 
-window.addEventListener('DOMContentLoaded', initCyberSlider);
+// --- INICIALIZAÇÃO ÚNICA E SEGURA ---
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Inicia Notificações Fake
+    setInterval(showFakeNotification, 8000);
 
+    // 2. Renderiza Seção de Serviços
+    const servicesContainer = document.getElementById('services-container');
+    if(servicesContainer) {
+        servicesContainer.innerHTML = services.map(s => `
+            <div class="p-10 bg-[#0d0d0d] border border-white/5 rounded-2xl hover:border-red-600 transition-all text-center group">
+                <div class="text-red-600 mb-6 group-hover:scale-110 transition-transform flex justify-center">
+                    <i data-lucide="${s.icon}" size="32"></i>
+                </div>
+                <h4 class="text-lg font-black uppercase mb-2">${s.title}</h4>
+                <p class="text-gray-500 text-[10px] font-black uppercase tracking-widest">${s.desc}</p>
+            </div>`).join('');
+    }
+
+    // 3. Renderiza Catálogo e Categorias da Loja
+    const storeContent = document.getElementById('store-content');
+    if(storeContent) {
+        const currentStoreData = getStoreData();
+        storeContent.innerHTML = 
+            renderStoreSection("Drumkits em Destaque", currentStoreData.drumkits, "drumkits") +
+            renderStoreSection("FLPs e Projetos", currentStoreData.flps, "flp") +
+            renderStoreSection("Ebook em Destaque", currentStoreData.ebook, "ebook") +
+            renderStoreSection("Packs Especiais", currentStoreData.packs, "packs");
+    }
+
+    // 4. Inicializa os Recursos Auxiliares
+    startCountdown();
+    updateCartBadge();
+    initCyberSlider();
+
+    // 5. Ativa Ícones do Lucide
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+
+    // 6. Verifica se há um produto direto via URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const prodSlug = urlParams.get('produto');
+    if (prodSlug) setTimeout(() => openProductByName(prodSlug), 500);
+});
 </script>
 
 
