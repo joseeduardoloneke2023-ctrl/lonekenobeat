@@ -8,7 +8,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght=400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #050505; color: white; overflow-x: hidden; }
         .payment-card.active { border-color: #dc2626; background: rgba(220, 38, 38, 0.05); }
         .cart-item { transition: all 0.3s ease; }
@@ -19,7 +19,6 @@
 </head>
 <body class="min-h-screen pb-20">
 
-    <!-- Header -->
     <nav class="w-full bg-black/90 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
             <a href="../index.html" class="text-2xl font-black italic uppercase tracking-tighter">
@@ -34,12 +33,19 @@
     </nav>
 
     <main class="max-w-7xl mx-auto px-6 py-12">
+        <section class="mb-16 max-w-4xl mx-auto">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-black uppercase italic tracking-tighter">COMO FAZER O <span class="text-red-600">PAGAMENTO?</span></h2>
+                <p class="text-gray-500 font-bold uppercase text-[10px] tracking-[0.2em] mt-2">Assista ao vídeo para garantir que o seu pedido seja processado na hora</p>
+            </div>
+            <div class="aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-[0_0_50px_rgba(220,38,38,0.15)] bg-zinc-900">
+                <iframe class="w-full h-full" src="https://www.youtube.com/embed/ID_DO_SEU_VIDEO" title="Tutorial Checkout" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </section>
+
         <div class="grid lg:grid-cols-12 gap-12">
             
-            <!-- Formulários (Esquerda) -->
             <div class="lg:col-span-8 space-y-12">
-                
-                <!-- Seção 1: Carrinho -->
                 <section>
                     <h2 class="text-2xl font-black uppercase italic mb-6 flex items-center gap-3 text-white/90">
                         <span class="bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm not-italic">1</span>
@@ -48,7 +54,6 @@
                     <div id="cart-items-container" class="space-y-4"></div>
                 </section>
 
-                <!-- Seção 2: Perfil -->
                 <section class="bg-[#0d0d0d] p-8 rounded-3xl border border-white/10 shadow-sm">
                     <h2 class="text-2xl font-black uppercase italic mb-6 flex items-center gap-3 text-white/90">
                         <span class="bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm not-italic">2</span>
@@ -60,41 +65,43 @@
                             <input type="text" id="cus-name" placeholder="EX: PEDRO DOS SANTOS" class="w-full bg-black border border-white/10 rounded-xl p-4 text-xs font-bold uppercase outline-none transition-all">
                         </div>
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase text-gray-500 tracking-widest ml-1">E-mail (Para receber os Beats)</label>
+                            <label class="text-[10px] font-black uppercase text-gray-500 tracking-widest ml-1">E-mail de Recebimento</label>
                             <input type="email" id="cus-email" placeholder="EX: SEUEMAIL@GMAIL.COM" class="w-full bg-black border border-white/10 rounded-xl p-4 text-xs font-bold outline-none transition-all">
                         </div>
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase text-gray-500 tracking-widest ml-1">WhatsApp</label>
+                            <label class="text-[10px] font-black uppercase text-gray-500 tracking-widest ml-1">WhatsApp com Código</label>
                             <input type="tel" id="cus-phone" placeholder="+244 000 000 000" class="w-full bg-black border border-white/10 rounded-xl p-4 text-xs font-bold outline-none transition-all">
                         </div>
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase text-gray-500 tracking-widest ml-1">País</label>
+                            <label class="text-[10px] font-black uppercase text-gray-500 tracking-widest ml-1">Localização</label>
                             <select id="cus-country" class="w-full bg-black border border-white/10 rounded-xl p-4 text-xs font-bold uppercase outline-none transition-all text-white">
                                 <option value="Angola">Angola</option>
                                 <option value="Portugal">Portugal</option>
                                 <option value="Brasil">Brasil</option>
-                                <option value="Outro">Outro País</option>
+                                <option value="Outro">Outro</option>
                             </select>
                         </div>
                     </div>
                 </section>
 
-                <!-- Seção 3: Pagamento -->
                 <section>
                     <h2 class="text-2xl font-black uppercase italic mb-6 flex items-center gap-3 text-white/90">
                         <span class="bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm not-italic">3</span>
                         Pagamento e Comprovativo
                     </h2>
                     
-                    <div class="grid md:grid-cols-3 gap-4 mb-8">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                         <div onclick="selectPayment('express')" id="btn-express" class="payment-card border border-white/10 p-5 rounded-2xl cursor-pointer hover:border-red-600 transition-all text-center">
-                            <p class="font-black uppercase text-[10px] tracking-widest">MCX Express</p>
+                            <p class="font-black uppercase text-[9px] tracking-widest">Express</p>
                         </div>
                         <div onclick="selectPayment('bank')" id="btn-bank" class="payment-card border border-white/10 p-5 rounded-2xl cursor-pointer hover:border-red-600 transition-all text-center">
-                            <p class="font-black uppercase text-[10px] tracking-widest">Transferência Bancária Angola</p>
+                            <p class="font-black uppercase text-[9px] tracking-widest">Banco Angola</p>
+                        </div>
+                        <div onclick="selectPayment('paypay')" id="btn-paypay" class="payment-card border border-white/10 p-5 rounded-2xl cursor-pointer hover:border-red-600 transition-all text-center">
+                            <p class="font-black uppercase text-[9px] tracking-widest">PayPay Ref.</p>
                         </div>
                         <div onclick="selectPayment('europa')" id="btn-europa" class="payment-card border border-white/10 p-5 rounded-2xl cursor-pointer hover:border-red-600 transition-all text-center">
-                            <p class="font-black uppercase text-[10px] tracking-widest">Transferência Bancária Europa</p>
+                            <p class="font-black uppercase text-[9px] tracking-widest">Europa (EUR)</p>
                         </div>
                     </div>
 
@@ -108,33 +115,43 @@
                         <label for="cus-file" class="file-input-wrapper flex flex-col items-center justify-center gap-3 w-full py-10 rounded-2xl cursor-pointer">
                             <i data-lucide="upload-cloud" class="text-red-600" id="upload-icon"></i>
                             <span id="file-name" class="text-xs font-black uppercase text-gray-400">Selecionar Comprovativo</span>
-                            <span class="text-[9px] text-gray-600 font-bold uppercase">PNG, JPG ou PDF (Máx 5MB)</span>
+                            <span class="text-[9px] text-gray-600 font-bold uppercase">PNG, JPG ou PDF</span>
                         </label>
                     </div>
                 </section>
             </div>
 
-            <!-- Resumo Fixo (Direita) -->
             <div class="lg:col-span-4">
                 <div class="bg-[#0d0d0d] p-8 rounded-3xl border border-white/10 sticky top-32 shadow-2xl border-t-red-600/50 border-t-2">
-                    <h3 class="text-xl font-black uppercase mb-6 italic">Resumo do Pedido</h3>
+                    <h3 class="text-xl font-black uppercase mb-6 italic">Resumo</h3>
                     <div class="space-y-4 mb-8">
-                        <div class="flex justify-between text-gray-400 text-xs font-black uppercase tracking-widest">
+                        <div class="flex justify-between text-gray-400 text-xs font-black uppercase">
                             <span>Subtotal</span>
                             <span id="subtotal-val">0 Kz</span>
                         </div>
-                        <div id="total-container-wrapper" class="pt-4 border-t border-white/5">
-                            <div class="flex justify-between items-end">
-                                <span class="font-black uppercase italic text-lg">Total</span>
-                                <span id="total-val" class="text-4xl font-black text-red-600 tracking-tighter">0 Kz</span>
+                        
+                        <div id="discount-area"></div>
+
+                        <div id="total-container-wrapper" class="pt-4 border-t border-white/5 space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="font-black uppercase text-gray-500 text-[9px]">Total Kwanza</span>
+                                <span id="total-kz" class="text-3xl font-black text-white tracking-tighter">0 Kz</span>
+                            </div>
+                            <div class="flex justify-between items-center opacity-60">
+                                <span class="font-black uppercase text-gray-500 text-[9px]">Total Dólar</span>
+                                <span id="total-usd" class="text-xl font-black text-red-600 tracking-tighter">$ 0.00</span>
+                            </div>
+                            <div class="flex justify-between items-center opacity-60">
+                                <span class="font-black uppercase text-gray-500 text-[9px]">Total Euro</span>
+                                <span id="total-eur" class="text-xl font-black text-red-600 tracking-tighter">€ 0.00</span>
                             </div>
                         </div>
                     </div>
-                    <button id="main-submit-btn" onclick="submitOrder()" class="w-full bg-red-600 hover:bg-white hover:text-black text-white py-6 rounded-2xl font-black uppercase text-sm tracking-[0.2em] transition-all duration-500 shadow-lg shadow-red-600/10">
+                    <button id="main-submit-btn" onclick="submitOrder()" class="w-full bg-red-600 hover:bg-white hover:text-black text-white py-6 rounded-2xl font-black uppercase text-sm tracking-widest transition-all duration-500">
                         Finalizar Pedido
                     </button>
                     <p class="text-center mt-6 text-[9px] text-gray-500 font-bold uppercase tracking-widest">
-                        <i data-lucide="shield-check" class="inline-block mr-1 mb-1" size="12"></i> Pagamento 100% Seguro
+                        <i data-lucide="shield-check" class="inline-block mr-1 mb-1" size="12"></i> Verificação Manual Segura
                     </p>
                 </div>
             </div>
@@ -145,6 +162,7 @@
     <script>
         let cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
         let selectedMethod = '';
+        let totalGlobalKz = 0;
 
         document.getElementById('cus-file').addEventListener('change', function() {
             const fileName = this.files[0] ? this.files[0].name : "Selecionar Comprovativo";
@@ -156,22 +174,10 @@
         function renderCart() {
             const container = document.getElementById('cart-items-container');
             const subtotalEl = document.getElementById('subtotal-val');
-            const wrapper = document.getElementById('total-container-wrapper');
+            const discountArea = document.getElementById('discount-area');
             
             if (cart.length === 0) {
-                container.innerHTML = `
-                    <div class="py-16 text-center border border-dashed border-white/10 rounded-3xl">
-                        <i data-lucide="shopping-cart" class="mx-auto mb-4 text-gray-800" size="40"></i>
-                        <p class="text-gray-500 uppercase font-black text-xs tracking-widest">Seu carrinho está vazio</p>
-                        <a href="../index.html" class="inline-block mt-4 text-red-600 font-bold uppercase text-[10px] border-b border-red-600">Voltar para Beats</a>
-                    </div>`;
-                subtotalEl.innerText = "0 Kz";
-                wrapper.innerHTML = `
-                    <div class="flex justify-between items-end">
-                        <span class="font-black uppercase italic text-lg">Total</span>
-                        <span id="total-val" class="text-4xl font-black text-red-600 tracking-tighter">0 Kz</span>
-                    </div>`;
-                lucide.createIcons();
+                container.innerHTML = `<div class="py-16 text-center border border-dashed border-white/10 rounded-3xl"><p class="text-gray-500 font-black text-xs uppercase">Carrinho Vazio</p></div>`;
                 return;
             }
 
@@ -179,57 +185,38 @@
             container.innerHTML = cart.map((item, index) => {
                 let cleanPrice = item.preco.toString().replace(/\s/g, '').replace('.', '').replace(',', '');
                 subtotalKz += parseInt(cleanPrice.replace(/[^0-9]/g, '')) || 0;
-                const imgSrc = item.imagem.startsWith('http') ? item.imagem : `../${item.imagem}`;
-
                 return `
-                    <div class="cart-item bg-[#0d0d0d] p-5 rounded-2xl border border-white/5 flex justify-between items-center hover:border-white/10 transition-all">
+                    <div class="cart-item bg-[#0d0d0d] p-5 rounded-2xl border border-white/5 flex justify-between items-center">
                         <div class="flex items-center gap-5">
-                            <img src="${imgSrc}" class="w-14 h-14 rounded-xl object-cover border border-white/10 shadow-lg">
+                            <img src="${item.imagem}" class="w-12 h-12 rounded-xl object-cover border border-white/10">
                             <div>
-                                <h4 class="font-black uppercase text-xs italic tracking-tight text-white">${item.nome}</h4>
-                                <p class="text-red-600 font-bold text-[10px] mt-1">${item.preco} KZ</p>
+                                <h4 class="font-black uppercase text-[11px] italic text-white">${item.nome}</h4>
+                                <p class="text-red-600 font-bold text-[9px] mt-1">${item.preco} KZ</p>
                             </div>
                         </div>
-                        <button onclick="removeItem(${index})" class="text-gray-600 hover:text-red-600 transition-colors p-2">
-                            <i data-lucide="trash-2" size="18"></i>
-                        </button>
+                        <button onclick="removeItem(${index})" class="text-gray-500 hover:text-red-600 transition-colors"><i data-lucide="trash-2" size="16"></i></button>
                     </div>`;
             }).join('');
 
+            // Lógica de Desconto (15% acima de 20.000)
             let totalFinalKz = subtotalKz;
-            let descontoHtml = '';
-
-            if (cart.length > 12) {
-                const valorDesconto = subtotalKz * 0.10;
+            if (subtotalKz >= 20000) {
+                const valorDesconto = subtotalKz * 0.15;
                 totalFinalKz = subtotalKz - valorDesconto;
-                descontoHtml = `
-                    <div class="flex justify-between items-center text-green-500 mb-2 animate-pulse">
-                        <span class="text-[9px] font-black uppercase tracking-widest">Desconto Bulk (10% OFF)</span>
-                        <p class="text-lg font-black">- ${new Intl.NumberFormat('pt-AO').format(valorDesconto)} Kz</p>
+                discountArea.innerHTML = `
+                    <div class="flex justify-between items-center text-green-500 mb-2">
+                        <span class="text-[8px] font-black uppercase">Desconto Especial (15% OFF)</span>
+                        <p class="font-black">- ${new Intl.NumberFormat('pt-AO').format(valorDesconto)} Kz</p>
                     </div>`;
+            } else {
+                discountArea.innerHTML = '';
             }
 
-            const totalUSD = totalFinalKz * 0.0012; 
-            const totalEUR = totalFinalKz * 0.0011;
-            
+            totalGlobalKz = totalFinalKz;
             subtotalEl.innerText = new Intl.NumberFormat('pt-AO').format(subtotalKz) + " Kz";
-            
-            wrapper.innerHTML = `
-                <div class="flex flex-col gap-2">
-                    ${descontoHtml}
-                    <div class="flex justify-between items-center border-b border-white/5 pb-2">
-                        <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Total Kwanza</span>
-                        <p id="total-val" class="text-3xl font-black text-white tracking-tighter">${new Intl.NumberFormat('pt-AO').format(totalFinalKz)} Kz</p>
-                    </div>
-                    <div class="flex justify-between items-center border-b border-white/5 pb-2">
-                        <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Total Dólar</span>
-                        <p class="text-3xl font-black text-red-600 tracking-tighter">$ ${totalUSD.toFixed(2)}</p>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Total Euro</span>
-                        <p class="text-3xl font-black text-red-600 tracking-tighter">€ ${totalEUR.toFixed(2)}</p>
-                    </div>
-                </div>`;
+            document.getElementById('total-kz').innerText = new Intl.NumberFormat('pt-AO').format(totalFinalKz) + " Kz";
+            document.getElementById('total-usd').innerText = "$ " + (totalFinalKz * 0.0012).toFixed(2);
+            document.getElementById('total-eur').innerText = "€ " + (totalFinalKz * 0.0011).toFixed(2);
             
             lucide.createIcons();
         }
@@ -241,15 +228,14 @@
         }
 
         function copyText(text, btnId) {
-            navigator.clipboard.writeText(text).then(() => {
+            // Limpa o texto: remove "AO06" e espaços
+            const cleanText = text.replace('AO06', '').replace(/\s/g, '');
+            navigator.clipboard.writeText(cleanText).then(() => {
                 const btn = document.getElementById(btnId);
                 const original = btn.innerText;
-                btn.innerText = "COPIADO";
+                btn.innerText = "COPIADO!";
                 btn.style.color = "#22c55e";
-                setTimeout(() => {
-                    btn.innerText = original;
-                    btn.style.color = "";
-                }, 2000);
+                setTimeout(() => { btn.innerText = original; btn.style.color = ""; }, 2000);
             });
         }
 
@@ -258,39 +244,56 @@
             document.querySelectorAll('.payment-card').forEach(el => el.classList.remove('active', 'border-red-600', 'bg-red-600/5'));
             document.getElementById(`btn-${method}`).classList.add('active', 'border-red-600', 'bg-red-600/5');
             document.getElementById('payment-details').classList.remove('hidden');
-            
             const content = document.getElementById('detail-content');
             
+            const beneficiary = `<p class="text-[10px] font-black text-white mt-3 uppercase italic"><span class="text-gray-500 not-italic">Beneficiário:</span> JOSÉ EDUARDO LONEKE</p>`;
+
             if(method === 'express') {
                 content.innerHTML = `
                     <div class="flex justify-between items-center bg-black p-4 rounded-xl border border-white/5">
                         <div>
-                            <p class="text-[9px] text-gray-500 uppercase font-bold tracking-widest">Entidade Express (AOA)</p>
-                            <span class="text-xl font-black tracking-tighter text-white">936 380 720</span>
+                            <p class="text-[9px] text-gray-500 uppercase font-bold">Número Express</p>
+                            <span class="text-xl font-black tracking-tighter">936 380 720</span>
+                            ${beneficiary}
                         </div>
-                        <button onclick="copyText('936380720', 'cp-exp')" id="cp-exp" class="bg-red-600/10 text-red-600 px-4 py-2 rounded-lg text-[10px] font-black">COPIAR</button>
+                        <button onclick="copyText('936380720', 'cp-exp')" id="cp-exp" class="bg-red-600 text-white px-4 py-2 rounded-lg text-[10px] font-black">COPIAR</button>
                     </div>`;
             } else if(method === 'bank') {
                 content.innerHTML = `
                     <div class="space-y-4">
-                        <p class="text-[10px] font-black uppercase text-gray-400 mb-2">Escolha o seu banco para transferência rápida:</p>
                         <select id="bank-selector" onchange="updateBankIban()" class="w-full bg-black border border-white/10 rounded-xl p-4 text-xs font-bold uppercase text-white outline-none">
                             <option value="">SELECIONE SEU BANCO...</option>
-                            <option value="BAI">MEU BANCO É O BAI</option>
-                            <option value="BFA">MEU BANCO É O BFA</option>
-                            <option value="BCI">MEU BANCO É O BCI</option>
-                            <option value="BIC">MEU BANCO É O BIC</option>
+                            <option value="BAI">BAI</option>
+                            <option value="BFA">BFA</option>
+                            <option value="BCI">BCI</option>
+                            <option value="BIC">BIC</option>
                         </select>
-                        <div id="iban-display" class="hidden animate-in fade-in duration-500 bg-black p-4 rounded-xl border border-red-600/20"></div>
+                        <div id="iban-display" class="hidden bg-black p-5 rounded-xl border border-red-600/20"></div>
+                        ${beneficiary}
+                    </div>`;
+            } else if(method === 'paypay') {
+                content.innerHTML = `
+                    <div class="space-y-4 bg-black p-5 rounded-xl border border-white/5">
+                        <div class="flex justify-between items-center border-b border-white/5 pb-3">
+                            <div><p class="text-[9px] text-gray-500 uppercase">Entidade</p><span class="text-xl font-black">10116</span></div>
+                            <button onclick="copyText('10116', 'cp-ent')" id="cp-ent" class="text-red-600 font-bold text-xs uppercase">Copiar</button>
+                        </div>
+                        <div class="flex justify-between items-center pt-1">
+                            <div><p class="text-[9px] text-gray-500 uppercase">Referência</p><span class="text-xl font-black">936 380 720</span></div>
+                            <button onclick="copyText('936380720', 'cp-ref')" id="cp-ref" class="text-red-600 font-bold text-xs uppercase">Copiar</button>
+                        </div>
+                        <p class="text-[8px] text-amber-500 font-bold uppercase mt-2">* Pagamento por referência PayPay (Mínimo 1.000 Kz)</p>
+                        ${beneficiary}
                     </div>`;
             } else {
                 content.innerHTML = `
                     <div class="flex justify-between items-center bg-black p-4 rounded-xl border border-white/5">
                         <div>
-                            <p class="text-[9px] text-gray-500 uppercase font-bold tracking-widest">IBAN EUROPA (EUR)</p>
-                            <span class="text-xl font-black tracking-tighter text-white">LU16 4080 0000 4422 5147</span>
+                            <p class="text-[9px] text-gray-500 uppercase">IBAN EUROPA (EUR)</p>
+                            <span class="text-sm font-black">LU16 4080 0000 4422 5147</span>
+                            ${beneficiary}
                         </div>
-                        <button onclick="copyText('LU164080000044225147', 'cp-eur')" id="cp-eur" class="bg-red-600/10 text-red-600 px-4 py-2 rounded-lg text-[10px] font-black">COPIAR</button>
+                        <button onclick="copyText('LU164080000044225147', 'cp-eur')" id="cp-eur" class="bg-red-600 text-white px-4 py-2 rounded-lg text-[10px] font-black">COPIAR</button>
                     </div>`;
             }
         }
@@ -298,33 +301,20 @@
         function updateBankIban() {
             const bank = document.getElementById('bank-selector').value;
             const display = document.getElementById('iban-display');
-            const ibans = {
-                'BAI': 'AO06 0040 0000 6562 1494 1019 2',
-                'BFA': 'AO06 0006 0000 6591 4448 3010 9',
-                'BCI': 'AO06 0005 0000 6474 4882 1019 7',
-                'BIC': 'AO06 0051 0000 0538 9050 1411 8'
+            const ibans = { 
+                'BAI': 'AO06 0040 0000 6562 1494 1019 2', 
+                'BFA': 'AO06 0006 0000 6591 4448 3010 9', 
+                'BCI': 'AO06 0005 0000 6474 4882 1019 7', 
+                'BIC': 'AO06 0051 0000 0538 9050 1411 8' 
             };
-
             if(bank) {
-                const ibanParaCopiar = ibans[bank].replace(/\s/g, '').replace('AO06', '');
                 display.classList.remove('hidden');
                 display.innerHTML = `
-                    <div class="space-y-2">
-                        <div>
-                            <p class="text-[9px] text-red-600 uppercase font-black tracking-widest mb-1">IBAN PARA TRANSFERÊNCIA (${bank})</p>
-                            <div class="flex justify-between items-center bg-black/50 p-2 rounded-lg border border-white/5">
-                                <span class="text-[11px] font-black text-white">${ibans[bank]}</span>
-                                <button onclick="copyText('${ibanParaCopiar}', 'cp-bank')" id="cp-bank" class="bg-white text-black px-3 py-1 rounded text-[9px] font-black uppercase hover:bg-red-600 hover:text-white transition-colors">Copiar</button>
-                            </div>
-                        </div>
-                        <div class="pt-2 border-t border-white/5">
-                            <p class="text-[9px] text-gray-500 uppercase font-black tracking-widest">Beneficiário:</p>
-                            <p class="text-xs font-bold text-white uppercase italic">José Eduardo Loneke</p>
-                        </div>
-                        <p class="text-[8px] text-gray-600 font-bold italic">* O prefixo AO06 será removido automaticamente ao copiar.</p>
-                    </div>`;
-            } else {
-                display.classList.add('hidden');
+                    <div class="flex justify-between items-center">
+                        <div><p class="text-[9px] text-red-600 font-black mb-1 uppercase">IBAN ${bank}</p><span class="text-xs font-bold">${ibans[bank]}</span></div>
+                        <button onclick="copyText('${ibans[bank]}', 'cp-bk')" id="cp-bk" class="text-[10px] text-white bg-red-600 px-3 py-1 rounded font-black uppercase">Copiar</button>
+                    </div>
+                    <p class="text-[8px] text-gray-500 mt-2 italic font-medium">* O prefixo AO06 será removido ao copiar para facilitar no Multicaixa.</p>`;
             }
         }
 
@@ -332,98 +322,58 @@
             const name = document.getElementById('cus-name').value.trim();
             const email = document.getElementById('cus-email').value.trim();
             const phone = document.getElementById('cus-phone').value.trim();
-            const country = document.getElementById('cus-country').value;
-            const totalEl = document.getElementById('total-val');
-            const total = totalEl ? totalEl.innerText : "0 Kz";
             const fileInput = document.getElementById('cus-file');
 
-            if(!name || !email || !phone || !selectedMethod || cart.length === 0) {
-                Swal.fire({ icon: 'warning', title: 'DADOS INCOMPLETOS', text: 'Por favor, preencha todos os campos e selecione o método de pagamento.', background: '#0d0d0d', color: '#fff', confirmButtonColor: '#dc2626' });
+            // Validação PayPay Mínimo
+            if(selectedMethod === 'paypay' && totalGlobalKz < 1000) {
+                Swal.fire({ icon: 'error', title: 'VALOR MÍNIMO', text: 'O pagamento por referência PayPay exige um valor mínimo de 1.000 Kz.', background: '#0d0d0d', color: '#fff' });
                 return;
             }
 
-            if (!fileInput.files[0]) {
-                Swal.fire({ icon: 'warning', title: 'FALTA COMPROVATIVO', text: 'Você precisa anexar o comprovativo para que possamos validar o seu pedido.', background: '#0d0d0d', color: '#fff', confirmButtonColor: '#dc2626' });
+            if(!name || !email || !phone || !selectedMethod || cart.length === 0 || !fileInput.files[0]) {
+                Swal.fire({ icon: 'warning', title: 'DADOS EM FALTA', text: 'Preencha todos os campos e anexe o comprovativo.', background: '#0d0d0d', color: '#fff', confirmButtonColor: '#dc2626' });
                 return;
             }
 
             const btn = document.getElementById('main-submit-btn');
-            const originalBtnText = btn.innerHTML;
-            btn.innerHTML = `<i data-lucide="loader-2" class="animate-spin inline-block mr-2"></i> ENVIANDO...`;
+            btn.innerHTML = `ENVIANDO PEDIDO...`;
             btn.disabled = true;
-            lucide.createIcons();
 
-            // Mapeamento exato dos campos que o FormBold exige para receber arquivos
             const formData = new FormData();
-            formData.append('email', email); // Campo padrão obrigatório
-            formData.append('subject', `Novo Pedido de Beats - ${name}`.toUpperCase()); // Título do E-mail
-            formData.append('file', fileInput.files[0]); // O arquivo DEVE se chamar exatamente 'file'
-            
-            // O restante dos detalhes vai no corpo da mensagem do formulário
-            const messageBody = `
-                Nome do Cliente: ${name}
-                WhatsApp: ${phone}
-                País: ${country}
-                Método de Pagamento: ${selectedMethod.toUpperCase()}
-                Total Pago: ${total}
-                Beats Escolhidos: ${cart.map(i => i.nome).join(' | ')}
-            `;
-            formData.append('message', messageBody);
+            formData.append('email', email);
+            formData.append('subject', `PEDIDO SITE: ${name}`.toUpperCase());
+            formData.append('file', fileInput.files[0]);
+            formData.append('message', `Cliente: ${name}\nWhatsApp: ${phone}\nTotal: ${totalGlobalKz} Kz\nMétodo: ${selectedMethod}\nItens: ${cart.map(i => i.nome).join(', ')}`);
 
             try {
-                // Link atualizado do seu novo plano premium do FormBold
-                const response = await fetch('https://formbold.com/s/9gDlV', {
-                    method: 'POST',
-                    body: formData,
-                    headers: { 'Accept': 'application/json' }
-                });
-
+                const response = await fetch('https://formbold.com/s/9gDlV', { method: 'POST', body: formData, headers: { 'Accept': 'application/json' } });
                 if (response.ok) {
                     Swal.fire({
                         icon: 'success',
-                        title: 'RECEBIDO COM SUCESSO!',
+                        title: 'COMPROVATIVO RECEBIDO!',
                         html: `
-                            <div class="text-left space-y-3 text-sm">
-                                <p>Estamos verificando o seu comprovativo agora.</p>
-                                <p><b>Dentro de 5 minutos</b> vamos enviar os produtos no seu WhatsApp e no seu E-mail (<b>${email}</b>).</p>
-                                <p class="text-xs text-gray-400 border-t border-white/10 pt-2 text-center">
-                                    Qualquer coisa podes contactar: <br>
-                                    <span class="text-red-600 font-black">+244 924 034 159</span>
-                                </p>
+                            <div class="text-left text-xs space-y-4 font-medium leading-relaxed">
+                                <p>Estamos verificando o seu comprovativo de pagamento agora mesmo.</p>
+                                <p>Dentro de alguns minutos você receberá os seus produtos no seu <b>WhatsApp</b> e no seu <b>E-mail</b>.</p>
+                                <div class="bg-white/5 p-4 rounded-xl space-y-2 border border-white/5">
+                                    <p class="text-gray-400 font-bold uppercase text-[9px] tracking-widest">Suporte Oficial:</p>
+                                    <p class="font-black text-red-600"><i data-lucide="phone" class="inline w-3 h-3 mr-1"></i> +244 924 034 159</p>
+                                    <p class="font-black text-red-600"><i data-lucide="mail" class="inline w-3 h-3 mr-1"></i> contacto@lonekenobeat.com</p>
+                                </div>
                             </div>`,
                         background: '#0d0d0d',
                         color: '#fff',
                         confirmButtonColor: '#dc2626',
-                        confirmButtonText: 'OK, VOU AGUARDAR'
+                        confirmButtonText: 'ENTENDIDO, VOU AGUARDAR'
                     }).then(() => {
                         localStorage.removeItem('loneke_cart');
                         window.location.href = '../index.html';
                     });
-                } else {
-                    throw new Error("Erro no servidor FormBold");
                 }
             } catch (e) {
-                console.error("Erro detalhado:", e);
-                Swal.fire({ 
-                    icon: 'error', 
-                    title: 'FALHA NO ENVIO', 
-                    html: `Não conseguimos processar o arquivo agora. Envie o comprovativo direto para o nosso <b>WhatsApp</b> para receber seus Beats na hora!`, 
-                    showCancelButton: true,
-                    confirmButtonText: 'ABRIR WHATSAPP',
-                    cancelButtonText: 'TENTAR NOVAMENTE',
-                    background: '#0d0d0d', 
-                    color: '#fff',
-                    confirmButtonColor: '#25d366'
-                }).then((res) => {
-                    if (res.isConfirmed) {
-                        const msg = `Olá Loneke! Fiz um pedido no site de ${total}. Meu nome é ${name}. Aqui está o comprovativo.`;
-                        window.open(`https://wa.me/244924034159?text=${encodeURIComponent(msg)}`);
-                    }
-                });
-                
-                btn.innerHTML = originalBtnText;
+                Swal.fire({ icon: 'error', title: 'ERRO NO ENVIO', text: 'Tente enviar o comprovativo diretamente no nosso WhatsApp.' });
                 btn.disabled = false;
-                lucide.createIcons();
+                btn.innerHTML = 'Finalizar Pedido';
             }
         }
 
