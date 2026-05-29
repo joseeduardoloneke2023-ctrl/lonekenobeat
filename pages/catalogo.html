@@ -35,6 +35,7 @@
         .active-category i, .active-category h4, .active-category p {
             color: white !important; 
         }
+       
     </style>
 </head>
 <body class="pt-32"> 
@@ -143,8 +144,8 @@
             <div class="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20">
                 <div class="md:col-span-5">
                     <div class="sticky top-32">
-                        <div class="aspect-[3/4] rounded-2xl overflow-hidden border border-white/10 bg-zinc-900 shadow-2xl">
-                            <img id="prod-img-1" src="" class="w-full h-full object-cover">
+                        <div class="aspect-square rounded-2xl overflow-hidden border border-white/10 bg-[#141414] flex items-center justify-center shadow-2xl p-4">
+                            <img id="prod-img-1" src="" class="w-full h-full max-h-full object-contain transition-transform group-hover:scale-105">
                         </div>
                     </div>
                 </div>
@@ -256,7 +257,7 @@
                 <div>
                     <p class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-1">Pagamento Confirmado</p>
                     <p class="text-sm font-black uppercase italic text-white">${nome} <span class="text-red-600 text-[10px] not-italic">via ${pagamento}</span></p>
-                    <p class="text-xs font-bold text-gray-400 mt-1">${valor.toLocaleString()} Kz recebidos</p>
+                    <p class="text-xs font-bold text-gray-400 mt-1">${valor.toLocaleString()} Kz received</p>
                 </div>
             </div>`;
         
@@ -265,6 +266,7 @@
         setTimeout(() => { div.classList.add('opacity-0', '-translate-x-10'); setTimeout(() => div.remove(), 500); }, 5000);
     }
 
+    /* RENDERIZAÇÃO DOS CARDS DO CATÁLOGO CORRIGIDA */
     function renderProducts() {
         const grid = document.getElementById('catalog-grid');
         const searchText = document.getElementById('search-input').value.toLowerCase();
@@ -285,11 +287,11 @@
                 const oldPrice = item.precoAntigo || Math.floor(parsePrice(item.preco) * 1.4).toLocaleString();
                 return `
                     <div class="product-card group bg-[#0d0d0d] border border-white/10 rounded-2xl overflow-hidden hover:border-red-600 flex flex-col justify-between h-full">
-                        <div onclick="openProductPage(${item.id})" class="relative aspect-[4/5] cursor-pointer overflow-hidden">
-                            <img src="${item.imagem}" class="w-full h-full object-cover transition-transform group-hover:scale-110">
-                            <div class="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-transparent to-transparent"></div>
+                        <div onclick="openProductPage(${item.id})" class="relative aspect-square cursor-pointer overflow-hidden flex items-center justify-center p-3 bg-[#111111]">
+                            <img src="${item.imagem}" class="w-full h-full max-h-full object-contain transition-transform group-hover:scale-105">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-transparent to-transparent opacity-40"></div>
                         </div>
-                        <div class="p-6 bg-[#0d0d0d] relative mt-[-40px] flex-grow flex flex-col justify-between">
+                        <div class="p-6 bg-[#0d0d0d] relative mt-0 flex-grow flex flex-col justify-between">
                             <div class="space-y-1">
                                 <span class="text-red-600 font-bold text-[9px] uppercase tracking-widest block">${item.categoria}</span>
                                 <h4 onclick="openProductPage(${item.id})" class="text-base font-black uppercase italic cursor-pointer text-white break-words min-h-[3rem] flex items-center leading-tight">${item.nome}</h4>
@@ -383,14 +385,19 @@
         window.history.replaceState({}, document.title, url);
     }
 
+    /* RECOMENDAÇÕES CORRIGIDAS TAMBÉM */
     function renderRecommendations(categoria, currentId) {
         const grid = document.getElementById('recommendations-grid');
         const sugeridos = produtos.filter(p => p.categoria.toLowerCase() === categoria.toLowerCase() && p.id !== currentId).slice(0, 4);
         grid.innerHTML = (sugeridos.length ? sugeridos : produtos.slice(0, 4)).map(item => `
-            <div class="group cursor-pointer bg-white/5 p-4 rounded-xl border border-white/5 hover:border-red-600 transition-all" onclick="openProductPage(${item.id})">
-                <img src="${item.imagem}" class="aspect-square object-cover rounded-lg mb-3">
-                <h4 class="text-[10px] font-black uppercase truncate">${item.nome}</h4>
-                <p class="text-red-600 font-bold text-[10px] mt-1">${item.preco} Kz</p>
+            <div class="group cursor-pointer bg-white/5 p-4 rounded-xl border border-white/5 hover:border-red-600 transition-all flex flex-col justify-between" onclick="openProductPage(${item.id})">
+                <div class="aspect-square w-full bg-[#111111] rounded-lg mb-3 flex items-center justify-center p-2 overflow-hidden">
+                    <img src="${item.imagem}" class="max-w-full max-h-full object-contain">
+                </div>
+                <div>
+                    <h4 class="text-[10px] font-black uppercase truncate">${item.nome}</h4>
+                    <p class="text-red-600 font-bold text-[10px] mt-1">${item.preco} Kz</p>
+                </div>
             </div>`).join('');
     }
 
@@ -403,7 +410,6 @@
         Swal.fire({ title: 'ADICIONADO!', text: prod.nome, icon: 'success', background: '#0d0d0d', color: '#fff', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
     }
 
-    type = 'text/javascript';
     function updateCartBadge() { document.getElementById('cart-count').innerText = cart.length; }
 
     function startCountdown() {
