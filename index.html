@@ -17,82 +17,81 @@
             color: white;
             scroll-behavior: smooth;
         }
-
-     
+       
         .hero-pulse {
             animation: pulse-slow 8s infinite;
         }
 
         @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&display=swap');
 
-.font-syncopate {
-    font-family: 'Syncopate', sans-serif;
-}
+        .font-syncopate {
+            font-family: 'Syncopate', sans-serif;
+        }
 
-/* Transições fluidas de fundo líquido */
-.slide-glow-bg {
-    transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
+        /* Transições fluidas de fundo líquido */
+        .slide-glow-bg {
+            transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
 
-.cyber-slide {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.8s ease, visibility 0.8s ease;
-}
+        .cyber-slide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
 
-.cyber-slide.active {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    z-index: 10;
-}
+        .cyber-slide.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            z-index: 10;
+        }
 
-/* Efeito Parallax/Flutuação 3D nas suas Imagens */
-.floating-art {
-    animation: cyber-float 6s ease-in-out infinite;
-    filter: drop-shadow(0 0 40px rgba(255, 255, 255, 0.15));
-    transition: all 1s cubic-bezier(0.19, 1, 0.22, 1);
-}
+        /* Efeito Parallax/Flutuação 3D nas suas Imagens */
+        .floating-art {
+            animation: cyber-float 6s ease-in-out infinite;
+            filter: drop-shadow(0 0 40px rgba(255, 255, 255, 0.15));
+            transition: all 1s cubic-bezier(0.19, 1, 0.22, 1);
+        }
 
-@keyframes cyber-float {
-    0%, 100% { transform: translateY(0px) scale(1) rotate(0deg); }
-    50% { transform: translateY(-25px) scale(1.03) rotate(2deg); }
-}
+        @keyframes cyber-float {
+            0%, 100% { transform: translateY(0px) scale(1) rotate(0deg); }
+            50% { transform: translateY(-25px) scale(1.03) rotate(2deg); }
+        }
 
-/* Texto Entrando Rotacionando Levemente (High-End Effect) */
-.cyber-slide .text-reveal {
-    transform: translateY(50px) skewY(3deg);
-    opacity: 0;
-    transition: transform 0.9s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.9s ease;
-}
+        /* Texto Entrando Rotacionando Levemente (High-End Effect) */
+        .cyber-slide .text-reveal {
+            transform: translateY(50px) skewY(3deg);
+            opacity: 0;
+            transition: transform 0.9s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.9s ease;
+        }
 
-.cyber-slide.active .text-reveal {
-    transform: translateY(0) skewY(0deg);
-    opacity: 1;
-}
+        .cyber-slide.active .text-reveal {
+            transform: translateY(0) skewY(0deg);
+            opacity: 1;
+        }
 
-/* Imagem surgindo da direita com escala */
-.cyber-slide .img-reveal {
-    transform: translateX(60px) scale(0.9);
-    opacity: 0;
-    transition: transform 1.1s cubic-bezier(0.19, 1, 0.22, 1), opacity 1.1s ease;
-}
+        /* Imagem surgindo da direita com escala */
+        .cyber-slide .img-reveal {
+            transform: translateX(60px) scale(0.9);
+            opacity: 0;
+            transition: transform 1.1s cubic-bezier(0.19, 1, 0.22, 1), opacity 1.1s ease;
+        }
 
-.cyber-slide.active .img-reveal {
-    transform: translateX(0) scale(1);
-    opacity: 1;
-}
+        .cyber-slide.active .img-reveal {
+            transform: translateX(0) scale(1);
+            opacity: 1;
+        }
 
-/* Mesh Gradients Dinâmicos */
-.mesh-orange { background: radial-gradient(circle at 70% 30%, #ff5e00 0%, transparent 60%); }
-.mesh-yellow { background: radial-gradient(circle at 70% 30%, #ffe600 0%, transparent 60%); }
-.mesh-cyan { background: radial-gradient(circle at 70% 30%, #00f3ff 0%, transparent 60%); }
-.mesh-purple { background: radial-gradient(circle at 70% 30%, #b600ff 0%, transparent 60%); }
+        /* Mesh Gradients Dinâmicos */
+        .mesh-orange { background: radial-gradient(circle at 70% 30%, #ff5e00 0%, transparent 60%); }
+        .mesh-yellow { background: radial-gradient(circle at 70% 30%, #ffe600 0%, transparent 60%); }
+        .mesh-cyan { background: radial-gradient(circle at 70% 30%, #00f3ff 0%, transparent 60%); }
+        .mesh-purple { background: radial-gradient(circle at 70% 30%, #b600ff 0%, transparent 60%); }
 
-.cyber-dot.active {
-    background-color: white !important;
-}
+        .cyber-dot.active {
+            background-color: white !important;
+        }
 
         @keyframes pulse-slow {
             0%, 100% { transform: scale(1.05); opacity: 0.5; }
@@ -111,8 +110,9 @@
         }
     </style>
 </head>
-<body class="pt-[130px] md:pt-[150px]"> <div class="fixed top-0 left-0 w-full z-[200]">
-        
+<body class="pt-[130px] md:pt-[150px]"> 
+    
+    <div class="fixed top-0 left-0 w-full z-[200]">
         <div id="countdown-bar" class="w-full bg-red-600 text-white py-2 text-center font-black tracking-widest text-[10px] md:text-sm shadow-xl">
             OFERTA TERMINA EM: <span id="countdown"></span>
         </div>
@@ -148,23 +148,18 @@
                 <a href="#serviços" onclick="document.getElementById('mobile-menu').classList.add('hidden')" class="block py-2 border-b border-white/5">Serviços</a>
                 <a href="#drumkits" onclick="document.getElementById('mobile-menu').classList.add('hidden')" class="block py-2 border-b border-white/5">Drumkits</a>
                 <a href="plataforma/index.html" onclick="document.getElementById('mobile-menu').classList.add('hidden')" class="block py-2 border-b border-white/5">Cursos</a>
-           
                 <a href="#sobre" onclick="document.getElementById('mobile-menu').classList.add('hidden')" class="block py-2">Sobre</a>
             </div>
         </nav>
     </div>
 
-
-
    <section id="home" class="relative h-screen w-full overflow-hidden bg-[#040406] flex items-center">
-    
     <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <div id="mesh-glow-1" class="absolute inset-0 opacity-40 mix-blend-screen slide-glow-bg mesh-orange"></div>
         <div id="mesh-glow-2" class="absolute -top-[20%] -left-[10%] w-[60vw] h-[60vw] bg-purple-600/10 rounded-full blur-[140px]"></div>
     </div>
 
     <div id="cyber-slider" class="relative h-full w-full z-10 flex items-center">
-        
         <div class="cyber-slide active absolute inset-0 flex items-center" data-mesh="mesh-orange">
             <div class="max-w-7xl mx-auto px-6 md:px-12 w-full grid md:grid-cols-12 items-center gap-8 md:gap-12">
                 <div class="md:col-span-7 space-y-6 md:space-y-8 text-left z-20">
@@ -175,15 +170,13 @@
                         CHEGASTE NA <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#ff2a5f] via-[#ff7300] to-[#ffe600]">FONTE DA FONTE</span>
                     </h2>
                     <p class="text-reveal text-zinc-400 text-sm md:text-xl font-medium max-w-xl leading-relaxed">
-                        Se seus beats ou mixagem não soam profissional, tem uma sonoridade amadora e desejas melhorar isso, estas no lugar certo, aqui encontras muito material de qualidade, a preço de banana. <br> 
+                        Se seus beats ou mixagem não soam profissional, tem uma sonoridade amadora e desejas melhorar isso, estas no lugar certo, aqui encontras muito material de qualidade, a preço de banana.
                     </p>
-                    <br>
-                    <br>
                 </div>
                 <div class="md:col-span-5 flex justify-center img-reveal relative mt-6 md:mt-0">
                     <div class="absolute w-[120%] h-[120%] bg-[#ff2a5f]/5 rounded-full blur-3xl pointer-events-none"></div>
                     <img src="https://www.image2url.com/r2/default/images/1779905026563-256c4c05-67de-4e80-aaa6-73468eca8b9f.png" 
-                         class="w-full max-w-[340px] md:max-w-[480px] object-contain floating-art drop-shadow-[0_25px_60px_rgba(255,42,95,0.45)]">
+                         class="w-full max-w-[340px] md:max-w-[480px] object-contain floating-art drop-shadow-[0_25px_60px_rgba(255,42,95,0.45)] cursor-pointer" onclick="viewImageFullscreen(this.src)">
                 </div>
             </div>
         </div>
@@ -204,7 +197,7 @@
                 <div class="md:col-span-5 flex justify-center img-reveal relative mt-6 md:mt-0">
                     <div class="absolute w-[120%] h-[120%] bg-[#ffe600]/5 rounded-full blur-3xl pointer-events-none"></div>
                     <img src="https://www.image2url.com/r2/default/images/1779905433483-64566f3b-b35d-4822-8fa4-0538d74b2cd4.png" 
-                         class="w-full max-w-[380px] md:max-w-[530px] object-contain floating-art drop-shadow-[0_25px_60px_rgba(234,179,8,0.5)]">
+                         class="w-full max-w-[380px] md:max-w-[530px] object-contain floating-art drop-shadow-[0_25px_60px_rgba(234,179,8,0.5)] cursor-pointer" onclick="viewImageFullscreen(this.src)">
                 </div>
             </div>
         </div>
@@ -219,12 +212,13 @@
                         CURSOS <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#00f3ff] to-[#0077ff]">7.500 KZ</span>
                     </h2>
                     <p class="text-reveal text-zinc-400 text-sm md:text-xl font-medium max-w-xl leading-relaxed">
-                        Se desejas aprender a fazer beats que vendem, produção musical, mix e master, remakes ou até mesmo facturar no minimo 50.000kz todos os meses criando artes que vendem ou distribuição de musicas, os nossos cursos tornam isso tudo possivel, com acompanhamento personalizado, didática simples e fácil de aplicar e o melhor de tudo, num orçamento que cabe no seu bolço.              </p>
+                        Se desejas aprender a fazer beats que vendem, production musical, mix e master, remakes ou até mesmo facturar no minimo 50.000kz todos os meses criando artes que vendem ou distribuição de musicas, os nossos cursos tornam isso tudo possivel, com acompanhamento personalizado, didática simples e fácil de aplicar e o melhor de tudo, num orçamento que cabe no seu bolço.
+                    </p>
                 </div>
                 <div class="md:col-span-5 flex justify-center img-reveal relative mt-6 md:mt-0">
                     <div class="absolute w-[120%] h-[120%] bg-[#00f3ff]/5 rounded-full blur-3xl pointer-events-none"></div>
                     <img src="https://www.image2url.com/r2/default/images/1779905373129-6d7467aa-6ff0-4e28-a916-5c4436f0b491.png" 
-                         class="w-full max-w-[340px] md:max-w-[480px] object-contain floating-art drop-shadow-[0_25px_60px_rgba(0,243,255,0.45)]">
+                         class="w-full max-w-[340px] md:max-w-[480px] object-contain floating-art drop-shadow-[0_25px_60px_rgba(0,243,255,0.45)] cursor-pointer" onclick="viewImageFullscreen(this.src)">
                 </div>
             </div>
         </div>
@@ -260,7 +254,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <div class="absolute bottom-10 left-0 w-full z-30 flex flex-col md:flex-row items-center justify-between px-6 md:px-12 gap-6">
@@ -279,40 +272,30 @@
             </button>
         </a>
     </div>
-
 </section>
-
    
     <section id="serviços" class="py-32 bg-[#080808] border-y border-white/5">
         <div class="max-w-7xl mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6" id="services-container">
-   
-            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6" id="services-container"></div>
         </div>
     </section>
 
-
-    <div id="store-content" class="space-y-20 pb-32">
-    
-    </div>
+    <div id="store-content" class="space-y-20 pb-32"></div>
 
 <section id="sobre" class="py-40 bg-[#080808] relative overflow-hidden">
     <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-24 items-center">
         <div class="relative group">
             <div class="absolute -inset-4 border-2 border-red-600 opacity-20 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
-           
-            <img src="https://www.image2url.com/r2/default/images/1779905026563-256c4c05-67de-4e80-aaa6-73468eca8b9f.png" class="rounded-xl grayscale filter hover:grayscale-0 transition-all duration-1000 shadow-2xl" alt="Sobre Loneke">
+            <img src="https://www.image2url.com/r2/default/images/1779905026563-256c4c05-67de-4e80-aaa6-73468eca8b9f.png" class="rounded-xl grayscale filter hover:grayscale-0 transition-all duration-1000 shadow-2xl cursor-pointer" alt="Sobre Loneke" onclick="viewImageFullscreen(this.src)">
         </div>
         <div>
             <h3 class="text-6xl font-black italic uppercase tracking-tighter mb-10 leading-none">
                 MAIS QUE UMA MARCA <br/>
                 <span class="text-red-600">UM MOVIMENTO</span>
             </h3>
-
             <p class="text-gray-400 text-xl leading-relaxed font-medium mb-8">
                 Aqui não vendemos apenas sons ou arquivos. Construímos produtores preparados para competir no mais alto nível.
             </p>
-
             <p class="text-gray-500 text-lg leading-relaxed font-medium mb-12">
                 Loneke no Beat tornou-se uma referência em Angola ao entregar qualidade real, conhecimento aplicável e ferramentas que aceleram resultados. Se queres evoluir, este é o teu ponto de virada.
             </p>
@@ -360,94 +343,75 @@
             <div class="flex text-red-600 mb-4">★★★★★</div>
             <h4 class="text-lg font-black uppercase mb-2">Carlos Mendes</h4>
             <p class="text-gray-400 text-sm italic">
-                “Comecei do zero mesmo… hoje já produzo Afro House com qualidade profissional. 
-                A didática é simples e o suporte no WhatsApp ajuda muito. Evolução garantida.”
+                “Comecei do zero mesmo… hoje já produzo Afro House com qualidade profissional. A didática é simples e o suporte no WhatsApp ajuda muito. Evolução garantida.”
             </p>
         </div>
-
         <div class="bg-[#0d0d0d] p-8 rounded-3xl border border-white/5 hover:border-red-600/50 transition-all">
             <img src="https://i.pravatar.cc/150?img=36" class="w-16 h-16 rounded-full mb-6 border-2 border-red-600">
             <div class="flex text-red-600 mb-4">★★★★★</div>
             <h4 class="text-lg font-black uppercase mb-2">Rafael Costa</h4>
             <p class="text-gray-400 text-sm italic">
-                “Antes fazia 3 beats por semana… hoje faço 3 por dia fácil. 
-                Os drumkits Afro House Fariento e Guetho Zouk Fariento aceleraram tudo.”
+                “Antes fazia 3 beats por semana… hoje faço 3 por dia fácil. Os drumkits Afro House Fariento e Guetho Zouk Fariento aceleraram tudo.”
             </p>
         </div>
-
         <div class="bg-[#0d0d0d] p-8 rounded-3xl border border-white/5 hover:border-red-600/50 transition-all">
             <img src="https://i.pravatar.cc/150?img=37" class="w-16 h-16 rounded-full mb-6 border-2 border-red-600">
             <div class="flex text-red-600 mb-4">★★★★★</div>
             <h4 class="text-lg font-black uppercase mb-2">André Silva</h4>
             <p class="text-gray-400 text-sm italic">
-                “Já comprei vários packs e continuo comprando. 
-                Sempre que lança algo novo, já sei que vem pesado.”
+                “Já comprei vários packs e continuo comprando. Sempre que lança algo novo, já sei que vem pesado.”
             </p>
         </div>
-
         <div class="bg-[#0d0d0d] p-8 rounded-3xl border border-white/5 hover:border-red-600/50 transition-all">
             <img src="https://i.pravatar.cc/150?img=30" class="w-16 h-16 rounded-full mb-6 border-2 border-red-600">
             <div class="flex text-red-600 mb-4">★★★★★</div>
             <h4 class="text-lg font-black uppercase mb-2">Bruno Kiala</h4>
             <p class="text-gray-400 text-sm italic">
-                “Os drumkits já vêm prontos para usar. 
-                Só arrastar e fazer beat. Economiza muito tempo.”
+                “Os drumkits já vêm prontos para usar. Só arrastar e fazer beat. Economiza muito tempo.”
             </p>
         </div>
-
         <div class="bg-[#0d0d0d] p-8 rounded-3xl border border-white/5 hover:border-red-600/50 transition-all">
             <img src="https://i.pravatar.cc/150?u=eduardo" class="w-16 h-16 rounded-full mb-6 border-2 border-red-600">
             <div class="flex text-red-600 mb-4">★★★★★</div>
             <h4 class="text-lg font-black uppercase mb-2">Eduardo Santos</h4>
             <p class="text-gray-400 text-sm italic">
-                “Já passei dos 100.000 KZ com o que aprendi aqui. 
-                Hoje ganho dinheiro com produção e serviços.”
+                “Já passei dos 100.000 KZ com o que aprendi aqui. Hoje ganho dinheiro com produção e serviços.”
             </p>
         </div>
-
         <div class="bg-[#0d0d0d] p-8 rounded-3xl border border-white/5 hover:border-red-600/50 transition-all">
             <img src="https://i.pravatar.cc/150?img=28" class="w-16 h-16 rounded-full mb-6 border-2 border-red-600">
             <div class="flex text-red-600 mb-4">★★★★★</div>
             <h4 class="text-lg font-black uppercase mb-2">Nelson Vieira</h4>
             <p class="text-gray-400 text-sm italic">
-                “O curso de mix e master levou meu som para outro nível. 
-                Agora soa profissional mesmo.”
+                “O curso de mix e master levou meu som para outro nível. Agora soa profissional mesmo.”
             </p>
         </div>
-
         <div class="bg-[#0d0d0d] p-8 rounded-3xl border border-white/5 hover:border-red-600/50 transition-all">
             <img src="https://i.pravatar.cc/150?u=joao" class="w-16 h-16 rounded-full mb-6 border-2 border-red-600">
             <div class="flex text-red-600 mb-4">★★★★★</div>
             <h4 class="text-lg font-black uppercase mb-2">João Pedro</h4>
             <p class="text-gray-400 text-sm italic">
-                “Já comprei quase todos os packs Fariento. 
-                É conteúdo que entrega resultado mesmo.”
+                “Já comprei quase todos os packs Fariento. É conteúdo que entrega resultado mesmo.”
             </p>
         </div>
-
         <div class="bg-[#0d0d0d] p-8 rounded-3xl border border-white/5 hover:border-red-600/50 transition-all">
             <img src="https://i.pravatar.cc/150?img=31" class="w-16 h-16 rounded-full mb-6 border-2 border-red-600">
             <div class="flex text-red-600 mb-4">★★★★★</div>
             <h4 class="text-lg font-black uppercase mb-2">Fábio Manuel</h4>
             <p class="text-gray-400 text-sm italic">
-                “Afro House Fariento mudou completamente o nível dos meus beats. 
-                Qualidade muito alta.”
+                “Afro House Fariento mudou completamente o nível dos meus beats. Qualidade muito alta.”
             </p>
         </div>
-
         <div class="bg-[#0d0d0d] p-8 rounded-3xl border border-white/5 hover:border-red-600/50 transition-all">
             <img src="https://i.pravatar.cc/150?u=mario" class="w-16 h-16 rounded-full mb-6 border-2 border-red-600">
             <div class="flex text-red-600 mb-4">★★★★★</div>
             <h4 class="text-lg font-black uppercase mb-2">Mário Domingos</h4>
             <p class="text-gray-400 text-sm italic">
-                “Hoje instalo plugins sem dificuldade nenhuma. 
-                Curso direto e sem enrolação.”
+                “Hoje instalo plugins sem dificuldade nenhuma. Curso direto e sem enrolação.”
             </p>
         </div>
-
     </div>
 </section>
-
 
 <section class="py-32 bg-[#080808] border-t border-white/5">
     <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
@@ -479,6 +443,7 @@
         </div>
     </div>
 </section>
+
     <footer class="bg-[#080808] pt-40 pb-16 px-6 border-t border-white/10">
         <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-32 mb-40">
             <div>
@@ -489,24 +454,28 @@
                 </div>
             </div>
             <form class="bg-[#0d0d0d] p-6 md:p-10 rounded-3xl border border-white/10 space-y-6">
-    <div class="grid md:grid-cols-2 gap-6">
-        <input type="text" id="wa-nome" placeholder="SEU NOME" class="bg-[#050505] border border-white/10 p-6 rounded-xl text-sm font-bold text-white outline-none focus:border-red-600 transition-all w-full">
-        <input type="email" id="wa-email" placeholder="SEU EMAIL" class="bg-[#050505] border border-white/10 p-6 rounded-xl text-sm font-bold text-white outline-none focus:border-red-600 transition-all w-full">
-    </div>
-    <textarea id="wa-mensagem" placeholder="SUA MENSAGEM" class="bg-[#050505] border border-white/10 p-6 rounded-xl text-sm font-bold text-white outline-none focus:border-red-600 h-40 w-full resize-none transition-all"></textarea>
-    <button type="button" onclick="enviarWhatsApp()" class="w-full bg-red-600 py-6 font-black uppercase text-sm tracking-[0.4em] hover:bg-white hover:text-black transition-all rounded-xl">Enviar Mensagem</button>
-</form>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <input type="text" id="wa-nome" placeholder="SEU NOME" class="bg-[#050505] border border-white/10 p-6 rounded-xl text-sm font-bold text-white outline-none focus:border-red-600 transition-all w-full">
+                    <input type="email" id="wa-email" placeholder="SEU EMAIL" class="bg-[#050505] border border-white/10 p-6 rounded-xl text-sm font-bold text-white outline-none focus:border-red-600 transition-all w-full">
+                </div>
+                <textarea id="wa-mensagem" placeholder="SUA MENSAGEM" class="bg-[#050505] border border-white/10 p-6 rounded-xl text-sm font-bold text-white outline-none focus:border-red-600 h-40 w-full resize-none transition-all"></textarea>
+                <button type="button" onclick="enviarWhatsApp()" class="w-full bg-red-600 py-6 font-black uppercase text-sm tracking-[0.4em] hover:bg-white hover:text-black transition-all rounded-xl">Enviar Mensagem</button>
+            </form>
         </div>
        
-
-
- <div class="max-w-7xl mx-auto pt-16 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-8">
+        <div class="max-w-7xl mx-auto pt-16 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-8">
             <p class="text-sm font-black text-gray-600 uppercase tracking-widest">© 2026 LONEKE NO BEAT - ALL RIGHTS RESERVED</p>
             <h1 class="text-4xl font-black italic tracking-tighter">LONEKE NO BEAT</h1>
         </div>
-
-
     </footer>
+
+<div id="image-lightbox" class="fixed inset-0 bg-black/95 z-[300] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <button onclick="closeImageFullscreen()" class="absolute top-6 right-6 text-white hover:text-red-600 bg-white/10 p-3 rounded-full transition-all">
+        <i data-lucide="x" class="w-6 h-6"></i>
+    </button>
+    <img id="lightbox-img" src="" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl border border-white/10">
+</div>
+
 <script src="produtos.js"></script>
 
 <script>
@@ -515,10 +484,9 @@ const fakeNames = ["Delson", "Mauro", "Cláudio", "Aline", "Filipe", "Gelson", "
 const pagamentos = ["Express", "Transferência Bancária"];
 const valoresExatos = [7500, 12000, 500, 10000, 15000, 25000, 50000];
 
-// Fallback de segurança caso o array global 'produtos' não tenha sido carregado antes
 if (typeof produtos === 'undefined') {
     window.produtos = [];
-    console.error("Aviso: O array global 'produtos' não foi encontrado. Certifique-se de que o ficheiro de dados foi importado antes deste script.");
+    console.error("Aviso: O array global 'produtos' não foi encontrado.");
 }
 
 const createSlug = (text) => {
@@ -530,13 +498,17 @@ const createSlug = (text) => {
         .replace(/-+$/, '');
 };
 
-// Gerado de forma dinâmica para evitar erros de leitura imediata
 const getStoreData = () => ({
-    drumkits: produtos.filter(p => p.categoria && p.categoria.toLowerCase() === 'drumkit').slice(0, 10),
+    drumkitsArtista: produtos.filter(p => p.categoria && p.categoria.toLowerCase() === 'drumkits artista').slice(0, 10),
+    drumkitsEstilo: produtos.filter(p => p.categoria && p.categoria.toLowerCase() === 'drumkits estilo').slice(0, 10),
+    cursos: produtos.filter(p => p.categoria && p.categoria.toLowerCase() === 'cursos').slice(0, 10),
+    packsPlugins: produtos.filter(p => p.categoria && p.categoria.toLowerCase() === 'packs de plugins').slice(0, 10),
     flps: produtos.filter(p => p.categoria && p.categoria.toLowerCase() === 'flp').slice(0, 10),
-    ebook: produtos.filter(p => p.categoria && p.categoria.toLowerCase() === 'ebook').slice(0, 10),
-    packs: produtos.filter(p => p.categoria && p.categoria.toLowerCase() === 'packs').slice(0, 10)
+    ebook: produtos.filter(p => p.categoria && p.categoria.toLowerCase() === 'ebook').slice(0, 10)
 });
+
+
+
 
 const services = [
     { icon: "music", title: "Beats", desc: "Produção Exclusiva" },
@@ -548,12 +520,34 @@ const services = [
 
 let cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
 
-// --- SISTEMA DE NOTIFICAÇÕES FAKE ---
+// --- FUNÇÕES DE VISUALIZAÇÃO DE IMAGEM INTEIRA ---
+function viewImageFullscreen(src) {
+    const lightbox = document.getElementById('image-lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    if(lightbox && lightboxImg) {
+        lightboxImg.src = src;
+        lightbox.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeImageFullscreen() {
+    const lightbox = document.getElementById('image-lightbox');
+    if(lightbox) {
+        lightbox.classList.add('hidden');
+        if (!document.getElementById('product-page').classList.contains('hidden')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+    }
+}
+
 function showFakeNotification() {
     const container = document.getElementById("fake-notifications") || (() => {
         const div = document.createElement("div");
         div.id = "fake-notifications";
-        div.className = "fixed bottom-6 left-6 z-[300] space-y-4";
+        div.className = "fixed bottom-6 left-6 z-[150] space-y-4";
         document.body.appendChild(div);
         return div;
     })();
@@ -581,7 +575,7 @@ function showFakeNotification() {
     }, 5000);
 }
 
-// --- FUNÇÕES DO PRODUTO (ABRIR / FECHAR) ---
+// --- VISUALIZADOR DO PRODUTO (MODAL) ---
 function openProductPage(id) {
     const product = produtos.find(p => p.id === id);
     if (!product) return;
@@ -598,6 +592,12 @@ function openProductPage(id) {
     document.getElementById('prod-img-1').src = product.imagem;
     document.getElementById('prod-tag').innerText = product.categoria;
     
+    // Atualiza dinamicamente o evento de clique da imagem principal da modal para ver cheia
+    document.getElementById('prod-img-1').onclick = function() { viewImageFullscreen(product.imagem); };
+    
+    // Vincula ID dinamicamente no botão de compra da modal
+    document.getElementById('prod-add-btn').onclick = function() { addToCart(product.id); };
+
     const shareLink = `${window.location.origin}${window.location.pathname}?produto=${createSlug(product.nome)}`;
     const detalhesContainer = document.getElementById('prod-details-list');
     if (detalhesContainer) {
@@ -637,8 +637,6 @@ function openProductByName(slug) {
     }
 }
 
-// --- RECOMENDAÇÕES ---
-// --- RECOMENDAÇÕES (CORRIGIDO) ---
 function renderRecommendations(categoria, currentId) {
     const grid = document.getElementById('recommendations-grid');
     if (!grid) return;
@@ -649,19 +647,20 @@ function renderRecommendations(categoria, currentId) {
         .slice(0, 4);
 
     grid.innerHTML = sugeridos.map(item => `
-        <div class="group cursor-pointer bg-[#0d0d0d] p-4 rounded-2xl border border-white/5 hover:border-red-600/30 transition-all" onclick="openProductByName('${createSlug(item.nome)}')">
-            <div class="relative aspect-square rounded-xl overflow-hidden mb-4">
-                <img src="${item.imagem}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+        <div class="group cursor-pointer bg-[#0d0d0d] p-4 rounded-2xl border border-white/5 hover:border-red-600/30 transition-all">
+            <div class="relative aspect-square rounded-xl overflow-hidden mb-4 bg-zinc-900 flex items-center justify-center p-2">
+                <img src="${item.imagem}" class="max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-105" onclick="openProductByName('${createSlug(item.nome)}')">
+                <button onclick="event.stopPropagation(); viewImageFullscreen('${item.imagem}')" class="absolute top-2 right-2 bg-black/80 p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-20 hover:text-red-500">
+                    <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+                </button>
             </div>
-            <h4 class="text-[10px] font-black uppercase text-zinc-400 group-hover:text-white">${item.nome}</h4>
+            <h4 onclick="openProductByName('${createSlug(item.nome)}')" class="text-[10px] font-black uppercase text-zinc-400 group-hover:text-white">${item.nome}</h4>
             <p class="text-red-500 text-[11px] font-black mt-1">${item.preco.toLocaleString()} Kz</p>
         </div>
     `).join('');
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
-
-// --- PARTILHA ---
 function copyShareLink(link) {
     navigator.clipboard.writeText(link).then(() => {
         if (typeof Swal !== 'undefined') {
@@ -679,29 +678,36 @@ function copyShareLink(link) {
     });
 }
 
-// --- RENDER SEÇÕES DA LOJA ---
-// --- RENDER SEÇÕES DA LOJA (CORRIGIDO) ---
+// --- RENDERIZADOR DOS CARDS DA LOJA COM PROPRIEDADES INTEIRAS DE IMAGEM ---
 function renderStoreSection(title, items, sectionId) {
     if (!items || items.length === 0) return '';
     let itemsHtml = items.map(item => `
-        <div class="group relative bg-[#0d0d0d] border border-white/10 rounded-2xl overflow-hidden transition-all duration-500 hover:border-red-600/50">
-            <div onclick="openProductByName('${createSlug(item.nome)}')" class="relative aspect-[4/5] overflow-hidden cursor-pointer">
-                <img src="${item.imagem}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="${item.nome}">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-transparent to-transparent"></div>
+        <div class="group relative bg-[#0d0d0d] border border-white/10 rounded-2xl overflow-hidden transition-all duration-500 hover:border-red-600/50 flex flex-col justify-between">
+            <div>
+                <div class="relative w-full h-64 bg-zinc-900/40 p-4 flex items-center justify-center cursor-pointer overflow-hidden" onclick="openProductByName('${createSlug(item.nome)}')">
+                    <img src="${item.imagem}" class="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-105" alt="${item.nome}">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#0d0d0d]/80 via-transparent to-transparent pointer-events-none"></div>
+                    
+                    <button onclick="event.stopPropagation(); viewImageFullscreen('${item.imagem}')" class="absolute top-4 right-4 bg-black/80 border border-white/10 text-white p-2.5 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-[-10px] group-hover:translate-y-0 hover:bg-red-600 z-30 flex items-center gap-1.5 text-[9px] font-bold">
+                        <i data-lucide="eye" class="w-4 h-4"></i> VER COMPLETA
+                    </button>
+                </div>
+                
+                <div class="p-6 bg-[#0d0d0d]">
+                    <span class="text-red-600 font-bold text-[10px] tracking-widest uppercase mb-1 block">${item.categoria}</span>
+                    <h4 onclick="openProductByName('${createSlug(item.nome)}')" class="text-lg font-black uppercase italic mb-3 cursor-pointer hover:text-red-600 transition-colors line-clamp-2">
+                        ${item.nome}
+                    </h4>
+                </div>
             </div>
-            <div class="p-8 relative mt-[-60px] bg-[#0d0d0d] rounded-t-3xl border-t border-white/5">
-                <span class="text-red-600 font-bold text-[10px] tracking-widest uppercase mb-2 block">${item.categoria}</span>
-                
-                <h4 onclick="openProductByName('${createSlug(item.nome)}')" class="text-xl font-black uppercase italic mb-3 cursor-pointer hover:text-red-600 transition-colors">
-                    ${item.nome}
-                </h4>
-                
-                <div class="flex items-center justify-between mt-6">
+            
+            <div class="p-6 pt-0 bg-[#0d0d0d]">
+                <div class="flex items-center justify-between mt-2 border-t border-white/5 pt-4">
                     <div class="flex flex-col">
                         <span class="text-gray-500 line-through text-[10px]">${(item.precoAntigo || item.preco + 5000).toLocaleString()} Kz</span>
                         <span class="text-xl font-black text-white">${item.preco.toLocaleString()} Kz</span>
                     </div>
-                    <button onclick="addToCart(${item.id})" class="bg-white text-black p-3 rounded-xl hover:bg-red-600 hover:text-white transition-all">
+                    <button onclick="addToCart(${item.id})" class="bg-white text-black p-3 rounded-xl hover:bg-red-600 hover:text-white transition-all z-20">
                         <i data-lucide="shopping-cart"></i>
                     </button>
                 </div>
@@ -717,7 +723,10 @@ function renderStoreSection(title, items, sectionId) {
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">${itemsHtml}</div>
         </section>`;
 }
-// --- INTEGRAÇÃO DO CARRINHO ---
+
+
+
+
 function updateCartBadge() {
     const badge = document.getElementById('cart-count');
     if (badge) badge.innerText = cart.length;
@@ -754,7 +763,6 @@ function goToCheckout() {
     window.location.href = 'pages/checkout.html';
 }
 
-// --- CONTADOR REGRESSIVO ---
 function startCountdown() {
     const countdownElement = document.getElementById("countdown");
     if (!countdownElement) return;
@@ -764,14 +772,11 @@ function startCountdown() {
     
     setInterval(() => {
         const diff = endTime - new Date().getTime();
-        
-        // Proteção contra quebra se o elemento de barra sumir
         if (diff <= 0) { 
             const bar = document.getElementById("countdown-bar");
             if(bar) bar.innerText = "OFERTA TERMINADA"; 
             return; 
         }
-        
         const h = Math.floor(diff / 3600000);
         const m = Math.floor((diff % 3600000) / 60000);
         const s = Math.floor((diff % 60000) / 1000);
@@ -779,7 +784,6 @@ function startCountdown() {
     }, 1000);
 }
 
-// --- CONTATO WHATSAPP ---
 function enviarWhatsApp() {
     const nomeEl = document.getElementById('wa-nome');
     const msgEl = document.getElementById('wa-mensagem');
@@ -794,12 +798,11 @@ function enviarWhatsApp() {
     window.open(`https://wa.me/244924034159?text=Olá Loneke! Meu nome é ${nome}. ${msg}`, '_blank');
 }
 
-// --- CYBER SLIDER CONFIG ---
 function initCyberSlider() {
     const slides = document.querySelectorAll('.cyber-slide');
     const dots = document.querySelectorAll('.cyber-dot');
     const glowBg = document.getElementById('mesh-glow-1');
-    if (slides.length === 0) return; // Segurança caso não esteja na Home
+    if (slides.length === 0) return;
 
     let currentIdx = 0;
     let slideTimer;
@@ -822,7 +825,6 @@ function initCyberSlider() {
         if(glowBg && meshes[meshKey]) {
             glowBg.style.background = meshes[meshKey];
         }
-
         currentIdx = nextIdx;
     }
 
@@ -840,16 +842,12 @@ function initCyberSlider() {
             startTimer();
         });
     });
-
     startTimer();
 }
 
-// --- INICIALIZAÇÃO ÚNICA E SEGURA ---
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Inicia Notificações Fake
     setInterval(showFakeNotification, 8000);
 
-    // 2. Renderiza Seção de Serviços
     const servicesContainer = document.getElementById('services-container');
     if(servicesContainer) {
         servicesContainer.innerHTML = services.map(s => `
@@ -862,36 +860,31 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>`).join('');
     }
 
-    // 3. Renderiza Catálogo e Categorias da Loja
     const storeContent = document.getElementById('store-content');
     if(storeContent) {
         const currentStoreData = getStoreData();
         storeContent.innerHTML = 
-            renderStoreSection("Drumkits em Destaque", currentStoreData.drumkits, "drumkits") +
+            renderStoreSection("Drumkits de Artistas", currentStoreData.drumkitsArtista, "drumkits-artista") +
+            renderStoreSection("Drumkits por Estilo", currentStoreData.drumkitsEstilo, "drumkits-estilo") +
+            renderStoreSection("Cursos de Elite", currentStoreData.cursos, "cursos") +
+            renderStoreSection("Packs de Plugins", currentStoreData.packsPlugins, "packs-plugins") +
             renderStoreSection("FLPs e Projetos", currentStoreData.flps, "flp") +
-            renderStoreSection("Ebook em Destaque", currentStoreData.ebook, "ebook") +
-            renderStoreSection("Packs Especiais", currentStoreData.packs, "packs");
+            renderStoreSection("Ebooks em Destaque", currentStoreData.ebook, "ebook");
     }
 
-    // 4. Inicializa os Recursos Auxiliares
     startCountdown();
     updateCartBadge();
     initCyberSlider();
 
-    // 5. Ativa Ícones do Lucide
     if (typeof lucide !== 'undefined') lucide.createIcons();
 
-    // 6. Verifica se há um produto direto via URL
     const urlParams = new URLSearchParams(window.location.search);
     const prodSlug = urlParams.get('produto');
     if (prodSlug) setTimeout(() => openProductByName(prodSlug), 500);
 });
 </script>
 
-
-
 <div id="product-page" class="fixed inset-0 bg-zinc-950 z-[200] hidden overflow-y-auto pb-20 custom-scrollbar text-white">
-  
     <div class="sticky top-0 z-50 flex justify-between items-center px-8 py-6 bg-zinc-950/80 backdrop-blur-md border-b border-white/5">
         <span class="text-xs font-black tracking-[0.3em] uppercase opacity-50">Detalhes do Produto</span>
         <button onclick="closeProductPage()" class="group flex items-center gap-2 hover:text-red-500 transition-colors">
@@ -903,19 +896,19 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
 
     <div class="max-w-6xl mx-auto px-6 mt-12">
-      
         <div class="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20">
-            
-       
             <div class="md:col-span-5">
                 <div class="sticky top-32">
-                    <div class="aspect-[3/4] rounded-2xl overflow-hidden border border-white/10 bg-zinc-900 shadow-2xl">
-                        <img id="prod-img-1" src="" class="w-full h-full object-cover">
+                    <div class="relative group aspect-[3/4] rounded-2xl overflow-hidden border border-white/10 bg-zinc-900 flex items-center justify-center p-4 shadow-2xl">
+                        <img id="prod-img-1" src="" class="max-w-full max-h-full object-contain cursor-pointer transition-transform duration-500 hover:scale-105" title="Clique para ver em ecrã inteiro">
+                        
+                        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/70 backdrop-blur-sm border border-white/10 px-4 py-1.5 rounded-xl text-[10px] uppercase tracking-wider text-gray-300 font-bold pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1.5">
+                            <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i> Ampliar Imagem
+                        </div>
                     </div>
                 </div>
             </div>
 
-       
             <div class="md:col-span-7 flex flex-col justify-start py-4">
                 <div id="prod-tag" class="inline-block bg-red-600/10 text-red-500 text-[10px] font-black tracking-[0.2em] uppercase px-3 py-1 rounded-full w-max mb-6">
                     Categoria
@@ -926,9 +919,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 </h1>
 
                 <div class="flex items-center gap-4 mb-8">
-                    <span id="prod-price" class="text-3xl font-light text-zinc-100">€0,00</span>
+                    <span id="prod-price" class="text-3xl font-light text-zinc-100">0,00 Kz</span>
                     <div class="h-4 w-[1px] bg-white/20"></div>
-                    <span class="text-zinc-500 text-sm font-medium"></span>
+                    <span class="text-zinc-500 text-sm font-medium">Pronta Entrega</span>
                 </div>
                 
                 <p id="prod-full-desc" class="text-zinc-400 text-base leading-relaxed mb-10 max-w-lg">
@@ -945,8 +938,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </button>
                 </div>
 
-               <div class="grid grid-cols-2 gap-6 border-t border-white/5 pt-8">
-                    
+               <div class="grid grid-cols-2 gap-6 border-t border-white/5 pt-8" id="prod-details-list">
                     <div class="flex items-center gap-3">
                         <i data-lucide="shield-check" class="w-5 h-5 text-zinc-500"></i>
                         <span class="text-xs text-zinc-400 font-medium">Garantia de Autenticidade</span>
@@ -969,11 +961,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="flex items-center justify-between mb-10">
                 <h2 class="text-2xl font-black uppercase tracking-tighter italic">Recomendações <span class="text-red-600">Premium</span></h2>
                 <div class="h-[1px] flex-1 bg-white/5 mx-8 hidden md:block"></div>
-                <span class="text-zinc-500 text-xs font-bold uppercase tracking-widest">8 Sugestões</span>
+                <span class="text-zinc-500 text-xs font-bold uppercase tracking-widest">Sugestões</span>
             </div>
-            <div id="recommendations-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8">
-   
-            </div>
+            <div id="recommendations-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8"></div>
         </div>
     </div>
 </div>
