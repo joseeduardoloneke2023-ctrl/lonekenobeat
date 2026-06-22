@@ -308,20 +308,35 @@
 
             let subtotalKz = 0;
             container.innerHTML = cart.map((item, index) => {
-                let cleanPrice = item.preco.toString().replace(/\s/g, '').replace('.', '').replace(',', '');
-                subtotalKz += parseInt(cleanPrice.replace(/[^0-9]/g, '')) || 0;
-                return `
-                    <div class="cart-item bg-[#0d0d0d] p-5 rounded-2xl border border-white/5 flex justify-between items-center">
-                        <div class="flex items-center gap-5">
-                            <img src="${item.imagem}" class="w-12 h-12 rounded-xl object-cover border border-white/10">
-                            <div>
-                                <h4 class="font-black uppercase text-[11px] italic text-white">${item.nome}</h4>
-                                <p class="text-red-600 font-bold text-[9px] mt-1">${item.preco} KZ</p>
-                            </div>
-                        </div>
-                        <button onclick="removeItem(${index})" class="text-gray-500 hover:text-red-600 transition-colors"><i data-lucide="trash-2" size="16"></i></button>
-                    </div>`;
-            }).join('');
+    let cleanPrice = item.preco.toString().replace(/\s/g, '').replace('.', '').replace(',', '');
+    subtotalKz += parseInt(cleanPrice.replace(/[^0-9]/g, '')) || 0;
+
+    return `
+        <div class="cart-item bg-[#0d0d0d] p-5 rounded-2xl border border-white/5 flex justify-between items-center">
+            <div class="flex items-center gap-5">
+                <img 
+                    src="../${item.imagem}" 
+                    class="w-12 h-12 rounded-xl object-cover border border-white/10"
+                    alt="${item.nome}"
+                >
+
+                <div>
+                    <h4 class="font-black uppercase text-[11px] italic text-white">
+                        ${item.nome}
+                    </h4>
+
+                    <p class="text-red-600 font-bold text-[9px] mt-1">
+                        ${item.preco} KZ
+                    </p>
+                </div>
+            </div>
+
+            <button onclick="removeItem(${index})" class="text-gray-500 hover:text-red-600 transition-colors">
+                <i data-lucide="trash-2" size="16"></i>
+            </button>
+        </div>
+    `;
+}).join('');
 
             // Adicionar valor extra do Order Bump se estiver marcado
             let totalAntesDesconto = subtotalKz + orderBumpPrice;
