@@ -327,23 +327,49 @@
         if (badge) badge.innerText = cart.length;
     }
 
-   function addToCart(id) {
+    function addToCart(id) {
     const product = produtos.find(p => p.id === id);
     if (!product) return;
 
     let precoFinal = parsePrice(product.preco);
     let sufixo = "";
+    let tipoLicenca = "basica";
 
     if (product.categoria.toLowerCase() === 'beats') {
+
         if (selectedLicense === 'wav') {
-            precoFinal = precoFinal * 1.5;
+            precoFinal *= 1.5;
             sufixo = " (Licença MP3 + WAV)";
-        } else if (selectedLicense === 'premium') {
-            precoFinal = precoFinal * 2.0;
+            tipoLicenca = "wav";
+        } 
+        else if (selectedLicense === 'premium') {
+            precoFinal *= 2;
             sufixo = " (Licença MP3 + WAV + STEMS)";
-        } else {
+            tipoLicenca = "premium";
+        } 
+        else {
             sufixo = " (Licença Básica)";
+            tipoLicenca = "basica";
         }
+    }
+
+    // VERIFICA SE JÁ EXISTE NO CARRINHO
+    const jaExiste = cart.find(item =>
+        item.id === product.id &&
+        item.tipoCompra === tipoLicenca
+    );
+
+    if (jaExiste) {
+        Swal.fire({
+            icon: 'info',
+            title: 'PRODUTO JÁ ESTÁ NO CARRINHO',
+            text: 'Este produto já foi adicionado.',
+            background: '#0d0d0d',
+            color: '#fff',
+            confirmButtonColor: '#dc2626'
+        });
+
+        return;
     }
 
     cart.push({
@@ -352,12 +378,23 @@
         preco: precoFinal,
         imagem: product.imagem,
         categoria: product.categoria,
-        tipoCompra: 'vista'
+        tipoCompra: tipoLicenca
     });
 
-    // ... restante do código de salvamento e alerta
+    localStorage.setItem('loneke_cart', JSON.stringify(cart));
+    updateCartBadge();
+
+    Swal.fire({
+        icon: 'success',
+        title: 'PRODUTO ADICIONADO NO CARRINHO',
+        background: '#0d0d0d',
+        color: '#fff',
+        confirmButtonColor: '#dc2626'
+    });
 }
     
+
+
 
 
     function addCourseToCartWithInstallment() {
@@ -639,24 +676,18 @@ function getLocalImagePath(imagem) {
         } else {
             layoutCourse.classList.add('hidden');
             layoutStandard.classList.remove('hidden');
-            // ... dentro do else (layout standard) ...
-const isBeat = product.categoria.toLowerCase() === 'beats';
-const licenseSelector = document.getElementById('beat-license-selector');
+
+            const isBeat = product.categoria.toLowerCase() === 'beats';
+const licenseSelector = document.getElementById('license-selector');
 
 if (isBeat) {
     licenseSelector.classList.remove('hidden');
-    // Inicializa preços
-    const base = parsePrice(product.preco);
-    document.getElementById('price-basica').innerText = base.toLocaleString() + " Kz";
-    document.getElementById('price-standard').innerText = (base * 1.5).toLocaleString() + " Kz";
-    document.getElementById('price-premium').innerText = (base * 2).toLocaleString() + " Kz";
-    
-    // Atualiza o botão para usar a função de checkout específica de beats
-    document.getElementById('prod-add-btn').setAttribute('onclick', `addBeatToCart()`);
+    selectLicense('basica');
 } else {
     licenseSelector.classList.add('hidden');
-    // ... manter o resto do código original ...
 }
+            // ... dentro do else (layout standard) ...
+
             document.getElementById('prod-title').innerText = product.nome;
             document.getElementById('prod-full-desc').innerText = product.descricao || "Arsenal Premium Loneke no Beat.";
             document.getElementById('prod-price').innerText = product.preco.toLocaleString() + " Kz";
@@ -790,34 +821,58 @@ function selectBeatLicense(license) {
 
 
 
-const isBeat = product.categoria.toLowerCase() === 'beats';
-const licenseSelector = document.getElementById('license-selector');
-if (isBeat) {
-    licenseSelector.classList.remove('hidden');
-    selectLicense('basica'); // reseta ao abrir
-} else {
-    licenseSelector.classList.add('hidden');
-}
-
-
 function addBeatToCart() {
-    const basePrice = parsePrice(activeProductContext.preco);
-    const multipliers = { 'basica': 1, 'standard': 1.5, 'premium': 2 };
-    
-    cart.push({
-        id: activeProductContext.id,
-        nome: `${activeProductContext.nome} (Licença: ${selectedBeatLicense.toUpperCase()})`,
-        preco: basePrice * multipliers[selectedBeatLicense],
-        imagem: activeProductContext.imagem,
-        categoria: 'beats',
-        tipoCompra: selectedBeatLicense
-    });
 
-    localStorage.setItem('loneke_cart', JSON.stringify(cart));
-    updateCartBadge();
-    
-    Swal.fire({ icon: 'success', title: 'BEAT ADICIONADO!', background: '#0d0d0d', color: '#fff' });
+const jaExiste = cart.find(item =>
+    item.id === activeProductContext.id &&
+    item.tipoCompra === selectedBeatLicense
+);
+
+if (jaExiste) {
+    Swal.fire({
+        icon: 'info',
+        title: 'BEAT JÁ ESTÁ NO CARRINHO',
+        background: '#0d0d0d',
+        color: '#fff',
+        confirmButtonColor: '#dc2626'
+    });
+    return;
 }
+
+const basePrice = parsePrice(activeProductContext.preco);
+
+const multipliers = {
+    basica: 1,
+    standard: 1.5,
+    premium: 2
+};
+
+cart.push({
+    id: activeProductContext.id,
+    nome: `${activeProductContext.nome} (Licença: ${selectedBeatLicense.toUpperCase()})`,
+    preco: basePrice * multipliers[selectedBeatLicense],
+    imagem: activeProductContext.imagem,
+    categoria: 'beats',
+    tipoCompra: selectedBeatLicense
+});
+
+localStorage.setItem('loneke_cart', JSON.stringify(cart));
+updateCartBadge();
+
+Swal.fire({
+    icon: 'success',
+    title: 'BEAT ADICIONADO AO CARRINHO',
+    background: '#0d0d0d',
+    color: '#fff',
+    confirmButtonColor: '#dc2626'
+});
+}
+
+
+
+
+
+
 
 
 </script>
