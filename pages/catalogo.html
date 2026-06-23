@@ -70,12 +70,10 @@
                 <a href="../index.html#sobre" class="hover:text-red-600 transition-colors">Sobre</a>
             </div>
 
-            <div class="flex items-center gap-8">
-                <div onclick="goToCheckout()" class="relative cursor-pointer p-4 bg-red-600 rounded-2xl hover:scale-105 transition-transform group">
-                    <i data-lucide="shopping-cart" size="24" class="text-white"></i>
-                    <span id="cart-count" class="absolute -top-1 -right-1 bg-white text-black text-[11px] w-6 h-6 flex items-center justify-center rounded-full font-black shadow-2xl">0</span>
-                </div>
-            </div>
+            <a href="../index.html#contacto"
+   class="bg-red-600 px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-red-700 transition-all">
+    Contacto
+</a>
         </div>
     </nav>
 
@@ -169,20 +167,7 @@
                     </div>
 
                     <p id="prod-full-desc" class="text-zinc-400 text-base leading-relaxed mb-8 max-w-lg">Descrição...</p>
-                    <div id="beat-license-selector" class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8 hidden">
-    <div onclick="selectBeatLicense('basica')" id="license-basica" class="payment-type-card active border border-white/10 p-4 rounded-xl cursor-pointer transition-all">
-        <h4 class="font-black text-[10px] uppercase text-white">Básica (MP3)</h4>
-        <p id="price-basica" class="text-sm font-bold text-red-500 mt-1">0 Kz</p>
-    </div>
-    <div onclick="selectBeatLicense('standard')" id="license-standard" class="payment-type-card border border-white/10 p-4 rounded-xl cursor-pointer transition-all">
-        <h4 class="font-black text-[10px] uppercase text-white">Standard</h4>
-        <p id="price-standard" class="text-sm font-bold text-red-500 mt-1">0 Kz</p>
-    </div>
-    <div onclick="selectBeatLicense('premium')" id="license-premium" class="payment-type-card border border-white/10 p-4 rounded-xl cursor-pointer transition-all">
-        <h4 class="font-black text-[10px] uppercase text-white">Premium</h4>
-        <p id="price-premium" class="text-sm font-bold text-red-500 mt-1">0 Kz</p>
-    </div>
-</div>
+                   
                     <!-- LISTAS EM ITENS GRADE -->
                     <div id="container-listas-produto" class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-[#0d0d0d] p-6 border border-white/10 rounded-2xl mb-10 hidden">
                         <div class="border-b md:border-b-0 md:border-r border-white/5 pb-6 md:pb-0 md:pr-6">
@@ -200,9 +185,14 @@
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-4 mb-12">
-                        <button id="prod-add-btn" class="flex-1 bg-white text-black hover:bg-red-600 hover:text-white px-8 py-5 rounded-xl font-bold uppercase text-sm transition-all duration-300 flex items-center justify-center gap-3 shadow-lg shadow-white/5">
-                            <i data-lucide="shopping-bag" class="w-5 h-5"></i> Adicionar ao Carrinho
-                        </button>
+                        <a
+    id="prod-buy-btn"
+    href="#"
+    target="_blank"
+    class="flex-1 bg-red-600 hover:bg-red-700 text-white px-8 py-5 rounded-xl font-black uppercase text-sm transition-all duration-300 flex items-center justify-center gap-3"
+>
+    Comprar Agora
+</a>
                     </div>
                 </div>
             </div>
@@ -216,77 +206,6 @@
                 <div class="aspect-video rounded-3xl overflow-hidden bg-zinc-900 border border-white/5 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
                     <iframe id="prod-video" class="w-full h-full" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                 </div>
-            </div>
-        </div>
-
-<!-- Seletor de Licenças (Adicione isso após a div de preços no standard layout) -->
-<div id="license-selector" class="grid grid-cols-1 gap-3 mb-8 hidden">
-    <h4 class="text-xs font-black text-zinc-500 uppercase tracking-widest mb-1">Escolha sua Licença</h4>
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <button onclick="selectLicense('basica')" id="lic-basica" class="license-btn p-3 border border-red-600 bg-red-600/10 rounded-xl text-left transition-all">
-            <span class="text-[9px] font-black uppercase">Básica</span>
-            <div class="font-black text-sm">MP3</div>
-        </button>
-        <button onclick="selectLicense('wav')" id="lic-wav" class="license-btn p-3 border border-white/10 hover:border-red-600 rounded-xl text-left transition-all">
-            <span class="text-[9px] font-black uppercase">Standard</span>
-            <div class="font-black text-sm">MP3 + WAV</div>
-        </button>
-        <button onclick="selectLicense('premium')" id="lic-premium" class="license-btn p-3 border border-white/10 hover:border-red-600 rounded-xl text-left transition-all">
-            <span class="text-[9px] font-black uppercase">Premium</span>
-            <div class="font-black text-sm">MP3 + WAV + Stems</div>
-        </button>
-    </div>
-</div>
-
-
-        <!-- LAYOUT DE PRODUTO PARA CURSOS -->
-        <div id="layout-course-product" class="max-w-4xl mx-auto px-6 mt-12 hidden">
-            <div class="text-center space-y-6 mb-10">
-                <div id="course-tag" class="inline-block bg-red-600/20 text-red-500 text-xs font-black tracking-[0.3em] uppercase px-4 py-1.5 rounded-full">CURSO PREMIUM</div>
-                <h1 id="course-headline" class="text-4xl md:text-6xl font-black uppercase tracking-tight italic text-white leading-none">HEADLINE</h1>
-                <p id="course-subheadline" class="text-zinc-400 text-lg md:text-xl font-medium max-w-2xl mx-auto">Subheadline</p>
-            </div>
-
-            <div class="aspect-video rounded-3xl overflow-hidden bg-zinc-900 border-2 border-red-600/30 shadow-[0_0_60px_rgba(220,38,38,0.15)] mb-12">
-                <iframe id="course-video" class="w-full h-full" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            </div>
-
-            <!-- CURSOS - LISTA DE CONTEÚDO -->
-            <div id="course-content-container" class="max-w-2xl mx-auto bg-[#0d0d0d] border border-white/10 rounded-2xl p-6 mb-8 hidden">
-                <h4 class="text-xs font-black text-red-500 uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <i data-lucide="book-open" class="w-4 h-4 text-red-600"></i> Conteúdo Programático do Curso
-                </h4>
-                <div id="lista-curso-content" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
-            </div>
-
-            <!-- PARCELAMENTO -->
-            <div id="course-payment-selector" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 max-w-2xl mx-auto hidden">
-                <div onclick="selectCoursePaymentType('vista')" id="type-payment-vista" class="payment-type-card active border border-white/10 p-5 rounded-xl cursor-pointer text-left transition-all">
-                    <span class="text-[9px] font-black text-zinc-500 uppercase tracking-widest block">OPÇÃO 01</span>
-                    <h4 class="font-black text-sm uppercase text-white mt-1">PAGAMENTO À VISTA</h4>
-                    <p class="text-xs text-zinc-400 mt-1">Receba o acesso completo vitalício imediatamente.</p>
-                </div>
-                <div onclick="selectCoursePaymentType('parcelado')" id="type-payment-parcelado" class="payment-type-card border border-white/10 p-5 rounded-xl cursor-pointer text-left transition-all">
-                    <span class="text-[9px] font-black text-red-500 uppercase tracking-widest block">PAGAMENTO PARCELADO</span>
-                    <h4 class="font-black text-sm uppercase text-white mt-1">2 PRESTAÇÕES DE 65%</h4>
-                    <p class="text-xs text-zinc-400 mt-1">Pague 6.500 Kz agora e o restante no próximo mês.</p>
-                </div>
-            </div>
-
-            <div id="course-installment-alert" class="max-w-2xl mx-auto mb-8 bg-amber-600/10 border border-amber-500/30 rounded-xl p-4 text-center hidden">
-                <p class="text-xs font-bold text-amber-500 uppercase tracking-wide">⚠️ ATENÇÃO: Pagando a primeira prestação, receberá de imediato METADE das aulas/arquivos do curso. A outra metade será libertada após o pagamento da segunda prestação.</p>
-            </div>
-
-            <div class="bg-[#0d0d0d] border border-white/10 rounded-2xl p-8 flex flex-col md:flex-row justify-between items-center gap-6 max-w-2xl mx-auto shadow-2xl">
-                <div class="text-center md:text-left">
-                    <span id="course-price-old" class="text-zinc-500 line-through text-sm block">0 Kz</span>
-                    <span id="course-price" class="text-4xl font-black text-white">0 Kz</span>
-                    <span id="course-payment-badge" class="text-emerald-500 text-[10px] font-bold block uppercase tracking-wider mt-1">Acesso vitalício</span>
-                </div>
-                
-                <button id="course-add-btn" class="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white px-10 py-5 rounded-xl font-black uppercase text-sm tracking-wider transition-all duration-300 flex items-center justify-center gap-3 shadow-xl shadow-red-600/20">
-                    <i data-lucide="shopping-cart" class="w-5 h-5"></i> Adicionar ao Carrinho
-                </button>
             </div>
         </div>
 
@@ -310,8 +229,8 @@
     const fakeNames = ["Delson", "Mauro", "Cláudio", "Aline", "Filipe", "Gelson", "Sandra", "Yuri", "Belson", "Edna"];
     const pagamentos = ["Express", "Transferência Bancária"];
     
-    let selectedCourseType = 'vista'; 
-    let activeProductContext = null;
+   
+ 
 
     const parsePrice = (val) => {
         if (typeof val === 'number') return val;
@@ -322,144 +241,9 @@
         return text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
     };
 
-    function updateCartBadge() {
-        const badge = document.getElementById('cart-count');
-        if (badge) badge.innerText = cart.length;
-    }
-
-    function addToCart(id) {
-    const product = produtos.find(p => p.id === id);
-    if (!product) return;
-
-    let precoFinal = parsePrice(product.preco);
-    let sufixo = "";
-    let tipoLicenca = "basica";
-
-    if (product.categoria.toLowerCase() === 'beats') {
-
-        if (selectedLicense === 'wav') {
-            precoFinal *= 1.5;
-            sufixo = " (Licença MP3 + WAV)";
-            tipoLicenca = "wav";
-        } 
-        else if (selectedLicense === 'premium') {
-            precoFinal *= 2;
-            sufixo = " (Licença MP3 + WAV + STEMS)";
-            tipoLicenca = "premium";
-        } 
-        else {
-            sufixo = " (Licença Básica)";
-            tipoLicenca = "basica";
-        }
-    }
-
-    // VERIFICA SE JÁ EXISTE NO CARRINHO
-    const jaExiste = cart.find(item =>
-        item.id === product.id &&
-        item.tipoCompra === tipoLicenca
-    );
-
-    if (jaExiste) {
-        Swal.fire({
-            icon: 'info',
-            title: 'PRODUTO JÁ ESTÁ NO CARRINHO',
-            text: 'Este produto já foi adicionado.',
-            background: '#0d0d0d',
-            color: '#fff',
-            confirmButtonColor: '#dc2626'
-        });
-
-        return;
-    }
-
-    cart.push({
-        id: product.id,
-        nome: product.nome + sufixo,
-        preco: precoFinal,
-        imagem: product.imagem,
-        categoria: product.categoria,
-        tipoCompra: tipoLicenca
-    });
-
-    localStorage.setItem('loneke_cart', JSON.stringify(cart));
-    updateCartBadge();
-
-    Swal.fire({
-        icon: 'success',
-        title: 'PRODUTO ADICIONADO NO CARRINHO',
-        background: '#0d0d0d',
-        color: '#fff',
-        confirmButtonColor: '#dc2626'
-    });
-}
-    
 
 
-
-
-    function addCourseToCartWithInstallment() {
-        if (!activeProductContext) return;
-
-        const jaExiste = cart.find(item => item.id === activeProductContext.id && item.tipoCompra === selectedCourseType);
-        if (jaExiste) {
-            Swal.fire({ 
-                icon: 'info', 
-                title: 'PRODUTO JÁ ESTÁ NO CARRINHO', 
-                background: '#0d0d0d', 
-                color: '#fff', 
-                confirmButtonColor: '#dc2626' 
-            });
-            return;
-        }
-
-        let precoFinal = parsePrice(activeProductContext.preco);
-        if (selectedCourseType === 'parcelado') {
-            precoFinal = precoFinal * 0.65;
-        }
-
-        cart.push({
-            id: activeProductContext.id,
-            nome: activeProductContext.nome + (selectedCourseType === 'parcelado' ? " (1ª Prestação)" : " (Acesso Vitalício)"),
-            preco: precoFinal,
-            imagem: activeProductContext.imagem,
-            categoria: activeProductContext.categoria,
-            tipoCompra: selectedCourseType
-        });
-
-        localStorage.setItem('loneke_cart', JSON.stringify(cart));
-        updateCartBadge();
-
-        Swal.fire({
-            icon: 'success',
-            title: 'PRODUTO ADICIONADO NO CARRINHO',
-            background: '#0d0d0d',
-            color: '#fff',
-            confirmButtonColor: '#dc2626'
-        });
-    }
-
-    // CORRIGIDO: Agora aponta diretamente para 'checkout.html' na mesma pasta
-    function goToCheckout() {
-        if (cart.length === 0) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'CARRINHO VAZIO',
-                text: 'Adicione pelo menos um produto antes de ir para o checkout.',
-                background: '#0d0d0d',
-                color: '#fff',
-                confirmButtonColor: '#dc2626'
-            });
-            return;
-        }
-
-        const loader = document.getElementById('checkout-loader');
-        loader.classList.remove('hidden'); 
-
-        setTimeout(() => {
-            window.location.href = 'checkout.html'; 
-        }, 1800);
-    }
-
+   
 function getLocalImagePath(imagem) {
     // Adiciona o prefixo '../' para sair da pasta 'pages' e ir para a raiz
     // Verifica se já não foi adicionado para evitar duplicidade
@@ -530,15 +314,36 @@ function getLocalImagePath(imagem) {
                                 <span class="text-red-600 font-bold text-[9px] uppercase tracking-widest block">${item.categoria}</span>
                                 <h4 onclick="openProductPage(${item.id})" class="text-base font-black uppercase italic cursor-pointer text-white break-words min-h-[3rem] flex items-center leading-tight">${item.nome}</h4>
                             </div>
-                            <div class="mt-4 flex flex-col pt-2">
-                                <span class="text-[10px] text-gray-500 line-through">${oldPrice} Kz</span>
-                                <div class="flex justify-between items-center mt-1">
-                                    <span class="font-black text-white text-xl">${item.preco.toLocaleString()} Kz</span>
-                                    <button onclick="addToCart(${item.id})" class="bg-white text-black p-3 rounded-xl hover:bg-red-600 hover:text-white transition-all">
-                                        <i data-lucide="shopping-cart" class="w-5 h-5"></i>
-                                    </button>
-                                </div>
-                            </div>
+                           <div class="mt-4 flex flex-col pt-2">
+
+    <span class="text-[10px] text-gray-500 line-through">
+        ${oldPrice} Kz
+    </span>
+
+    <span class="font-black text-white text-xl mb-4">
+        ${item.preco.toLocaleString()} Kz
+    </span>
+
+    <div class="grid grid-cols-2 gap-2">
+
+        <a
+            href="${item.checkout}"
+            target="_blank"
+            class="bg-red-600 text-white py-3 rounded-xl text-center font-black uppercase text-[11px] hover:bg-red-700 transition-all"
+        >
+            Comprar
+        </a>
+
+        <button
+            onclick="openProductPage(${item.id})"
+            class="bg-white text-black py-3 rounded-xl font-black uppercase text-[11px] hover:bg-zinc-200 transition-all"
+        >
+            Ver Mais
+        </button>
+
+    </div>
+
+</div>
                         </div>
                     </div>`;
             }).join('');
@@ -574,7 +379,7 @@ function getLocalImagePath(imagem) {
         document.body.style.overflow = '';
         
         document.getElementById('prod-video').src = '';
-        document.getElementById('course-video').src = '';
+   
 
         const url = new URL(window.location);
         url.searchParams.delete('produto');
@@ -616,262 +421,120 @@ function getLocalImagePath(imagem) {
     }
 
     function openProductPage(id) {
-        const product = produtos.find(p => p.id === id);
-        if (!product) return;
-        
-        activeProductContext = product;
-        selectedCourseType = 'vista';
 
-        const url = new URL(window.location);
-        url.searchParams.set('produto', createSlug(product.nome));
-        window.history.pushState({}, '', url);
+    const product = produtos.find(p => p.id === id);
 
-        const isCurso = product.categoria.toLowerCase().trim().includes('curso');
-        const layoutStandard = document.getElementById('layout-standard-product');
-        const layoutCourse = document.getElementById('layout-course-product');
-        const localImg = getLocalImagePath(product.imagem, product.categoria);
+    if (!product) return;
 
-        if (isCurso) {
-            layoutStandard.classList.add('hidden');
-            layoutCourse.classList.remove('hidden');
-            
-            document.getElementById('course-headline').innerText = product.headline || product.nome;
-            document.getElementById('course-subheadline').innerText = product.subheadline || "Aprenda com Loneke No Beat.";
-            document.getElementById('course-price').innerText = product.preco.toLocaleString() + " Kz";
-            document.getElementById('course-price-old').innerText = (product.precoAntigo || Math.floor(parsePrice(product.preco) * 1.4)).toLocaleString() + " Kz";
-            document.getElementById('course-video').src = `https://www.youtube.com/embed/${product.videoID || 'dQw4w9WgXcQ'}`;
-            document.getElementById('course-add-btn').setAttribute('onclick', `addCourseToCartWithInstallment()`);
+    const localImg = getLocalImagePath(product.imagem);
 
-            const containerCursoList = document.getElementById('course-content-container');
-            const listaCursoContent = document.getElementById('lista-curso-content');
-            
-            if (product.conteudo && product.conteudo.length > 0) {
-                containerCursoList.classList.remove('hidden');
-                listaCursoContent.innerHTML = product.conteudo.map(c => `
-                    <div class="flex items-center gap-3 bg-zinc-900 border border-white/5 p-3 rounded-xl hover:border-white/10 transition-colors">
-                        <div class="bg-red-600/10 p-1.5 rounded-lg flex-shrink-0">
-                            <i data-lucide="play-circle" class="w-4 h-4 text-red-500"></i>
-                        </div>
-                        <span class="text-[10px] font-black text-zinc-300 uppercase tracking-wide truncate">${c}</span>
-                    </div>
-                `).join('');
-            } else {
-                containerCursoList.classList.add('hidden');
-            }
+    // Atualiza URL
+    const url = new URL(window.location);
+    url.searchParams.set('produto', createSlug(product.nome));
+    window.history.pushState({}, '', url);
 
-            const seletorPagamento = document.getElementById('course-payment-selector');
-            const alertaInstalment = document.getElementById('course-installment-alert');
-            
-            if (parsePrice(product.preco) >= 10000) {
-                seletorPagamento.classList.remove('hidden');
-                document.getElementById('type-payment-vista').classList.add('active');
-                document.getElementById('type-payment-parcelado').classList.remove('active');
-                document.getElementById('course-payment-badge').innerText = "Acesso vitalício";
-                document.getElementById('course-payment-badge').className = "text-emerald-500 text-[10px] font-bold block uppercase tracking-wider mt-1";
-            } else {
-                seletorPagamento.classList.add('hidden');
-            }
-            alertaInstalment.classList.add('hidden');
+    // Dados principais
+    document.getElementById('prod-title').innerText =
+        product.nome;
 
-        } else {
-            layoutCourse.classList.add('hidden');
-            layoutStandard.classList.remove('hidden');
+    document.getElementById('prod-tag').innerText =
+        product.categoria;
 
-            const isBeat = product.categoria.toLowerCase() === 'beats';
-const licenseSelector = document.getElementById('license-selector');
+    document.getElementById('prod-full-desc').innerText =
+        product.descricao || 'Produto Premium Loneke no Beat';
 
-if (isBeat) {
-    licenseSelector.classList.remove('hidden');
-    selectLicense('basica');
-} else {
-    licenseSelector.classList.add('hidden');
-}
-            // ... dentro do else (layout standard) ...
+    document.getElementById('prod-price').innerText =
+        product.preco.toLocaleString() + ' Kz';
 
-            document.getElementById('prod-title').innerText = product.nome;
-            document.getElementById('prod-full-desc').innerText = product.descricao || "Arsenal Premium Loneke no Beat.";
-            document.getElementById('prod-price').innerText = product.preco.toLocaleString() + " Kz";
-            document.getElementById('prod-price-old').innerText = (product.precoAntigo || Math.floor(parsePrice(product.preco) * 1.4)).toLocaleString() + " Kz";
-            document.getElementById('prod-img-1').src = localImg;
-            document.getElementById('prod-tag').innerText = product.categoria;
-            document.getElementById('prod-video').src = `https://www.youtube.com/embed/${product.videoID || 'dQw4w9WgXcQ'}`;
-            document.getElementById('prod-add-btn').setAttribute('onclick', `addToCart(${product.id})`);
+    document.getElementById('prod-price-old').innerText =
+        (product.precoAntigo ||
+        Math.floor(product.preco * 1.4))
+        .toLocaleString() + ' Kz';
 
-            const containerListas = document.getElementById('container-listas-produto');
-            const pecacontent = document.getElementById('lista-pecas-content');
-            const musiccontent = document.getElementById('lista-musicas-content');
+    document.getElementById('prod-img-1').src =
+        localImg;
 
-            const temConteudo = product.conteudo && product.conteudo.length > 0;
-            const temMusicas = product.musicasDemonstracao && product.musicasDemonstracao.length > 0;
+    // Vídeo
+    document.getElementById('prod-video').src =
+        `https://www.youtube.com/embed/${product.videoID || ''}`;
 
-            if (temConteudo || temMusicas) {
-                containerListas.classList.remove('hidden');
-                
-                if (temConteudo) {
-                    pecacontent.innerHTML = product.conteudo.map(p => `
-                        <div class="flex items-center gap-3 bg-zinc-900 border border-white/5 p-3 rounded-xl hover:border-white/10 transition-colors">
-                            <div class="bg-red-600/10 p-1.5 rounded-lg flex-shrink-0">
-                                <i data-lucide="package" class="w-4 h-4 text-red-500"></i>
-                            </div>
-                            <span class="text-[10px] font-black text-zinc-300 uppercase tracking-wide truncate">${p}</span>
-                        </div>
-                    `).join('');
-                } else {
-                    pecacontent.innerHTML = `<span class="text-zinc-500 text-xs">Nenhum item listado</span>`;
-                }
+    // Botão comprar
+    document.getElementById('prod-buy-btn').href =
+        product.checkout || '#';
 
-                if (temMusicas) {
-                    musiccontent.innerHTML = product.musicasDemonstracao.map(m => `
-                        <div class="flex items-center gap-3 bg-zinc-900 border border-white/5 p-3 rounded-xl hover:border-white/10 transition-colors">
-                            <div class="bg-red-600/10 p-1.5 rounded-lg flex-shrink-0">
-                                <i data-lucide="disc" class="w-4 h-4 text-red-500"></i>
-                            </div>
-                            <span class="text-[10px] font-black text-zinc-300 uppercase tracking-wide truncate italic">${m}</span>
-                        </div>
-                    `).join('');
-                } else {
-                    musiccontent.innerHTML = `<span class="text-zinc-500 text-xs">Sem demonstração de áudio</span>`;
-                }
-            } else {
-                containerListas.classList.add('hidden');
-            }
-        }
-        
-        document.getElementById('product-page').classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-        
-        const topAnchor = document.getElementById('product-top-anchor');
-        if (topAnchor) {
-            topAnchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-        
-        renderRecommendations(product.categoria, product.id);
-        lucide.createIcons();
+    // Conteúdo do produto
+    const containerListas =
+        document.getElementById('container-listas-produto');
+
+    const pecacontent =
+        document.getElementById('lista-pecas-content');
+
+    const musiccontent =
+        document.getElementById('lista-musicas-content');
+
+    const temConteudo =
+        product.conteudo &&
+        product.conteudo.length > 0;
+
+    const temMusicas =
+        product.musicasDemonstracao &&
+        product.musicasDemonstracao.length > 0;
+
+    if (temConteudo || temMusicas) {
+
+        containerListas.classList.remove('hidden');
+
+        pecacontent.innerHTML = temConteudo
+            ? product.conteudo.map(item => `
+                <div class="flex items-center gap-3 bg-zinc-900 border border-white/5 p-3 rounded-xl">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-red-500"></i>
+                    <span class="text-xs">${item}</span>
+                </div>
+            `).join('')
+            : '';
+
+        musiccontent.innerHTML = temMusicas
+            ? product.musicasDemonstracao.map(item => `
+                <div class="flex items-center gap-3 bg-zinc-900 border border-white/5 p-3 rounded-xl">
+                    <i data-lucide="music" class="w-4 h-4 text-red-500"></i>
+                    <span class="text-xs">${item}</span>
+                </div>
+            `).join('')
+            : '';
+
+    } else {
+
+        containerListas.classList.add('hidden');
+
     }
 
-    function selectCoursePaymentType(type) {
-        if (!activeProductContext) return;
-        selectedCourseType = type;
+    // Recomendações
+    renderRecommendations(
+        product.categoria,
+        product.id
+    );
 
-        const cardVista = document.getElementById('type-payment-vista');
-        const cardParcelado = document.getElementById('type-payment-parcelado');
-        const alertaInstalment = document.getElementById('course-installment-alert');
-        const precoDisplay = document.getElementById('course-price');
-        const badgeDisplay = document.getElementById('course-payment-badge');
+    // Mostrar página
+    document.getElementById('product-page')
+        .classList.remove('hidden');
 
-        if (type === 'parcelado') {
-            cardVista.classList.remove('active');
-            cardParcelado.classList.add('active');
-            alertaInstalment.classList.remove('hidden');
-            
-            const valorParcela = parsePrice(activeProductContext.preco) * 0.65;
-            precoDisplay.innerText = valorParcela.toLocaleString() + " Kz";
-            
-            badgeDisplay.innerText = "1ª Prestação (65% Ativo)";
-            badgeDisplay.className = "text-amber-500 text-[10px] font-black block uppercase tracking-wider mt-1";
-        } else {
-            cardParcelado.classList.remove('active');
-            cardVista.classList.add('active');
-            alertaInstalment.classList.add('hidden');
-            precoDisplay.innerText = activeProductContext.preco.toLocaleString() + " Kz";
-            badgeDisplay.innerText = "Acesso vitalício";
-            badgeDisplay.className = "text-emerald-500 text-[10px] font-bold block uppercase tracking-wider mt-1";
-        }
-    }
+    document.body.style.overflow = 'hidden';
 
-    window.onload = () => {
-        renderProducts();
-        updateCartBadge();
-        setInterval(showFakeNotification, 9000);
-    };
+    lucide.createIcons();
 
-
-let selectedLicense = 'basica'; // 'basica', 'wav', 'premium'
-
-function selectLicense(type) {
-    selectedLicense = type;
-    
-    // Atualizar visual dos botões
-    document.querySelectorAll('.license-btn').forEach(btn => btn.classList.remove('bg-red-600/10', 'border-red-600'));
-    document.getElementById('lic-' + type).classList.add('bg-red-600/10', 'border-red-600');
-
-    // Recalcular preço
-    const basePrice = parsePrice(activeProductContext.preco);
-    let finalPrice = basePrice;
-    
-    if (type === 'wav') finalPrice = basePrice * 1.5;
-    if (type === 'premium') finalPrice = basePrice * 2.0;
-
-    document.getElementById('prod-price').innerText = finalPrice.toLocaleString() + " Kz";
 }
 
-let selectedBeatLicense = 'basica'; // Variável global de controle
+  
+ window.addEventListener('load', () => {
 
-function selectBeatLicense(license) {
-    selectedBeatLicense = license;
-    // Lógica visual de botões ativos
-    document.querySelectorAll('[id^="license-"]').forEach(el => el.classList.remove('active'));
-    document.getElementById('license-' + license).classList.add('active');
-    
-    // Atualiza o preço principal no topo se quiser (opcional)
-    const basePrice = parsePrice(activeProductContext.preco);
-    const prices = { 'basica': 1, 'standard': 1.5, 'premium': 2 };
-    document.getElementById('prod-price').innerText = (basePrice * prices[license]).toLocaleString() + " Kz";
-}
+    currentCategory = 'all';
+    currentPage = 1;
 
+    renderProducts();
 
+    setInterval(showFakeNotification, 9000);
 
-function addBeatToCart() {
-
-const jaExiste = cart.find(item =>
-    item.id === activeProductContext.id &&
-    item.tipoCompra === selectedBeatLicense
-);
-
-if (jaExiste) {
-    Swal.fire({
-        icon: 'info',
-        title: 'BEAT JÁ ESTÁ NO CARRINHO',
-        background: '#0d0d0d',
-        color: '#fff',
-        confirmButtonColor: '#dc2626'
-    });
-    return;
-}
-
-const basePrice = parsePrice(activeProductContext.preco);
-
-const multipliers = {
-    basica: 1,
-    standard: 1.5,
-    premium: 2
-};
-
-cart.push({
-    id: activeProductContext.id,
-    nome: `${activeProductContext.nome} (Licença: ${selectedBeatLicense.toUpperCase()})`,
-    preco: basePrice * multipliers[selectedBeatLicense],
-    imagem: activeProductContext.imagem,
-    categoria: 'beats',
-    tipoCompra: selectedBeatLicense
-});
-
-localStorage.setItem('loneke_cart', JSON.stringify(cart));
-updateCartBadge();
-
-Swal.fire({
-    icon: 'success',
-    title: 'BEAT ADICIONADO AO CARRINHO',
-    background: '#0d0d0d',
-    color: '#fff',
-    confirmButtonColor: '#dc2626'
-});
-}
-
-
-
-
-
+});   
 
 
 
