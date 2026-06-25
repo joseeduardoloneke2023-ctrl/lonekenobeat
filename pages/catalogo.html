@@ -71,10 +71,7 @@
             </div>
 
             <div class="flex items-center gap-8">
-                <div onclick="goToCheckout()" class="relative cursor-pointer p-4 bg-red-600 rounded-2xl hover:scale-105 transition-transform group">
-                    <i data-lucide="shopping-cart" size="24" class="text-white"></i>
-                    <span id="cart-count" class="absolute -top-1 -right-1 bg-white text-black text-[11px] w-6 h-6 flex items-center justify-center rounded-full font-black shadow-2xl">0</span>
-                </div>
+                
             </div>
         </div>
     </nav>
@@ -194,14 +191,14 @@
                         
                     </div>
 
-                    <div class="flex flex-col sm:flex-row gap-4 mb-12">
-                        <button id="prod-add-btn" class="flex-1 bg-white text-black hover:bg-red-600 hover:text-white px-8 py-5 rounded-xl font-bold uppercase text-sm transition-all duration-300 flex items-center justify-center gap-3 shadow-lg shadow-white/5">
-                            <i data-lucide="shopping-bag" class="w-5 h-5"></i> Adicionar ao Carrinho
-                        </button>
-                        <a id="btn-promo-direct" href="#" target="_blank" class="hidden w-full bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-5 rounded-xl font-bold uppercase text-sm transition-all duration-300 items-center justify-center gap-3 shadow-lg shadow-emerald-600/20 text-center">
-                             <i data-lucide="zap" class="w-5 h-5"></i> Comprar no Valor Promocional
-                                </a>
-                    </div>
+                    <div class="flex flex-col gap-4 mb-12">
+    <a id="btn-nacional" href="#" target="_blank" class="w-full bg-white text-black hover:bg-red-600 hover:text-white px-8 py-5 rounded-xl font-bold uppercase text-sm transition-all duration-300 flex items-center justify-center gap-3">
+        <i data-lucide="credit-card" class="w-5-h-5"></i> Comprar (Nacional - Kz)
+    </a>
+    <a id="btn-internacional" href="#" target="_blank" class="w-full bg-red-600 hover:bg-red-700 text-white px-8 py-5 rounded-xl font-bold uppercase text-sm transition-all duration-300 flex items-center justify-center gap-3">
+        <i data-lucide="globe" class="w-5-h-5"></i> Comprar (Internacional - USD)
+    </a>
+</div>
                 </div>
             </div>
 
@@ -282,9 +279,14 @@
                     <span id="course-payment-badge" class="text-emerald-500 text-[10px] font-bold block uppercase tracking-wider mt-1">Acesso vitalício</span>
                 </div>
                 
-                <button id="course-add-btn" class="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white px-10 py-5 rounded-xl font-black uppercase text-sm tracking-wider transition-all duration-300 flex items-center justify-center gap-3 shadow-xl shadow-red-600/20">
-                    <i data-lucide="shopping-cart" class="w-5 h-5"></i> Adicionar ao Carrinho
-                </button>
+                <div class="flex flex-col gap-4 mb-12">
+    <a id="btn-nacional" href="#" target="_blank" class="w-full bg-white text-black hover:bg-red-600 hover:text-white px-8 py-5 rounded-xl font-bold uppercase text-sm transition-all duration-300 flex items-center justify-center gap-3">
+        <i data-lucide="credit-card" class="w-5-h-5"></i> Comprar (Nacional - Kz)
+    </a>
+    <a id="btn-internacional" href="#" target="_blank" class="w-full bg-red-600 hover:bg-red-700 text-white px-8 py-5 rounded-xl font-bold uppercase text-sm transition-all duration-300 flex items-center justify-center gap-3">
+        <i data-lucide="globe" class="w-5-h-5"></i> Comprar (Internacional - USD)
+    </a>
+</div>
             </div>
         </div>
 
@@ -301,7 +303,6 @@
     <script src="../produtos.js"></script>
 
 <script>
-    let cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
     let currentCategory = 'all';
     const itemsPerPage = 20;
     let currentPage = 1;
@@ -320,144 +321,12 @@
         return text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
     };
 
-    function updateCartBadge() {
-        const badge = document.getElementById('cart-count');
-        if (badge) badge.innerText = cart.length;
-    }
+   
+   
 
-    function addToCart(id) {
-    const product = produtos.find(p => p.id === id);
-    if (!product) return;
-
-    let precoFinal = parsePrice(product.preco);
-    let sufixo = "";
-    let tipoLicenca = "basica";
-
-    if (product.categoria.toLowerCase() === 'beats') {
-
-        if (selectedLicense === 'wav') {
-            precoFinal *= 1.5;
-            sufixo = " (Licença MP3 + WAV)";
-            tipoLicenca = "wav";
-        } 
-        else if (selectedLicense === 'premium') {
-            precoFinal *= 2;
-            sufixo = " (Licença MP3 + WAV + STEMS)";
-            tipoLicenca = "premium";
-        } 
-        else {
-            sufixo = " (Licença Básica)";
-            tipoLicenca = "basica";
-        }
-    }
-
-    // VERIFICA SE JÁ EXISTE NO CARRINHO
-    const jaExiste = cart.find(item =>
-        item.id === product.id &&
-        item.tipoCompra === tipoLicenca
-    );
-
-    if (jaExiste) {
-        Swal.fire({
-            icon: 'info',
-            title: 'PRODUTO JÁ ESTÁ NO CARRINHO',
-            text: 'Este produto já foi adicionado.',
-            background: '#0d0d0d',
-            color: '#fff',
-            confirmButtonColor: '#dc2626'
-        });
-
-        return;
-    }
-
-    cart.push({
-        id: product.id,
-        nome: product.nome + sufixo,
-        preco: precoFinal,
-        imagem: product.imagem,
-        categoria: product.categoria,
-        tipoCompra: tipoLicenca
-    });
-
-    localStorage.setItem('loneke_cart', JSON.stringify(cart));
-    updateCartBadge();
-
-    Swal.fire({
-        icon: 'success',
-        title: 'PRODUTO ADICIONADO NO CARRINHO',
-        background: '#0d0d0d',
-        color: '#fff',
-        confirmButtonColor: '#dc2626'
-    });
-}
-    
-
-
-
-
-    function addCourseToCartWithInstallment() {
-        if (!activeProductContext) return;
-
-        const jaExiste = cart.find(item => item.id === activeProductContext.id && item.tipoCompra === selectedCourseType);
-        if (jaExiste) {
-            Swal.fire({ 
-                icon: 'info', 
-                title: 'PRODUTO JÁ ESTÁ NO CARRINHO', 
-                background: '#0d0d0d', 
-                color: '#fff', 
-                confirmButtonColor: '#dc2626' 
-            });
-            return;
-        }
-
-        let precoFinal = parsePrice(activeProductContext.preco);
-        if (selectedCourseType === 'parcelado') {
-            precoFinal = precoFinal * 0.65;
-        }
-
-        cart.push({
-            id: activeProductContext.id,
-            nome: activeProductContext.nome + (selectedCourseType === 'parcelado' ? " (1ª Prestação)" : " (Acesso Vitalício)"),
-            preco: precoFinal,
-            imagem: activeProductContext.imagem,
-            categoria: activeProductContext.categoria,
-            tipoCompra: selectedCourseType
-        });
-
-        localStorage.setItem('loneke_cart', JSON.stringify(cart));
-        updateCartBadge();
-
-        Swal.fire({
-            icon: 'success',
-            title: 'PRODUTO ADICIONADO NO CARRINHO',
-            background: '#0d0d0d',
-            color: '#fff',
-            confirmButtonColor: '#dc2626'
-        });
-    }
-
+   
     // CORRIGIDO: Agora aponta diretamente para 'checkout.html' na mesma pasta
-    function goToCheckout() {
-        if (cart.length === 0) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'CARRINHO VAZIO',
-                text: 'Adicione pelo menos um produto antes de ir para o checkout.',
-                background: '#0d0d0d',
-                color: '#fff',
-                confirmButtonColor: '#dc2626'
-            });
-            return;
-        }
-
-        const loader = document.getElementById('checkout-loader');
-        loader.classList.remove('hidden'); 
-
-        setTimeout(() => {
-            window.location.href = 'checkout.html'; 
-        }, 1800);
-    }
-
+    
 function getLocalImagePath(imagem) {
     // Adiciona o prefixo '../' para sair da pasta 'pages' e ir para a raiz
     // Verifica se já não foi adicionado para evitar duplicidade
@@ -613,135 +482,96 @@ function getLocalImagePath(imagem) {
             </div>`;
     }
 
-    function openProductPage(id) {
-        const product = produtos.find(p => p.id === id);
-        if (!product) return;
+   function openProductPage(id) {
+    const product = produtos.find(p => p.id === id);
+    if (!product) return;
+
+    // Atualiza os links dos novos botões de compra
+    const btnNacional = document.getElementById('btn-nacional');
+    const btnInternacional = document.getElementById('btn-internacional');
+    
+    if (btnNacional) btnNacional.href = product.linkNacional || "#";
+    if (btnInternacional) btnInternacional.href = product.linkInternacional || "#";
+    
+    activeProductContext = product;
+
+    const url = new URL(window.location);
+    url.searchParams.set('produto', createSlug(product.nome));
+    window.history.pushState({}, '', url);
+
+    const isCurso = product.categoria.toLowerCase().trim().includes('curso');
+    const layoutStandard = document.getElementById('layout-standard-product');
+    const layoutCourse = document.getElementById('layout-course-product');
+    const localImg = getLocalImagePath(product.imagem, product.categoria);
+
+    if (isCurso) {
+        layoutStandard.classList.add('hidden');
+        layoutCourse.classList.remove('hidden');
         
-        activeProductContext = product;
-        selectedCourseType = 'vista';
+        document.getElementById('course-headline').innerText = product.headline || product.nome;
+        document.getElementById('course-subheadline').innerText = product.subheadline || "Aprenda com Loneke No Beat.";
+        document.getElementById('course-price').innerText = product.preco.toLocaleString() + " Kz";
+        document.getElementById('course-price-old').innerText = (product.precoAntigo || Math.floor(parsePrice(product.preco) * 1.4)).toLocaleString() + " Kz";
+        document.getElementById('course-video').src = `https://www.youtube.com/embed/${product.videoID || 'dQw4w9WgXcQ'}`;
 
-        const url = new URL(window.location);
-        url.searchParams.set('produto', createSlug(product.nome));
-        window.history.pushState({}, '', url);
-
-        const isCurso = product.categoria.toLowerCase().trim().includes('curso');
-        const layoutStandard = document.getElementById('layout-standard-product');
-        const layoutCourse = document.getElementById('layout-course-product');
-        const localImg = getLocalImagePath(product.imagem, product.categoria);
-
-        if (isCurso) {
-            layoutStandard.classList.add('hidden');
-            layoutCourse.classList.remove('hidden');
-            
-            document.getElementById('course-headline').innerText = product.headline || product.nome;
-            document.getElementById('course-subheadline').innerText = product.subheadline || "Aprenda com Loneke No Beat.";
-            document.getElementById('course-price').innerText = product.preco.toLocaleString() + " Kz";
-            document.getElementById('course-price-old').innerText = (product.precoAntigo || Math.floor(parsePrice(product.preco) * 1.4)).toLocaleString() + " Kz";
-            document.getElementById('course-video').src = `https://www.youtube.com/embed/${product.videoID || 'dQw4w9WgXcQ'}`;
-            document.getElementById('course-add-btn').setAttribute('onclick', `addCourseToCartWithInstallment()`);
-
-            const containerCursoList = document.getElementById('course-content-container');
-            const listaCursoContent = document.getElementById('lista-curso-content');
-            
-            if (product.conteudo && product.conteudo.length > 0) {
-                containerCursoList.classList.remove('hidden');
-                listaCursoContent.innerHTML = product.conteudo.map(c => `
-                    <div class="flex items-center gap-3 bg-zinc-900 border border-white/5 p-3 rounded-xl hover:border-white/10 transition-colors">
-                        <div class="bg-red-600/10 p-1.5 rounded-lg flex-shrink-0">
-                            <i data-lucide="play-circle" class="w-4 h-4 text-red-500"></i>
-                        </div>
-                        <span class="text-[10px] font-black text-zinc-300 uppercase tracking-wide truncate">${c}</span>
+        const containerCursoList = document.getElementById('course-content-container');
+        const listaCursoContent = document.getElementById('lista-curso-content');
+        
+        if (product.conteudo && product.conteudo.length > 0) {
+            containerCursoList.classList.remove('hidden');
+            listaCursoContent.innerHTML = product.conteudo.map(c => `
+                <div class="flex items-center gap-3 bg-zinc-900 border border-white/5 p-3 rounded-xl hover:border-white/10 transition-colors">
+                    <div class="bg-red-600/10 p-1.5 rounded-lg flex-shrink-0">
+                        <i data-lucide="play-circle" class="w-4 h-4 text-red-500"></i>
                     </div>
-                `).join('');
-            } else {
-                containerCursoList.classList.add('hidden');
-            }
-
-            const seletorPagamento = document.getElementById('course-payment-selector');
-            const alertaInstalment = document.getElementById('course-installment-alert');
-            
-            if (parsePrice(product.preco) >= 10000) {
-                seletorPagamento.classList.remove('hidden');
-                document.getElementById('type-payment-vista').classList.add('active');
-                document.getElementById('type-payment-parcelado').classList.remove('active');
-                document.getElementById('course-payment-badge').innerText = "Acesso vitalício";
-                document.getElementById('course-payment-badge').className = "text-emerald-500 text-[10px] font-bold block uppercase tracking-wider mt-1";
-            } else {
-                seletorPagamento.classList.add('hidden');
-            }
-            alertaInstalment.classList.add('hidden');
-
+                    <span class="text-[10px] font-black text-zinc-300 uppercase tracking-wide truncate">${c}</span>
+                </div>
+            `).join('');
         } else {
-            layoutCourse.classList.add('hidden');
-            layoutStandard.classList.remove('hidden');
-
-            const isBeat = product.categoria.toLowerCase() === 'beats';
-const licenseSelector = document.getElementById('license-selector');
-
-if (isBeat) {
-    licenseSelector.classList.remove('hidden');
-    selectLicense('basica');
-} else {
-    licenseSelector.classList.add('hidden');
-}
-            // ... dentro do else (layout standard) ...
-
-            document.getElementById('prod-title').innerText = product.nome;
-            document.getElementById('prod-full-desc').innerText = product.descricao || "Arsenal Premium Loneke no Beat.";
-            document.getElementById('prod-price').innerText = product.preco.toLocaleString() + " Kz";
-            document.getElementById('prod-price-old').innerText = (product.precoAntigo || Math.floor(parsePrice(product.preco) * 1.4)).toLocaleString() + " Kz";
-            document.getElementById('prod-img-1').src = localImg;
-            document.getElementById('prod-tag').innerText = product.categoria;
-            document.getElementById('prod-video').src = `https://www.youtube.com/embed/${product.videoID || 'dQw4w9WgXcQ'}`;
-            document.getElementById('prod-add-btn').setAttribute('onclick', `addToCart(${product.id})`);
-        // Lógica para o botão de compra direta
-const btnPromo = document.getElementById('btn-promo-direct');
-if (product.linkPromocional) {
-    btnPromo.href = product.linkPromocional;
-    btnPromo.classList.remove('hidden');
-    btnPromo.classList.add('flex');
-} else {
-    btnPromo.classList.add('hidden');
-    btnPromo.classList.remove('flex');
-}
-
-
-            const containerListas = document.getElementById('container-listas-produto');
-            const pecacontent = document.getElementById('lista-pecas-content');
-            const musiccontent = document.getElementById('lista-musicas-content');
-
-            const temConteudo = product.conteudo && product.conteudo.length > 0;
-
-            if (temConteudo || temMusicas) {
-                containerListas.classList.remove('hidden');
-                
-                if (temConteudo) {
-                    pecacontent.innerHTML = product.conteudo.map(p => `
-                        <div class="flex items-center gap-3 bg-zinc-900 border border-white/5 p-3 rounded-xl hover:border-white/10 transition-colors">
-                            <div class="bg-red-600/10 p-1.5 rounded-lg flex-shrink-0">
-                                <i data-lucide="package" class="w-4 h-4 text-red-500"></i>
-                            </div>
-                            <span class="text-[10px] font-black text-zinc-300 uppercase tracking-wide truncate">${p}</span>
-                        </div>
-                    `).join('');
-                } else {
-                    pecacontent.innerHTML = `<span class="text-zinc-500 text-xs">Nenhum item listado</span>`;
-                }
-
-            }
+            containerCursoList.classList.add('hidden');
         }
-        
-        document.getElementById('product-page').classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-        
-        const topAnchor = document.getElementById('product-top-anchor');
-        if (topAnchor) {
-            topAnchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    } else {
+        layoutCourse.classList.add('hidden');
+        layoutStandard.classList.remove('hidden');
+
+        document.getElementById('prod-title').innerText = product.nome;
+        document.getElementById('prod-full-desc').innerText = product.descricao || "Arsenal Premium Loneke no Beat.";
+        document.getElementById('prod-price').innerText = product.preco.toLocaleString() + " Kz";
+        document.getElementById('prod-price-old').innerText = (product.precoAntigo || Math.floor(parsePrice(product.preco) * 1.4)).toLocaleString() + " Kz";
+        document.getElementById('prod-img-1').src = localImg;
+        document.getElementById('prod-tag').innerText = product.categoria;
+        document.getElementById('prod-video').src = `https://www.youtube.com/embed/${product.videoID || 'dQw4w9WgXcQ'}`;
+
+        const containerListas = document.getElementById('container-listas-produto');
+        const pecacontent = document.getElementById('lista-pecas-content');
+        const temConteudo = product.conteudo && product.conteudo.length > 0;
+
+        if (temConteudo) {
+            containerListas.classList.remove('hidden');
+            pecacontent.innerHTML = product.conteudo.map(p => `
+                <div class="flex items-center gap-3 bg-zinc-900 border border-white/5 p-3 rounded-xl hover:border-white/10 transition-colors">
+                    <div class="bg-red-600/10 p-1.5 rounded-lg flex-shrink-0">
+                        <i data-lucide="package" class="w-4 h-4 text-red-500"></i>
+                    </div>
+                    <span class="text-[10px] font-black text-zinc-300 uppercase tracking-wide truncate">${p}</span>
+                </div>
+            `).join('');
+        } else {
+            containerListas.classList.add('hidden');
         }
-        
-        renderRecommendations(product.categoria, product.id);
-        lucide.createIcons();
     }
+    
+    document.getElementById('product-page').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    
+    const topAnchor = document.getElementById('product-top-anchor');
+    if (topAnchor) topAnchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    
+    renderRecommendations(product.categoria, product.id);
+    lucide.createIcons();
+}
+
 
     function selectCoursePaymentType(type) {
         if (!activeProductContext) return;
@@ -775,7 +605,7 @@ if (product.linkPromocional) {
 
     window.onload = () => {
         renderProducts();
-        updateCartBadge();
+    
         setInterval(showFakeNotification, 9000);
     };
 
@@ -812,57 +642,6 @@ function selectBeatLicense(license) {
     const prices = { 'basica': 1, 'standard': 1.5, 'premium': 2 };
     document.getElementById('prod-price').innerText = (basePrice * prices[license]).toLocaleString() + " Kz";
 }
-
-
-
-function addBeatToCart() {
-
-const jaExiste = cart.find(item =>
-    item.id === activeProductContext.id &&
-    item.tipoCompra === selectedBeatLicense
-);
-
-if (jaExiste) {
-    Swal.fire({
-        icon: 'info',
-        title: 'BEAT JÁ ESTÁ NO CARRINHO',
-        background: '#0d0d0d',
-        color: '#fff',
-        confirmButtonColor: '#dc2626'
-    });
-    return;
-}
-
-const basePrice = parsePrice(activeProductContext.preco);
-
-const multipliers = {
-    basica: 1,
-    standard: 1.5,
-    premium: 2
-};
-
-cart.push({
-    id: activeProductContext.id,
-    nome: `${activeProductContext.nome} (Licença: ${selectedBeatLicense.toUpperCase()})`,
-    preco: basePrice * multipliers[selectedBeatLicense],
-    imagem: activeProductContext.imagem,
-    categoria: 'beats',
-    tipoCompra: selectedBeatLicense
-});
-
-localStorage.setItem('loneke_cart', JSON.stringify(cart));
-updateCartBadge();
-
-Swal.fire({
-    icon: 'success',
-    title: 'BEAT ADICIONADO AO CARRINHO',
-    background: '#0d0d0d',
-    color: '#fff',
-    confirmButtonColor: '#dc2626'
-});
-}
-
-
 
 
 
