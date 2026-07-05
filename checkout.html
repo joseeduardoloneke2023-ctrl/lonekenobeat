@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra | Loneke no Beat Premium Infoproducts</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #E50914;
+            --primary-glow: rgba(229, 9, 20, 0.15);
+            --primary-hover: #b8070e;
+            --dark-gray: #202124;
+            --bg: #111111;
+            --card-bg: #1B1B1B;
+            --white: #FFFFFF;
+            --text-secondary: #BDBDBD;
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --font-poppins: 'Poppins', sans-serif;
+            --font-montserrat: 'Montserrat', sans-serif;
+            --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-fast: all 0.2s ease;
+            --success: #2ec4b6;
+            --info: #3a86ff;
+            --warning: #ffb703;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { background-color: var(--bg); color: var(--white); font-family: var(--font-poppins); }
+        body { min-height: 100vh; line-height: 1.6; position: relative; }
+        a { text-decoration: none; color: inherit; }
+
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        
+        .loading-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #0d0d0d; z-index: 15000; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; transition: opacity 0.4s ease, visibility 0.4s;
+        }
+        .loading-screen.hidden { opacity: 0; visibility: hidden; }
+
+        header {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            padding: 1.5rem 0; background-color: rgba(17, 17, 17, 0.95);
+            backdrop-filter: blur(15px); border-bottom: 1px solid var(--glass-border);
+        }
+        .nav-container { display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-family: var(--font-montserrat); font-size: 1.5rem; font-weight: 700; letter-spacing: -1px; }
+        .logo span { color: var(--primary); }
+
+        .checkout-wrapper {
+            padding-top: 140px;
+            padding-bottom: 6rem;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 3rem;
+        }
+
+        .checkout-box {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+        }
+
+        .checkout-title {
+            font-family: var(--font-montserrat);
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem; font-weight: 500; }
+        .form-control {
+            width: 100%; background: var(--bg); border: 1px solid rgba(255,255,255,0.08);
+            padding: 1rem; border-radius: 10px; color: var(--white); font-size: 0.95rem;
+            transition: var(--transition-fast);
+        }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary-glow); }
+
+        .phone-container { display: flex; gap: 0.5rem; }
+        .select-indicativo { max-width: 130px; cursor: pointer; }
+
+        .payment-methods-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .method-card {
+            background: var(--bg);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 1.2rem 0.3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            height: 110px;
+        }
+
+        .method-card i { font-size: 1.6rem; color: var(--text-secondary); }
+        .method-card .method-icon-img {
+            height: 32px; width: auto; object-fit: contain;
+            filter: grayscale(100%) opacity(0.6); transition: var(--transition-fast);
+        }
+        .method-card span { font-size: 0.75rem; font-weight: 600; line-height: 1.2; color: var(--text-secondary); }
+        .method-card:hover { border-color: rgba(229, 9, 20, 0.4); }
+        
+        .method-card.active {
+            border-color: var(--primary);
+            background: rgba(229, 9, 20, 0.04);
+        }
+        .method-card.active i { color: var(--primary); }
+        .method-card.active .method-icon-img { filter: grayscale(0%) opacity(1); }
+        .method-card.active span { color: var(--white); }
+
+        .dynamic-payment-panel {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem; display: none;
+        }
+
+        .copy-row {
+            display: flex; align-items: center; justify-content: space-between;
+            background: var(--bg); padding: 0.8rem 1rem; border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05); margin-top: 0.5rem; margin-bottom: 1rem;
+        }
+
+        .copy-row code { font-family: monospace; font-size: 1rem; color: #fff; letter-spacing: 0.5px; }
+
+        .btn-copy-action {
+            background: rgba(255, 255, 255, 0.08); border: none; color: var(--white);
+            padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer;
+            font-size: 0.75rem; font-weight: 600; display: flex; align-items: center;
+            gap: 0.3rem; transition: var(--transition-fast);
+        }
+        .btn-copy-action:hover { background: var(--info); }
+
+        .dropzone-wrapper { margin-top: 0.5rem; }
+        .dropzone-area {
+            border: 2px dashed rgba(255, 255, 255, 0.15); background: rgba(0, 0, 0, 0.25);
+            border-radius: 12px; padding: 2rem 1.5rem; text-align: center; cursor: pointer;
+            transition: var(--transition-smooth); position: relative;
+        }
+        .dropzone-area:hover, .dropzone-area.dragover { border-color: var(--primary); background: rgba(229, 9, 20, 0.03); }
+        .dropzone-area i { font-size: 2.2rem; color: var(--text-secondary); margin-bottom: 0.8rem; transition: var(--transition-fast); }
+        .dropzone-area:hover i { color: var(--primary); transform: translateY(-3px); }
+        .dropzone-text { font-size: 0.9rem; font-weight: 500; color: var(--white); }
+        .dropzone-hint { font-size: 0.75rem; color: var(--text-secondary); display: block; margin-top: 0.3rem; }
+        
+        .dropzone-preview {
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(46, 196, 182, 0.08); border: 1px solid rgba(46, 196, 182, 0.3);
+            padding: 0.8rem 1rem; border-radius: 8px; margin-top: 0.8rem;
+        }
+        .dropzone-preview-info { display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; color: #fff; overflow: hidden; }
+        .dropzone-preview-info i { color: var(--success); font-size: 1.1rem; }
+        .dropzone-filename { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 280px; }
+        .btn-clear-file { background: none; border: none; color: #ff4d4d; cursor: pointer; font-size: 1.1rem; padding: 0 0.2rem; }
+
+        .order-summary {
+            background: linear-gradient(145deg, #1e1e1e 0%, #121212 100%);
+            border-radius: 20px; padding: 2.5rem; border: 1px solid var(--glass-border); height: fit-content;
+        }
+
+        .summary-item {
+            display: flex; align-items: center; gap: 1rem;
+            margin-bottom: 1.2rem; padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            position: relative;
+        }
+        .summary-item img { width: 55px; height: 55px; border-radius: 8px; object-fit: cover; }
+        .summary-details h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.2rem; max-width: 180px; }
+        .summary-details p { color: var(--text-secondary); font-size: 0.8rem; }
+
+        .btn-remove-item {
+            background: rgba(255, 77, 77, 0.1); border: none; color: #ff4d4d;
+            width: 32px; height: 32px; border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            margin-left: auto; transition: var(--transition-fast);
+        }
+        .btn-remove-item:hover { background: #ff4d4d; color: #fff; transform: scale(1.05); }
+
+        .discount-container-panel {
+            background: rgba(255, 183, 3, 0.08); border: 1px dashed var(--warning);
+            border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem; text-align: center;
+        }
+        .btn-apply-discount {
+            width: 100%; background: var(--warning); color: #000; border: none;
+            padding: 0.8rem; border-radius: 8px; font-weight: 700; font-size: 0.9rem;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            gap: 0.5rem; transition: var(--transition-smooth);
+        }
+        .btn-apply-discount:hover { background: #e0a200; transform: translateY(-1px); }
+        .btn-apply-discount.applied { background: var(--success); color: #fff; cursor: not-allowed; transform: none; }
+
+        .total-container-box {
+            margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid rgba(255,255,255,0.05);
+        }
+
+        .total-row {
+            display: flex; justify-content: space-between; align-items: center;
+            font-family: var(--font-montserrat); margin-bottom: 0.8rem;
+        }
+        .total-row span { font-size: 0.95rem; color: var(--text-secondary); }
+        .total-row div { display: flex; align-items: center; gap: 0.5rem; }
+        .total-row strong { font-size: 1.5rem; color: var(--white); }
+
+        .btn-checkout {
+            width: 100%; background: var(--primary); color: var(--white);
+            padding: 1.2rem; border-radius: 12px; font-weight: 600; font-size: 1rem;
+            cursor: pointer; margin-top: 1.5rem; transition: var(--transition-smooth);
+            box-shadow: 0 4px 20px var(--primary-glow); display: flex; align-items: center;
+            justify-content: center; gap: 0.5rem; border: none;
+        }
+        .btn-checkout:hover { background: var(--primary-hover); transform: translateY(-2px); }
+
+        .btn-whatsapp-negotiate {
+            width: 100%; background: #25D366; color: #fff;
+            padding: 1rem; border-radius: 12px; font-weight: 600; font-size: 0.95rem;
+            cursor: pointer; margin-top: 0.8rem; border: none;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            transition: var(--transition-smooth);
+        }
+        .btn-whatsapp-negotiate:hover { background: #20ba5a; transform: translateY(-1px); }
+
+        .toast-container { position: fixed; top: 30px; right: 30px; z-index: 10005; display: flex; flex-direction: column; gap: 0.8rem; }
+        .toast-card {
+            background: #252525; color: #fff; padding: 1rem 1.5rem;
+            border-radius: 10px; border-left: 4px solid var(--primary);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4); font-size: 0.9rem;
+            font-weight: 500; display: flex; align-items: center; gap: 0.8rem;
+            transform: translateX(120%); animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            min-width: 320px; max-width: 420px;
+        }
+        .toast-card.success { border-left-color: var(--success); }
+        .toast-card.info { border-left-color: var(--info); }
+        .toast-card i { font-size: 1.1rem; }
+        .toast-card.success i { color: var(--success); }
+        .toast-card.info i { color: var(--info); }
+        @keyframes slideIn { to { transform: translateX(0); } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
+
+        .payment-screen-overlay {
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            z-index: 9999; display:none; align-items:center; justify-content:center; padding: 2rem;
+        }
+        .payment-modal {
+            background: var(--card-bg); border: 1px solid var(--glass-border);
+            padding: 3rem; border-radius: 20px; max-width: 500px; width: 100%;
+            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .spinner {
+            width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.1);
+            border-top-color: var(--primary); border-radius: 50%;
+            margin: 1.5rem auto; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media(max-width: 968px) {
+            .checkout-wrapper { grid-template-columns: 1fr; gap: 2rem; }
+            .payment-methods-grid { grid-template-columns: 1fr; }
+            .toast-container { right: 50%; transform: translateX(50%); top: 20px; width: calc(100% - 40px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loading-screen" id="loadingScreen">
+        <div class="logo" style="font-size: 2rem; margin-bottom: 0.5rem;">LONEKE NO<span> BEAT</span></div>
+        <p style="color: var(--text-secondary); font-size: 0.85rem; letter-spacing: 1px;">A processar os dados do carrinho seguro...</p>
+        <div class="spinner"></div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <header>
+        <div class="container nav-container">
+            <a href="index.html" class="logo">LONEKE NO <span> BEAT</span></a>
+            <a href="catalogo.html" style="font-size: 0.9rem; color: var(--text-secondary);"><i class="fa-solid fa-chevron-left"></i> Voltar ao catálogo</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="checkout-wrapper">
+            
+            <section class="checkout-box">
+                <h2 class="checkout-title"><i class="fa-solid fa-user-shield"></i> Dados de Faturação</h2>
+                
+                <form id="checkoutForm" onsubmit="return false;">
+                    <div class="form-group">
+                        <label for="customerName">Nome Completo</label>
+                        <input type="text" id="customerName" class="form-control" placeholder="Ex: Anselmo Ralph" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerEmail">E-mail para Receber os Produtos</label>
+                        <input type="email" id="customerEmail" class="form-control" placeholder="Ex: produtor@gmail.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customerWhatsApp">WhatsApp para Contacto / Suporte</label>
+                        <div class="phone-container">
+                            <select id="countryCode" class="form-control select-indicativo">
+                                <option value="+244" selected>🇦🇴 +244</option>
+                                <option value="+351">🇵🇹 +351</option>
+                                <option value="+55">🇧🇷 +55</option>
+                                <option value="+258">🇲🇿 +258</option>
+                                <option value="+238">🇨🇻 +238</option>
+                                <option value="+245">🇬🇼 +245</option>
+                                <option value="+239">🇸🇹 +239</option>
+                            </select>
+                            <input type="tel" id="customerWhatsApp" class="form-control" placeholder="Ex: 924034159" required>
+                        </div>
+                    </div>
+
+                    <h2 class="checkout-title" style="margin-top: 3rem;"><i class="fa-solid fa-credit-card"></i> Escolha o Método de Pagamento</h2>
+                    
+                    <div class="payment-methods-grid">
+                        <div class="method-card active" data-method="multicaixa" id="methodExpressCard">
+                            <img src="img/express.png" alt="Multicaixa Express" class="method-icon-img">
+                            <span>Multicaixa Express</span>
+                        </div>
+                        <div class="method-card" data-method="transf_ao" id="methodTransfAoCard">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>Transferência AO</span>
+                        </div>
+                        <div class="method-card" data-method="transf_eu" id="methodTransfEuCard">
+                            <i class="fa-solid fa-globe"></i>
+                            <span>Transferência Europa</span>
+                        </div>
+                        <div class="method-card" data-method="ref_bancaria" id="methodRefCard">
+                            <i class="fa-solid fa-barcode"></i>
+                            <span>Referência Bancária</span>
+                        </div>
+                    </div>
+
+                    <div class="dynamic-payment-panel" id="panel-multicaixa" style="display: block;">
+                        <label style="color: var(--text-secondary); font-size: 0.85rem;">Número de Telefone Express (Clique à direita para copiar):</label>
+                        <div class="copy-row">
+                            <code id="txtExpressNum">924034159</code>
+                            <button type="button" class="btn-copy-action" onclick="copySimpleText('txtExpressNum')">
+                                <i class="fa-solid fa-copy"></i> Copiar
+                            </button>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Carregar Comprovativo de Pagamento Express (PDF, JPG, PNG)</label>
+                            <div class="dropzone-wrapper">
+                                <div class="dropzone-area" id="dropzoneExpress" onclick="document.getElementById('fileReceiptExpress').click()">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    <p class="dropzone-text">Arraste o ficheiro aqui ou clique para fazer upload</p>
+                                    <span class="dropzone-hint">Formatos aceites: PDF, JPEG, PNG (Máx 10MB)</span>
+                                    <input type="file" id="fileReceiptExpress" style="display: none;" accept="application/pdf, image/jpeg, image/jpg, image/png">
+                                </div>
+                                <div class="dropzone-preview" id="previewExpress" style="display: none;">
+                                    <div class="dropzone-preview-info">
+                                        <i class="fa-solid fa-file-circle-check"></i>
+                                        <span class="dropzone-filename" id="filenameExpress">ficheiro.pdf</span>
+                                    </div>
+                                    <button type="button" class="btn-clear-file" onclick="clearFileSelection('Express', event)">&times;</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dynamic-payment-panel" id="panel-transf_ao">
+                        <div class="form-group" style="margin-bottom: 0.8rem;">
+                            <label style="color: var(--text-secondary); font-size: 0.85rem;">Titular da Conta:</label>
+                            <p style="font-weight: 600; font-size: 1rem; color: #fff; margin-left: 0.2rem;">José eduardo loneke</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="bankSelectAO">Selecione o seu Banco:</label>
+                            <select id="bankSelectAO" class="form-control">
+                                <option value="" disabled selected>-- Escolha um banco da lista --</option>
+                                <option value="BAI">BAI</option>
+                                <option value="BFA">BFA</option>
+                                <option value="BCI">BCI</option>
+                                <option value="BIC">BIC</option>
+                            </select>
+                        </div>
+                        
+                        <div id="ibanDisplayBoxAO" style="display: none;">
+                            <label style="color: var(--text-secondary); font-size: 0.85rem;">IBAN de Destino (Clique à direita para copiar sem o AO06):</label>
+                            <div class="copy-row">
+                                <code id="txtIbanAO">AO06000000000000000000000</code>
+                                <button type="button" class="btn-copy-action" onclick="copyCleanIban('txtIbanAO', 'AO06')">
+                                    <i class="fa-solid fa-copy"></i> Copiar
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Carregar Comprovativo de Transferência (PDF, JPG, PNG)</label>
+                            <div class="dropzone-wrapper">
+                                <div class="dropzone-area" id="dropzoneAO" onclick="document.getElementById('fileReceiptAO').click()">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    <p class="dropzone-text">Arraste o ficheiro aqui ou clique para fazer upload</p>
+                                    <span class="dropzone-hint">Formatos aceites: PDF, JPEG, PNG (Máx 10MB)</span>
+                                    <input type="file" id="fileReceiptAO" style="display: none;" accept="application/pdf, image/jpeg, image/jpg, image/png">
+                                </div>
+                                <div class="dropzone-preview" id="previewAO" style="display: none;">
+                                    <div class="dropzone-preview-info">
+                                        <i class="fa-solid fa-file-circle-check"></i>
+                                        <span class="dropzone-filename" id="filenameAO">ficheiro.pdf</span>
+                                    </div>
+                                    <button type="button" class="btn-clear-file" onclick="clearFileSelection('AO', event)">&times;</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dynamic-payment-panel" id="panel-transf_eu">
+                        <div class="form-group" style="margin-bottom: 0.8rem;">
+                            <label style="color: var(--text-secondary); font-size: 0.85rem;">Titular da Conta:</label>
+                            <p style="font-weight: 600; font-size: 1rem; color: #fff; margin-left: 0.2rem;">José eduardo loneke</p>
+                        </div>
+
+                        <label style="color: var(--text-secondary); font-size: 0.85rem;">IBAN Europeu (Clique à direita para copiar sem o LU16):</label>
+                        <div class="copy-row">
+                            <code id="txtIbanEU">LU164080000044225147</code>
+                            <button type="button" class="btn-copy-action" onclick="copyCleanIban('txtIbanEU', 'LU16')">
+                                <i class="fa-solid fa-copy"></i> Copiar
+                            </button>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Carregar Comprovativo de Transferência (PDF, JPG, PNG)</label>
+                            <div class="dropzone-wrapper">
+                                <div class="dropzone-area" id="dropzoneEU" onclick="document.getElementById('fileReceiptEU').click()">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    <p class="dropzone-text">Arraste o ficheiro aqui ou clique para fazer upload</p>
+                                    <span class="dropzone-hint">Formatos aceites: PDF, JPEG, PNG (Máx 10MB)</span>
+                                    <input type="file" id="fileReceiptEU" style="display: none;" accept="application/pdf, image/jpeg, image/jpg, image/png">
+                                </div>
+                                <div class="dropzone-preview" id="previewEU" style="display: none;">
+                                    <div class="dropzone-preview-info">
+                                        <i class="fa-solid fa-file-circle-check"></i>
+                                        <span class="dropzone-filename" id="filenameEU">ficheiro.pdf</span>
+                                    </div>
+                                    <button type="button" class="btn-clear-file" onclick="clearFileSelection('EU', event)">&times;</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dynamic-payment-panel" id="panel-ref_bancaria">
+                        <label style="color: var(--text-secondary); font-size: 0.85rem;">Entidade (Clique à direita para copiar):</label>
+                        <div class="copy-row">
+                            <code id="txtRefEntidade">10116</code>
+                            <button type="button" class="btn-copy-action" onclick="copySimpleText('txtRefEntidade')">
+                                <i class="fa-solid fa-copy"></i> Copiar
+                            </button>
+                        </div>
+
+                        <label style="color: var(--text-secondary); font-size: 0.85rem;">Referência (Clique à direita para copiar):</label>
+                        <div class="copy-row">
+                            <code id="txtRefNumero">936380720</code>
+                            <button type="button" class="btn-copy-action" onclick="copySimpleText('txtRefNumero')">
+                                <i class="fa-solid fa-copy"></i> Copiar
+                            </button>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Carregar Comprovativo de Pagamento por Referência (PDF, JPG, PNG)</label>
+                            <div class="dropzone-wrapper">
+                                <div class="dropzone-area" id="dropzoneRef" onclick="document.getElementById('fileReceiptRef').click()">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    <p class="dropzone-text">Arraste o ficheiro aqui ou clique para fazer upload</p>
+                                    <span class="dropzone-hint">Formatos aceites: PDF, JPEG, PNG (Máx 10MB)</span>
+                                    <input type="file" id="fileReceiptRef" style="display: none;" accept="application/pdf, image/jpeg, image/jpg, image/png">
+                                </div>
+                                <div class="dropzone-preview" id="previewRef" style="display: none;">
+                                    <div class="dropzone-preview-info">
+                                        <i class="fa-solid fa-file-circle-check"></i>
+                                        <span class="dropzone-filename" id="filenameRef">ficheiro.pdf</span>
+                                    </div>
+                                    <button type="button" class="btn-clear-file" onclick="clearFileSelection('Ref', event)">&times;</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </section>
+
+            <section class="order-summary">
+                <h2 class="checkout-title" style="border:none; margin-bottom: 1.5rem;"><i class="fa-solid fa-basket-shopping"></i> Resumo do Pedido</h2>
+                
+                <div id="summaryItemsContainer">
+                </div>
+
+                <div id="discountActionContainer" class="discount-container-panel" style="display: none;">
+                    <p style="font-size: 0.8rem; margin-bottom: 0.6rem; color: var(--warning); font-weight: 500;">
+                        🎉 Parabéns! A sua compra qualifica-se para um desconto especial.
+                    </p>
+                    <button type="button" id="btnApplyDiscount25" class="btn-apply-discount">
+                        <i class="fa-solid fa-percent"></i> Aplicar Desconto de 25%
+                    </button>
+                </div>
+
+                <div class="total-container-box">
+                    <div class="total-row">
+                        <span>Total (AKZ):</span>
+                        <div>
+                            <strong id="valTotalKz">0</strong>
+                            <button type="button" class="btn-copy-action" onclick="copyCleanTotal('valTotalKz')" title="Copiar apenas os números">
+                                <i class="fa-solid fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="total-row">
+                        <span>Total (EUR):</span>
+                        <div>
+                            <strong id="valTotalEur" style="color: #2ec4b6;">0</strong>
+                            <button type="button" class="btn-copy-action" onclick="copyCleanTotal('valTotalEur')" title="Copiar apenas os números">
+                                <i class="fa-solid fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <p style="font-size:0.75rem; color:var(--text-secondary); text-align:right; margin-top:-5px;">Câmbio Comercial: 1 EUR = 1.000 Kz</p>
+                </div>
+
+                <button type="button" class="btn-checkout" id="btnPlaceOrder">
+                    <i class="fa-solid fa-lock"></i> Processar Pedido com Segurança
+                </button>
+
+                <button type="button" class="btn-whatsapp-negotiate" id="btnWhatsappNegotiate">
+                    <i class="fa-brands fa-whatsapp"></i> Dúvidas / Suporte Direto
+                </button>
+            </section>
+
+        </div>
+    </main>
+
+    <div class="payment-screen-overlay" id="paymentOverlay">
+        <div class="payment-modal" id="paymentModalContent">
+        </div>
+    </div>
+
+
+<script src="produtos.js"></script>
+<script>
+    const API_BASE_URL = "https://rouxavcvorjiwhpjhsye.supabase.co/functions/v1/api-v1";
+    const API_KEY = "pgoo_Rudck4LChpAnHaI1YaRp1cEDeONYaBpcZyMOso8h";
+    const FORMBOLD_URL = "https://formbold.com/s/oDJNq"; 
+
+    const BANCOS_AO = {
+        BAI: "AO06004000006562149410192",
+        BFA: "AO06000600006591444830109",
+        BCI: "AO06000500006474488210197",
+        BIC: "AO06000500006474488210197"
+    };
+
+    let selectedMethod = "multicaixa";
+    let cart = [];
+    let pollingInterval = null;
+    const EXCHANGE_RATE = 1000; 
+
+    let discountApplied = false;
+    let originalTotalKz = 0;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        setTimeout(() => {
+            const loadingScreen = document.getElementById("loadingScreen");
+            if (loadingScreen) loadingScreen.classList.add("hidden");
+        }, 1200);
+
+        initCartWithPlanContext();
+
+        loadCartData();
+        initPaymentSelector();
+        initBankSelectorAO();
+        initDropzoneHandlers();
+        
+        document.getElementById("btnApplyDiscount25").addEventListener("click", triggerDiscountCalculation);
+        document.getElementById("btnPlaceOrder").addEventListener("click", processCheckoutFlow);
+        document.getElementById("btnWhatsappNegotiate").addEventListener("click", openWhatsAppNegotiation);
+    });
+
+    function showToast(message, type = "info") {
+        const container = document.getElementById("toastContainer");
+        const toast = document.createElement("div");
+        toast.className = `toast-card ${type}`;
+        
+        let icon = '<i class="fa-solid fa-circle-info"></i>';
+        if(type === "success") icon = '<i class="fa-solid fa-circle-check"></i>';
+        
+        toast.innerHTML = `${icon} <span>${message}</span>`;
+        container.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.animation = "fadeOut 0.3s forwards";
+            setTimeout(() => toast.remove(), 300);
+        }, 3500);
+    }
+
+    function initCartWithPlanContext() {
+        cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const isTypeVip = urlParams.get('type') === 'vip';
+        const rawPlanName = urlParams.get('plan');
+        const rawPlanPrice = parseFloat(urlParams.get('price'));
+
+        if (isTypeVip && rawPlanName && !isNaN(rawPlanPrice)) {
+            const planExists = cart.some(item => item.id === `plan-${rawPlanName}` || item.titulo === rawPlanName);
+            
+            if (!planExists) {
+                cart.push({
+                    id: `plan-${encodeURIComponent(rawPlanName)}`,
+                    titulo: rawPlanName,
+                    preco: rawPlanPrice,
+                    quantity: 1,
+                    imagem: "img/express.png", 
+                    isVipPlan: true 
+                });
+            }
+        }
+    }
+
+    function loadCartData() {
+        const container = document.getElementById("summaryItemsContainer");
+        const displayKz = document.getElementById("valTotalKz");
+        const displayEur = document.getElementById("valTotalEur");
+        const discountContainer = document.getElementById("discountActionContainer");
+        const btnPlaceOrder = document.getElementById("btnPlaceOrder");
+
+        if(cart.length === 0) {
+            container.innerHTML = `<p style="color: var(--text-secondary); text-align:center; padding: 2rem 0;">O seu carrinho está vazio.</p>`;
+            displayKz.innerText = "0 Kz";
+            displayEur.innerText = "0,00 €";
+            discountContainer.style.display = "none";
+            btnPlaceOrder.disabled = true;
+            btnPlaceOrder.style.opacity = "0.3";
+            return;
+        }
+
+        btnPlaceOrder.disabled = false;
+        btnPlaceOrder.style.opacity = "1";
+
+        originalTotalKz = cart.reduce((acc, current) => acc + (current.preco * current.quantity), 0);
+
+        container.innerHTML = cart.map((item, index) => {
+            return `
+                <div class="summary-item">
+                    <img src="${item.imagem}" onerror="this.src='img/express.png'" alt="${item.titulo}">
+                    <div class="summary-details">
+                        <h4>${item.titulo}</h4>
+                        <p>Qtd: ${item.quantity} &bull; ${(item.preco * item.quantity).toLocaleString('pt-AO')} Kz</p>
+                    </div>
+                    <button type="button" class="btn-remove-item" onclick="removeProductFromCheckout(${index})" title="Remover este item">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            `;
+        }).join('');
+
+        if (originalTotalKz >= 10000) {
+            discountContainer.style.display = "block";
+        } else {
+            discountContainer.style.display = "none";
+            discountApplied = false; // Força reset se o valor cair abaixo do limite pelas remoções
+            resetPaymentMethodRestrictions();
+        }
+
+        let totalCalculadoKz = discountApplied ? (originalTotalKz * 0.75) : originalTotalKz;
+        let totalCalculadoEur = totalCalculadoKz / EXCHANGE_RATE;
+
+        displayKz.innerText = `${totalCalculadoKz.toLocaleString('pt-AO')} Kz`;
+        displayEur.innerText = `${totalCalculadoEur.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} €`;
+    }
+
+    function removeProductFromCheckout(index) {
+        const itemRemovido = cart[index];
+
+        if (itemRemovido.isVipPlan) {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('type');
+            url.searchParams.delete('plan');
+            url.searchParams.delete('price');
+            window.history.replaceState({}, '', url.toString());
+        }
+
+        cart.splice(index, 1);
+        
+        const localCartItems = JSON.parse(localStorage.getItem('loneke_cart')) || [];
+        const matchIndex = localCartItems.findIndex(i => i.titulo === itemRemovido.titulo);
+        if (matchIndex !== -1) {
+            localCartItems.splice(matchIndex, 1);
+            localStorage.setItem('loneke_cart', JSON.stringify(localCartItems));
+        }
+
+        showToast(`"${itemRemovido.titulo}" foi removido do seu pedido.`, "info");
+        
+        loadCartData();
+    }
+
+    function triggerDiscountCalculation() {
+        if (originalTotalKz < 10000) return;
+
+        discountApplied = true;
+        
+        const btn = document.getElementById("btnApplyDiscount25");
+        btn.className = "btn-apply-discount applied";
+        btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> Desconto de 25% Aplicado!`;
+        btn.disabled = true;
+
+        showToast("Desconto de 25% validado e aplicado com sucesso ao seu pedido!", "success");
+
+        loadCartData();
+    }
+
+    function resetPaymentMethodRestrictions() {
+        const btn = document.getElementById("btnApplyDiscount25");
+        if (btn) {
+            btn.className = "btn-apply-discount";
+            btn.innerHTML = `<i class="fa-solid fa-percent"></i> Aplicar Desconto de 25%`;
+            btn.disabled = false;
+        }
+    }
+
+    function initPaymentSelector() {
+        const cards = document.querySelectorAll(".method-card");
+        cards.forEach(card => {
+            card.addEventListener("click", () => {
+                cards.forEach(c => c.classList.remove("active"));
+                card.classList.add("active");
+                
+                selectedMethod = card.getAttribute("data-method");
+                document.querySelectorAll(".dynamic-payment-panel").forEach(p => p.style.display = "none");
+                document.getElementById(`panel-${selectedMethod}`).style.display = "block";
+                
+                showToast(`Método alterado para: ${card.querySelector('span').innerText}`, "info");
+            });
+        });
+    }
+
+    function initBankSelectorAO() {
+        const select = document.getElementById("bankSelectAO");
+        const displayBox = document.getElementById("ibanDisplayBoxAO");
+        const txtIban = document.getElementById("txtIbanAO");
+
+        select.addEventListener("change", () => {
+            const bancoSelecionado = select.value;
+            if(BANCOS_AO[bancoSelecionado]) {
+                txtIban.innerText = BANCOS_AO[bancoSelecionado];
+                displayBox.style.display = "block";
+                showToast(`Dados do banco ${bancoSelecionado} carregados com sucesso!`, "success");
+            } else {
+                displayBox.style.display = "none";
+            }
+        });
+    }
+
+    function initDropzoneHandlers() {
+        ['Express', 'AO', 'EU', 'Ref'].forEach(type => {
+            const dropzone = document.getElementById(`dropzone${type}`);
+            const input = document.getElementById(`fileReceipt${type}`);
+            const preview = document.getElementById(`preview${type}`);
+            const filenameText = document.getElementById(`filename${type}`);
+
+            input.addEventListener("change", (e) => {
+                if(e.target.files.length) {
+                    filenameText.innerText = e.target.files[0].name;
+                    preview.style.display = "flex";
+                    showToast("Ficheiro anexado com sucesso!", "success");
+                }
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropzone.addEventListener(eventName, (e) => { e.preventDefault(); dropzone.classList.add('dragover'); }, false);
+            });
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropzone.addEventListener(eventName, (e) => { e.preventDefault(); dropzone.classList.remove('dragover'); }, false);
+            });
+
+            dropzone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if(files.length) {
+                    input.files = files;
+                    filenameText.innerText = files[0].name;
+                    preview.style.display = "flex";
+                    showToast("Ficheiro solto e anexado!", "success");
+                }
+            });
+        });
+    }
+
+    function clearFileSelection(type, event) {
+        event.stopPropagation();
+        document.getElementById(`fileReceipt${type}`).value = "";
+        document.getElementById(`preview${type}`).style.display = "none";
+        showToast("Ficheiro removido.", "info");
+    }
+
+    function copySimpleText(elementId) {
+        const text = document.getElementById(elementId).innerText.trim();
+        navigator.clipboard.writeText(text).then(() => {
+            showToast(`Copiado com sucesso: ${text}`, "success");
+        }).catch(err => {
+            console.error("Falha ao copiar:", err);
+        });
+    }
+
+    function copyCleanIban(elementId, prefixToRemove) {
+        const rawIban = document.getElementById(elementId).innerText;
+        const cleanIban = rawIban.replace(/\s+/g, '').replace(prefixToRemove, '');
+
+        navigator.clipboard.writeText(cleanIban).then(() => {
+            showToast(`IBAN limpo copiado sem o prefixo (${prefixToRemove}): ${cleanIban}`, "success");
+        }).catch(err => {
+            console.error("Falha ao copiar:", err);
+        });
+    }
+
+    function copyCleanTotal(elementId) {
+        const rawText = document.getElementById(elementId).innerText;
+        const cleanNumber = rawText.replace(/[^\d.,]/g, '').trim();
+
+        navigator.clipboard.writeText(cleanNumber).then(() => {
+            showToast(`Valor numérico copiado: ${cleanNumber}`, "success");
+        }).catch(err => {
+            console.error("Falha ao copiar valor:", err);
+        });
+    }
+
+    function openWhatsAppNegotiation() {
+        const name = document.getElementById("customerName").value.trim() || "Cliente Interessado";
+        const totalKz = document.getElementById("valTotalKz").innerText;
+        const totalEur = document.getElementById("valTotalEur").innerText;
+        const itensTexto = cart.map((item, idx) => `  - ${idx + 1}. ${item.titulo} (Qtd: ${item.quantity})`).join("\n");
+
+        const mensagemCorpo = `Olá Loneke no Beat!\n\nEstou no checkout do site e gostaria de esclarecer dúvidas / confirmar o meu pedido.\n\n👤 Nome: ${name}\n📦 Itens no Pedido:\n${itensTexto}\n\n💰 Total: ${totalKz} / ${totalEur}\n\n${discountApplied ? "⚠️ *Nota:* Apliquei o desconto de 25% no checkout." : ""}\nAguardo o seu retorno para fecharmos negócio!`;
+        
+        const targetUrl = `https://wa.me/244924034159?text=${encodeURIComponent(mensagemCorpo)}`;
+        window.open(targetUrl, '_blank');
+    }
+
+    async function processCheckoutFlow() {
+        const name = document.getElementById("customerName").value.trim();
+        const email = document.getElementById("customerEmail").value.trim();
+        const dialCode = document.getElementById("countryCode").value;
+        const whatsNum = document.getElementById("customerWhatsApp").value.trim();
+
+        if(!name || !email || !whatsNum) {
+            showToast("Por favor, preencha todos os campos obrigatórios dos Dados de Faturação.", "info");
+            return;
+        }
+
+        const fullWhatsApp = `${dialCode} ${whatsNum.replace(/\s+/g, '')}`;
+        const overlay = document.getElementById("paymentOverlay");
+        const modal = document.getElementById("paymentModalContent");
+
+        if (selectedMethod === "multicaixa") {
+            const fileInput = document.getElementById("fileReceiptExpress");
+
+            if(!fileInput.files.length) {
+                showToast("Por favor, faça o upload do comprovativo do seu pagamento Multicaixa Express.", "info");
+                return;
+            }
+
+            overlay.style.display = "flex";
+            modal.innerHTML = `<h3>A processar comprovativo</h3><p>O sistema está a preparar o arquivo para armazenamento digital...</p><div class="spinner"></div>`;
+            
+            triggerManualTransferEmail(modal, email, fullWhatsApp, name, "Multicaixa Express (Manual)", fileInput.files[0]);
+        }
+        
+        else if(selectedMethod === "transf_ao") {
+            const banco = document.getElementById("bankSelectAO").value;
+            const fileInput = document.getElementById("fileReceiptAO");
+
+            if(!banco) {
+                showToast("Por favor, selecione para qual dos nossos bancos efetuou a transferência.", "info");
+                return;
+            }
+            if(!fileInput.files.length) {
+                showToast("Por favor, faça o upload do comprovativo da transferência efetuada.", "info");
+                return;
+            }
+
+            overlay.style.display = "flex";
+            modal.innerHTML = `<h3>A processar comprovativo</h3><p>O sistema está a preparar o arquivo para armazenamento digital...</p><div class="spinner"></div>`;
+            
+            triggerManualTransferEmail(modal, email, fullWhatsApp, name, `Transferência Bancária Nacional (Angola) - Banco: ${banco}`, fileInput.files[0]);
+        }
+        
+        else if(selectedMethod === "transf_eu") {
+            const fileInput = document.getElementById("fileReceiptEU");
+
+            if(!fileInput.files.length) {
+                showToast("Por favor, faça o upload do comprovativo da transferência europeia efetuada.", "info");
+                return;
+            }
+
+            overlay.style.display = "flex";
+            modal.innerHTML = `<h3>A processar comprovativo</h3><p>O sistema está a preparar o arquivo para armazenamento digital...</p><div class="spinner"></div>`;
+            
+            triggerManualTransferEmail(modal, email, fullWhatsApp, name, "Transferência Bancária Internacional (Europa - IBAN LU)", fileInput.files[0]);
+        }
+
+        else if(selectedMethod === "ref_bancaria") {
+            const fileInput = document.getElementById("fileReceiptRef");
+
+            if(!fileInput.files.length) {
+                showToast("Por favor, faça o upload do comprovativo do pagamento por referência.", "info");
+                return;
+            }
+
+            overlay.style.display = "flex";
+            modal.innerHTML = `<h3>A processar comprovativo</h3><p>O sistema está a preparar o arquivo para armazenamento digital...</p><div class="spinner"></div>`;
+            
+            triggerManualTransferEmail(modal, email, fullWhatsApp, name, "Pagamento por Referência Bancária (Entidade 10116)", fileInput.files[0]);
+        }
+    }
+
+    function triggerManualTransferEmail(modal, customerEmail, customerWhatsApp, customerName, methodTitle, fileObject) {
+        const listaProdutosComLinks = cart.map((item, index) => {
+            const prodOriginal = typeof produtos !== 'undefined' ? produtos.find(p => p.id === item.id) : null;
+            const linkDownload = prodOriginal && prodOriginal.downloadUrl ? prodOriginal.downloadUrl : "Link de download interno";
+            return `${index + 1}️⃣ ${item.titulo}\n📥 LINK DE DOWNLOAD: ${linkDownload}\n-----------------------------------------`;
+        }).join("\n\n");
+
+        const tkz = document.getElementById("valTotalKz").innerText;
+        const teur = document.getElementById("valTotalEur").innerText;
+
+        const emailText = `Olá! Recebemos um novo comprovativo de transferência através do site.\n\n` +
+                          `Cliente: ${customerName}\n` +
+                          `E-mail: ${customerEmail}\n` +
+                          `WhatsApp Informado: ${customerWhatsApp}\n\n` +
+                          `Modalidade de Escolha:\n👉 ${methodTitle}.\n\n` +
+                          `Status do Desconto (25%): ${discountApplied ? 'APLICADO COM SUCESSO' : 'NENHUM'}\n\n` +
+                          `Assim que confirmar a entrada do saldo em conta, os links abaixo serão válidos para o cliente:\n\n${listaProdutosComLinks}\n\n` +
+                          `💵 Valor Final Liquidado: ${tkz} / ${teur}\n📅 Registo temporal: ${new Date().toLocaleString('pt-AO')}`;
+
+        const formData = new FormData();
+        formData.append("Cliente", customerName);
+        formData.append("Email", customerEmail);
+        formData.append("WhatsApp", customerWhatsApp);
+        formData.append("Metodo_Pagamento", methodTitle);
+        formData.append("Desconto_Aplicado", discountApplied ? "Sim (25%)" : "Não");
+        formData.append("Valor_Total", `${tkz} / ${teur}`);
+        formData.append("Corpo_Do_Email_E_Produtos", emailText);
+        formData.append("comprovativo_faturamento", fileObject);
+
+        fetch(FORMBOLD_URL, {
+            method: "POST",
+            body: formData
+        })
+        .then(() => {
+            modal.innerHTML = `
+                <i class="fa-solid fa-clock-rotate-left" style="font-size: 4rem; color: #FFA500;"></i>
+                <h2 style="font-family: var(--font-montserrat); margin-top: 1.5rem;">Comprovativo Recebido!</h2>
+                <p style="color: var(--text-secondary); margin-top: 0.8rem; font-size: 0.95rem;">
+                    O seu ficheiro foi enviado com sucesso para validação manual.
+                </p>
+                <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 10px; margin: 1.5rem 0; font-size: 0.85rem; border: 1px dashed rgba(255,255,255,0.1); text-align: left;">
+                    ⏱️ <strong>Nota de Liberação:</strong> A validação manual demora habitualmente entre 10 minutos a 2 horas. Assim que a conta for confirmada, o acesso aos ficheiros é totalmente desbloqueado no seu e-mail: <strong style="color:#fff;">${customerEmail}</strong>.
+                </div>
+                <button class="btn-checkout" style="background:#FFA500;" onclick="clearCartAndExit()">Concluir e Voltar</button>
+            `;
+        })
+        .catch(() => {
+            modal.innerHTML = `<h3>Erro ao Submeter</h3><p>Ocorreu uma falha ao enviar o seu ficheiro pelo pipeline automático. Por favor, clique no botão do WhatsApp para enviar o seu comprovativo manualmente ao produtor.</p><button class="btn-checkout" onclick="document.getElementById('paymentOverlay').style.display='none'">Fechar</button>`;
+        });
+    }
+
+    function clearCartAndExit() {
+        localStorage.removeItem('loneke_cart');
+        window.location.href = "index.html";
+    }
+</script>
+
+</body>
+</html>
