@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Aluno VIP | Loneke no Beat</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #E50914;
+            --primary-glow: rgba(229, 9, 20, 0.25);
+            --primary-hover: #b8070e;
+            --bg: #060606;
+            --sidebar-bg: #020202;
+            --card-bg: #0d0d0d;
+            --player-bg: #000000;
+            --white: #FFFFFF;
+            --text-secondary: #777777;
+            --glass-border: rgba(255, 255, 255, 0.03);
+            --sidebar-width: 260px;
+            
+            --font-poppins: 'Poppins', sans-serif;
+            --font-montserrat: 'Montserrat', sans-serif;
+            --transition-premium: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Custom Scrollbar Global */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        body {
+            background-color: var(--bg);
+            color: var(--white);
+            font-family: var(--font-poppins);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+            letter-spacing: -0.1px;
+            transition: var(--transition-premium);
+        }
+
+        /* --- GLOBAL SCREEN LOADER --- */
+        .global-loader {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: var(--bg);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .spinner {
+            width: 40px; height: 40px;
+            border: 2px solid rgba(255, 255, 255, 0.03);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--glass-border);
+            position: fixed;
+            top: 0; left: 0; height: 100vh;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: var(--transition-premium);
+        }
+        .sidebar-brand {
+            padding: 2.5rem 2rem;
+            font-family: var(--font-montserrat);
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .sidebar-brand span { color: var(--primary); }
+        .sidebar-menu {
+            padding: 1.5rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.9rem 2rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-premium);
+            border-left: 3px solid transparent;
+        }
+        .menu-item:hover, .menu-item.active {
+            color: var(--white);
+            background: rgba(255, 255, 255, 0.01);
+        }
+        .menu-item.active {
+            border-left-color: var(--primary);
+            font-weight: 600;
+            background: linear-gradient(90deg, rgba(229, 9, 20, 0.03) 0%, rgba(0,0,0,0) 100%);
+        }
+        .menu-item i { width: 18px; text-align: center; font-size: 1rem; }
+        .menu-whatsapp { color: #25D366 !important; }
+        .menu-logout { color: #ff4444 !important; margin-top: auto; border-top: 1px solid var(--glass-border); padding-top: 1.5rem; }
+
+        /* --- MAIN PANEL --- */
+        .main-panel {
+            margin-left: var(--sidebar-width);
+            flex-grow: 1;
+            padding: 3rem 4rem;
+            min-height: 100vh;
+            position: relative;
+            transition: var(--transition-premium);
+        }
+        .panel-header { margin-bottom: 3rem; transition: var(--transition-premium); }
+        .welcome-text h1 { font-family: var(--font-montserrat); font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; }
+        .welcome-text p { color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.2rem; }
+        .welcome-text p span { color: var(--white); font-weight: 500; }
+
+        /* --- VIEWS --- */
+        .panel-view { display: none; }
+        .panel-view.active { display: block; animation: viewFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes viewFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- DASHBOARD METRICS --- */
+        .report-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
+        .report-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            padding: 1.8rem;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: var(--transition-premium);
+        }
+        .report-card:hover { border-color: rgba(229, 9, 20, 0.2); transform: translateY(-2px); }
+        .report-info h3 { font-size: 0.75rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.5px; }
+        .report-info p { font-family: var(--font-montserrat); font-size: 2rem; font-weight: 800; margin-top: 0.1rem; }
+        .report-icon { width: 45px; height: 45px; background: rgba(255, 255, 255, 0.02); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--text-secondary); }
+
+        /* --- CARDS --- */
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 1.5rem; }
+        .premium-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: var(--transition-premium);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            cursor: pointer;
+        }
+        .premium-card:hover { transform: translateY(-4px); border-color: rgba(255, 255, 255, 0.08); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+        
+        .thumb-wrapper { position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background-color: #000; }
+        .card-thumb { width: 100%; height: 100%; object-fit: cover; transition: var(--transition-premium); filter: grayscale(20%); }
+        .premium-card:hover .card-thumb { transform: scale(1.04); filter: grayscale(0%); }
+
+        .card-body { padding: 1.2rem; display: flex; flex-direction: column; flex-grow: 1; }
+        .card-body h4 { font-family: var(--font-montserrat); font-size: 0.95rem; font-weight: 700; line-height: 1.4; margin-bottom: 1.2rem; }
+        
+        .card-btn {
+            margin-top: auto; width: 100%; padding: 0.8rem;
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            color: #eeeeee; font-weight: 500; border-radius: 8px; font-size: 0.8rem;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            cursor: pointer; transition: var(--transition-premium);
+            pointer-events: none;
+        }
+        .premium-card:hover .card-btn { background-color: var(--white); color: #000; font-weight: 600; }
+
+        /* CADEADO RESTRITO GERAL */
+        .premium-card.locked .thumb-wrapper::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(4, 4, 4, 0.75); backdrop-filter: blur(1px);
+        }
+        .lock-overlay {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 5; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+        }
+        .lock-icon-circle {
+            width: 44px; height: 44px; background: #141414; border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--primary);
+        }
+        .lock-text { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; color: var(--text-secondary); }
+
+        /* =======================================================
+           ⚡ MODULO PLAYER & WORKSPACE (THEATRE MODE)
+        ======================================================= */
+        body.theatre-mode .sidebar {
+            transform: translateX(-100%);
+            pointer-events: none;
+        }
+        body.theatre-mode .main-panel {
+            margin-left: 0;
+            padding: 2rem 2rem 4rem 2rem;
+        }
+        body.theatre-mode .panel-header {
+            opacity: 0; visibility: hidden; height: 0; margin-bottom: 0; overflow: hidden;
+        }
+
+        .player-workspace-grid {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 1.5rem;
+            max-width: 1140px;
+            margin: 0 auto;
+        }
+
+        .player-left-column {
+            display: flex;
+            flex-direction: column;
+        }
+        .video-frame-pane { 
+            width: 100%; 
+            aspect-ratio: 16 / 9; 
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+        .video-frame-pane iframe { width: 100%; height: 100%; border: 0; }
+
+        .materials-container-box {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.2rem 1.5rem;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .materials-meta-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .materials-icon-wrapper {
+            width: 44px; height: 44px;
+            background: rgba(229, 9, 20, 0.06);
+            border: 1px solid rgba(229, 9, 20, 0.15);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.15rem; color: var(--primary);
+        }
+        .materials-title-text h5 {
+            font-family: var(--font-montserrat);
+            font-size: 0.85rem; font-weight: 700; color: #fff;
+            letter-spacing: -0.1px;
+        }
+        .materials-title-text p {
+            color: var(--text-secondary); font-size: 0.72rem; margin-top: 0.15rem;
+        }
+        .materials-download-action-btn {
+            background: var(--white);
+            color: #000;
+            padding: 0.7rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.78rem; font-weight: 600;
+            text-decoration: none;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            transition: var(--transition-premium);
+            border: none; cursor: pointer;
+        }
+        .materials-download-action-btn:hover {
+            background: var(--primary);
+            color: var(--white);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .video-playlist-pane { 
+            background: #090909; 
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            display: flex; 
+            flex-direction: column; 
+            height: fit-content;
+            max-height: 580px;
+            overflow: hidden;
+        }
+        .playlist-header { 
+            padding: 1.1rem 1.2rem; 
+            background: #020202; 
+            font-family: var(--font-montserrat); 
+            font-weight: 700; font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--glass-border); 
+            display: flex; align-items: center; gap: 0.6rem;
+        }
+        #playlist-tracks-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 0.8rem;
+        }
+
+        details.module-wrapper {
+            background: #0d0d0d;
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            margin-bottom: 0.4rem;
+            overflow: hidden;
+        }
+        summary.module-summary {
+            padding: 0.8rem; font-size: 0.75rem; font-weight: 600; color: #ddd;
+            cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none;
+        }
+        summary.module-summary i.chevron { transition: transform 0.3s ease; font-size: 0.7rem; color: var(--text-secondary); }
+        details[open] summary i.chevron { transform: rotate(180deg); color: var(--primary); }
+
+        .playlist-track { 
+            padding: 0.6rem 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 0.6rem; 
+            font-size: 0.72rem; color: #888; transition: var(--transition-premium); border-radius: 6px; margin: 0.15rem 0.3rem;
+        }
+        .playlist-track:hover { color: var(--white); background: rgba(255,255,255,0.02); }
+        .playlist-track.active { background: rgba(229, 9, 20, 0.08) !important; color: var(--white) !important; }
+        .playlist-track i { font-size: 0.8rem; color: #444; }
+        .playlist-track.active i { color: var(--primary); }
+
+        .back-container-wrapper {
+            max-width: 1140px;
+            margin: 0 auto 1.2rem auto;
+        }
+        .back-courses-btn { 
+            display: inline-flex; align-items: center; gap: 0.5rem; 
+            color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; 
+            cursor: pointer; transition: var(--transition-premium);
+            background: rgba(255,255,255,0.02); padding: 0.5rem 1rem; border-radius: 30px; border: 1px solid var(--glass-border);
+        }
+        .back-courses-btn:hover { color: var(--white); background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+
+        /* =======================================================
+           ⚡ CASULO DE PRÉ-VISUALIZAÇÃO DE PRODUTOS
+        ======================================================= */
+        .product-preview-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 2rem;
+            max-width: 1140px;
+            margin: 0 auto;
+        }
+        .product-meta-sidebar {
+            background: var(--sidebar-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 1.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            height: fit-content;
+        }
+        .product-preview-thumb {
+            width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 8px; border: 1px solid var(--glass-border);
+        }
+        .product-info-title h2 {
+            font-family: var(--font-montserrat); font-size: 1.25rem; font-weight: 800; line-height: 1.3;
+        }
+        .price-badge-container {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            padding: 1rem; border-radius: 10px; display: flex; flex-direction: column; gap: 0.2rem;
+        }
+        .price-label { font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+        .price-value { font-family: var(--font-montserrat); font-size: 1.6rem; font-weight: 800; color: #25D366; }
+        
+        .product-action-stack { display: flex; flex-direction: column; gap: 0.6rem; }
+        .btn-action-premium {
+            width: 100%; padding: 0.9rem; border-radius: 8px; font-size: 0.8rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center; gap: 0.6rem; text-decoration: none; cursor: pointer; transition: var(--transition-premium); border: none;
+        }
+        .btn-download-unlocked { background: var(--white); color: #000; }
+        .btn-download-unlocked:hover { background: var(--primary); color: #fff; box-shadow: 0 0 15px var(--primary-glow); }
+        .btn-download-locked { background: #161616; color: #444; cursor: not-allowed; border: 1px solid rgba(255,255,255,0.02); }
+        .btn-buy-whatsapp { background: #25D366; color: #000; }
+        .btn-buy-whatsapp:hover { background: #1ebd58; box-shadow: 0 0 15px rgba(37, 211, 102, 0.2); }
+
+        /* Loader Interno */
+        .inner-loader { display: none; text-align: center; padding: 6rem 0; width: 100%; }
+        .inner-loader .spinner { margin: 0 auto 1.5rem auto; width: 36px; height: 36px; }
+
+        /* Toast Notifications */
+        .toast-container { position: fixed; top: 30px; right: 30px; z-index: 100000; display: flex; flex-direction: column; gap: 12px; pointer-events: none; }
+        .toast-notification { pointer-events: auto; background: #0f0f0f; border: 1px solid var(--glass-border); border-left: 3px solid var(--primary); color: var(--white); padding: 1rem 1.5rem; border-radius: 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; gap: 0.8rem; transform: translateX(180%); transition: var(--transition-premium); }
+        .toast-notification.show { transform: translateX(0); }
+
+        /* Responsividade */
+        @media (max-width: 992px) {
+            .player-workspace-grid, .product-preview-grid { grid-template-columns: 1fr; }
+            .video-playlist-pane { max-height: 360px; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { left: -100%; }
+            .sidebar.open { left: 0; }
+            .main-panel { margin-left: 0; padding: 2rem 1.5rem; }
+            body.theatre-mode .main-panel { padding: 1rem 1.1rem; }
+            .mobile-nav-toggle { display: block !important; }
+            .materials-container-box { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .materials-download-action-btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- GLOBAL INITIAL SCREEN LOADER -->
+    <div class="global-loader" id="globalLoader">
+        <div class="spinner"></div>
+        <p style="font-family: var(--font-montserrat); letter-spacing: 2px; font-size: 0.75rem; font-weight: 700; color: var(--text-secondary);">VIP PORTAL ACTIVE</p>
+    </div>
+
+    <!-- MOBILE MENU TOGGLE -->
+    <div class="mobile-nav-toggle" id="menuToggle" style="display: none; position: fixed; top: 1.5rem; right: 1.5rem; z-index: 1001; background: #111; border: 1px solid rgba(255,255,255,0.08); padding: 0.9rem; border-radius: 10px; cursor: pointer;">
+        <i class="fa-solid fa-bars" id="toggleIcon" style="font-size: 1.1rem; color: #fff;"></i>
+    </div>
+
+    <!-- SIDEBAR LEFT -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            LONEKE NO <span>BEAT</span>
+        </div>
+        <nav class="sidebar-menu">
+            <div class="menu-item active" onclick="switchView('dashboard', this)"><i class="fa-solid fa-chart-pie"></i> Dashboard</div>
+            <div class="menu-item" onclick="switchView('cursos', this)"><i class="fa-solid fa-graduation-cap"></i> Meus cursos</div>
+            <div class="menu-item" onclick="switchView('drumkits', this)"><i class="fa-solid fa-drum"></i> Meus Drumkits</div>
+            <div class="menu-item" onclick="switchView('flp', this)"><i class="fa-solid fa-folder-open"></i> Meus FLP</div>
+            <div class="menu-item" onclick="switchView('loops', this)"><i class="fa-solid fa-wave-square"></i> Meus loops Kits</div>
+            <div class="menu-item" onclick="switchView('plugins', this)"><i class="fa-solid fa-plug"></i> Meus Packs de Plugins</div>
+            <div class="menu-item" onclick="switchView('ebooks', this)"><i class="fa-solid fa-book"></i> Meus Ebooks</div>
+            <div class="menu-item" onclick="switchView('notificacoes', this)"><i class="fa-solid fa-bell"></i> Notificações</div>
+            <div class="menu-item menu-whatsapp" onclick="openWhatsApp('Geral')"><i class="fa-brands fa-whatsapp"></i> Suporte Técnico</div>
+            <div class="menu-item menu-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Sair da conta</div>
+        </nav>
+    </aside>
+
+    <!-- MAIN INTERFACE -->
+    <main class="main-panel">
+        
+        <!-- CABEÇALHO GLOBAL -->
+        <header class="panel-header" id="mainPanelHeader">
+            <div class="welcome-text">
+                <h1 id="txt-user-name">Painel de Acesso</h1>
+                <p id="txt-user-welcome">A verificar as tuas credenciais digitais...</p>
+            </div>
+        </header>
+
+        <!-- TELA DE PROCESSAMENTO EXCLUSIVA -->
+        <div class="inner-loader" id="innerLoader">
+            <div class="spinner"></div>
+            <p style="color: var(--text-secondary); font-size: 0.75rem; font-family: var(--font-montserrat); letter-spacing: 1px;">A CONFIGURAR EXPERIÊNCIA IMERSIVA...</p>
+        </div>
+
+        <!-- VIEW: DASHBOARD -->
+        <section id="view-dashboard" class="panel-view active">
+            <div class="report-grid">
+                <div class="report-card">
+                    <div class="report-info">
+                        <h3>Cursos Adquiridos</h3>
+                        <p id="cnt-cursos">-</p>
+                    </div>
+                    <div class="report-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                </div>
+                <div class="report-card">
+                    <div class="report-info">
+                        <h3>Drumkits Liberados</h3>
+                        <p id="cnt-drumkits">-</p>
+                    </div>
+                    <div class="report-icon"><i class="fa-solid fa-drum"></i></div>
+                </div>
+                <div class="report-card">
+                    <div class="report-info">
+                        <h3>Templates FLP</h3>
+                        <p id="cnt-flp">-</p>
+                    </div>
+                    <div class="report-icon"><i class="fa-solid fa-folder-open"></i></div>
+                </div>
+                <div class="report-card">
+                    <div class="report-info">
+                        <h3>Loops Kits</h3>
+                        <p id="cnt-loops">-</p>
+                    </div>
+                    <div class="report-icon"><i class="fa-solid fa-wave-square"></i></div>
+                </div>
+                <div class="report-card">
+                    <div class="report-info">
+                        <h3>Packs de Plugins</h3>
+                        <p id="cnt-plugins">-</p>
+                    </div>
+                    <div class="report-icon"><i class="fa-solid fa-plug"></i></div>
+                </div>
+                <div class="report-card">
+                    <div class="report-info">
+                        <h3>Ebooks</h3>
+                        <p id="cnt-ebooks">-</p>
+                    </div>
+                    <div class="report-icon"><i class="fa-solid fa-book"></i></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: MEUS CURSOS -->
+        <section id="view-cursos" class="panel-view">
+            <div id="cursos-list-pane">
+                <div class="cards-grid" id="grid-cursos"></div>
+            </div>
+            
+            <!-- THEATRE ENGINE WORKSPACE -->
+            <div id="courses-player-pane" style="display: none;">
+                <div class="back-container-wrapper">
+                    <div class="back-courses-btn" onclick="closeVideoReader()">
+                        <i class="fa-solid fa-arrow-left"></i> Sair do Player / Voltar para Cursos
+                    </div>
+                </div>
+                
+                <div class="player-workspace-grid">
+                    <div class="player-left-column">
+                        <div class="video-frame-pane">
+                            <iframe id="main-video-frame" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                        <div class="materials-container-box">
+                            <div class="materials-meta-info">
+                                <div class="materials-icon-wrapper"><i class="fa-solid fa-box-open"></i></div>
+                                <div class="materials-title-text">
+                                    <h5>Materiais & Ferramentas de Apoio</h5>
+                                    <p>Plugins, Drumkits e ficheiros anexados a esta formação.</p>
+                                </div>
+                            </div>
+                            <a href="#" target="_blank" id="btn-download-material" class="materials-download-action-btn">
+                                <i class="fa-solid fa-download"></i> Baixar Recursos
+                            </a>
+                        </div>
+                    </div>
+                    <div class="video-playlist-pane">
+                        <div class="playlist-header">
+                            <i class="fa-solid fa-layer-group" style="color: var(--primary);"></i> 
+                            <span id="player-course-title" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px;">CONTEÚDO DIGITAL</span>
+                        </div>
+                        <div id="playlist-tracks-container"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: DRUMKITS -->
+        <section id="view-drumkits" class="panel-view">
+            <div id="drumkits-list-pane">
+                <div class="cards-grid" id="grid-drumkits"></div>
+            </div>
+        </section>
+
+        <!-- VIEW: FLP -->
+        <section id="view-flp" class="panel-view">
+            <div id="flp-list-pane">
+                <div class="cards-grid" id="grid-flp"></div>
+            </div>
+        </section>
+
+        <!-- VIEW: MEUS LOOPS KITS -->
+        <section id="view-loops" class="panel-view">
+            <div id="loops-list-pane">
+                <div class="cards-grid" id="grid-loops"></div>
+            </div>
+        </section>
+
+        <!-- VIEW: MEUS PACKS DE PLUGINS -->
+        <section id="view-plugins" class="panel-view">
+            <div id="plugins-list-pane">
+                <div class="cards-grid" id="grid-plugins"></div>
+            </div>
+        </section>
+
+        <!-- VIEW: MEUS EBOOKS -->
+        <section id="view-ebooks" class="panel-view">
+            <div id="ebooks-list-pane">
+                <div class="cards-grid" id="grid-ebooks"></div>
+            </div>
+        </section>
+
+        <!-- VIEW: NOTIFICAÇÕES -->
+        <section id="view-notificacoes" class="panel-view">
+            <div style="display: flex; flex-direction: column; gap: 1.2rem; max-width: 750px; margin: 0 auto;">
+                <div class="report-card" style="flex-direction: column; align-items: flex-start; gap: 0.6rem;">
+                    <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                        <span style="font-family: var(--font-montserrat); font-weight: 700; color: var(--primary); font-size: 0.85rem;"><i class="fa-solid fa-circle-check"></i> PAINEL ATUALIZADO</span>
+                        <span style="font-size: 0.7rem; color: var(--text-secondary);">Agora</span>
+                    </div>
+                    <p style="font-size: 0.85rem; color: #eee; line-height: 1.5;">O teu painel VIP foi configurado com todas as categorias comerciais: Cursos, Drumkits, FLPs, Loops, Plugins e Ebooks com sucesso!</p>
+                </div>
+
+                <div class="report-card" style="flex-direction: column; align-items: flex-start; gap: 0.6rem;">
+                    <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                        <span style="font-family: var(--font-montserrat); font-weight: 700; color: #25D366; font-size: 0.85rem;"><i class="fa-solid fa-headset"></i> SUPORTE DIRETO ACTIVO</span>
+                        <span style="font-size: 0.7rem; color: var(--text-secondary);">Há 1 hora</span>
+                    </div>
+                    <p style="font-size: 0.85rem; color: #eee; line-height: 1.5;">Qualquer dúvida na instalação de plugins, download de ficheiros ou upgrades de conta, clica no botão do Suporte Técnico para atendimento via WhatsApp.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PANE GLOBAL DE PRÉ-VISUALIZAÇÃO DE PRODUTOS -->
+        <section id="product-preview-pane" style="display: none; animation: viewFadeIn 0.5s ease;">
+            <div class="back-container-wrapper">
+                <div class="back-courses-btn" onclick="closeProductPreview()">
+                    <i class="fa-solid fa-arrow-left"></i> Voltar à Galeria de Produtos
+                </div>
+            </div>
+
+            <div class="product-preview-grid">
+                <div class="player-left-column">
+                    <div class="video-frame-pane">
+                        <iframe id="product-video-frame" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                </div>
+
+                <div class="product-meta-sidebar">
+                    <img id="product-preview-img" src="" class="product-preview-thumb" alt="Thumb">
+                    <div class="product-info-title">
+                        <h2 id="product-preview-title">Nome do Produto</h2>
+                    </div>
+                    
+                    <div class="price-badge-container">
+                        <span class="price-label">Valor do Investimento</span>
+                        <span class="price-value" id="product-preview-price">Kz 0.00</span>
+                    </div>
+
+                    <div class="product-action-stack" id="product-btn-stack">
+                        <!-- Gerado Dinamicamente via JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MOTOR DE INJEÇÃO DINÂMICA -->
+    <script>
+        let currentProductSection = ''; 
+
+        const studentFile = localStorage.getItem('loggedStudentFile');
+        if (!studentFile) {
+            window.location.href = "index.html"; 
+        }
+
+        const script = document.createElement('script');
+        script.src = studentFile;
+        document.head.appendChild(script);
+
+        script.onload = function() {
+            setTimeout(() => {
+                const gLoader = document.getElementById('globalLoader');
+                if(gLoader) {
+                    gLoader.style.opacity = '0';
+                    setTimeout(() => gLoader.style.display = 'none', 500);
+                }
+            }, 800);
+
+            initMobileNav();
+            loadStudentData(); 
+        };
+
+        script.onerror = function() {
+            alert("Erro crítico ao carregar permissões.");
+            window.location.href = "index.html";
+        };
+
+        function showToast(message, type = 'info', icon = 'fa-circle-info') {
+            let container = document.getElementById('toastContainer');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toastContainer';
+                container.className = 'toast-container';
+                document.body.appendChild(container);
+            }
+            const toast = document.createElement('div');
+            toast.className = `toast-notification toast-${type}`;
+            toast.innerHTML = `<i class="fa-solid ${icon}"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 50);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+
+        function loadStudentData() {
+            if (typeof dadosAluno === 'undefined') {
+                showToast("Erro: Dados indisponíveis.", "warning", "fa-triangle-exclamation");
+                return;
+            }
+
+            document.getElementById('txt-user-name').innerHTML = `Olá, ${dadosAluno.usuario.nome} <span style="font-size: 1rem; color: var(--text-secondary); font-weight:400;">(@${dadosAluno.usuario.username})</span>`;
+            document.getElementById('txt-user-welcome').innerHTML = `Acesso de Agência ativo para: <span>${dadosAluno.usuario.email}</span>`;
+
+            document.getElementById('cnt-cursos').innerText = dadosAluno.cursos ? dadosAluno.cursos.length : 0;
+            document.getElementById('cnt-drumkits').innerText = dadosAluno.drumkits ? dadosAluno.drumkits.length : 0;
+            document.getElementById('cnt-flp').innerText = dadosAluno.flps ? dadosAluno.flps.length : 0;
+            document.getElementById('cnt-loops').innerText = dadosAluno.loops ? dadosAluno.loops.length : 0;
+            document.getElementById('cnt-plugins').innerText = dadosAluno.plugins ? dadosAluno.plugins.length : 0;
+            document.getElementById('cnt-ebooks').innerText = dadosAluno.ebooks ? dadosAluno.ebooks.length : 0;
+
+            // CARDS: CURSOS
+            const gridCursos = document.getElementById('grid-cursos');
+            if(dadosAluno.cursos && dadosAluno.cursos.length > 0) {
+                gridCursos.innerHTML = dadosAluno.cursos.map(c => `
+                    <div class="premium-card ${!c.desbloqueado ? 'locked' : ''}" onclick="handleCourseAction(${c.id}, ${c.desbloqueado}, '${c.titulo}')">
+                        <div class="thumb-wrapper">
+                            ${!c.desbloqueado ? `
+                                <div class="lock-overlay">
+                                    <div class="lock-icon-circle"><i class="fa-solid fa-lock"></i></div>
+                                    <span class="lock-text">Restrito</span>
+                                </div>
+                            ` : ''}
+                            <img src="${c.imagem}" class="card-thumb" alt="${c.titulo}">
+                        </div>
+                        <div class="card-body">
+                            <h4>${c.titulo}</h4>
+                            <button class="card-btn">
+                                <i class="fa-solid ${c.desbloqueado ? 'fa-play' : 'fa-brands fa-whatsapp'}"></i> 
+                                ${c.desbloqueado ? 'Acessar Treinamento' : 'Solicitar Upgrade'}
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // CARDS: DRUMKITS
+            const gridDrumkits = document.getElementById('grid-drumkits');
+            if(dadosAluno.drumkits && dadosAluno.drumkits.length > 0) {
+                gridDrumkits.innerHTML = dadosAluno.drumkits.map(dk => `
+                    <div class="premium-card ${!dk.desbloqueado ? 'locked' : ''}" onclick="openProductPreview(${dk.id}, 'drumkits')">
+                        <div class="thumb-wrapper">
+                            ${!dk.desbloqueado ? `
+                                <div class="lock-overlay">
+                                    <div class="lock-icon-circle"><i class="fa-solid fa-lock"></i></div>
+                                    <span class="lock-text">Ver Demo</span>
+                                </div>
+                            ` : ''}
+                            <img src="${dk.imagem}" class="card-thumb" alt="${dk.titulo}">
+                        </div>
+                        <div class="card-body">
+                            <h4>${dk.titulo}</h4>
+                            <button class="card-btn">
+                                <i class="fa-solid fa-magnifying-glass"></i> Ver Detalhes
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // CARDS: FLP
+            const gridFlp = document.getElementById('grid-flp');
+            if(dadosAluno.flps && dadosAluno.flps.length > 0) {
+                gridFlp.innerHTML = dadosAluno.flps.map(f => `
+                    <div class="premium-card ${!f.desbloqueado ? 'locked' : ''}" onclick="openProductPreview(${f.id}, 'flps')">
+                        <div class="thumb-wrapper">
+                            ${!f.desbloqueado ? `
+                                <div class="lock-overlay">
+                                    <div class="lock-icon-circle"><i class="fa-solid fa-lock"></i></div>
+                                    <span class="lock-text">Ver Demo</span>
+                                </div>
+                            ` : ''}
+                            <img src="${f.imagem}" class="card-thumb" alt="${f.titulo}">
+                        </div>
+                        <div class="card-body">
+                            <h4>${f.titulo}</h4>
+                            <button class="card-btn">
+                                <i class="fa-solid fa-magnifying-glass"></i> Ver Detalhes
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // CARDS: LOOPS
+            const gridLoops = document.getElementById('grid-loops');
+            if(dadosAluno.loops && dadosAluno.loops.length > 0) {
+                gridLoops.innerHTML = dadosAluno.loops.map(l => `
+                    <div class="premium-card ${!l.desbloqueado ? 'locked' : ''}" onclick="openProductPreview(${l.id}, 'loops')">
+                        <div class="thumb-wrapper">
+                            ${!l.desbloqueado ? `
+                                <div class="lock-overlay">
+                                    <div class="lock-icon-circle"><i class="fa-solid fa-lock"></i></div>
+                                    <span class="lock-text">Ver Demo</span>
+                                </div>
+                            ` : ''}
+                            <img src="${l.imagem}" class="card-thumb" alt="${l.titulo}">
+                        </div>
+                        <div class="card-body">
+                            <h4>${l.titulo}</h4>
+                            <button class="card-btn">
+                                <i class="fa-solid fa-magnifying-glass"></i> Ver Detalhes
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // CARDS: PLUGINS
+            const gridPlugins = document.getElementById('grid-plugins');
+            if(dadosAluno.plugins && dadosAluno.plugins.length > 0) {
+                gridPlugins.innerHTML = dadosAluno.plugins.map(p => `
+                    <div class="premium-card ${!p.desbloqueado ? 'locked' : ''}" onclick="openProductPreview(${p.id}, 'plugins')">
+                        <div class="thumb-wrapper">
+                            ${!p.desbloqueado ? `
+                                <div class="lock-overlay">
+                                    <div class="lock-icon-circle"><i class="fa-solid fa-lock"></i></div>
+                                    <span class="lock-text">Ver Demo</span>
+                                </div>
+                            ` : ''}
+                            <img src="${p.imagem}" class="card-thumb" alt="${p.titulo}">
+                        </div>
+                        <div class="card-body">
+                            <h4>${p.titulo}</h4>
+                            <button class="card-btn">
+                                <i class="fa-solid fa-magnifying-glass"></i> Ver Detalhes
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // CARDS: EBOOKS
+            const gridEbooks = document.getElementById('grid-ebooks');
+            if(dadosAluno.ebooks && dadosAluno.ebooks.length > 0) {
+                gridEbooks.innerHTML = dadosAluno.ebooks.map(e => `
+                    <div class="premium-card ${!e.desbloqueado ? 'locked' : ''}" onclick="openProductPreview(${e.id}, 'ebooks')">
+                        <div class="thumb-wrapper">
+                            ${!e.desbloqueado ? `
+                                <div class="lock-overlay">
+                                    <div class="lock-icon-circle"><i class="fa-solid fa-lock"></i></div>
+                                    <span class="lock-text">Ver Demo</span>
+                                </div>
+                            ` : ''}
+                            <img src="${e.imagem}" class="card-thumb" alt="${e.titulo}">
+                        </div>
+                        <div class="card-body">
+                            <h4>${e.titulo}</h4>
+                            <button class="card-btn">
+                                <i class="fa-solid fa-magnifying-glass"></i> Ver Detalhes
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // ==========================================
+        // SISTEMA DE PLAYER DE CURSOS
+        // ==========================================
+        function handleCourseAction(id, isUnlocked, title) {
+            if (!isUnlocked) {
+                openWhatsApp(`Compra do Curso: ${title}`);
+                return;
+            }
+            const iLoader = document.getElementById('innerLoader');
+            document.getElementById('cursos-list-pane').style.display = "none";
+            iLoader.style.display = "block";
+            setTimeout(() => {
+                document.body.classList.add('theatre-mode');
+                iLoader.style.display = "none";
+                openCoursePlayer(id);
+            }, 600);
+        }
+
+        function closeVideoReader() {
+            const iLoader = document.getElementById('innerLoader');
+            document.getElementById('courses-player-pane').style.display = "none";
+            document.getElementById('main-video-frame').src = "";
+            iLoader.style.display = "block";
+            setTimeout(() => {
+                document.body.classList.remove('theatre-mode');
+                iLoader.style.display = "none";
+                document.getElementById('cursos-list-pane').style.display = "block";
+            }, 500);
+        }
+
+        function openCoursePlayer(courseId) {
+            const curso = dadosAluno.cursos.find(c => c.id === courseId);
+            if(!curso || !curso.modulos || curso.modulos.length === 0) {
+                showToast("Módulos em processamento de upload.", "warning", "fa-video-slash");
+                closeVideoReader();
+                return;
+            }
+            document.getElementById('courses-player-pane').style.display = "block";
+            document.getElementById('player-course-title').innerText = curso.titulo.toUpperCase();
+
+            const materialBtn = document.getElementById('btn-download-material');
+            if(curso.linkMaterial) {
+                materialBtn.href = curso.linkMaterial;
+                materialBtn.style.opacity = "1";
+                materialBtn.style.pointerEvents = "auto";
+                materialBtn.innerHTML = `<i class="fa-solid fa-download"></i> Baixar Recursos`;
+            } else {
+                materialBtn.href = "#";
+                materialBtn.style.opacity = "0.4";
+                materialBtn.style.pointerEvents = "none";
+                materialBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Sem Anexos`;
+            }
+
+            const trackContainer = document.getElementById('playlist-tracks-container');
+            trackContainer.innerHTML = curso.modulos.map((modulo, modIndex) => `
+                <details class="module-wrapper" ${modIndex === 0 ? 'open' : ''}>
+                    <summary class="module-summary">
+                        <span><i class="fa-regular fa-folder" style="color: var(--primary); margin-right: 0.4rem;"></i> ${modulo.nome}</span>
+                        <i class="fa-solid fa-chevron-down chevron"></i>
+                    </summary>
+                    <div style="padding-bottom: 0.5rem;">
+                        ${modulo.aulas.map((aula, aulaIndex) => `
+                            <div class="playlist-track ${modIndex === 0 && aulaIndex === 0 ? 'active' : ''}" onclick="playTrackVideo('${aula.url}', this)">
+                                <i class="fa-solid fa-play"></i> ${aula.titulo}
+                            </div>
+                        `).join('')}
+                    </div>
+                </details>
+            `).join('');
+
+            try {
+                playTrackVideo(curso.modulos[0].aulas[0].url, trackContainer.querySelector('.playlist-track'));
+            } catch(e) {}
+        }
+
+        function playTrackVideo(url, element) {
+            document.querySelectorAll('.playlist-track').forEach(t => t.classList.remove('active'));
+            if(element) element.classList.add('active');
+            document.getElementById('main-video-frame').src = parseYoutubeUrl(url);
+        }
+
+        // ==========================================
+        // MOTOR DE PRÉ-VISUALIZAÇÃO DE PRODUTOS
+        // ==========================================
+        function openProductPreview(id, type) {
+            currentProductSection = type; 
+            
+            let lista = [];
+            let listPaneId = '';
+            
+            if(type === 'drumkits') { lista = dadosAluno.drumkits; listPaneId = 'drumkits-list-pane'; }
+            else if(type === 'flps') { lista = dadosAluno.flps; listPaneId = 'flp-list-pane'; }
+            else if(type === 'loops') { lista = dadosAluno.loops; listPaneId = 'loops-list-pane'; }
+            else if(type === 'plugins') { lista = dadosAluno.plugins; listPaneId = 'plugins-list-pane'; }
+            else if(type === 'ebooks') { lista = dadosAluno.ebooks; listPaneId = 'ebooks-list-pane'; }
+            
+            const produto = lista.find(p => p.id === id);
+            
+            if(!produto) {
+                showToast("Produto não localizado.", "warning", "fa-triangle-exclamation");
+                return;
+            }
+
+            const iLoader = document.getElementById('innerLoader');
+            document.getElementById(listPaneId).style.display = "none";
+            iLoader.style.display = "block";
+
+            setTimeout(() => {
+                document.body.classList.add('theatre-mode');
+                iLoader.style.display = "none";
+                
+                document.getElementById('product-preview-title').innerText = produto.titulo;
+                document.getElementById('product-preview-img').src = produto.imagem;
+                
+                const precoFormatado = produto.preco ? produto.preco : "Kz 6.500,00";
+                document.getElementById('product-preview-price').innerText = precoFormatado;
+                
+                const videoUrl = produto.videoDemo ? produto.videoDemo : "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+                document.getElementById('product-video-frame').src = parseYoutubeUrl(videoUrl);
+
+                const btnStack = document.getElementById('product-btn-stack');
+                if(produto.desbloqueado) {
+                    btnStack.innerHTML = `
+                        <button class="btn-action-premium btn-download-unlocked" onclick="executeDownload('${produto.linkDownload}')">
+                            <i class="fa-solid fa-cloud-arrow-down"></i> Baixar Conteúdo Adquirido
+                        </button>
+                    `;
+                } else {
+                    btnStack.innerHTML = `
+                        <button class="btn-action-premium btn-download-locked" disabled>
+                            <i class="fa-solid fa-lock"></i> Download Bloqueado (Não Comprado)
+                        </button>
+                        <button class="btn-action-premium btn-buy-whatsapp" onclick="triggerProductPurchase('${produto.titulo}', '${precoFormatado}')">
+                            <i class="fa-brands fa-whatsapp"></i> Comprar via WhatsApp
+                        </button>
+                    `;
+                }
+
+                document.getElementById('product-preview-pane').style.display = "block";
+            }, 500);
+        }
+
+        function closeProductPreview() {
+            const iLoader = document.getElementById('innerLoader');
+            document.getElementById('product-preview-pane').style.display = "none";
+            document.getElementById('product-video-frame').src = "";
+            iLoader.style.display = "block";
+
+            setTimeout(() => {
+                document.body.classList.remove('theatre-mode');
+                iLoader.style.display = "none";
+                
+                let listPaneId = '';
+                if(currentProductSection === 'drumkits') listPaneId = 'drumkits-list-pane';
+                if(currentProductSection === 'flps') listPaneId = 'flp-list-pane';
+                if(currentProductSection === 'loops') listPaneId = 'loops-list-pane';
+                if(currentProductSection === 'plugins') listPaneId = 'plugins-list-pane';
+                if(currentProductSection === 'ebooks') listPaneId = 'ebooks-list-pane';
+
+                document.getElementById(listPaneId).style.display = "block";
+                switchView(currentProductSection === 'flps' ? 'flp' : currentProductSection, document.querySelector(`[onclick*="switchView('${currentProductSection === 'flps' ? 'flp' : currentProductSection}'"]`));
+            }, 400);
+        }
+
+        function executeDownload(url) {
+            showToast("A processar link seguro de transferência...", "success", "fa-arrow-down");
+            setTimeout(() => window.open(url, "_blank"), 600);
+        }
+
+        function triggerProductPurchase(titulo, preco) {
+            const mensagem = `*INTERESSE DE COMPRA - LOJA LONEKE*\n\nOlá Loneke! Quero adquirir o seguinte produto:\n📦 *Produto:* ${titulo}\n💰 *Valor:* ${preco}\n\nComo posso efetuar o pagamento para libertar o acesso no meu painel?`;
+            const url = `https://wa.me/244924034159?text=${encodeURIComponent(mensagem)}`;
+            window.open(url, "_blank");
+        }
+
+        // ==========================================
+        // UTILITÁRIOS GERAIS
+        // ==========================================
+        function parseYoutubeUrl(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}?autoplay=1` : url;
+        }
+
+        function openWhatsApp(contexto = "Geral") {
+            const texto = `*Suporte VIP - Loneke no Beat*\nOlá, preciso de suporte no meu painel do aluno.`;
+            const url = `https://wa.me/244924034159?text=${encodeURIComponent(texto)}`;
+            window.open(url, "_blank");
+        }
+
+        function switchView(targetView, menuElement) {
+            document.getElementById('courses-player-pane').style.display = "none";
+            document.getElementById('product-preview-pane').style.display = "none";
+            document.getElementById('main-video-frame').src = "";
+            document.getElementById('product-video-frame').src = "";
+            document.body.classList.remove('theatre-mode');
+
+            document.getElementById('cursos-list-pane').style.display = "block";
+            document.getElementById('drumkits-list-pane').style.display = "block";
+            document.getElementById('flp-list-pane').style.display = "block";
+            document.getElementById('loops-list-pane').style.display = "block";
+            document.getElementById('plugins-list-pane').style.display = "block";
+            document.getElementById('ebooks-list-pane').style.display = "block";
+
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            if(menuElement) menuElement.classList.add('active');
+
+            const iLoader = document.getElementById('innerLoader');
+            document.querySelectorAll('.panel-view').forEach(view => view.classList.remove('active'));
+            
+            iLoader.style.display = "block";
+            setTimeout(() => {
+                iLoader.style.display = "none";
+                const target = document.getElementById(`view-${targetView}`);
+                if (target) target.classList.add('active');
+            }, 200);
+
+            document.getElementById('sidebar').classList.remove('open');
+        }
+
+        function initMobileNav() {
+            const toggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            if(toggle && sidebar) {
+                toggle.onclick = () => sidebar.classList.toggle('open');
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>

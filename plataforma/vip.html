@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Assinante VIP | Loneke no Beat</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #FFD700; /* Dourado Premium para área VIP */
+            --primary-glow: rgba(255, 215, 0, 0.2);
+            --primary-hover: #e6c200;
+            --bg: #030303;
+            --sidebar-bg: #070707;
+            --card-bg: #0e0e0e;
+            --player-bg: #000000;
+            --white: #FFFFFF;
+            --text-secondary: #aaaaaa;
+            --glass-border: rgba(255, 255, 255, 0.04);
+            --sidebar-width: 270px;
+            --font-poppins: 'Poppins', sans-serif;
+            --font-montserrat: 'Montserrat', sans-serif;
+            --transition-premium: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        body {
+            background-color: var(--bg);
+            color: var(--white);
+            font-family: var(--font-poppins);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* SCREEN LOADER INITIAL */
+        .global-loader {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: var(--bg);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            transition: opacity 0.5s ease;
+        }
+        .spinner {
+            width: 45px; height: 45px;
+            border: 2px solid rgba(255, 255, 255, 0.02);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* SIDEBAR DE CONTROLADORES */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--glass-border);
+            position: fixed;
+            top: 0; left: 0; height: 100vh;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: var(--transition-premium);
+        }
+        .sidebar-brand {
+            padding: 2.5rem 2rem;
+            font-family: var(--font-montserrat);
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .sidebar-brand span { color: var(--primary); text-shadow: 0 0 10px var(--primary-glow); }
+        .sidebar-menu {
+            padding: 1.5rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.9rem 2rem;
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-premium);
+            border-left: 3px solid transparent;
+        }
+        .menu-item:hover, .menu-item.active {
+            color: var(--white);
+            background: rgba(255, 255, 255, 0.01);
+        }
+        .menu-item.active {
+            border-left-color: var(--primary);
+            font-weight: 600;
+            background: linear-gradient(90deg, rgba(255, 213, 0, 0.03) 0%, rgba(0,0,0,0) 100%);
+        }
+        .menu-item i { width: 18px; text-align: center; font-size: 1rem; }
+        .menu-vip-plans { color: var(--primary) !important; font-weight: 600; }
+        .menu-whatsapp { color: #25D366 !important; }
+        .menu-logout { color: #ff4444 !important; margin-top: auto; border-top: 1px solid var(--glass-border); padding-top: 1.5rem; }
+
+        /* PAINEL CENTRAL CONTENEDOR */
+        .main-panel {
+            margin-left: var(--sidebar-width);
+            flex-grow: 1;
+            padding: 3rem 4rem;
+            min-height: 100vh;
+            position: relative;
+            transition: var(--transition-premium);
+        }
+        .panel-header { margin-bottom: 3rem; }
+        .welcome-text h1 { font-family: var(--font-montserrat); font-size: 1.8rem; font-weight: 800; }
+        .welcome-text p { color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.2rem; }
+        .welcome-text p span { color: var(--white); font-weight: 500; }
+
+        /* SEÇÃO E COMPONENTES VISUAIS */
+        .panel-view { display: none; }
+        .panel-view.active { display: block; animation: viewFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes viewFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* CRONÔMETRO E METRICAS DE ASSINATURA VIP */
+        .vip-status-banner {
+            background: linear-gradient(135deg, #121210 0%, #080808 100%);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .vip-meta-box h2 { font-family: var(--font-montserrat); font-size: 1.4rem; color: var(--primary); display: flex; align-items: center; gap: 0.6rem; }
+        .vip-meta-box p { font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.4rem; }
+        .vip-meta-box p strong { color: #fff; }
+        
+        .countdown-wrapper { display: flex; gap: 1rem; }
+        .countdown-unit {
+            background: #181818;
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 0.8rem 1.2rem;
+            text-align: center;
+            min-width: 75px;
+        }
+        .countdown-unit span { display: block; font-family: var(--font-montserrat); font-size: 1.6rem; font-weight: 800; color: #fff; }
+        .countdown-unit label { font-size: 0.62rem; uppercase; color: var(--text-secondary); letter-spacing: 0.5px; }
+
+        .report-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; }
+        .report-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            padding: 1.6rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: var(--transition-premium);
+        }
+        .report-card:hover { border-color: rgba(255, 215, 0, 0.15); transform: translateY(-2px); }
+        .report-info h3 { font-size: 0.72rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.5px; }
+        .report-info p { font-family: var(--font-montserrat); font-size: 1.8rem; font-weight: 800; margin-top: 0.1rem; }
+        .report-icon { width: 42px; height: 42px; background: rgba(255, 255, 255, 0.02); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--text-secondary); }
+
+        /* ELEMENTOS DO VITRINE DE PRODUTOS */
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 1.5rem; }
+        .premium-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: var(--transition-premium);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            cursor: pointer;
+        }
+        .premium-card:hover { transform: translateY(-4px); border-color: rgba(255, 255, 255, 0.08); box-shadow: 0 12px 25px rgba(0,0,0,0.6); }
+        
+        .thumb-wrapper { position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #000; }
+        .card-thumb { width: 100%; height: 100%; object-fit: cover; transition: var(--transition-premium); filter: grayscale(15%); }
+        .premium-card:hover .card-thumb { transform: scale(1.03); filter: grayscale(0%); }
+
+        .card-body { padding: 1.2rem; display: flex; flex-direction: column; flex-grow: 1; }
+        .card-body h4 { font-family: var(--font-montserrat); font-size: 0.92rem; font-weight: 700; line-height: 1.4; margin-bottom: 1.2rem; }
+        
+        .card-btn {
+            margin-top: auto; width: 100%; padding: 0.75rem;
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            color: #ddd; font-weight: 500; border-radius: 8px; font-size: 0.78rem;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            pointer-events: none; transition: var(--transition-premium);
+        }
+        .premium-card:hover .card-btn { background-color: var(--white); color: #000; font-weight: 600; }
+
+        /* TELA DE PRODUTO RESTRITO / VER DEMO */
+        .premium-card.locked .thumb-wrapper::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(3, 3, 3, 0.8); backdrop-filter: blur(1px);
+        }
+        .lock-overlay {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 5; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+        }
+        .lock-icon-circle {
+            width: 42px; height: 42px; background: #121212; border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; color: var(--primary);
+        }
+        .lock-text { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 700; color: #888; }
+
+        /* GRADE E TABELA COMPARTIMENTADA DE PLANOS VIP */
+        .plans-view-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 2rem; margin-top: 1rem; }
+        .plan-vip-card {
+            background: #0b0b0b;
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2.2rem 1.8rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: var(--transition-premium);
+        }
+        .plan-vip-card.active-tier {
+            border-color: var(--primary);
+            background: linear-gradient(180deg, #0e0e0c 0%, #050505 100%);
+            box-shadow: 0 15px 35px rgba(255, 215, 0, 0.05);
+        }
+        .plan-badge-status {
+            position: absolute; top: 1rem; right: 1.2rem;
+            background: var(--primary); color: #000; font-size: 0.62rem; font-weight: 800;
+            padding: 0.25rem 0.6rem; border-radius: 20px; text-transform: uppercase;
+        }
+        .plan-vip-card h3 { font-family: var(--font-montserrat); font-size: 1.3rem; font-weight: 800; }
+        .plan-vip-card .plan-duration { font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.1rem; }
+        .plan-vip-card .plan-price { font-family: var(--font-montserrat); font-size: 1.8rem; font-weight: 800; margin: 1.2rem 0; color: #fff; }
+        .plan-vip-card .plan-price span { font-size: 0.85rem; color: var(--text-secondary); font-family: var(--font-poppins); font-weight: 400; }
+        
+        .plan-features-list { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 2rem; flex-grow: 1; border-top: 1px solid var(--glass-border); padding-top: 1.2rem;}
+        .plan-features-list li { font-size: 0.78rem; color: #ccc; display: flex; align-items: flex-start; gap: 0.6rem; line-height: 1.4; }
+        .plan-features-list li i { color: var(--primary); font-size: 0.85rem; margin-top: 0.15rem; }
+        .plan-features-list li.plus-feature i { color: #25D366; }
+
+        .btn-plan-action {
+            width: 100%; padding: 0.85rem; border-radius: 8px; font-size: 0.8rem; font-weight: 700;
+            border: 1px solid var(--glass-border); background: rgba(255,255,255,0.02); color: #fff;
+            cursor: pointer; transition: var(--transition-premium); display: flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none;
+        }
+        .plan-vip-card.active-tier .btn-plan-action { background: var(--primary); color: #000; border: none; }
+        .plan-vip-card.active-tier .btn-plan-action:hover { background: var(--primary-hover); }
+        .btn-plan-action:hover { background: var(--white); color: #000; }
+
+        /* =======================================================
+           ⚡ MODULO PLAYER & PREVIEW ENGINE ARQUITETURA
+        ======================================================= */
+        body.theatre-mode .sidebar { transform: translateX(-100%); pointer-events: none; }
+        body.theatre-mode .main-panel { margin-left: 0; padding: 2rem; }
+        body.theatre-mode .panel-header, body.theatre-mode .vip-status-banner { display: none; }
+
+        .player-workspace-grid, .product-preview-grid { display: grid; grid-template-columns: 1fr 360px; gap: 1.5rem; max-width: 1140px; margin: 0 auto; }
+        .video-frame-pane { width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-border); box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        .video-frame-pane iframe { width: 100%; height: 100%; border: 0; }
+
+        .materials-container-box { background: var(--card-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.2rem 1.5rem; margin-top: 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+        .materials-meta-info { display: flex; align-items: center; gap: 1rem; }
+        .materials-icon-wrapper { width: 44px; height: 44px; background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; color: var(--primary); }
+        .materials-title-text h5 { font-family: var(--font-montserrat); font-size: 0.85rem; font-weight: 700; color: #fff; }
+        .materials-title-text p { color: var(--text-secondary); font-size: 0.72rem; margin-top: 0.15rem; }
+        
+        .materials-download-action-btn { background: var(--white); color: #000; padding: 0.7rem 1.2rem; border-radius: 8px; font-size: 0.78rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: var(--transition-premium); border: none; cursor: pointer; }
+        .materials-download-action-btn:hover { background: var(--primary); color: #000; box-shadow: 0 0 15px var(--primary-glow); }
+
+        .video-playlist-pane { background: #090909; border: 1px solid var(--glass-border); border-radius: 12px; display: flex; flex-direction: column; max-height: 580px; overflow: hidden; }
+        .playlist-header { padding: 1.1rem 1.2rem; background: #020202; font-family: var(--font-montserrat); font-weight: 700; font-size: 0.8rem; border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; gap: 0.6rem; }
+        #playlist-tracks-container { flex-grow: 1; overflow-y: auto; padding: 0.8rem; }
+
+        details.module-wrapper { background: #0d0d0d; border: 1px solid var(--glass-border); border-radius: 8px; margin-bottom: 0.4rem; overflow: hidden; }
+        summary.module-summary { padding: 0.8rem; font-size: 0.75rem; font-weight: 600; color: #ddd; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+        summary.module-summary i.chevron { transition: transform 0.3s ease; font-size: 0.7rem; color: var(--text-secondary); }
+        details[open] summary i.chevron { transform: rotate(180deg); color: var(--primary); }
+
+        .playlist-track { padding: 0.6rem 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 0.6rem; font-size: 0.72rem; color: #888; transition: var(--transition-premium); border-radius: 6px; margin: 0.15rem 0.3rem; }
+        .playlist-track:hover { color: var(--white); background: rgba(255,255,255,0.02); }
+        .playlist-track.active { background: rgba(255, 215, 0, 0.08) !important; color: var(--white) !important; }
+        .playlist-track i { font-size: 0.8rem; color: #444; }
+        .playlist-track.active i { color: var(--primary); }
+
+        .back-container-wrapper { max-width: 1140px; margin: 0 auto 1.2rem auto; }
+        .back-courses-btn { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: var(--transition-premium); background: rgba(255,255,255,0.02); padding: 0.5rem 1rem; border-radius: 30px; border: 1px solid var(--glass-border); }
+        .back-courses-btn:hover { color: var(--white); background: rgba(255,255,255,0.05); }
+
+        /* PREVIEW VITRINE PANE CONTROLE */
+        .product-meta-sidebar { background: var(--sidebar-bg); border: 1px solid var(--glass-border); border-radius: 14px; padding: 1.8rem; display: flex; flex-direction: column; gap: 1.5rem; height: fit-content; }
+        .product-preview-thumb { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 8px; border: 1px solid var(--glass-border); }
+        .product-info-title h2 { font-family: var(--font-montserrat); font-size: 1.15rem; font-weight: 800; line-height: 1.3; }
+        
+        .price-badge-container { background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border); padding: 1rem; border-radius: 10px; display: flex; flex-direction: column; gap: 0.2rem; }
+        .price-label { font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; }
+        .price-value { font-family: var(--font-montserrat); font-size: 1.35rem; font-weight: 800; color: var(--primary); }
+        
+        .product-action-stack { display: flex; flex-direction: column; gap: 0.6rem; }
+        .btn-action-premium { width: 100%; padding: 0.9rem; border-radius: 8px; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.6rem; text-decoration: none; cursor: pointer; transition: var(--transition-premium); border: none; }
+        .btn-download-unlocked { background: var(--white); color: #000; }
+        .btn-download-unlocked:hover { background: var(--primary); color: #000; }
+        .btn-download-locked { background: #121212; color: #444; cursor: not-allowed; border: 1px solid rgba(255,255,255,0.01); }
+        .btn-buy-whatsapp { background: #25D366; color: #000; }
+        .btn-buy-whatsapp:hover { background: #1ebd58; }
+
+        .inner-loader { display: none; text-align: center; padding: 5rem 0; width: 100%; }
+        .inner-loader .spinner { margin: 0 auto 1.5rem auto; width: 36px; height: 36px; }
+
+        .toast-container { position: fixed; top: 30px; right: 30px; z-index: 100000; display: flex; flex-direction: column; gap: 12px; pointer-events: none; }
+        .toast-notification { pointer-events: auto; background: #0f0f0f; border: 1px solid var(--glass-border); border-left: 3px solid var(--primary); color: var(--white); padding: 1rem 1.5rem; border-radius: 10px; font-size: 0.85rem; display: flex; align-items: center; gap: 0.8rem; transform: translateX(180%); transition: var(--transition-premium); }
+        .toast-notification.show { transform: translateX(0); }
+
+        @media (max-width: 992px) {
+            .player-workspace-grid, .product-preview-grid { grid-template-columns: 1fr; }
+            .vip-status-banner { flex-direction: column; align-items: flex-start; }
+            .countdown-wrapper { width: 100%; justify-content: space-between; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { left: -100%; }
+            .main-panel { margin-left: 0; padding: 2rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SCREEN LOADER SYSTEM -->
+    <div class="global-loader" id="globalLoader">
+        <div class="spinner"></div>
+        <p style="font-family: var(--font-montserrat); letter-spacing: 2px; font-size: 0.72rem; font-weight: 700; color: #555;">VIP MEMBERSHIP PORTAL</p>
+    </div>
+
+    <!-- CONEXÃO LATERAL DE CONTROLE -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            VIP <span>LONEKE BEATS</span>
+        </div>
+        <nav class="sidebar-menu">
+            <div class="menu-item active" onclick="switchView('dashboard', this)"><i class="fa-solid fa-crown"></i> Painel VIP</div>
+            <div class="menu-item menu-vip-plans" onclick="switchView('planos', this)"><i class="fa-solid fa-gem"></i> Planos de Assinatura</div>
+            <div class="menu-item" onclick="switchView('cursos', this)"><i class="fa-solid fa-graduation-cap"></i> Cursos do Plano</div>
+            <div class="menu-item" onclick="switchView('drumkits', this)"><i class="fa-solid fa-drum"></i> Drumkits VIP</div>
+            <div class="menu-item" onclick="switchView('flp', this)"><i class="fa-solid fa-folder-open"></i> Projetos FLP</div>
+            <div class="menu-item" onclick="switchView('loops', this)"><i class="fa-solid fa-wave-square"></i> Loops Premium</div>
+            <div class="menu-item" onclick="switchView('plugins', this)"><i class="fa-solid fa-plug"></i> VST & Plugins</div>
+            <div class="menu-item" onclick="switchView('ebooks', this)"><i class="fa-solid fa-book"></i> Ebooks Exclusivos</div>
+            <div class="menu-item menu-whatsapp" onclick="triggerPlanChange('Suporte Geral')"><i class="fa-brands fa-whatsapp"></i> Falar com Loneke</div>
+            <div class="menu-item menu-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Sair do Painel</div>
+        </nav>
+    </aside>
+
+    <!-- CONTAINER OPERACIONAL PRINCIPAL -->
+    <main class="main-panel">
+        
+        <header class="panel-header" id="mainPanelHeader">
+            <div class="welcome-text">
+                <h1 id="txt-user-name">Carregando Assinatura...</h1>
+                <p id="txt-user-welcome">Sincronizando chaves de segurança com o servidor...</p>
+            </div>
+        </header>
+
+        <!-- CRONÔMETRO TEMPORAL DINÂMICO DE EXPIRAÇÃO -->
+        <div class="vip-status-banner" id="vipSubscriptionBanner">
+            <div class="vip-meta-box">
+                <h2><i class="fa-solid fa-circle-check"></i> Assinatura Premium Ativa</h2>
+                <p>Plano Contratado: <strong id="lbl-active-plan-name" style="color: var(--primary);">-</strong></p>
+                <p>Data de Início: <span id="lbl-date-start">-</span> | Expira em: <span id="lbl-date-end">-</span></p>
+            </div>
+            <div class="countdown-wrapper">
+                <div class="countdown-unit"><span id="timer-days">00</span><label>Dias</label></div>
+                <div class="countdown-unit"><span id="timer-hours">00</span><label>Horas</label></div>
+                <div class="countdown-unit"><span id="timer-mins">00</span><label>Minutos</label></div>
+            </div>
+        </div>
+
+        <div class="inner-loader" id="innerLoader">
+            <div class="spinner"></div>
+            <p style="color: var(--text-secondary); font-size: 0.7rem; font-family: var(--font-montserrat);">RENDERIZANDO CONTEÚDO VIP...</p>
+        </div>
+
+        <!-- VIEW: DASHBOARD METRICAS -->
+        <section id="view-dashboard" class="panel-view active">
+            <div class="report-grid">
+                <div class="report-card">
+                    <div class="report-info"><h3>Formações</h3><p id="cnt-cursos">-</p></div>
+                    <div class="report-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                </div>
+                <div class="report-card">
+                    <div class="report-info"><h3>Drumkits VIP</h3><p id="cnt-drumkits">-</p></div>
+                    <div class="report-icon"><i class="fa-solid fa-drum"></i></div>
+                </div>
+                <div class="report-card">
+                    <div class="report-info"><h3>Projetos FLP</h3><p id="cnt-flp">-</p></div>
+                    <div class="report-icon"><i class="fa-solid fa-folder-open"></i></div>
+                </div>
+                <div class="report-card">
+                    <div class="report-info"><h3>Loops Kits</h3><p id="cnt-loops">-</p></div>
+                    <div class="report-icon"><i class="fa-solid fa-wave-square"></i></div>
+                </div>
+                <div class="report-card">
+                    <div class="report-info"><h3>VST Packs</h3><p id="cnt-plugins">-</p></div>
+                    <div class="report-icon"><i class="fa-solid fa-plug"></i></div>
+                </div>
+                <div class="report-card">
+                    <div class="report-info"><h3>Ebooks</h3><p id="cnt-ebooks">-</p></div>
+                    <div class="report-icon"><i class="fa-solid fa-book"></i></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: GERENCIADOR E COMPARAÇÃO DE PLANOS -->
+        <section id="view-planos" class="panel-view">
+            <div class="plans-view-grid">
+                
+                <!-- PLANO INICIAL -->
+                <div class="plan-vip-card" id="tier-Plano-Inicial">
+                    <h3>Plano Inicial</h3>
+                    <div class="plan-duration">Acesso Semanal</div>
+                    <div class="plan-price">2 999Kz <span>/semana</span></div>
+                    <ul class="plan-features-list">
+                        <li><i class="fa-solid fa-check"></i> Assistir vídeos na plataforma online</li>
+                        <li><i class="fa-solid fa-xmark" style="color:#ff4444;"></i> Sem direito a baixar arquivos</li>
+                        <li><i class="fa-solid fa-circle-play"></i> Aulas exclusivas de Produção de Beats</li>
+                        <li><i class="fa-solid fa-circle-play"></i> Aulas exclusivas de Criação de Melodias</li>
+                        <li><i class="fa-solid fa-circle-play"></i> Aulas exclusivas de Mix & Master</li>
+                    </ul>
+                    <button class="btn-plan-action" onclick="triggerPlanChange('Plano Inicial')">Selecionar Plano</button>
+                </div>
+
+                <!-- PLANO PRO -->
+                <div class="plan-vip-card" id="tier-Plano-Pro">
+                    <h3>Plano Pro</h3>
+                    <div class="plan-duration">Acesso Mensal</div>
+                    <div class="plan-price">5 500Kz <span>/mês</span></div>
+                    <ul class="plan-features-list">
+                        <li class="plus-feature"><i class="fa-solid fa-plus"></i> Tudo do Plano Inicial +</li>
+                        <li><i class="fa-solid fa-check"></i> Aulas personalizadas de criação de beats</li>
+                        <li><i class="fa-solid fa-check"></i> Análise e correção dos seus beats</li>
+                        <li><i class="fa-solid fa-check"></i> Canal direto para tirar dúvidas</li>
+                        <li><i class="fa-solid fa-check"></i> Receber Drumkits e Plugins de graça</li>
+                    </ul>
+                    <button class="btn-plan-action" onclick="triggerPlanChange('Plano Pro')">Selecionar Plano</button>
+                </div>
+
+                <!-- PLANO MASTER -->
+                <div class="plan-vip-card" id="tier-Plano-Master">
+                    <h3>Plano Master</h3>
+                    <div class="plan-duration">Acesso Anual</div>
+                    <div class="plan-price">52 999Kz <span>/ano</span></div>
+                    <ul class="plan-features-list">
+                        <li class="plus-feature"><i class="fa-solid fa-plus"></i> Tudo do Plano Pro +</li>
+                        <li><i class="fa-solid fa-check"></i> Fazer transmissões ao vivo comigo</li>
+                        <li><i class="fa-solid fa-check"></i> Acompanhamento individual via WhatsApp</li>
+                        <li><i class="fa-solid fa-check"></i> Acompanhamento Presencial</li>
+                        <li><i class="fa-solid fa-check"></i> Combo de VSTs/Drumkits no seu PC</li>
+                        <li><i class="fa-solid fa-check"></i> Visitas no teu estúdio (Luanda)</li>
+                        <li><i class="fa-solid fa-check"></i> Divulgação do seu trabalho</li>
+                    </ul>
+                    <button class="btn-plan-action" onclick="triggerPlanChange('Plano Master')">Selecionar Plano</button>
+                </div>
+
+                <!-- PLANO ELITE ANUAL -->
+                <div class="plan-vip-card" id="tier-Plano-Elite-Anual">
+                    <div class="plan-badge-status">PREMIUM</div>
+                    <h3>Plano Elite</h3>
+                    <div class="plan-duration">Acesso Anual</div>
+                    <div class="plan-price">100 000Kz <span>/ano</span></div>
+                    <ul class="plan-features-list">
+                        <li class="plus-feature"><i class="fa-solid fa-plus"></i> Tudo do Plano Master +</li>
+                        <li><i class="fa-solid fa-check"></i> Acesso integral a 5 Cursos grátis</li>
+                        <li><i class="fa-solid fa-check"></i> Produzir comigo presencialmente</li>
+                        <li><i class="fa-solid fa-check"></i> Mentorias e dicas de monetização</li>
+                        <li><i class="fa-solid fa-check"></i> Acesso antecipado a atualizações</li>
+                    </ul>
+                    <button class="btn-plan-action" onclick="triggerPlanChange('Plano Elite Anual')">Selecionar Plano</button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- VIEW: CURSOS VIP -->
+        <section id="view-cursos" class="panel-view">
+            <div id="cursos-list-pane"><div class="cards-grid" id="grid-cursos"></div></div>
+            
+            <div id="courses-player-pane" style="display: none;">
+                <div class="back-container-wrapper">
+                    <div class="back-courses-btn" onclick="closeVideoReader()">
+                        <i class="fa-solid fa-arrow-left"></i> Fechar Reprodutor
+                    </div>
+                </div>
+                <div class="player-workspace-grid">
+                    <div class="player-left-column">
+                        <div class="video-frame-pane">
+                            <iframe id="main-video-frame" src="" allowfullscreen></iframe>
+                        </div>
+                        <div class="materials-container-box">
+                            <div class="materials-meta-info">
+                                <div class="materials-icon-wrapper"><i class="fa-solid fa-box-open"></i></div>
+                                <div class="materials-title-text">
+                                    <h5>Arquivos Complementares</h5>
+                                    <p>Material disponibilizado para download neste curso.</p>
+                                </div>
+                            </div>
+                            <a href="#" target="_blank" id="btn-download-material" class="materials-download-action-btn"><i class="fa-solid fa-download"></i> Baixar Anexos</a>
+                        </div>
+                    </div>
+                    <div class="video-playlist-pane">
+                        <div class="playlist-header"><i class="fa-solid fa-folder" style="color:var(--primary);"></i> <span id="player-course-title">PLAYLIST VIP</span></div>
+                        <div id="playlist-tracks-container"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DEMAIS VIEWS DA PLATAFORMA -->
+        <section id="view-drumkits" class="panel-view"><div id="drumkits-list-pane"><div class="cards-grid" id="grid-drumkits"></div></div></section>
+        <section id="view-flp" class="panel-view"><div id="flp-list-pane"><div class="cards-grid" id="grid-flp"></div></div></section>
+        <section id="view-loops" class="panel-view"><div id="loops-list-pane"><div class="cards-grid" id="grid-loops"></div></div></section>
+        <section id="view-plugins" class="panel-view"><div id="plugins-list-pane"><div class="cards-grid" id="grid-plugins"></div></div></section>
+        <section id="view-ebooks" class="panel-view"><div id="ebooks-list-pane"><div class="cards-grid" id="grid-ebooks"></div></div></section>
+
+        <!-- VIEW UNITÁRIA DE PRÉ-VISUALIZAÇÃO DE PRODUTOS BLOQUEADOS -->
+        <section id="product-preview-pane" style="display: none;">
+            <div class="back-container-wrapper">
+                <div class="back-courses-btn" onclick="closeProductPreview()"><i class="fa-solid fa-arrow-left"></i> Voltar para a Lista</div>
+            </div>
+            <div class="product-preview-grid">
+                <div class="player-left-column">
+                    <div class="video-frame-pane">
+                        <iframe id="product-video-frame" src="" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="product-meta-sidebar">
+                    <img id="product-preview-img" src="" class="product-preview-thumb">
+                    <div class="product-info-title"><h2 id="product-preview-title">-</h2></div>
+                    <div class="price-badge-container">
+                        <span class="price-label">Status de Acesso</span>
+                        <span class="price-value" id="product-preview-price">-</span>
+                    </div>
+                    <div class="product-action-stack" id="product-btn-stack"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MOTOR LÓGICO DE INJEÇÃO E GERENCIAMENTO -->
+    <script>
+        let currentProductSection = '';
+        const suporteWhatsapp = "244924034159";
+
+        // Mecanismo de carregamento de arquivo JS dinâmico do aluno
+        window.addEventListener('DOMContentLoaded', () => {
+            let fileTarget = localStorage.getItem('loggedStudentFile') || "bd/vip/vip_loneke.js";
+            
+            // Garantir caminho correto se vier da tela comum
+            if(fileTarget.includes('aluno_')) {
+                let username = fileTarget.split('aluno_')[1].replace('.js', '');
+                fileTarget = `bd/vip/vip_${username}.js`;
+            }
+
+            const scriptNode = document.createElement('script');
+            scriptNode.src = fileTarget;
+            document.head.appendChild(scriptNode);
+
+            scriptNode.onload = () => {
+                setTimeout(() => {
+                    const gLoader = document.getElementById('globalLoader');
+                    if(gLoader) gLoader.style.opacity = '0';
+                    setTimeout(() => gLoader.style.display = 'none', 400);
+                }, 600);
+                setupDashboardVIP();
+            };
+
+            scriptNode.onerror = () => {
+                showToast("Erro ao ler banco de dados VIP.", "warning");
+            };
+        });
+
+        function showToast(msg) {
+            let container = document.getElementById('toastContainer') || document.createElement('div');
+            if(!container.id) { container.id = 'toastContainer'; container.className = 'toast-container'; document.body.appendChild(container); }
+            const t = document.createElement('div'); t.className = 'toast-notification show';
+            t.innerHTML = `<i class="fa-solid fa-circle-info"></i><span>${msg}</span>`;
+            container.appendChild(t);
+            setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 3000);
+        }
+
+        function setupDashboardVIP() {
+            if (typeof dadosVip === 'undefined') return;
+
+            // Preenchimento de textos do cabeçalho
+            document.getElementById('txt-user-name').innerHTML = `Espaço VIP \r Mestre ${dadosVip.usuario.nome}`;
+            document.getElementById('txt-user-welcome').innerHTML = `Painel premium autenticado para: <span>${dadosVip.usuario.email}</span>`;
+
+            // Setup de datas e disparo do cronômetro
+            document.getElementById('lbl-active-plan-name').innerText = dadosVip.assinatura.plano;
+            document.getElementById('lbl-date-start').innerText = dadosVip.assinatura.dataAssinatura;
+            document.getElementById('lbl-date-end').innerText = dadosVip.assinatura.dataExpiracao;
+            
+            runSubscriptionClock(dadosVip.assinatura.dataExpiracao);
+            highlightCurrentPlan(dadosVip.assinatura.plano);
+
+            // Mapeamento de contadores nos cards informativos
+            document.getElementById('cnt-cursos').innerText = dadosVip.cursos ? dadosVip.cursos.length : 0;
+            document.getElementById('cnt-drumkits').innerText = dadosVip.drumkits ? dadosVip.drumkits.length : 0;
+            document.getElementById('cnt-flp').innerText = dadosVip.flps ? dadosVip.flps.length : 0;
+            document.getElementById('cnt-loops').innerText = dadosVip.loops ? dadosVip.loops.length : 0;
+            document.getElementById('cnt-plugins').innerText = dadosVip.plugins ? dadosVip.plugins.length : 0;
+            document.getElementById('cnt-ebooks').innerText = dadosVip.ebooks ? dadosVip.ebooks.length : 0;
+
+            buildProductGrids();
+        }
+
+        // MOTOR DO CRONÔMETRO REGRESSIVO
+        function runSubscriptionClock(targetDateStr) {
+            function calculateTime() {
+                const target = new Date(targetDateStr + "T23:59:59").getTime();
+                const now = new Date().getTime();
+                const diff = target - now;
+
+                if(diff <= 0) {
+                    document.getElementById('vipSubscriptionBanner').style.borderColor = "#ff4444";
+                    document.getElementById('timer-days').innerText = "00";
+                    document.getElementById('timer-hours').innerText = "00";
+                    document.getElementById('timer-mins').innerText = "00";
+                    return;
+                }
+
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+                document.getElementById('timer-days').innerText = d < 10 ? '0'+d : d;
+                document.getElementById('timer-hours').innerText = h < 10 ? '0'+h : h;
+                document.getElementById('timer-mins').innerText = m < 10 ? '0'+m : m;
+            }
+            calculateTime();
+            setInterval(calculateTime, 60000);
+        }
+
+        function highlightCurrentPlan(planName) {
+            const normalizedId = "tier-" + planName.replace(/\s+/g, '-');
+            const targetCard = document.getElementById(normalizedId);
+            if(targetCard) {
+                targetCard.classList.add('active-tier');
+                const btn = targetCard.querySelector('.btn-plan-action');
+                if(btn) btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> Seu Plano Atual`;
+            }
+        }
+
+        function triggerPlanChange(planTarget) {
+            const msg = `*MUDANÇA DE PLANO VIP*\n\nOlá Loneke, estou no meu Painel VIP e gostaria de negociar/alterar o meu plano atual para o: *${planTarget}*. Como procedemos?`;
+            window.open(`https://wa.me/${suporteWhatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        // MOTOR DE CONSTRUÇÃO DE GALERIAS DE CONTEÚDO
+        function buildProductGrids() {
+            // CURSOS
+            document.getElementById('grid-cursos').innerHTML = dadosVip.cursos.map(c => `
+                <div class="premium-card ${!c.desbloqueado ? 'locked' : ''}" onclick="handleCourseVIP(${c.id}, ${c.desbloqueado}, '${c.titulo}')">
+                    <div class="thumb-wrapper">
+                        ${!c.desbloqueado ? `<div class="lock-overlay"><div class="lock-icon-circle"><i class="fa-solid fa-lock"></i></div><span class="lock-text">Ver Demo</span></div>` : ''}
+                        <img src="${c.imagem}" class="card-thumb">
+                    </div>
+                    <div class="card-body">
+                        <h4>${c.titulo}</h4>
+                        <button class="card-btn"><i class="fa-solid ${c.desbloqueado ? 'fa-circle-play' : 'fa-magnifying-glass'}"></i> ${c.desbloqueado ? 'Iniciar Aula' : 'Ver Prévia'}</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // UTILS MAP GENERATOR
+            const sections = [
+                { arr: dadosVip.drumkits, grid: 'grid-drumkits', key: 'drumkits' },
+                { arr: dadosVip.flps, grid: 'grid-flp', key: 'flps' },
+                { arr: dadosVip.loops, grid: 'grid-loops', key: 'loops' },
+                { arr: dadosVip.plugins, grid: 'grid-plugins', key: 'plugins' },
+                { arr: dadosVip.ebooks, grid: 'grid-ebooks', key: 'ebooks' }
+            ];
+
+            sections.forEach(s => {
+                if(!s.arr) return;
+                document.getElementById(s.grid).innerHTML = s.arr.map(item => `
+                    <div class="premium-card ${!item.desbloqueado ? 'locked' : ''}" onclick="openProductPreview(${item.id}, '${s.key}')">
+                        <div class="thumb-wrapper">
+                            ${!item.desbloqueado ? `<div class="lock-overlay"><div class="lock-icon-circle"><i class="fa-solid fa-lock"></i></div><span class="lock-text">Ver Demo</span></div>` : ''}
+                            <img src="${item.imagem}" class="card-thumb">
+                        </div>
+                        <div class="card-body">
+                            <h4>${item.titulo}</h4>
+                            <button class="card-btn"><i class="fa-solid fa-magnifying-glass"></i> Detalhes</button>
+                        </div>
+                    </div>
+                `).join('');
+            });
+        }
+
+        // FUNÇÕES DA PLAYER VIEW (CURSOS)
+        function handleCourseVIP(id, isUnlocked, title) {
+            if(!isUnlocked) {
+                // Se o curso estiver bloqueado no arquivo, ele deixa assistir ao vídeo demonstrativo
+                const curso = dadosVip.cursos.find(c => c.id === id);
+                openProductPreview(id, 'cursos');
+                return;
+            }
+            document.getElementById('cursos-list-pane').style.display = "none";
+            document.body.classList.add('theatre-mode');
+            
+            const curso = dadosVip.cursos.find(c => c.id === id);
+            document.getElementById('courses-player-pane').style.display = "block";
+            document.getElementById('player-course-title').innerText = curso.titulo;
+
+            const matBtn = document.getElementById('btn-download-material');
+            if(curso.linkMaterial) { matBtn.href = curso.linkMaterial; matBtn.style.opacity="1"; matBtn.style.pointerEvents="auto"; } 
+            else { matBtn.style.opacity="0.3"; matBtn.style.pointerEvents="none"; }
+
+            document.getElementById('playlist-tracks-container').innerHTML = curso.modulos.map((m, mIdx) => `
+                <details class="module-wrapper" ${mIdx === 0 ? 'open' : ''}>
+                    <summary class="module-summary"><span>${m.nome}</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
+                    <div>
+                        ${m.aulas.map((a, aIdx) => `<div class="playlist-track ${mIdx===0 && aIdx===0 ? 'active':''}" onclick="playVideoVIP('${a.url}', this)"><i class="fa-solid fa-play"></i> ${a.titulo}</div>`).join('')}
+                    </div>
+                </details>
+            `).join('');
+
+            if(curso.modulos[0] && curso.modulos[0].aulas[0]) {
+                playVideoVIP(curso.modulos[0].aulas[0].url, document.querySelector('.playlist-track'));
+            }
+        }
+
+        function playVideoVIP(url, el) {
+            document.querySelectorAll('.playlist-track').forEach(t => t.classList.remove('active'));
+            if(el) el.classList.add('active');
+            document.getElementById('main-video-frame').src = formatVideoEmbed(url);
+        }
+
+        function closeVideoReader() {
+            document.getElementById('courses-player-pane').style.display = "none";
+            document.getElementById('main-video-frame').src = "";
+            document.body.classList.remove('theatre-mode');
+            document.getElementById('cursos-list-pane').style.display = "block";
+        }
+
+        // FUNÇÕES DO PRODUTO PREVIEW VIEW (BLOQUEADOS)
+        function openProductPreview(id, type) {
+            currentProductSection = type;
+            let list = [];
+            let paneId = type + '-list-pane';
+            if(type === 'flps') paneId = 'flp-list-pane';
+
+            if(type === 'cursos') list = dadosVip.cursos;
+            else if(type === 'drumkits') list = dadosVip.drumkits;
+            else if(type === 'flps') list = dadosVip.flps;
+            else if(type === 'loops') list = dadosVip.loops;
+            else if(type === 'plugins') list = dadosVip.plugins;
+            else if(type === 'ebooks') list = dadosVip.ebooks;
+
+            const prod = list.find(p => p.id === id);
+            if(!prod) return;
+
+            const paneElement = document.getElementById(paneId);
+            if(paneElement) paneElement.style.display = "none";
+            
+            document.body.classList.add('theatre-mode');
+            document.getElementById('product-preview-title').innerText = prod.titulo;
+            document.getElementById('product-preview-img').src = prod.imagem;
+            document.getElementById('product-preview-price').innerText = prod.desbloqueado ? "Adquirido no Plano" : (prod.preco || "Requer Upgrade");
+
+            const demoUrl = prod.videoDemo || "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+            document.getElementById('product-video-frame').src = formatVideoEmbed(demoUrl);
+
+            const btnStack = document.getElementById('product-btn-stack');
+            if(prod.desbloqueado) {
+                btnStack.innerHTML = `<button class="btn-action-premium btn-download-unlocked" onclick="downloadFileVIP('${prod.linkDownload || prod.linkMaterial}')"><i class="fa-solid fa-cloud-arrow-down"></i> Baixar Arquivo</button>`;
+            } else {
+                btnStack.innerHTML = `
+                    <button class="btn-action-premium btn-download-locked" disabled><i class="fa-solid fa-lock"></i> Download Indisponível</button>
+                    <button class="btn-action-premium btn-buy-whatsapp" onclick="requestUpgradeProduct('${prod.titulo}')"><i class="fa-brands fa-whatsapp"></i> Solicitar Acesso via WhatsApp</button>
+                `;
+            }
+
+            document.getElementById('product-preview-pane').style.display = "block";
+        }
+
+        function closeProductPreview() {
+            document.getElementById('product-preview-pane').style.display = "none";
+            document.getElementById('product-video-frame').src = "";
+            document.body.classList.remove('theatre-mode');
+            
+            let paneId = currentProductSection + '-list-pane';
+            if(currentProductSection === 'flps') paneId = 'flp-list-pane';
+            
+            const paneElement = document.getElementById(paneId);
+            if(paneElement) paneElement.style.display = "block";
+        }
+
+        function downloadFileVIP(url) {
+            showToast("Verificando integridade do token VIP...");
+            setTimeout(() => window.open(url, '_blank'), 500);
+        }
+
+        function requestUpgradeProduct(prodTitle) {
+            const msg = `*UPGRADE DE CONTEÚDO VIP*\n\nOlá Loneke, estou visualizando a prévia do item *${prodTitle}* e notei que ele está restrito para o meu nível de conta. Como posso fazer a liberação definitiva dele?`;
+            window.open(`https://wa.me/${suporteWhatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function formatVideoEmbed(url) {
+            const reg = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const m = url.match(reg);
+            return (m && m[2].length === 11) ? `https://www.youtube.com/embed/${m[2]}?autoplay=1` : url;
+        }
+
+        function switchView(target, menuEl) {
+            closeVideoReader();
+            closeProductPreview();
+
+            document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+            if(menuEl) menuEl.classList.add('active');
+
+            const loader = document.getElementById('innerLoader');
+            document.querySelectorAll('.panel-view').forEach(v => v.classList.remove('active'));
+            
+            loader.style.display = "block";
+            setTimeout(() => {
+                loader.style.display = "none";
+                const targetView = document.getElementById(`view-${target}`);
+                if(targetView) targetView.classList.add('active');
+            }, 250);
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>
