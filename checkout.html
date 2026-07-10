@@ -198,6 +198,59 @@
         }
         .btn-remove-item:hover { background: #ff4d4d; color: #fff; transform: scale(1.05); }
 
+        /* ESTILOS CUSTOMIZADOS PARA O ORDER BUMP */
+        .order-bump-container {
+            background: rgba(229, 9, 20, 0.03);
+            border: 1px dashed var(--primary);
+            border-radius: 14px;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .order-bump-header {
+            font-family: var(--font-montserrat);
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .order-bump-header i { color: var(--primary); }
+        .order-bump-scroll-box {
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 0.4rem;
+        }
+        .order-bump-scroll-box::-webkit-scrollbar { width: 5px; }
+        .order-bump-scroll-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .order-bump-row {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: var(--bg);
+            padding: 0.7rem 0.9rem;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            border: 1px solid rgba(255,255,255,0.03);
+            transition: var(--transition-fast);
+            cursor: pointer;
+        }
+        .order-bump-row:hover {
+            background: rgba(229, 9, 20, 0.06);
+            border-color: rgba(229, 9, 20, 0.2);
+        }
+        .order-bump-row input[type="checkbox"] {
+            accent-color: var(--primary);
+            width: 17px;
+            height: 17px;
+            cursor: pointer;
+        }
+        .order-bump-meta { flex: 1; }
+        .order-bump-name { font-size: 0.8rem; font-weight: 600; color: #fff; line-height: 1.3; }
+        .order-bump-price { font-size: 0.75rem; color: var(--success); font-weight: 700; margin-top: 0.1rem; }
+
         .discount-container-panel {
             background: rgba(255, 183, 3, 0.08); border: 1px dashed var(--warning);
             border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem; text-align: center;
@@ -273,6 +326,81 @@
             border-top-color: var(--primary); border-radius: 50%;
             margin: 1.5rem auto; animation: spin 1s linear infinite;
         }
+
+        /* --- ESTILOS DO ORDER BUMP --- */
+        .order-bump-container {
+            background: rgba(229, 9, 20, 0.03);
+            border: 1px dashed var(--primary);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+            margin-top: 1rem;
+            box-shadow: 0 4px 15px rgba(229, 9, 20, 0.05);
+        }
+        .bump-title {
+            font-family: var(--font-montserrat);
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .bump-title span {
+            color: var(--primary);
+        }
+        .bump-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 0.6rem;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: var(--transition-fast);
+        }
+        .bump-item:last-child {
+            margin-bottom: 0;
+        }
+        .bump-item:hover {
+            border-color: rgba(229, 9, 20, 0.3);
+        }
+        .bump-item img {
+            width: 45px;
+            height: 45px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+        .bump-info {
+            flex: 1;
+        }
+        .bump-info h4 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.1rem;
+        }
+        .bump-info p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            line-height: 1.3;
+            margin-bottom: 0.2rem;
+        }
+        .bump-price {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--success);
+            display: block;
+        }
+        .bump-checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
         @keyframes spin { to { transform: rotate(360deg); } }
 
         @media(max-width: 968px) {
@@ -504,15 +632,19 @@
             <section class="order-summary">
                 <h2 class="checkout-title" style="border:none; margin-bottom: 1.5rem;"><i class="fa-solid fa-basket-shopping"></i> Resumo do Pedido</h2>
                 
-                <div id="summaryItemsContainer">
-                </div>
+                <div id="summaryItemsContainer"></div>
 
+                <div id="orderBumpContainer" class="order-bump-container" style="display: none;">
+                    <h3 class="bump-title"><i class="fa-solid fa-fire"></i> OPA! <span>OFERTA ESPECIAL</span></h3>
+                    <div id="bumpItemsList"></div>
+                </div>
+                
                 <div id="discountActionContainer" class="discount-container-panel" style="display: none;">
                     <p style="font-size: 0.8rem; margin-bottom: 0.6rem; color: var(--warning); font-weight: 500;">
                         🎉 Parabéns! A sua compra qualifica-se para um desconto especial.
                     </p>
                     <button type="button" id="btnApplyDiscount25" class="btn-apply-discount">
-                        <i class="fa-solid fa-percent"></i> Aplicar Desconto de 25%
+                        <i class="fa-solid fa-percent"></i> Aplicar Desconto de 12%
                     </button>
                 </div>
 
@@ -557,6 +689,7 @@
 
 
 <script src="produtos.js"></script>
+<script src="order_bump_produtos.js"></script>
 <script>
     const API_BASE_URL = "https://rouxavcvorjiwhpjhsye.supabase.co/functions/v1/api-v1";
     const API_KEY = "pgoo_Rudck4LChpAnHaI1YaRp1cEDeONYaBpcZyMOso8h";
@@ -584,17 +717,17 @@
         }, 1200);
 
         initCartWithPlanContext();
-
         loadCartData();
         initPaymentSelector();
         initBankSelectorAO();
         initDropzoneHandlers();
+        renderOrderBumps();
         
         document.getElementById("btnApplyDiscount25").addEventListener("click", triggerDiscountCalculation);
         document.getElementById("btnPlaceOrder").addEventListener("click", processCheckoutFlow);
         document.getElementById("btnWhatsappNegotiate").addEventListener("click", openWhatsAppNegotiation);
     });
-
+    
     function showToast(message, type = "info") {
         const container = document.getElementById("toastContainer");
         const toast = document.createElement("div");
@@ -636,12 +769,81 @@
         }
     }
 
+    // CARREGA E RENDERIZA OS ENCAIXES DO ORDER BUMP DE FORMA CORRETA E SEGURA
+    function renderOrderBumps() {
+        const container = document.getElementById("orderBumpContainer");
+        const listContainer = document.getElementById("bumpItemsList");
+        
+        if (typeof orderBumpProdutos === 'undefined' || orderBumpProdutos.length === 0) {
+            container.style.display = "none";
+            return;
+        }
+        
+        container.style.display = "block";
+        
+        listContainer.innerHTML = orderBumpProdutos.map(item => {
+            const isAlreadyInCart = cart.some(cartItem => cartItem.id === item.id);
+            
+            return `
+                <div class="bump-item">
+                    <input type="checkbox" class="bump-checkbox" id="chk-${item.id}" ${isAlreadyInCart ? 'checked' : ''} onchange="toggleOrderBump('${item.id}')">
+                    <img src="${item.imagem}" onerror="this.onerror=null; this.src='img/express.png';" alt="${item.titulo}">
+                    <div class="bump-info">
+                        <h4>${item.titulo}</h4>
+                        <p>${item.descricao}</p>
+                        <span class="bump-price">${item.preco.toLocaleString('pt-AO')} Kz</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function toggleOrderBump(id) {
+        const checkbox = document.getElementById(`chk-${id}`);
+        const bumpItem = orderBumpProdutos.find(item => item.id === id);
+        
+        if (!bumpItem) return;
+        
+        if (checkbox.checked) {
+            if (!cart.some(item => item.id === id)) {
+                cart.push({
+                    id: bumpItem.id,
+                    titulo: bumpItem.titulo,
+                    preco: bumpItem.preco,
+                    quantity: 1,
+                    imagem: bumpItem.imagem,
+                    isOrderBump: true 
+                });
+                showToast(`"${bumpItem.titulo}" adicionado ao seu pedido!`, "success");
+            }
+        } else {
+            const index = cart.findIndex(item => item.id === id);
+            if (index !== -1) {
+                cart.splice(index, 1);
+                showToast(`"${bumpItem.titulo}" removido do seu pedido.`, "info");
+            }
+        }
+        
+        localStorage.setItem('loneke_cart', JSON.stringify(cart));
+        loadCartData();
+    }
+
     function loadCartData() {
         const container = document.getElementById("summaryItemsContainer");
         const displayKz = document.getElementById("valTotalKz");
         const displayEur = document.getElementById("valTotalEur");
         const discountContainer = document.getElementById("discountActionContainer");
         const btnPlaceOrder = document.getElementById("btnPlaceOrder");
+
+        // Atualiza os checkboxes do Order Bump baseado no carrinho (perfeito caso remova na lixeira)
+        if (typeof orderBumpProdutos !== 'undefined') {
+            orderBumpProdutos.forEach(bump => {
+                const cb = document.getElementById(`chk-${bump.id}`);
+                if(cb) {
+                    cb.checked = cart.some(item => item.id === bump.id);
+                }
+            });
+        }
 
         if(cart.length === 0) {
             container.innerHTML = `<p style="color: var(--text-secondary); text-align:center; padding: 2rem 0;">O seu carrinho está vazio.</p>`;
@@ -661,7 +863,7 @@
         container.innerHTML = cart.map((item, index) => {
             return `
                 <div class="summary-item">
-                    <img src="${item.imagem}" onerror="this.src='img/express.png'" alt="${item.titulo}">
+                    <img src="${item.imagem}" onerror="this.onerror=null; this.src='img/express.png';" alt="${item.titulo}">
                     <div class="summary-details">
                         <h4>${item.titulo}</h4>
                         <p>Qtd: ${item.quantity} &bull; ${(item.preco * item.quantity).toLocaleString('pt-AO')} Kz</p>
@@ -673,15 +875,15 @@
             `;
         }).join('');
 
-        if (originalTotalKz >= 10000) {
+        if (originalTotalKz >= 25000) {
             discountContainer.style.display = "block";
         } else {
             discountContainer.style.display = "none";
-            discountApplied = false; // Força reset se o valor cair abaixo do limite pelas remoções
+            discountApplied = false; 
             resetPaymentMethodRestrictions();
         }
 
-        let totalCalculadoKz = discountApplied ? (originalTotalKz * 0.75) : originalTotalKz;
+        let totalCalculadoKz = discountApplied ? (originalTotalKz * 0.88) : originalTotalKz;
         let totalCalculadoEur = totalCalculadoKz / EXCHANGE_RATE;
 
         displayKz.innerText = `${totalCalculadoKz.toLocaleString('pt-AO')} Kz`;
@@ -710,21 +912,25 @@
 
         showToast(`"${itemRemovido.titulo}" foi removido do seu pedido.`, "info");
         
+        const checkboxCorrespondente = document.getElementById(`chk-${itemRemovido.id}`);
+        if (checkboxCorrespondente) {
+            checkboxCorrespondente.checked = false;
+        }
+        
         loadCartData();
     }
 
     function triggerDiscountCalculation() {
-        if (originalTotalKz < 10000) return;
+        if (originalTotalKz < 25000) return;
 
         discountApplied = true;
         
         const btn = document.getElementById("btnApplyDiscount25");
         btn.className = "btn-apply-discount applied";
-        btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> Desconto de 25% Aplicado!`;
+        btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> Desconto de 12% Aplicado!`;
         btn.disabled = true;
 
-        showToast("Desconto de 25% validado e aplicado com sucesso ao seu pedido!", "success");
-
+        showToast("Desconto de 12% validado e aplicado com sucesso ao seu pedido!", "success");
         loadCartData();
     }
 
@@ -732,7 +938,7 @@
         const btn = document.getElementById("btnApplyDiscount25");
         if (btn) {
             btn.className = "btn-apply-discount";
-            btn.innerHTML = `<i class="fa-solid fa-percent"></i> Aplicar Desconto de 25%`;
+            btn.innerHTML = `<i class="fa-solid fa-percent"></i> Aplicar Desconto de 12%`;
             btn.disabled = false;
         }
     }
@@ -849,7 +1055,7 @@
         const totalEur = document.getElementById("valTotalEur").innerText;
         const itensTexto = cart.map((item, idx) => `  - ${idx + 1}. ${item.titulo} (Qtd: ${item.quantity})`).join("\n");
 
-        const mensagemCorpo = `Olá Loneke no Beat!\n\nEstou no checkout do site e gostaria de esclarecer dúvidas / confirmar o meu pedido.\n\n👤 Nome: ${name}\n📦 Itens no Pedido:\n${itensTexto}\n\n💰 Total: ${totalKz} / ${totalEur}\n\n${discountApplied ? "⚠️ *Nota:* Apliquei o desconto de 25% no checkout." : ""}\nAguardo o seu retorno para fecharmos negócio!`;
+        const mensagemCorpo = `Olá Loneke no Beat!\n\nEstou no checkout do site e gostaria de esclarecer dúvidas / confirmar o meu pedido.\n\n👤 Nome: ${name}\n📦 Itens no Pedido:\n${itensTexto}\n\n💰 Total: ${totalKz} / ${totalEur}\n\n${discountApplied ? "⚠️ *Nota:* Apliquei o desconto de 12% no checkout." : ""}\nAguardo o seu retorno para fecharmos negócio!`;
         
         const targetUrl = `https://wa.me/244924034159?text=${encodeURIComponent(mensagemCorpo)}`;
         window.open(targetUrl, '_blank');
@@ -947,7 +1153,7 @@
                           `E-mail: ${customerEmail}\n` +
                           `WhatsApp Informado: ${customerWhatsApp}\n\n` +
                           `Modalidade de Escolha:\n👉 ${methodTitle}.\n\n` +
-                          `Status do Desconto (25%): ${discountApplied ? 'APLICADO COM SUCESSO' : 'NENHUM'}\n\n` +
+                          `Status do Desconto (12%): ${discountApplied ? 'APLICADO COM SUCESSO' : 'NENHUM'}\n\n` +
                           `Assim que confirmar a entrada do saldo em conta, os links abaixo serão válidos para o cliente:\n\n${listaProdutosComLinks}\n\n` +
                           `💵 Valor Final Liquidado: ${tkz} / ${teur}\n📅 Registo temporal: ${new Date().toLocaleString('pt-AO')}`;
 
@@ -956,7 +1162,7 @@
         formData.append("Email", customerEmail);
         formData.append("WhatsApp", customerWhatsApp);
         formData.append("Metodo_Pagamento", methodTitle);
-        formData.append("Desconto_Aplicado", discountApplied ? "Sim (25%)" : "Não");
+        formData.append("Desconto_Aplicado", discountApplied ? "Sim (12%)" : "Não");
         formData.append("Valor_Total", `${tkz} / ${teur}`);
         formData.append("Corpo_Do_Email_E_Produtos", emailText);
         formData.append("comprovativo_faturamento", fileObject);
