@@ -14,7 +14,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT 3FINER.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 142,
+        vendas: 12,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-3finer",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -29,7 +29,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT ANDERSON MÁRIO.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 98,
+        vendas: 10,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-anderson-mario",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -44,7 +44,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT ANNA JOYCE.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 230,
+        vendas: 10,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-anna-joyce",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -61,9 +61,9 @@ const produtos = [
         categoria: "cursos",
         descricao: "O método definitivo para monetizar o seu conhecimento musical e faturar semanalmente.",
         imagem: "img/prontos/CURSO COMPLETO COMO CRIAR E VENDER DRUMKITS E FAZER 50.000KZ POR SEMANA.jpg",
-        precoAntigo: 50000,
-        precoAtual: 30000,
-        vendas: 412,
+        precoAntigo: 30000,
+        precoAtual: 20000,
+        vendas: 5,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/curso-completo-como-criar-e-vender-drumkits-e-fazer-50000kz-por-semana",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -77,8 +77,8 @@ const produtos = [
         descricao: "Aprenda a colocar as suas músicas no Spotify, Apple Music e Deezer de forma profissional.",
         imagem: "img/prontos/CURSO COMPLETO COMO DISTRIBUIR MÚSICAS NAS PLATAFORMAS DE STREAM.jpg",
         precoAntigo: 15000,
-        precoAtual: 7500,
-        vendas: 189,
+        precoAtual: 10000,
+        vendas: 18,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/curso-completo-como-distribuir-musicas-nas-plataformas-de-stream",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -97,7 +97,7 @@ const produtos = [
         imagem: "img/prontos/FLP AFRO HOUSE - PRA MATAR - ME PROD.LONEKE NO BEAT.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 305,
+        vendas: 30,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/flp-afro-house-pra-matar-me-prod-loneke-no-beat",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -112,7 +112,7 @@ const produtos = [
         imagem: "img/prontos/FLP APANHOU TEC TEC.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 167,
+        vendas: 16,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/flp-apanhou-tec-tec",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -127,7 +127,7 @@ const produtos = [
         imagem: "img/prontos/FLP BANANA.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 88,
+        vendas: 8,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/flp-banana",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -146,7 +146,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT ARIETH FEIJÓ.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 112,
+        vendas: 11,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-arieth-feijo",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -161,7 +161,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT BUTTON ROSE.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 95,
+        vendas: 9,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-button-rose",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -176,7 +176,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT CEF.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 210,
+        vendas: 10,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-cef",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -195,7 +195,7 @@ const produtos = [
         imagem: "img/prontos/LOOP KIT TABUA MISTA DE KIZOMBA VOLUME 2.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 143,
+        vendas: 14,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/loop-kit-tabua-mista-de-kizomba-volume-2",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -210,7 +210,7 @@ const produtos = [
         imagem: "img/prontos/LOOP KIT TABUA MISTA DE KIZOMBA.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 256,
+        vendas: 26,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/loop-kit-tabua-mista-de-kizomba",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -229,7 +229,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT CHELSEA DINORATH.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 310,
+        vendas: 30,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-chelsea-dinorath",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -244,7 +244,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT CLEYTON DAVID.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 89,
+        vendas: 8,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-cleyton-david",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -259,7 +259,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT CLEYTON M.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 145,
+        vendas: 14,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-cleyton-m",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -274,7 +274,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT CU DOCE DE GUETHO ZOUK.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 177,
+        vendas: 17,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-cu-doce-de-guetho-zouk",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -293,7 +293,7 @@ const produtos = [
         imagem: "img/prontos/PACKS DE PLUGINS DE MIX E MASTER.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 540,
+        vendas: 40,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/packs-de-plugins-de-mix-e-master",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -308,7 +308,7 @@ const produtos = [
         imagem: "img/prontos/PACKS DE PLUGINS DE INSTRUMENTOS VIRTUAIS DE AFROBEAT.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 218,
+        vendas: 28,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/packs-de-plugins-de-instrumentos-virtuais-de-afrobeat",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -326,8 +326,8 @@ const produtos = [
         descricao: "Um guia prático com estratégias secretas de monetização técnica em estúdios de gravação.",
         imagem: "img/prontos/CURSO COMPLETO DE COMO BAIXAR E  INSTALAR QUALQUER PLUGIN E FAZER NO MINIMO 50.000KZ POR SEMANA.jpg",
         precoAntigo: 15000,
-        precoAtual: 7500,
-        vendas: 388,
+        precoAtual: 10000,
+        vendas: 30,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/curso-completo-de-como-baixar-e-instalar-qualquer-plugin-e-fazer-no-minimo-50000kz-por-semana",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -341,8 +341,8 @@ const produtos = [
         descricao: "Esqueça os erros de instalação. Passo a passo para ter qualquer ferramenta rodando liso no seu DAW.",
         imagem: "img/prontos/CURSO COMPLETO DE COMO BAIXAR E  INSTALAR QUALQUER PLUGIN.jpg",
         precoAntigo: 5000,
-        precoAtual: 2560,
-        vendas: 299,
+        precoAtual: 2600,
+        vendas: 19,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/curso-completo-de-como-baixar-e-instalar-qualquer-plugin",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -355,9 +355,9 @@ const produtos = [
         categoria: "cursos",
         descricao: "Aprenda a fazer batidas profissionais de Afro House e Kuduro que dominam as pistas nacionais.",
         imagem: "img/prontos/CURSO COMPLETO DE PRODUÇÃO DE BEATS DE AFRO HOUSE KUDURO + MIX E MASTER NO FL STUDIO.jpg",
-        precoAntigo: 40000,
-        precoAtual: 20000,
-        vendas: 512,
+        precoAntigo: 15000,
+        precoAtual: 10000,
+        vendas: 10,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/curso-completo-de-producao-de-beats-de-afro-house-huduro-mix-e-master-no-fl-studio",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -376,7 +376,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT CU DOCE KUDURO MELODICO.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 194,
+        vendas: 14,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-cu-doce-huduro-melodico",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -391,7 +391,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT DJODJE.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 149,
+        vendas: 19,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-djodje",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -406,7 +406,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT DODDY.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 82,
+        vendas: 18,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-doddy",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -421,7 +421,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT DREAM BOYZ.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 110,
+        vendas: 11,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-dream-boyz",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -440,7 +440,7 @@ const produtos = [
         imagem: "img/prontos/FLP DRENA NA UK.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 132,
+        vendas: 12,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/flp-drena-na-uk",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -455,7 +455,7 @@ const produtos = [
         imagem: "img/prontos/FLP GUETHO ZOUK PIANO.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 211,
+        vendas: 4,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/flp-guetho-zouk-piano",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -470,7 +470,7 @@ const produtos = [
         imagem: "img/prontos/FLP GUETHO ZOUK RIJO.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 175,
+        vendas: 17,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/flp-guetho-zouk-rijo",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -489,7 +489,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT DUPLA GELADO DE MÚCUA.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 289,
+        vendas: 29,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-dupla-gelado-de-mucua",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -504,7 +504,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT EDMAZIA MAYEMBE.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 164,
+        vendas: 16,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-edmazia-mayembe",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -519,7 +519,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT FABIO HUSTLE.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 93,
+        vendas: 12,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-fabio-hustle",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -534,7 +534,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT FARIENTO DE AFRO HOUSE.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 204,
+        vendas: 20,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-fariento-de-afro-house",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -553,7 +553,7 @@ const produtos = [
         imagem: "img/prontos/LOOP KIT TABUA MISTA DE REGGAE.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 110,
+        vendas: 11,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/loop-kit-tabua-mista-de-reggae",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -568,7 +568,7 @@ const produtos = [
         imagem: "img/prontos/LOOP KIT TABUA MISTA DE SEBENE.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 322,
+        vendas: 32,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/loop-kit-tabua-mista-de-sebene",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -587,7 +587,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT FARIENTO DE AFROBEAT.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 185,
+        vendas: 18,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-fariento-de-afrobeat",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -602,7 +602,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT FARIENTO DE AMAPIANO.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 294,
+        vendas: 24,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-fariento-de-amapiano",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -617,7 +617,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT FARIENTO DE DRILL.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 120,
+        vendas: 10,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-fariento-de-drill",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -632,7 +632,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT FARIENTO DE GUETHO ZOUK.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 135,
+        vendas: 15,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-fariento-de-guetho-zouk",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -651,7 +651,7 @@ const produtos = [
         imagem: "img/prontos/CURSO COMPLETO DE PRODUÇÃO DE BEATS DE AFROBEAT + MIX E MASTER NO FL STUDIO.jpg",
         precoAntigo: 20000,
         precoAtual: 10000,
-        vendas: 345,
+        vendas: 5,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/curso-completo-de-producao-de-beats-de-afrobeat-mix-e-master-no-fl-studio",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -666,7 +666,7 @@ const produtos = [
         imagem: "img/prontos/CURSO COMPLETO DE PRODUÇÃO DE BEATS DE GUETHO ZOUK + MIX E MASTER NO FL STUDIO.jpg",
         precoAntigo: 20000,
         precoAtual: 10000,
-        vendas: 215,
+        vendas: 5,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/curso-completo-de-producao-de-beats-de-guetho-zouk-mix-e-master-no-fl-studio",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -681,7 +681,7 @@ const produtos = [
         imagem: "img/prontos/CURSO COMPLETO DE PRODUÇÃO DE BEATS DE SEMBA + MIX E MASTER NO FL STUDIO.jpg",
         precoAntigo: 20000,
         precoAtual: 10000,
-        vendas: 278,
+        vendas: 28,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/curso-completo-de-producao-de-beats-de-semba-mix-e-master-no-fl-studio",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -700,7 +700,7 @@ const produtos = [
         imagem: "img/prontos/FLP I NEED YOU.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 114,
+        vendas: 14,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/flp-i-need-you",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -715,7 +715,7 @@ const produtos = [
         imagem: "img/prontos/FLP MINHA EX.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 195,
+        vendas: 19,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/flp-minha-ex",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -730,7 +730,7 @@ const produtos = [
         imagem: "img/prontos/FLP MONEY FOLLOW.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 142,
+        vendas: 12,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/flp-money-follow",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -749,7 +749,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT FARIENTO DE KUDURO MELODICO.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 160,
+        vendas: 10,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-fariento-de-huduro-melodico",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -764,7 +764,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT FARIENTO DE SEMBA.jpg",
         precoAntigo: 3000,
         precoAtual: 1000,
-        vendas: 125,
+        vendas: 14,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/drumkit-fariento-de-semba",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: false
@@ -924,8 +924,8 @@ const produtos = [
         categoria: "cursos",
         descricao: "Monte o seu estúdio digital sem dores de cabeça com este tutorial completo passo a passo.",
         imagem: "img/prontos/CURSO DE COMO BAIXAR E INSTALAR QUALQUER PROGRAMA DE PRODUÇÃO MUSICAL.jpg",
-        precoAntigo: 5000,
-        precoAtual: 2000,
+        precoAntigo: 15000,
+        precoAtual: 10000,
         vendas: 176,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/curso-de-como-baixar-e-instalar-qualquer-programa-de-producao-musical",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
@@ -940,7 +940,7 @@ const produtos = [
         descricao: "Aprenda a configurar e validar a sua conta para receber pagamentos internacionais sem travas.",
         imagem: "img/prontos/CURSO DE COMO CRIAR UMA CONTA NA REDOTPAY.jpg",
         precoAntigo: 5000,
-        precoAtual: 2000,
+        precoAtual: 1000,
         vendas: 210,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/curso-de-como-criar-uma-conta-na-redotpay",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
@@ -1169,8 +1169,8 @@ const produtos = [
         categoria: "cursos",
         descricao: "Aprenda a dominar as ferramentas de I.A. para criar capas de beats, flyers e faturar no mercado digital.",
         imagem: "img/prontos/CURSO DE COMO GANHAR NO MINIMO 50.000KZ POR MES CRIANDO ARTES COM INTELIGENCIA ARTIFICIAL.jpg",
-        precoAntigo: 30000,
-        precoAtual: 15000,
+        precoAntigo: 15000,
+        precoAtual: 10000,
         vendas: 267,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/curso-de-como-ganhar-no-minimo-50000kz-por-mes-criando-artes-com-inteligencia-artificial",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
@@ -1184,8 +1184,8 @@ const produtos = [
         categoria: "cursos",
         descricao: "O pontapé inicial perfeito. Aprenda a dominar a interface, piano roll e mixer do zero absoluto.",
         imagem: "img/prontos/CURSO DE FL STUDIO PARA INICIANTES.jpg",
-        precoAntigo: 10000,
-        precoAtual: 5000,
+        precoAntigo: 20000,
+        precoAtual: 10000,
         vendas: 534,
         linkCheckout: "https://checkout.lonekenobeat.com/pay/curso-de-fl-studio-para-iniciantes",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
