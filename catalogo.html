@@ -445,6 +445,86 @@
             box-shadow: 0 8px 20px rgba(229, 9, 20, 0.4);
         }
 
+        /* Grelha de dois botões lado a lado nos Cards */
+.card-actions-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    width: 100%;
+    margin-top: auto;
+}
+.btn-card-view {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.05);
+    color: #fff;
+    padding: 0.75rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.btn-card-view:hover { background: rgba(255,255,255,0.15); }
+
+.btn-card-add {
+    background: #E50914;
+    border: none;
+    color: #fff;
+    padding: 0.75rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.btn-card-add:hover { background: #b8070e; }
+
+/* Bloco interativo das parcelas dentro do Modal */
+.payment-plans-wrapper {
+    margin-bottom: 1.5rem;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 1rem;
+    border-radius: 12px;
+}
+.payment-plans-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #aaa;
+    margin-bottom: 0.8rem;
+}
+.plans-grid-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+}
+.btn-plan-select {
+    background: #1a1a1a;
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #aaa;
+    padding: 0.8rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+}
+.btn-plan-select strong { font-size: 0.95rem; color: #fff; }
+.btn-plan-select span { font-size: 0.75rem; }
+.btn-plan-select.active {
+    background: rgba(229, 9, 20, 0.08);
+    border-color: #E50914;
+    color: #fff;
+}
+.btn-plan-select.active strong { color: #E50914; }
+
+
+
+
         .detail-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -695,11 +775,12 @@
                         <button class="tab-btn active" data-category="all">Todos os Produtos</button>
                         <button class="tab-btn" data-category="drumkits">Drum Kits</button>
                         <button class="tab-btn" data-category="loops">Loop Kits</button>
-                        <button class="tab-btn" data-category="flp">FLP Templates</button>
+                        <button class="tab-btn" data-category="flp">FLP</button>
                         <button class="tab-btn" data-category="cursos">Cursos Online</button>
                         <button class="tab-btn" data-category="plugins">Packs de Plugins</button>
                         <button class="tab-btn" data-category="ebooks">E-books</button>
                     </div>
+                    
                 </div>
 
                 <div class="suggestion-grid" id="catalogGrid">
@@ -769,7 +850,7 @@
 
 <script src="produtos.js"></script>
 <script>
-    const ITEMS_PER_PAGE = 15;
+    const ITEMS_PER_PAGE = 20;
     let currentPage = 1;
     let selectedCategory = 'all';
     let filterSearchQuery = '';
@@ -850,7 +931,7 @@
         }, 600);
     }
 
-    function createProductCardHTML(prod) {
+   function createProductCardHTML(prod) {
         const vendas = prod.vendas !== undefined ? prod.vendas : 0;
         return `
             <article class="product-card-premium reveal active" onclick="goToProductDetail(${prod.id})">
@@ -866,13 +947,23 @@
                         <span class="card-price-old">${prod.precoAntigo.toLocaleString('pt-AO')} Kz</span>
                         <span class="card-price-new">${prod.precoAtual.toLocaleString('pt-AO')} Kz</span>
                     </div>
-                    <button class="btn-card-action">
-                        <i class="fa-solid fa-eye"></i> Ver Produto
-                    </button>
+                    <div class="card-actions-row">
+                        <button class="btn-card-view">
+                            <i class="fa-solid fa-eye"></i> Ver Produto
+                        </button>
+                        <button class="btn-card-add" onclick="addItemToCart(event, ${prod.id})">
+                            <i class="fa-solid fa-cart-shopping"></i> + Carrinho
+                        </button>
+                    </div>
                 </div>
             </article>
         `;
     }
+    
+
+
+
+
 
     function goToProductDetail(id) {
         window.location.search = `?id=${id}`;
@@ -1012,6 +1103,9 @@
             }
         }
 
+        // Validação: Apenas Cursos com valor igual ou superior a 10.000 Kz ganham parcelamento
+        const permiteParcelas = prod.categoria.toLowerCase().includes('curso') && prod.precoAtual >= 10000;
+
         main.innerHTML = `
             <section class="section-padding" style="padding-top: 140px;">
                 <div class="container">
@@ -1032,15 +1126,32 @@
                             <p style="color: var(--text-secondary); font-size: 1.1rem; line-height: 1.7; font-weight: 300; margin-bottom: 2.5rem;">${prod.descricao}</p>
                             
                             <div style="background: rgba(255,255,255,0.02); padding: 2rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.04); margin-bottom: 2rem;">
+                                
+                                ${permiteParcelas ? `
+                                <div class="payment-plans-wrapper">
+                                    <div class="payment-plans-title"><i class="fa-solid fa-credit-card"></i> Opções de Pagamento:</div>
+                                    <div class="plans-grid-buttons">
+                                        <button type="button" id="plan-1" class="btn-plan-select active" onclick="selectPaymentPlan(${prod.id}, 1)">
+                                            <strong>Uma Prestação</strong>
+                                            <span>Integral: ${prod.precoAtual.toLocaleString('pt-AO')} Kz</span>
+                                        </button>
+                                        <button type="button" id="plan-2" class="btn-plan-select" onclick="selectPaymentPlan(${prod.id}, 2)">
+                                            <strong>Duas Prestações</strong>
+                                            <span>2x de ${((prod.precoAtual / 2) + 500).toLocaleString('pt-AO')} Kz</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                ` : ''}
+
                                 <div style="display:flex; flex-direction:column; gap:0.2rem; margin-bottom:1.5rem;">
                                     <span style="text-decoration: line-through; color: #666; font-size: 1.1rem;">De ${prod.precoAntigo.toLocaleString('pt-AO')} Kz</span>
-                                    <span style="font-family: var(--font-montserrat); font-size: 2.5rem; font-weight: 700; color: var(--white);">Por ${prod.precoAtual.toLocaleString('pt-AO')} Kz</span>
+                                    <span id="detailPriceDisplay" style="font-family: var(--font-montserrat); font-size: 2.5rem; font-weight: 700; color: var(--white);">Por ${prod.precoAtual.toLocaleString('pt-AO')} Kz</span>
                                 </div>
                                 <div style="display: flex; flex-direction: column; gap: 1rem;">
-                                    <a href="${linkCheckout}" target="_blank" class="btn btn-vip" style="width: 100%; padding: 1.2rem; border-radius: 12px; font-size: 1.1rem;" onclick="showNotification('Redirecionando para o checkout seguro...', 'fa-shield-halved')">
+                                    <a id="detailCheckoutBtn" href="${linkCheckout}" target="_blank" class="btn btn-vip" style="width: 100%; padding: 1.2rem; border-radius: 12px; font-size: 1.1rem;" onclick="showNotification('Redirecionando para o checkout seguro...', 'fa-shield-halved')">
                                         <i class="fa-solid fa-bolt"></i> Comprar Agora
                                     </a>
-                                    <button class="btn btn-primary" style="width: 100%; padding: 1.2rem; border-radius: 12px; font-size: 1.1rem; background-color: transparent; border: 1px solid var(--primary);" onclick="addItemToCart(event, ${prod.id})">
+                                    <button id="detailCartBtn" class="btn btn-primary" style="width: 100%; padding: 1.2rem; border-radius: 12px; font-size: 1.1rem; background-color: transparent; border: 1px solid var(--primary);" onclick="addItemToCart(event, ${prod.id}, 1)">
                                         <i class="fa-solid fa-cart-shopping"></i> Adicionar ao Carrinho
                                     </button>
                                 </div>
@@ -1048,7 +1159,6 @@
                         </div>
                     </div>
 
-                    <!-- VÍDEO DE DEMONSTRAÇÃO DINÂMICO -->
                     <div style="margin-top: 5rem;">
                         <h2 class="section-title" style="font-size: 1.8rem; margin-bottom: 0.5rem;">Demonstração em Áudio & Vídeo</h2>
                         <div class="video-showcase">
@@ -1056,9 +1166,8 @@
                         </div>
                     </div>
 
-                    <!-- PRODUTOS SUGERIDOS -->
                     <div style="margin-top: 6rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 4rem;">
-                        <h2 class="section-title" style="font-size: 1.8rem; margin-bottom: 0.5rem;"> Quem comprou este item também se interessou por:</h2>
+                        <h2 class="section-title" style="font-size: 1.8rem; margin-bottom: 0.5rem;"> Quem comprou este item também se interested por:</h2>
                         <div class="suggestion-grid">
                             ${sugestoes.map(item => createProductCardHTML(item)).join('')}
                         </div>
@@ -1069,25 +1178,68 @@
         window.scrollTo({ top: 0 });
     }
 
-    function addItemToCart(event, id) {
+    // Gerenciador interativo de planos de pagamento
+    function selectPaymentPlan(id, plan) {
+        const prod = produtos.find(p => p.id === id);
+        if (!prod) return;
+
+        const btn1 = document.getElementById('plan-1');
+        const btn2 = document.getElementById('plan-2');
+        const priceDisplay = document.getElementById('detailPriceDisplay');
+        const cartBtn = document.getElementById('detailCartBtn');
+        const checkoutBtn = document.getElementById('detailCheckoutBtn');
+
+        if (plan === 1) {
+            if(btn1) btn1.classList.add('active');
+            if(btn2) btn2.classList.remove('active');
+            if(priceDisplay) priceDisplay.innerHTML = `Por ${prod.precoAtual.toLocaleString('pt-AO')} Kz`;
+            if(cartBtn) cartBtn.setAttribute('onclick', `addItemToCart(event, ${prod.id}, 1)`);
+            if(checkoutBtn) checkoutBtn.href = prod.linkCheckout || "#";
+        } else {
+            if(btn1) btn1.classList.remove('active');
+            if(btn2) btn2.classList.add('active');
+            const valorParcela = (prod.precoAtual / 2) + 500;
+            if(priceDisplay) priceDisplay.innerHTML = `Por ${valorParcela.toLocaleString('pt-AO')} Kz <small style="font-size:1.1rem; color:var(--primary); font-weight:500;">(1ª Prestação)</small>`;
+            if(cartBtn) cartBtn.setAttribute('onclick', `addItemToCart(event, ${prod.id}, 2)`);
+            
+            if(checkoutBtn && prod.linkCheckout) {
+                let urlDinamica = prod.linkCheckout;
+                urlDinamica += (urlDinamica.includes('?') ? '&' : '?') + 'prestacoes=2';
+                checkoutBtn.href = urlDinamica;
+            }
+        }
+    }
+
+    function addItemToCart(event, id, prestacoes = 1) {
         event.stopPropagation();
         let cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
         const productSelected = produtos.find(p => p.id === id);
 
         if (!productSelected) return;
 
-        const itemIndex = cart.findIndex(item => item.id === id);
+        // Identificador único para evitar conflito se o mesmo item for adicionado com planos diferentes
+        const cartItemId = prestacoes === 2 ? `${id}_p2` : `${id}`;
+        const itemIndex = cart.findIndex(item => item.id === cartItemId || item.id === id);
         
         if (itemIndex > -1) {
-            showNotification("Este produto já está no seu carrinho!", "fa-circle-exclamation");
+            showNotification("Este item já se encontra no carrinho!", "fa-circle-exclamation");
             return;
         } else {
+            let precoFinal = productSelected.precoAtual;
+            let tituloFinal = productSelected.titulo;
+            
+            if (prestacoes === 2) {
+                precoFinal = (productSelected.precoAtual / 2) + 500;
+                tituloFinal += " (1ª Prestação)";
+            }
+
             cart.push({
                 id: productSelected.id,
-                titulo: productSelected.titulo,
+                titulo: tituloFinal,
                 imagem: productSelected.imagem,
-                preco: productSelected.precoAtual,
-                quantity: 1
+                preco: precoFinal,
+                quantity: 1,
+                prestacoes: prestacoes
             });
         }
 
@@ -1109,6 +1261,7 @@
             }, 1500);
         }
     }
+
 
     function updateCartBadge() {
         let cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
