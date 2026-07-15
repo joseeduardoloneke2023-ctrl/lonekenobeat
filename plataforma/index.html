@@ -83,7 +83,35 @@
         .btn-login { width: 100%; padding: 1.1rem; background: var(--primary); border: none; color: white; font-weight: 600; border-radius: 12px; cursor: pointer; font-size: 1rem; transition: background 0.3s; }
         .btn-login:hover { background: #b8070e; }
         #error-msg { color: #ff3333; font-size: 0.9rem; margin-top: 1rem; display: none; }
-    </style>
+        
+        /* Container para separar os botões de forma elegante */
+        .new { 
+            margin-top: 1.2rem; 
+        }
+
+        /* Botão Continuar Sem Conta melhorado (tamanho idêntico e estilo moderno) */
+        .new-btn { 
+            display: block;
+            width: 100%; 
+            box-sizing: border-box;
+            text-decoration: none; 
+            background: rgba(255, 255, 255, 0.05); 
+            border: 1px solid rgba(255, 255, 255, 0.15); 
+            color: var(--white); 
+            font-weight: 600; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-size: 1rem; 
+            padding: 1.1rem;
+            text-align: center;
+            transition: all 0.3s ease; 
+        }
+        .new-btn:hover { 
+            background: rgba(255, 255, 255, 0.1); 
+            border-color: rgba(255, 255, 255, 0.35);
+            color: var(--white);
+        }
+   </style>
 </head>
 <body>
 
@@ -121,8 +149,13 @@
             </div>
 
             <button type="submit" class="btn-login"><i class="fa-solid fa-right-to-bracket"></i> Entrar no Painel</button>
+
             <div id="error-msg">Utilizador ou senha incorretos!</div>
         </form>
+
+        <div class="new">
+            <a href="../index.html" class="new-btn">CONTINUAR SEM CONTA</a>
+        </div>
     </div>
 
     <script>
@@ -155,7 +188,6 @@
 
             const nomeArquivo = userInput.includes('@') ? userInput.split('@')[0] : userInput;
 
-            // Define dinamicamente a rota correta baseada no plano selecionado
             let srcPath = "";
             if (accountType === "normal") {
                 srcPath = `bd/aluno_${nomeArquivo}.js`;
@@ -170,7 +202,6 @@
             script.onload = function() {
                 let dadosUser = null;
                 
-                // Validação inteligente: verifica se o arquivo carregou como 'dadosAluno' ou 'dadosVip'
                 if (typeof dadosAluno !== 'undefined' && dadosAluno.usuario) {
                     dadosUser = dadosAluno.usuario;
                 } else if (typeof dadosVip !== 'undefined' && dadosVip.usuario) {
@@ -178,15 +209,12 @@
                 }
 
                 if (dadosUser) {
-                    // Valida as credenciais comparando o input com o username ou e-mail
                     const loginValido = (userInput === dadosUser.username.toLowerCase() || userInput === dadosUser.email.toLowerCase());
                     const senhaValida = (dadosUser.senha === password);
 
                     if (loginValido && senhaValida) {
-                        // Salva no localStorage para que os painéis (aluno ou vip) saibam qual arquivo ler
                         localStorage.setItem('loggedStudentFile', srcPath);
                         
-                        // Redirecionamento condicional baseado na conta
                         if (accountType === "normal") {
                             window.location.href = "aluno.html";
                         } else {
