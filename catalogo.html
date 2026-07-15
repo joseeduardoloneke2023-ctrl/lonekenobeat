@@ -747,6 +747,7 @@
                 <a href="index.html" class="nav-link">Home</a>
                 <a href="catalogo.html" class="nav-link">Produtos</a>
                 <a href="index.html#features" class="nav-link">Serviços</a>
+                <a href="aulas.html" class="nav-link active">Aulas</a>
                 <a href="index.html#about" class="nav-link">Sobre</a>
                 <a href="index.html#contact" class="nav-link">Contato</a>
                 <a href="vip.html" class="nav-link">Cliente Vip</a>
@@ -873,6 +874,20 @@
         { nome: "Djamila Diogo", forma: "Referência Bancária", valor: "18.500 Kz" }
     ];
 
+    // Helper para gerar Slugs elegantes a partir do Título do Produto
+    function slugify(text) {
+        return text
+            .toString()
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "") // Remove acentos
+            .replace(/\s+/g, '-')           // Substitui espaços por hifens
+            .replace(/[^\w\-]+/g, '')       // Remove caracteres especiais
+            .replace(/\-\-+/g, '-')         // Previne hifens duplicados
+            .replace(/^-+/, '')             // Remove hifens no início
+            .replace(/-+$/, '');            // Remove hifens no final
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         initMobileMenu();
         initScrollTop();
@@ -880,11 +895,23 @@
         initFakePurchaseNotifications(); // Inicializa motor de notificações
 
         const urlParams = new URLSearchParams(window.location.search);
-        const productId = urlParams.get('id');
+        const productParam = urlParams.get('produto') || urlParams.get('id'); // Aceita ?produto=nome-do-produto ou legado ?id=X
         const categoryParam = urlParams.get('cat');
 
-        if (productId) {
-            renderProductDetailPage(parseInt(productId));
+        if (productParam) {
+            // Procura o produto pelo slug gerado a partir do seu título
+            let prod = produtos.find(p => slugify(p.titulo) === productParam);
+            
+            // Caso não encontre por slug e o parâmetro seja numérico, tenta encontrar por ID (Retrocompatibilidade)
+            if (!prod && !isNaN(productParam)) {
+                prod = produtos.find(p => p.id === parseInt(productParam));
+            }
+
+            if (prod) {
+                renderProductDetailPage(prod.id);
+            } else {
+                renderProductDetailPage(null);
+            }
         } else {
             if (categoryParam) {
                 selectedCategory = categoryParam.toLowerCase();
@@ -959,14 +986,13 @@
             </article>
         `;
     }
-    
 
-
-
-
-
+    // Altera a URL para utilizar o Slug do nome do produto ao invés do ID
     function goToProductDetail(id) {
-        window.location.search = `?id=${id}`;
+        const prod = produtos.find(p => p.id === id);
+        if (prod) {
+            window.location.search = `?produto=${slugify(prod.titulo)}`;
+        }
     }
 
     function initCatalogEvents() {
@@ -1078,6 +1104,12 @@
 
     function renderProductDetailPage(id) {
         const main = document.getElementById("mainContent");
+        
+        if (!id) {
+            main.innerHTML = `<div class="container section-padding text-center"><h2>Produto não encontrado</h2><a href="catalogo.html" class="btn btn-primary mt-2">Voltar ao Catálogo</a></div>`;
+            return;
+        }
+
         const prod = produtos.find(p => p.id === id);
 
         if (!prod) {
