@@ -875,7 +875,7 @@
             `;
         }).join('');
 
-        if (originalTotalKz >= 25000) {
+        if (originalTotalKz >= 1000) {
             discountContainer.style.display = "block";
         } else {
             discountContainer.style.display = "none";
@@ -921,7 +921,7 @@
     }
 
     function triggerDiscountCalculation() {
-        if (originalTotalKz < 25000) return;
+        if (originalTotalKz < 1000) return;
 
         discountApplied = true;
         
