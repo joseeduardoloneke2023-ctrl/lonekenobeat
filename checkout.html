@@ -198,59 +198,6 @@
         }
         .btn-remove-item:hover { background: #ff4d4d; color: #fff; transform: scale(1.05); }
 
-        /* ESTILOS CUSTOMIZADOS PARA O ORDER BUMP */
-        .order-bump-container {
-            background: rgba(229, 9, 20, 0.03);
-            border: 1px dashed var(--primary);
-            border-radius: 14px;
-            padding: 1.2rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        .order-bump-header {
-            font-family: var(--font-montserrat);
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: var(--white);
-            margin-bottom: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-        .order-bump-header i { color: var(--primary); }
-        .order-bump-scroll-box {
-            max-height: 200px;
-            overflow-y: auto;
-            padding-right: 0.4rem;
-        }
-        .order-bump-scroll-box::-webkit-scrollbar { width: 5px; }
-        .order-bump-scroll-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-        .order-bump-row {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            background: var(--bg);
-            padding: 0.7rem 0.9rem;
-            border-radius: 10px;
-            margin-bottom: 0.5rem;
-            border: 1px solid rgba(255,255,255,0.03);
-            transition: var(--transition-fast);
-            cursor: pointer;
-        }
-        .order-bump-row:hover {
-            background: rgba(229, 9, 20, 0.06);
-            border-color: rgba(229, 9, 20, 0.2);
-        }
-        .order-bump-row input[type="checkbox"] {
-            accent-color: var(--primary);
-            width: 17px;
-            height: 17px;
-            cursor: pointer;
-        }
-        .order-bump-meta { flex: 1; }
-        .order-bump-name { font-size: 0.8rem; font-weight: 600; color: #fff; line-height: 1.3; }
-        .order-bump-price { font-size: 0.75rem; color: var(--success); font-weight: 700; margin-top: 0.1rem; }
-
         .discount-container-panel {
             background: rgba(255, 183, 3, 0.08); border: 1px dashed var(--warning);
             border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem; text-align: center;
@@ -347,9 +294,7 @@
             align-items: center;
             gap: 0.5rem;
         }
-        .bump-title span {
-            color: var(--primary);
-        }
+        .bump-title span { color: var(--primary); }
         .bump-item {
             display: flex;
             align-items: center;
@@ -361,45 +306,14 @@
             border: 1px solid rgba(255, 255, 255, 0.03);
             transition: var(--transition-fast);
         }
-        .bump-item:last-child {
-            margin-bottom: 0;
-        }
-        .bump-item:hover {
-            border-color: rgba(229, 9, 20, 0.3);
-        }
-        .bump-item img {
-            width: 45px;
-            height: 45px;
-            border-radius: 6px;
-            object-fit: cover;
-        }
-        .bump-info {
-            flex: 1;
-        }
-        .bump-info h4 {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #fff;
-            margin-bottom: 0.1rem;
-        }
-        .bump-info p {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            line-height: 1.3;
-            margin-bottom: 0.2rem;
-        }
-        .bump-price {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--success);
-            display: block;
-        }
-        .bump-checkbox {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--primary);
-            cursor: pointer;
-        }
+        .bump-item:last-child { margin-bottom: 0; }
+        .bump-item:hover { border-color: rgba(229, 9, 20, 0.3); }
+        .bump-item img { width: 45px; height: 45px; border-radius: 6px; object-fit: cover; }
+        .bump-info { flex: 1; }
+        .bump-info h4 { font-size: 0.85rem; font-weight: 600; color: #fff; margin-bottom: 0.1rem; }
+        .bump-info p { font-size: 0.75rem; color: var(--text-secondary); line-height: 1.3; margin-bottom: 0.2rem; }
+        .bump-price { font-size: 0.8rem; font-weight: 700; color: var(--success); display: block; }
+        .bump-checkbox { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -451,9 +365,9 @@
                                 <option value="+351">🇵🇹 +351</option>
                                 <option value="+55">🇧🇷 +55</option>
                                 <option value="+258">🇲🇿 +258</option>
-                                <option value="+238">🇨🇻 +238</option>
-                                <option value="+245">🇬🇼 +245</option>
-                                <option value="+239">🇸🇹 +239</option>
+                                <option value="+238">🇨𝑽 +238</option>
+                                <option value="+245">🇬𝑾 +245</option>
+                                <option value="+239">🇸𝑻 +239</option>
                             </select>
                             <input type="tel" id="customerWhatsApp" class="form-control" placeholder="Ex: 924034159" required>
                         </div>
@@ -480,6 +394,7 @@
                         </div>
                     </div>
 
+                    <!-- MÉTODOS DE PAGAMENTO DINÂMICOS -->
                     <div class="dynamic-payment-panel" id="panel-multicaixa" style="display: block;">
                         <label style="color: var(--text-secondary); font-size: 0.85rem;">Número de Telefone Express (Clique à direita para copiar):</label>
                         <div class="copy-row">
@@ -693,7 +608,10 @@
 <script>
     const API_BASE_URL = "https://rouxavcvorjiwhpjhsye.supabase.co/functions/v1/api-v1";
     const API_KEY = "pgoo_Rudck4LChpAnHaI1YaRp1cEDeONYaBpcZyMOso8h";
-    const FORMBOLD_URL = "https://formbold.com/s/oDJNq"; 
+    
+    // CONFIGURAÇÕES ATUALIZADAS DO PRODUTOR
+    const FORMSUBMIT_URL = "https://formsubmit.co/ajax/joseeduardoloneke2023@gmail.com"; 
+    const LONEKE_WHATSAPP_NUM = "244924034159";
 
     const BANCOS_AO = {
         BAI: "AO06004000006562149410192",
@@ -704,7 +622,6 @@
 
     let selectedMethod = "multicaixa";
     let cart = [];
-    let pollingInterval = null;
     const EXCHANGE_RATE = 1000; 
 
     let discountApplied = false;
@@ -769,7 +686,6 @@
         }
     }
 
-    // CARREGA E RENDERIZA OS ENCAIXES DO ORDER BUMP DE FORMA CORRETA E SEGURA
     function renderOrderBumps() {
         const container = document.getElementById("orderBumpContainer");
         const listContainer = document.getElementById("bumpItemsList");
@@ -835,7 +751,6 @@
         const discountContainer = document.getElementById("discountActionContainer");
         const btnPlaceOrder = document.getElementById("btnPlaceOrder");
 
-        // Atualiza os checkboxes do Order Bump baseado no carrinho (perfeito caso remova na lixeira)
         if (typeof orderBumpProdutos !== 'undefined') {
             orderBumpProdutos.forEach(bump => {
                 const cb = document.getElementById(`chk-${bump.id}`);
@@ -1057,7 +972,7 @@
 
         const mensagemCorpo = `Olá Loneke no Beat!\n\nEstou no checkout do site e gostaria de esclarecer dúvidas / confirmar o meu pedido.\n\n👤 Nome: ${name}\n📦 Itens no Pedido:\n${itensTexto}\n\n💰 Total: ${totalKz} / ${totalEur}\n\n${discountApplied ? "⚠️ *Nota:* Apliquei o desconto de 12% no checkout." : ""}\nAguardo o seu retorno para fecharmos negócio!`;
         
-        const targetUrl = `https://wa.me/244924034159?text=${encodeURIComponent(mensagemCorpo)}`;
+        const targetUrl = `https://wa.me/${LONEKE_WHATSAPP_NUM}?text=${encodeURIComponent(mensagemCorpo)}`;
         window.open(targetUrl, '_blank');
     }
 
@@ -1078,22 +993,18 @@
 
         if (selectedMethod === "multicaixa") {
             const fileInput = document.getElementById("fileReceiptExpress");
-
             if(!fileInput.files.length) {
                 showToast("Por favor, faça o upload do comprovativo do seu pagamento Multicaixa Express.", "info");
                 return;
             }
-
             overlay.style.display = "flex";
-            modal.innerHTML = `<h3>A processar comprovativo</h3><p>O sistema está a preparar o arquivo para armazenamento digital...</p><div class="spinner"></div>`;
-            
+            modal.innerHTML = `<h3>A processar comprovativo</h3><p>A enviar comprovativo de pagamento por e-mail e a preparar o redirecionamento seguro para o WhatsApp...</p><div class="spinner"></div>`;
             triggerManualTransferEmail(modal, email, fullWhatsApp, name, "Multicaixa Express (Manual)", fileInput.files[0]);
         }
         
         else if(selectedMethod === "transf_ao") {
             const banco = document.getElementById("bankSelectAO").value;
             const fileInput = document.getElementById("fileReceiptAO");
-
             if(!banco) {
                 showToast("Por favor, selecione para qual dos nossos bancos efetuou a transferência.", "info");
                 return;
@@ -1102,42 +1013,35 @@
                 showToast("Por favor, faça o upload do comprovativo da transferência efetuada.", "info");
                 return;
             }
-
             overlay.style.display = "flex";
-            modal.innerHTML = `<h3>A processar comprovativo</h3><p>O sistema está a preparar o arquivo para armazenamento digital...</p><div class="spinner"></div>`;
-            
+            modal.innerHTML = `<h3>A processar comprovativo</h3><p>A enviar comprovativo de pagamento por e-mail e a preparar o redirecionamento seguro para o WhatsApp...</p><div class="spinner"></div>`;
             triggerManualTransferEmail(modal, email, fullWhatsApp, name, `Transferência Bancária Nacional (Angola) - Banco: ${banco}`, fileInput.files[0]);
         }
         
         else if(selectedMethod === "transf_eu") {
             const fileInput = document.getElementById("fileReceiptEU");
-
             if(!fileInput.files.length) {
                 showToast("Por favor, faça o upload do comprovativo da transferência europeia efetuada.", "info");
                 return;
             }
-
             overlay.style.display = "flex";
-            modal.innerHTML = `<h3>A processar comprovativo</h3><p>O sistema está a preparar o arquivo para armazenamento digital...</p><div class="spinner"></div>`;
-            
+            modal.innerHTML = `<h3>A processar comprovativo</h3><p>A enviar comprovativo de pagamento por e-mail e a preparar o redirecionamento seguro para o WhatsApp...</p><div class="spinner"></div>`;
             triggerManualTransferEmail(modal, email, fullWhatsApp, name, "Transferência Bancária Internacional (Europa - IBAN LU)", fileInput.files[0]);
         }
 
         else if(selectedMethod === "ref_bancaria") {
             const fileInput = document.getElementById("fileReceiptRef");
-
             if(!fileInput.files.length) {
                 showToast("Por favor, faça o upload do comprovativo do pagamento por referência.", "info");
                 return;
             }
-
             overlay.style.display = "flex";
-            modal.innerHTML = `<h3>A processar comprovativo</h3><p>O sistema está a preparar o arquivo para armazenamento digital...</p><div class="spinner"></div>`;
-            
+            modal.innerHTML = `<h3>A processar comprovativo</h3><p>A enviar comprovativo de pagamento por e-mail e a preparar o redirecionamento seguro para o WhatsApp...</p><div class="spinner"></div>`;
             triggerManualTransferEmail(modal, email, fullWhatsApp, name, "Pagamento por Referência Bancária (Entidade 10116)", fileInput.files[0]);
         }
     }
 
+    // A SOLUÇÃO 1 ENTRA EM AÇÃO AQUI: FormSubmit + WhatsApp Automático
     function triggerManualTransferEmail(modal, customerEmail, customerWhatsApp, customerName, methodTitle, fileObject) {
         const listaProdutosComLinks = cart.map((item, index) => {
             const prodOriginal = typeof produtos !== 'undefined' ? produtos.find(p => p.id === item.id) : null;
@@ -1148,6 +1052,7 @@
         const tkz = document.getElementById("valTotalKz").innerText;
         const teur = document.getElementById("valTotalEur").innerText;
 
+        // Texto detalhado estruturado para o seu Registro de E-mail
         const emailText = `Olá! Recebemos um novo comprovativo de transferência através do site.\n\n` +
                           `Cliente: ${customerName}\n` +
                           `E-mail: ${customerEmail}\n` +
@@ -1157,35 +1062,57 @@
                           `Assim que confirmar a entrada do saldo em conta, os links abaixo serão válidos para o cliente:\n\n${listaProdutosComLinks}\n\n` +
                           `💵 Valor Final Liquidado: ${tkz} / ${teur}\n📅 Registo temporal: ${new Date().toLocaleString('pt-AO')}`;
 
+        // Preparação do objeto FormData para o FormSubmit
         const formData = new FormData();
-        formData.append("Cliente", customerName);
-        formData.append("Email", customerEmail);
-        formData.append("WhatsApp", customerWhatsApp);
-        formData.append("Metodo_Pagamento", methodTitle);
-        formData.append("Desconto_Aplicado", discountApplied ? "Sim (12%)" : "Não");
+        formData.append("_subject", `🔥 NOVO PEDIDO - ${customerName} (${tkz})`);
+        formData.append("_captcha", "false");
+        formData.append("Cliente_Nome", customerName);
+        formData.append("Cliente_Email", customerEmail);
+        formData.append("Cliente_WhatsApp", customerWhatsApp);
+        formData.append("Metodo_Utilizado", methodTitle);
+        formData.append("Desconto_12_Porcento", discountApplied ? "Sim" : "Não");
         formData.append("Valor_Total", `${tkz} / ${teur}`);
-        formData.append("Corpo_Do_Email_E_Produtos", emailText);
-        formData.append("comprovativo_faturamento", fileObject);
+        formData.append("Resumo_Do_Pedido", emailText);
+        formData.append("Comprovativo_Ficheiro", fileObject);
 
-        fetch(FORMBOLD_URL, {
+        // Disparo assíncrono via AJAX
+        fetch(FORMSUBMIT_URL, {
             method: "POST",
             body: formData
         })
+        .then(response => {
+            if (!response.ok) throw new Error("Erro de submissão");
+            return response.json();
+        })
         .then(() => {
+            // MONTAGEM DA MENSAGEM DO WHATSAPP DO PRODUTOR
+            const itensCompacto = cart.map((item, idx) => `  ${idx + 1}. ${item.titulo} (x${item.quantity})`).join("\n");
+            const whatsMsg = `Olá Loneke no Beat! 👋\n\nAcabei de fazer o envio do meu comprovativo pelo checkout do site. ⚡\n\n👤 *Cliente:* ${customerName}\n📧 *E-mail:* ${customerEmail}\n📱 *Meu WhatsApp:* ${customerWhatsApp}\n\n📦 *Produtos Comprados:* \n${itensCompacto}\n\n💳 *Forma de Envio:* ${methodTitle}\n💰 *Valor Pago:* ${tkz} / ${teur}\n\n${discountApplied ? "✅ _Desconto de 12% aplicado com sucesso no site!_" : ""}\n\nPor favor, valide o meu pagamento para liberar o acesso! Aguardo o retorno. 🔥`;
+            
+            const urlWhatsAppCompleto = `https://wa.me/${LONEKE_WHATSAPP_NUM}?text=${encodeURIComponent(whatsMsg)}`;
+
+            // Dispara a abertura automática da aba do WhatsApp
+            window.open(urlWhatsAppCompleto, '_blank');
+
+            // Renderiza a tela de sucesso elegante com botões de contingência e finalização
             modal.innerHTML = `
-                <i class="fa-solid fa-clock-rotate-left" style="font-size: 4rem; color: #FFA500;"></i>
-                <h2 style="font-family: var(--font-montserrat); margin-top: 1.5rem;">Comprovativo Recebido!</h2>
+                <i class="fa-solid fa-circle-check" style="font-size: 4rem; color: var(--success);"></i>
+                <h2 style="font-family: var(--font-montserrat); margin-top: 1.5rem;">Pedido Processado!</h2>
                 <p style="color: var(--text-secondary); margin-top: 0.8rem; font-size: 0.95rem;">
-                    O seu ficheiro foi enviado com sucesso para validação manual.
+                    O comprovativo foi enviado com sucesso para o e-mail do produtor. A sua janela de chat do WhatsApp deverá abrir automaticamente a seguir.
                 </p>
-                <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 10px; margin: 1.5rem 0; font-size: 0.85rem; border: 1px dashed rgba(255,255,255,0.1); text-align: left;">
-                    ⏱️ <strong>Nota de Liberação:</strong> A validação manual demora habitualmente entre 10 minutos a 2 horas. Assim que a conta for confirmada, o acesso aos ficheiros é totalmente desbloqueado no seu e-mail: <strong style="color:#fff;">${customerEmail}</strong>.
+                <div style="background: rgba(46, 196, 182, 0.05); padding: 1rem; border-radius: 10px; margin: 1.5rem 0; font-size: 0.85rem; border: 1px dashed var(--success); text-align: left;">
+                    ⏱️ <strong>O que acontece agora?</strong> Assim que o saldo for verificado pelo produtor na conta bancária, os arquivos finais serão totalmente validados e enviados diretamente para o seu e-mail: <strong style="color:#fff;">${customerEmail}</strong>.
                 </div>
-                <button class="btn-checkout" style="background:#FFA500;" onclick="clearCartAndExit()">Concluir e Voltar</button>
+                <a href="${urlWhatsAppCompleto}" target="_blank" class="btn-checkout" style="background:#25D366; color: #fff; text-decoration: none; margin-bottom: 0.6rem;">
+                    <i class="fa-brands fa-whatsapp"></i> Abrir WhatsApp Manualmente
+                </a>
+                <button class="btn-checkout" style="background: rgba(255, 255, 255, 0.08); color: #fff;" onclick="clearCartAndExit()">Concluir e Sair</button>
             `;
         })
-        .catch(() => {
-            modal.innerHTML = `<h3>Erro ao Submeter</h3><p>Ocorreu uma falha ao enviar o seu ficheiro pelo pipeline automático. Por favor, clique no botão do WhatsApp para enviar o seu comprovativo manualmente ao produtor.</p><button class="btn-checkout" onclick="document.getElementById('paymentOverlay').style.display='none'">Fechar</button>`;
+        .catch((err) => {
+            console.error(err);
+            modal.innerHTML = `<h3>Erro ao Enviar</h3><p>Não conseguimos processar o formulário automaticamente devido a uma instabilidade de conexão. Por favor, clique no botão abaixo para tratar do seu pedido diretamente com o produtor via WhatsApp.</p><button class="btn-checkout" style="background:#25D366;" onclick="openWhatsAppNegotiation()">Notificar no WhatsApp</button><button class="btn-checkout" style="margin-top:0.5rem; background:rgba(255,255,255,0.05);" onclick="document.getElementById('paymentOverlay').style.display='none'">Tentar Novamente</button>`;
         });
     }
 
