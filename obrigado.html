@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obrigado! | Loneke no Beat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #E50914;
+            --bg: #0a0a0a;
+            --card-bg: rgba(23, 23, 23, 0.7);
+            --white: #FFFFFF;
+            --text-secondary: #aaaaaa;
+        }
+        body {
+            background: var(--bg);
+            color: var(--white);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 2rem 1rem;
+            box-sizing: border-box;
+        }
+        .container-box {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 3rem 2rem;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 500px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            text-align: center;
+            box-sizing: border-box;
+        }
+        h2 { font-family: 'Montserrat', sans-serif; font-weight: 800; margin-bottom: 0.5rem; color: var(--white); }
+        .subtitle { color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2rem; }
+        
+        /* Container responsivo para o vídeo do YouTube (Proporção 16:9) */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 14px;
+            margin-bottom: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .form-heading {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: left;
+            border-left: 4px solid var(--primary);
+            padding-left: 10px;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.2rem; text-align: left; }
+        label { font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; }
+        
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .form-control { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1.1rem; color: var(--white); font-size: 0.95rem; transition: all 0.3s; box-sizing: border-box; }
+        .form-control:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 10px rgba(229, 9, 20, 0.2); }
+        
+        .toggle-password {
+            position: absolute;
+            right: 1.1rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .toggle-password:hover { color: var(--white); }
+
+        .btn-submit { width: 100%; padding: 1.1rem; background: var(--primary); border: none; color: white; font-weight: 600; border-radius: 12px; cursor: pointer; font-size: 1rem; transition: background 0.3s; margin-top: 1rem; }
+        .btn-submit:hover { background: #b8070e; }
+   </style>
+</head>
+<body>
+
+    <div class="container-box">
+        <h2>INSCRIÇÃO CONFIRMADA! 🎉</h2>
+        <p class="subtitle">Assista ao vídeo abaixo para os próximos passos importantes.</p>
+        
+        <!-- CONTAINER DO VÍDEO DO YOUTUBE -->
+        <div class="video-container">
+            <!-- IMPORTANTE: Substitua o ID 'INSERIR_ID_DO_VIDEO' pelo ID real do seu vídeo do YouTube -->
+            <iframe src="https://www.youtube.com/embed/INSERIR_ID_DO_VIDEO?rel=0" title="Vídeo de Instruções" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+
+        <div class="form-heading">Crie a sua Conta VIP</div>
+
+       
+        <form action="https://formsubmit.co/joseeduardoloneke2023@gmail.com" method="POST">
+            
+            <!-- Configurações Extras do FormSubmit -->
+            <input type="hidden" name="_subject" value="Novo Cadastro Solicitado - Painel VIP!">
+            <input type="hidden" name="_captcha" value="false">
+            <!-- Altere a URL abaixo para onde o aluno deve ir após enviar o formulário, se desejar -->
+            <input type="hidden" name="_next" value="https://lonekenobeat.com">
+
+            <div class="form-group">
+                <label>Nome Completo</label>
+                <input type="text" name="Nome Completo" class="form-control" placeholder="Ex: Pedro Henrique" required>
+            </div>
+
+            <div class="form-group">
+                <label>E-mail de Acesso</label>
+                <input type="email" name="Email" class="form-control" placeholder="Ex: pedro@gmail.com" required>
+            </div>
+
+            <div class="form-group">
+                <label>Número de Telefone</label>
+                <input type="tel" name="Telefone" class="form-control" placeholder="Ex: +244 924 034 159" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Escolha uma Senha</label>
+                <div class="password-container">
+                    <input type="password" id="password" name="Senha Escolhida" class="form-control" placeholder="••••••••" required style="padding-right: 3rem;">
+                    <i class="fa-solid fa-eye toggle-password" id="btnTogglePass"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit"><i class="fa-solid fa-paper-plane"></i> Concluir Cadastro e Solicitar Acesso</button>
+        </form>
+    </div>
+
+    <script>
+        // Script para mostrar/ocultar a senha de forma elegante
+        const btnTogglePass = document.getElementById('btnTogglePass');
+        const passwordInput = document.getElementById('password');
+
+        btnTogglePass.addEventListener('click', function() {
+            const isPassword = passwordInput.getAttribute('type') === 'password';
+            passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+            
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+            
+            this.style.color = isPassword ? 'var(--primary)' : 'var(--text-secondary)';
+        });
+    </script>
+</body>
+</html>
