@@ -274,7 +274,6 @@
             margin: 1.5rem auto; animation: spin 1s linear infinite;
         }
 
-        /* --- ESTILOS DO ORDER BUMP --- */
         .order-bump-container {
             background: rgba(229, 9, 20, 0.03);
             border: 1px dashed var(--primary);
@@ -315,13 +314,13 @@
         .bump-price { font-size: 0.8rem; font-weight: 700; color: var(--success); display: block; }
         .bump-checkbox { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
-
         @media(max-width: 968px) {
             .checkout-wrapper { grid-template-columns: 1fr; gap: 2rem; }
             .payment-methods-grid { grid-template-columns: 1fr; }
             .toast-container { right: 50%; transform: translateX(50%); top: 20px; width: calc(100% - 40px); }
         }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -602,14 +601,9 @@
         </div>
     </div>
 
-
 <script src="produtos.js"></script>
 <script src="order_bump_produtos.js"></script>
 <script>
-    const API_BASE_URL = "https://rouxavcvorjiwhpjhsye.supabase.co/functions/v1/api-v1";
-    const API_KEY = "pgoo_Rudck4LChpAnHaI1YaRp1cEDeONYaBpcZyMOso8h";
-    
-    // CONFIGURAÇÕES ATUALIZADAS DO PRODUTOR
     const FORMSUBMIT_URL = "https://formsubmit.co/ajax/joseeduardoloneke2023@gmail.com"; 
     const LONEKE_WHATSAPP_NUM = "244924034159";
 
@@ -1041,8 +1035,35 @@
         }
     }
 
-    // A SOLUÇÃO 1 ENTRA EM AÇÃO AQUI: FormSubmit + WhatsApp Automático
-    function triggerManualTransferEmail(modal, customerEmail, customerWhatsApp, customerName, methodTitle, fileObject) {
+    async function triggerManualTransferEmail(modal, customerEmail, customerWhatsApp, customerName, methodTitle, fileObject) {
+        modal.innerHTML = `
+            <h3>A processar comprovativo...</h3>
+            <p>Estamos a preparar os ficheiros e a gerar o link de visualização com segurança.</p>
+            <div class="spinner"></div>
+        `;
+
+        let comprovativoLink = "Ficheiro enviado em anexo direto no e-mail";
+
+        // Novo upload estável com suporte CORS nativo para localhost/127.0.0.1
+        try {
+            const uploadFormData = new FormData();
+            uploadFormData.append("file", fileObject);
+
+            const uploadResponse = await fetch("https://tmpfiles.org/api/v1/upload", {
+                method: "POST",
+                body: uploadFormData
+            });
+
+            if (uploadResponse.ok) {
+                const uploadResult = await uploadResponse.json();
+                if (uploadResult.status === "success" && uploadResult.data && uploadResult.data.url) {
+                    comprovativoLink = uploadResult.data.url;
+                }
+            }
+        } catch (uploadError) {
+            console.error("Erro no link temporário:", uploadError);
+        }
+
         const listaProdutosComLinks = cart.map((item, index) => {
             const prodOriginal = typeof produtos !== 'undefined' ? produtos.find(p => p.id === item.id) : null;
             const linkDownload = prodOriginal && prodOriginal.downloadUrl ? prodOriginal.downloadUrl : "Link de download interno";
@@ -1052,17 +1073,16 @@
         const tkz = document.getElementById("valTotalKz").innerText;
         const teur = document.getElementById("valTotalEur").innerText;
 
-        // Texto detalhado estruturado para o seu Registro de E-mail
         const emailText = `Olá! Recebemos um novo comprovativo de transferência através do site.\n\n` +
                           `Cliente: ${customerName}\n` +
                           `E-mail: ${customerEmail}\n` +
                           `WhatsApp Informado: ${customerWhatsApp}\n\n` +
                           `Modalidade de Escolha:\n👉 ${methodTitle}.\n\n` +
+                          `🔗 LINK DIRETO DO COMPROVATIVO:\n${comprovativoLink}\n\n` +
                           `Status do Desconto (12%): ${discountApplied ? 'APLICADO COM SUCESSO' : 'NENHUM'}\n\n` +
                           `Assim que confirmar a entrada do saldo em conta, os links abaixo serão válidos para o cliente:\n\n${listaProdutosComLinks}\n\n` +
                           `💵 Valor Final Liquidado: ${tkz} / ${teur}\n📅 Registo temporal: ${new Date().toLocaleString('pt-AO')}`;
 
-        // Preparação do objeto FormData para o FormSubmit
         const formData = new FormData();
         formData.append("_subject", `🔥 NOVO PEDIDO - ${customerName} (${tkz})`);
         formData.append("_captcha", "false");
@@ -1072,10 +1092,12 @@
         formData.append("Metodo_Utilizado", methodTitle);
         formData.append("Desconto_12_Porcento", discountApplied ? "Sim" : "Não");
         formData.append("Valor_Total", `${tkz} / ${teur}`);
+        formData.append("Link_Visualizacao_Comprovativo", comprovativoLink);
         formData.append("Resumo_Do_Pedido", emailText);
-        formData.append("Comprovativo_Ficheiro", fileObject);
+        
+        // ENVIO EM ANEXO DIRETOR PARA O FORMSUBMIT
+        formData.append("attachment", fileObject);
 
-        // Disparo assíncrono via AJAX
         fetch(FORMSUBMIT_URL, {
             method: "POST",
             body: formData
@@ -1085,24 +1107,21 @@
             return response.json();
         })
         .then(() => {
-            // MONTAGEM DA MENSAGEM DO WHATSAPP DO PRODUTOR
             const itensCompacto = cart.map((item, idx) => `  ${idx + 1}. ${item.titulo} (x${item.quantity})`).join("\n");
-            const whatsMsg = `Olá Loneke no Beat! 👋\n\nAcabei de fazer o envio do meu comprovativo pelo checkout do site. ⚡\n\n👤 *Cliente:* ${customerName}\n📧 *E-mail:* ${customerEmail}\n📱 *Meu WhatsApp:* ${customerWhatsApp}\n\n📦 *Produtos Comprados:* \n${itensCompacto}\n\n💳 *Forma de Envio:* ${methodTitle}\n💰 *Valor Pago:* ${tkz} / ${teur}\n\n${discountApplied ? "✅ _Desconto de 12% aplicado com sucesso no site!_" : ""}\n\nPor favor, valide o meu pagamento para liberar o acesso! Aguardo o retorno. 🔥`;
+            const whatsMsg = `Olá Loneke no Beat! 👋\n\nAcabei de fazer o envio do meu comprovativo pelo checkout do site. ⚡\n\n👤 *Cliente:* ${customerName}\n📧 *E-mail:* ${customerEmail}\n📱 *Meu WhatsApp:* ${customerWhatsApp}\n\n📦 *Produtos Comprados:* \n${itensCompacto}\n\n💳 *Forma de Envio:* ${methodTitle}\n💰 *Valor Pago:* ${tkz} / ${teur}\n\n🔗 *Link do Comprovativo:* ${comprovativoLink}\n\n${discountApplied ? "✅ _Desconto de 12% aplicado com sucesso no site!_" : ""}\n\nPor favor, valide o meu pagamento para liberar o acesso! Aguardo o retorno. 🔥`;
             
             const urlWhatsAppCompleto = `https://wa.me/${LONEKE_WHATSAPP_NUM}?text=${encodeURIComponent(whatsMsg)}`;
 
-            // Dispara a abertura automática da aba do WhatsApp
             window.open(urlWhatsAppCompleto, '_blank');
 
-            // Renderiza a tela de sucesso elegante com botões de contingência e finalização
             modal.innerHTML = `
                 <i class="fa-solid fa-circle-check" style="font-size: 4rem; color: var(--success);"></i>
                 <h2 style="font-family: var(--font-montserrat); margin-top: 1.5rem;">Pedido Processado!</h2>
                 <p style="color: var(--text-secondary); margin-top: 0.8rem; font-size: 0.95rem;">
-                    O comprovativo foi enviado com sucesso para o e-mail do produtor. A sua janela de chat do WhatsApp deverá abrir automaticamente a seguir.
+                    As informações e o ficheiro em anexo foram enviados com sucesso.
                 </p>
                 <div style="background: rgba(46, 196, 182, 0.05); padding: 1rem; border-radius: 10px; margin: 1.5rem 0; font-size: 0.85rem; border: 1px dashed var(--success); text-align: left;">
-                    ⏱️ <strong>O que acontece agora?</strong> Assim que o saldo for verificado pelo produtor na conta bancária, os arquivos finais serão totalmente validados e enviados diretamente para o seu e-mail: <strong style="color:#fff;">${customerEmail}</strong>.
+                    ⏱️ <strong>O que acontece agora?</strong> Assim que o pagamento for verificado (pelo anexo no e-mail ou via WhatsApp), o acesso será validado e enviado para: <strong style="color:#fff;">${customerEmail}</strong>.
                 </div>
                 <a href="${urlWhatsAppCompleto}" target="_blank" class="btn-checkout" style="background:#25D366; color: #fff; text-decoration: none; margin-bottom: 0.6rem;">
                     <i class="fa-brands fa-whatsapp"></i> Abrir WhatsApp Manualmente
@@ -1112,7 +1131,7 @@
         })
         .catch((err) => {
             console.error(err);
-            modal.innerHTML = `<h3>Erro ao Enviar</h3><p>Não conseguimos processar o formulário automaticamente devido a uma instabilidade de conexão. Por favor, clique no botão abaixo para tratar do seu pedido diretamente com o produtor via WhatsApp.</p><button class="btn-checkout" style="background:#25D366;" onclick="openWhatsAppNegotiation()">Notificar no WhatsApp</button><button class="btn-checkout" style="margin-top:0.5rem; background:rgba(255,255,255,0.05);" onclick="document.getElementById('paymentOverlay').style.display='none'">Tentar Novamente</button>`;
+            modal.innerHTML = `<h3>Erro ao Enviar</h3><p>Houve uma falha na conexão. Podes clicar no botão abaixo para enviar o comprovativo diretamente ao WhatsApp do produtor.</p><button class="btn-checkout" style="background:#25D366;" onclick="openWhatsAppNegotiation()">Notificar no WhatsApp</button>`;
         });
     }
 
