@@ -21,1061 +21,1168 @@
             --player-bg: #000000;
             --white: #FFFFFF;
             --text-secondary: #777777;
-            --glass-border: rgba(255, 255, 255, 0.03);
-            --sidebar-width: 260px;
-            
-            --font-poppins: 'Poppins', sans-serif;
-            --font-montserrat: 'Montserrat', sans-serif;
-            --transition-premium: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            --sidebar-width: 280px;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        *, *::before, *::after {
-            box-sizing: border-box;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-drag: none;
         }
-
-        /* Custom Scrollbar Global */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
         body {
             background-color: var(--bg);
             color: var(--white);
-            font-family: var(--font-poppins);
-            min-height: 100vh;
-            display: flex;
+            font-family: 'Poppins', sans-serif;
             overflow-x: hidden;
-            letter-spacing: -0.1px;
-            transition: var(--transition-premium);
         }
 
-        /* --- GLOBAL SCREEN LOADER --- */
-        .global-loader {
+        /* LAYOUT PRINCIPAL */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: appEntry 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+        }
+
+        @keyframes appEntry {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background-color: var(--bg);
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 999;
+            padding: 20px 10px;
+            transition: var(--transition);
+            border-right: 1px solid #111;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        #sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+        #sidebar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        #sidebar::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 3rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 18px;
+            color: #888888;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 0.5rem;
+            text-decoration: none;
+        }
+
+        .menu-item i {
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            color: var(--white);
+            background: rgba(255, 255, 255, 0.03);
+            transform: translateX(3px);
+        }
+
+        .menu-item.active {
+            color: var(--white);
+            background: rgba(229, 9, 20, 0.1);
+            border-left: 3px solid var(--primary);
+        }
+
+        /* CONTEÚDO PRINCIPAL */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2.5rem;
+            min-height: 100vh;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        /* HEADER MÓVEL */
+        .mobile-header {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: var(--sidebar-bg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            position: sticky;
+            top: 0;
+            z-index: 98;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* VIEWS (PAINÉIS) */
+        .panel-view {
+            display: none;
+            opacity: 0;
+            transform: translateY(15px);
+        }
+
+        .panel-view.active {
+            display: block;
+            animation: viewFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes viewFadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .view-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* ELEMENTOS DE FILTRO E PESQUISA */
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 240px;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 12px 16px 12px 42px;
+            color: var(--white);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.04);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .filter-select {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 12px 20px;
+            color: var(--white);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            cursor: pointer;
+            min-width: 200px;
+            transition: var(--transition);
+        }
+
+        .filter-select:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .filter-select option {
+            background: #0d0d0d;
+            color: var(--white);
+        }
+
+        /* DASHBOARD GERAL */
+        .welcome-box {
+            background: linear-gradient(135deg, #121212 0%, #080808 100%);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            filter: blur(140px);
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .welcome-box h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.8rem;
+        }
+
+        .welcome-box p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.02);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+
+        .stat-icon {
+            width: 55px;
+            height: 55px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: var(--primary);
+        }
+
+        .stat-info h3 {
+            font-size: 1.8rem;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .stat-info p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* PRODUTOS E CARDS */
+        .grid-produtos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: rgba(255,255,255,0.01);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .product-thumb {
+            position: relative;
+            width: 100%;
+            padding-top: 100%;
+            background: #111;
+        }
+
+        .product-thumb img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .product-card:hover .product-thumb img {
+            transform: scale(1.05);
+        }
+
+        .lock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .lock-overlay i {
+            font-size: 3rem;
+            color: var(--primary);
+            filter: drop-shadow(0 0 15px rgba(229, 9, 20, 0.5));
+            animation: pulseLock 2s infinite alternate;
+        }
+
+        @keyframes pulseLock {
+            from { transform: scale(1); opacity: 0.8; }
+            to { transform: scale(1.1); opacity: 1; }
+        }
+
+        .product-info {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .product-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 2.8rem;
+        }
+
+        .product-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 3.8rem;
+        }
+
+        .product-actions {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            border: none;
+            background-color: var(--white);
+            color: #000;
+        }
+
+        .btn-action:hover {
+            background-color: #e0e0e0;
+            transform: scale(1.02);
+        }
+
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--white);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-video {
+            background-color: rgba(229, 9, 20, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(229, 9, 20, 0.2);
+        }
+
+        .btn-video:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-buy {
+            background-color: #2ec4b6;
+            color: #000;
+        }
+
+        .btn-buy:hover {
+            background-color: #26a69a;
+            color: #000;
+        }
+
+        /* LMS DE CURSOS COMPLETO */
+        .lms-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(4, 4, 4, 0.98);
+            backdrop-filter: blur(15px);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            opacity: 0;
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .lms-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .lms-container {
+            width: 100%;
+            max-width: 1350px;
+            height: 90vh;
+            background: #0d0d0d;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            display: flex;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9);
+            transform: scale(0.95);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .lms-overlay.active .lms-container {
+            transform: scale(1);
+        }
+
+        .lms-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #000;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .lms-video-area {
+            flex: 1;
+            position: relative;
+            background: #050505;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .lms-video-area iframe {
+            position: absolute;
+            top:0; left:0; width:100%; height:100%; border:none;
+        }
+
+        .lms-info-area {
+            margin-top: 1.2rem;
+        }
+
+        .lms-info-area h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+        }
+
+        .lms-info-area p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .lms-sidebar {
+            width: 380px;
+            border-left: 1px solid rgba(255, 255, 255, 0.06);
+            background: #090909;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .lms-sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .lms-sidebar-header h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        .btn-close-lms {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-close-lms:hover {
+            color: var(--primary);
+            transform: rotate(90deg);
+        }
+
+        .lms-curriculum {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .lms-module {
+            margin-bottom: 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .lms-module-header {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 12px 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .lms-module-header:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .lms-module-header span {
+            max-width: 90%;
+            line-height: 1.4;
+        }
+
+        .lms-module-header i {
+            transition: transform 0.3s ease;
+        }
+
+        .lms-module.active .lms-module-header i {
+            transform: rotate(180deg);
+        }
+
+        .lms-module-content {
+            display: none;
+            background: #050505;
+            border-top: 1px solid rgba(255,255,255,0.02);
+        }
+
+        .lms-module.active .lms-module-content {
+            display: block;
+        }
+
+        .lms-class-item {
+            padding: 10px 18px;
+            font-size: 0.8rem;
+            color: #888;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.01);
+            transition: var(--transition);
+        }
+
+        .lms-class-item:hover {
+            background: rgba(229, 9, 20, 0.05);
+            color: #fff;
+        }
+
+        .lms-class-item.active {
+            background: rgba(229, 9, 20, 0.1);
+            color: #fff;
+            border-left: 3px solid var(--primary);
+        }
+
+        /* PLAYER OVERLAY COMUM */
+        .player-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            opacity: 0;
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .player-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .player-container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--player-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+            transform: scale(0.95);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .player-overlay.active .player-container {
+            transform: scale(1);
+        }
+
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .player-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .btn-close-player {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-close-player:hover {
+            color: var(--white);
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* LOADERS & ANIMAÇÕES DE SUPORTE */
+        .loader-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: var(--bg);
             z-index: 9999;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 1.5rem;
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            gap: 20px;
+            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), cubic-bezier(0.16, 1, 0.3, 1) 0.5s;
         }
-        .spinner {
-            width: 40px; height: 40px;
-            border: 2px solid rgba(255, 255, 255, 0.03);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* --- SIDEBAR --- */
-        .sidebar {
-            width: var(--sidebar-width);
-            background-color: var(--sidebar-bg);
-            border-right: 1px solid var(--glass-border);
+        .loader-backdrop.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .action-loader {
             position: fixed;
-            top: 0; left: 0; height: 100vh;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(6, 6, 6, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 99999;
             display: flex;
             flex-direction: column;
-            z-index: 100;
-            transition: var(--transition-premium);
-        }
-        .sidebar-brand {
-            padding: 2.5rem 2rem;
-            font-family: var(--font-montserrat);
-            font-size: 1.2rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-            border-bottom: 1px solid var(--glass-border);
-        }
-        .sidebar-brand span { color: var(--primary); }
-        .sidebar-menu {
-            padding: 1.5rem 0;
-            display: flex;
-            flex-direction: column;
-            gap: 0.2rem;
-            flex-grow: 1;
-            overflow-y: auto;
-        }
-        .menu-item {
-            display: flex;
             align-items: center;
-            gap: 1rem;
-            padding: 0.9rem 2rem;
+            justify-content: center;
+            gap: 15px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .action-loader.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.05);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .inner-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            z-index: 10;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 1rem;
             color: var(--text-secondary);
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition-premium);
-            border-left: 3px solid transparent;
-        }
-        .menu-item:hover, .menu-item.active {
-            color: var(--white);
-            background: rgba(255, 255, 255, 0.01);
-        }
-        .menu-item.active {
-            border-left-color: var(--primary);
-            font-weight: 600;
-            background: linear-gradient(90deg, rgba(229, 9, 20, 0.03) 0%, rgba(0,0,0,0) 100%);
-        }
-        .menu-item i { width: 18px; text-align: center; font-size: 1rem; }
-        .menu-whatsapp { color: #25D366 !important; }
-        .menu-logout { color: #ff4444 !important; margin-top: auto; border-top: 1px solid var(--glass-border); padding-top: 1.5rem; }
-
-        /* --- MAIN PANEL --- */
-        .main-panel {
-            margin-left: var(--sidebar-width);
-            flex-grow: 1;
-            padding: 3rem 4rem;
-            min-height: 100vh;
-            position: relative;
-            transition: var(--transition-premium);
-        }
-        .panel-header { margin-bottom: 3rem; transition: var(--transition-premium); }
-        .welcome-text h1 { font-family: var(--font-montserrat); font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; }
-        .welcome-text p { color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.2rem; }
-        .welcome-text p span { color: var(--white); font-weight: 500; }
-
-        /* --- VIEWS --- */
-        .panel-view { display: none; }
-        .panel-view.active { display: block; animation: viewFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes viewFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- DASHBOARD METRICS --- */
-        .report-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
-        .report-card {
-            background: var(--card-bg);
-            border: 1px solid var(--glass-border);
-            padding: 1.8rem;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: var(--transition-premium);
-        }
-        .report-card:hover { border-color: rgba(229, 9, 20, 0.2); transform: translateY(-2px); }
-        .report-info h3 { font-size: 0.75rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.5px; }
-        .report-info p { font-family: var(--font-montserrat); font-size: 2rem; font-weight: 800; margin-top: 0.1rem; }
-        .report-icon { width: 45px; height: 45px; background: rgba(255, 255, 255, 0.02); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--text-secondary); }
-
-        /* --- CARDS --- */
-        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 1.5rem; }
-        .premium-card {
-            background: var(--card-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 14px;
-            overflow: hidden;
-            transition: var(--transition-premium);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            cursor: pointer;
-        }
-        .premium-card:hover { transform: translateY(-4px); border-color: rgba(255, 255, 255, 0.08); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
-        
-        .thumb-wrapper { position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background-color: #000; }
-        .card-thumb { width: 100%; height: 100%; object-fit: cover; transition: var(--transition-premium); filter: grayscale(20%); }
-        .premium-card:hover .card-thumb { transform: scale(1.04); filter: grayscale(0%); }
-
-        .card-body { padding: 1.2rem; display: flex; flex-direction: column; flex-grow: 1; }
-        .card-body h4 { font-family: var(--font-montserrat); font-size: 0.95rem; font-weight: 700; line-height: 1.4; margin-bottom: 1.2rem; }
-        
-        .card-btn {
-            margin-top: auto; width: 100%; padding: 0.8rem;
-            background-color: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            color: #eeeeee; font-weight: 500; border-radius: 8px; font-size: 0.8rem;
-            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-            cursor: pointer; transition: var(--transition-premium);
-            pointer-events: none;
-        }
-        .premium-card:hover .card-btn { background-color: var(--white); color: #000; font-weight: 600; }
-
-        /* CADEADO RESTRITO GERAL */
-        .premium-card.locked .thumb-wrapper::after {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(4, 4, 4, 0.75); backdrop-filter: blur(1px);
-        }
-        .lock-overlay {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            z-index: 5; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
-        }
-        .lock-icon-circle {
-            width: 44px; height: 44px; background: #141414; border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--primary);
-        }
-        .lock-text { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; color: var(--text-secondary); }
-
-        /* =======================================================
-           ⚡ MODULO PLAYER & WORKSPACE (THEATRE MODE)
-        ======================================================= */
-        body.theatre-mode .sidebar {
-            transform: translateX(-100%);
-            pointer-events: none;
-        }
-        body.theatre-mode .main-panel {
-            margin-left: 0;
-            padding: 2rem 2rem 4rem 2rem;
-        }
-        body.theatre-mode .panel-header {
-            opacity: 0; visibility: hidden; height: 0; margin-bottom: 0; overflow: hidden;
         }
 
-        .player-workspace-grid {
-            display: grid;
-            grid-template-columns: 1fr 360px;
-            gap: 1.5rem;
-            max-width: 1140px;
-            margin: 0 auto;
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
         }
 
-        .player-left-column {
-            display: flex;
-            flex-direction: column;
-        }
-        .video-frame-pane { 
-            width: 100%; 
-            aspect-ratio: 16 / 9; 
-            background: #000;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-        }
-        .video-frame-pane iframe { width: 100%; height: 100%; border: 0; }
-
-        .materials-container-box {
-            background: var(--card-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 1.2rem 1.5rem;
-            margin-top: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-        }
-        .materials-meta-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .materials-icon-wrapper {
-            width: 44px; height: 44px;
-            background: rgba(229, 9, 20, 0.06);
-            border: 1px solid rgba(229, 9, 20, 0.15);
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.15rem; color: var(--primary);
-        }
-        .materials-title-text h5 {
-            font-family: var(--font-montserrat);
-            font-size: 0.85rem; font-weight: 700; color: #fff;
-            letter-spacing: -0.1px;
-        }
-        .materials-title-text p {
-            color: var(--text-secondary); font-size: 0.72rem; margin-top: 0.15rem;
-        }
-        .materials-download-action-btn {
-            background: var(--white);
-            color: #000;
-            padding: 0.7rem 1.2rem;
-            border-radius: 8px;
-            font-size: 0.78rem; font-weight: 600;
-            text-decoration: none;
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            transition: var(--transition-premium);
-            border: none; cursor: pointer;
-        }
-        .materials-download-action-btn:hover {
-            background: var(--primary);
-            color: var(--white);
-            box-shadow: 0 0 15px var(--primary-glow);
+        /* RESPONSIVIDADE */
+        @media (max-width: 1024px) {
+            #sidebar {
+                transform: translateX(-100%);
+            }
+            #sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 1.5rem;
+            }
+            .mobile-header {
+                display: flex;
+            }
+            .lms-container {
+                flex-direction: column;
+                height: 95vh;
+            }
+            .lms-sidebar {
+                width: 100%;
+                height: 45%;
+                border-left: none;
+                border-top: 1px solid rgba(255, 255, 255, 0.06);
+            }
         }
 
-        .video-playlist-pane { 
-            background: #090909; 
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            display: flex; 
-            flex-direction: column; 
-            height: fit-content;
-            max-height: 580px;
-            overflow: hidden;
-        }
-        .playlist-header { 
-            padding: 1.1rem 1.2rem; 
-            background: #020202; 
-            font-family: var(--font-montserrat); 
-            font-weight: 700; font-size: 0.8rem;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid var(--glass-border); 
-            display: flex; align-items: center; gap: 0.6rem;
-        }
-        #playlist-tracks-container {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 0.8rem;
-        }
-
-        details.module-wrapper {
-            background: #0d0d0d;
-            border: 1px solid var(--glass-border);
-            border-radius: 8px;
-            margin-bottom: 0.4rem;
-            overflow: hidden;
-        }
-        summary.module-summary {
-            padding: 0.8rem; font-size: 0.75rem; font-weight: 600; color: #ddd;
-            cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none;
-        }
-        summary.module-summary i.chevron { transition: transform 0.3s ease; font-size: 0.7rem; color: var(--text-secondary); }
-        details[open] summary i.chevron { transform: rotate(180deg); color: var(--primary); }
-
-        .playlist-track { 
-            padding: 0.6rem 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 0.6rem; 
-            font-size: 0.72rem; color: #888; transition: var(--transition-premium); border-radius: 6px; margin: 0.15rem 0.3rem;
-        }
-        .playlist-track:hover { color: var(--white); background: rgba(255,255,255,0.02); }
-        .playlist-track.active { background: rgba(229, 9, 20, 0.08) !important; color: var(--white) !important; }
-        .playlist-track i { font-size: 0.8rem; color: #444; }
-        .playlist-track.active i { color: var(--primary); }
-
-        .back-container-wrapper {
-            max-width: 1140px;
-            margin: 0 auto 1.2rem auto;
-        }
-        .back-courses-btn { 
-            display: inline-flex; align-items: center; gap: 0.5rem; 
-            color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; 
-            cursor: pointer; transition: var(--transition-premium);
-            background: rgba(255,255,255,0.02); padding: 0.5rem 1rem; border-radius: 30px; border: 1px solid var(--glass-border);
-        }
-        .back-courses-btn:hover { color: var(--white); background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
-
-        /* =======================================================
-           ⚡ CASULO DE PRÉ-VISUALIZAÇÃO DE PRODUTOS
-        ======================================================= */
-        .product-preview-grid {
-            display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 2rem;
-            max-width: 1140px;
-            margin: 0 auto;
-        }
-        .product-meta-sidebar {
-            background: var(--sidebar-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 14px;
-            padding: 1.8rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            height: fit-content;
-        }
-        .product-preview-thumb {
-            width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 8px; border: 1px solid var(--glass-border);
-        }
-        .product-info-title h2 {
-            font-family: var(--font-montserrat); font-size: 1.25rem; font-weight: 800; line-height: 1.3;
-        }
-        .price-badge-container {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--glass-border);
-            padding: 1rem; border-radius: 10px; display: flex; flex-direction: column; gap: 0.2rem;
-        }
-        .price-label { font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
-        .price-value { font-family: var(--font-montserrat); font-size: 1.6rem; font-weight: 800; color: #25D366; }
-        
-        .product-action-stack { display: flex; flex-direction: column; gap: 0.6rem; }
-        .btn-action-premium {
-            width: 100%; padding: 0.9rem; border-radius: 8px; font-size: 0.8rem; font-weight: 700;
-            display: flex; align-items: center; justify-content: center; gap: 0.6rem; text-decoration: none; cursor: pointer; transition: var(--transition-premium); border: none;
-        }
-        .btn-download-unlocked { background: var(--white); color: #000; }
-        .btn-download-unlocked:hover { background: var(--primary); color: #fff; box-shadow: 0 0 15px var(--primary-glow); }
-        .btn-download-locked { background: #161616; color: #444; cursor: not-allowed; border: 1px solid rgba(255,255,255,0.02); }
-        .btn-buy-whatsapp { background: #25D366; color: #000; }
-        .btn-buy-whatsapp:hover { background: #1ebd58; box-shadow: 0 0 15px rgba(37, 211, 102, 0.2); }
-
-        /* Loader Interno */
-        .inner-loader { display: none; text-align: center; padding: 6rem 0; width: 100%; }
-        .inner-loader .spinner { margin: 0 auto 1.5rem auto; width: 36px; height: 36px; }
-
-        /* Toast Notifications */
-        .toast-container { position: fixed; top: 30px; right: 30px; z-index: 100000; display: flex; flex-direction: column; gap: 12px; pointer-events: none; }
-        .toast-notification { pointer-events: auto; background: #0f0f0f; border: 1px solid var(--glass-border); border-left: 3px solid var(--primary); color: var(--white); padding: 1rem 1.5rem; border-radius: 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; gap: 0.8rem; transform: translateX(180%); transition: var(--transition-premium); }
-        .toast-notification.show { transform: translateX(0); }
-
-        /* Responsividade */
-        @media (max-width: 992px) {
-            .player-workspace-grid, .product-preview-grid { grid-template-columns: 1fr; }
-            .video-playlist-pane { max-height: 360px; }
-        }
-        @media (max-width: 768px) {
-            .sidebar { left: -100%; }
-            .sidebar.open { left: 0; }
-            .main-panel { margin-left: 0; padding: 2rem 1.5rem; }
-            body.theatre-mode .main-panel { padding: 1rem 1.1rem; }
-            .mobile-nav-toggle { display: block !important; }
-            .materials-container-box { flex-direction: column; align-items: flex-start; gap: 1rem; }
-            .materials-download-action-btn { width: 100%; justify-content: center; }
+        @media (max-width: 480px) {
+            .view-title {
+                font-size: 1.5rem;
+            }
+            .welcome-box {
+                padding: 1.5rem;
+            }
+            .welcome-box h1 {
+                font-size: 1.6rem;
+            }
+            .quick-stats {
+                grid-template-columns: 1fr;
+            }
+            .filter-bar {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+            .filter-select {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- GLOBAL INITIAL SCREEN LOADER -->
-    <div class="global-loader" id="globalLoader">
+    <!-- LOADER PRINCIPAL (ABERTURA V1) -->
+    <div id="mainLoader" class="loader-backdrop">
         <div class="spinner"></div>
-        <p style="font-family: var(--font-montserrat); letter-spacing: 2px; font-size: 0.75rem; font-weight: 700; color: var(--text-secondary);">VIP PORTAL ACTIVE</p>
+        <p style="font-family:'Montserrat',sans-serif; font-size:0.85rem; letter-spacing:2px; text-transform:uppercase; color:#eee;">Acessando Banco de Dados VIP...</p>
     </div>
 
-    <!-- MOBILE MENU TOGGLE -->
-    <div class="mobile-nav-toggle" id="menuToggle" style="display: none; position: fixed; top: 1.5rem; right: 1.5rem; z-index: 1001; background: #111; border: 1px solid rgba(255,255,255,0.08); padding: 0.9rem; border-radius: 10px; cursor: pointer;">
-        <i class="fa-solid fa-bars" id="toggleIcon" style="font-size: 1.1rem; color: #fff;"></i>
+    <!-- TELA DE PROCESSAMENTO INTERMA (AÇÕES GERAIS) -->
+    <div id="actionLoader" class="action-loader">
+        <div class="spinner" style="width:40px; height:40px;"></div>
+        <p id="actionLoaderText" style="font-family:'Montserrat',sans-serif; font-size:0.8rem; letter-spacing:1px; color:#ccc;">Carregando Mídia...</p>
     </div>
 
-    <!-- SIDEBAR LEFT -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-brand">
-            LONEKE NO <span>BEAT</span>
-        </div>
-        <nav class="sidebar-menu">
-            <div class="menu-item active" onclick="switchView('dashboard', this)"><i class="fa-solid fa-chart-pie"></i> Dashboard</div>
-            <div class="menu-item" onclick="switchView('cursos', this)"><i class="fa-solid fa-graduation-cap"></i> Meus cursos</div>
-            <div class="menu-item" onclick="switchView('drumkits', this)"><i class="fa-solid fa-drum"></i> Meus Drumkits</div>
-            <div class="menu-item" onclick="switchView('flp', this)"><i class="fa-solid fa-folder-open"></i> Meus FLP</div>
-            <div class="menu-item" onclick="switchView('loops', this)"><i class="fa-solid fa-wave-square"></i> Meus loops Kits</div>
-            <div class="menu-item" onclick="switchView('plugins', this)"><i class="fa-solid fa-plug"></i> Meus Packs de Plugins</div>
-            <div class="menu-item" onclick="switchView('ebooks', this)"><i class="fa-solid fa-book"></i> Meus Ebooks</div>
-            <div class="menu-item" onclick="switchView('notificacoes', this)"><i class="fa-solid fa-bell"></i> Notificações</div>
-            <div class="menu-item menu-whatsapp" onclick="openWhatsApp('Geral')"><i class="fa-brands fa-whatsapp"></i> Suporte Técnico</div>
-            <div class="menu-item menu-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Sair da conta</div>
-        </nav>
-    </aside>
+    <div class="app-container">
 
-    <!-- MAIN INTERFACE -->
-    <main class="main-panel">
-        
-        <!-- CABEÇALHO GLOBAL -->
-        <header class="panel-header" id="mainPanelHeader">
-            <div class="welcome-text">
-                <h1 id="txt-user-name">Painel de Acesso</h1>
-                <p id="txt-user-welcome">A verificar as tuas credenciais digitais...</p>
-            </div>
-        </header>
-
-        <!-- TELA DE PROCESSAMENTO EXCLUSIVA -->
-        <div class="inner-loader" id="innerLoader">
-            <div class="spinner"></div>
-            <p style="color: var(--text-secondary); font-size: 0.75rem; font-family: var(--font-montserrat); letter-spacing: 1px;">A CONFIGURAR EXPERIÊNCIA IMERSIVA...</p>
-        </div>
-
-        <!-- VIEW: DASHBOARD -->
-        <section id="view-dashboard" class="panel-view active">
-            <div class="report-grid">
-                <div class="report-card">
-                    <div class="report-info">
-                        <h3>Cursos Adquiridos</h3>
-                        <p id="cnt-cursos">-</p>
-                    </div>
-                    <div class="report-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+        <!-- SIDEBAR -->
+        <div class="sidebar" id="sidebar">
+            <div class="logo-area">
+                <i class="fa-solid fa-circle-user" style="color:var(--primary); font-size:2.2rem;"></i>
+                <div style="display:flex; flex-direction:column; gap:2px;">
+                    <span id="studentName" style="font-weight:700; font-size:1.05rem;">Carregando...</span>
+                    <span id="studentEmail" style="color:var(--text-secondary); font-size:0.75rem; word-break:break-all;">carregando...</span>
                 </div>
-                <div class="report-card">
-                    <div class="report-info">
-                        <h3>Drumkits Liberados</h3>
-                        <p id="cnt-drumkits">-</p>
-                    </div>
-                    <div class="report-icon"><i class="fa-solid fa-drum"></i></div>
-                </div>
-                <div class="report-card">
-                    <div class="report-info">
-                        <h3>Templates FLP</h3>
-                        <p id="cnt-flp">-</p>
-                    </div>
-                    <div class="report-icon"><i class="fa-solid fa-folder-open"></i></div>
-                </div>
-                <div class="report-card">
-                    <div class="report-info">
-                        <h3>Loops Kits</h3>
-                        <p id="cnt-loops">-</p>
-                    </div>
-                    <div class="report-icon"><i class="fa-solid fa-wave-square"></i></div>
-                </div>
-                <div class="report-card">
-                    <div class="report-info">
-                        <h3>Packs de Plugins</h3>
-                        <p id="cnt-plugins">-</p>
-                    </div>
-                    <div class="report-icon"><i class="fa-solid fa-plug"></i></div>
-                </div>
-                <div class="report-card">
-                    <div class="report-info">
-                        <h3>Ebooks</h3>
-                        <p id="cnt-ebooks">-</p>
-                    </div>
-                    <div class="report-icon"><i class="fa-solid fa-book"></i></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW: MEUS CURSOS -->
-        <section id="view-cursos" class="panel-view">
-            <div id="cursos-list-pane">
-                <div class="cards-grid" id="grid-cursos"></div>
             </div>
             
-            <!-- THEATRE ENGINE WORKSPACE -->
-            <div id="courses-player-pane" style="display: none;">
-                <div class="back-container-wrapper">
-                    <div class="back-courses-btn" onclick="closeVideoReader()">
-                        <i class="fa-solid fa-arrow-left"></i> Sair do Player / Voltar para Cursos
+            <div class="menu-item active" onclick="switchView('dashboard', this)">
+                <i class="fa-solid fa-house"></i> Início
+            </div>
+
+            <div class="menu-item" onclick="switchView('comprados', this)">
+                <i class="fa-solid fa-circle-check" style="color: #00cc66;"></i> Produtos Comprados
+            </div>
+
+            <div class="menu-item" onclick="switchView('cursos', this)">
+                <i class="fa-solid fa-graduation-cap"></i> Cursos Especiais
+            </div>
+            <div class="menu-item" onclick="switchView('drumkits', this)">
+                <i class="fa-solid fa-drum"></i> Drum Kits Elite
+            </div>
+            <div class="menu-item" onclick="switchView('flps', this)">
+                <i class="fa-solid fa-file-audio"></i> FLPs Prontos
+            </div>
+            <div class="menu-item" onclick="switchView('loops', this)">
+                <i class="fa-solid fa-music"></i> Loops & Melodias
+            </div>
+            <div class="menu-item" onclick="switchView('plugins', this)">
+                <i class="fa-solid fa-plug"></i> Plugins & VSTs
+            </div>
+            <div class="menu-item" onclick="switchView('ebooks', this)">
+                <i class="fa-solid fa-book"></i> E-books & Guias
+            </div>
+
+            <div class="menu-item" onclick="logout()" style="margin-top:auto; color:#ff4444; border-top:1px solid rgba(255,255,255,0.05); padding-top:1.5rem;">
+                <i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão
+            </div>
+        </div>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="main-content">
+            
+            <!-- HEADER MÓVEL -->
+            <div class="mobile-header">
+                <span style="font-family:'Montserrat',sans-serif; font-weight:800; color:var(--white);">ALUNO <span style="color:var(--primary);">VIP</span></span>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+
+            <!-- LOADER DE TRANSIÇÃO INTERNA -->
+            <div class="inner-loader" id="innerLoader">
+                <div class="spinner" style="width:35px; height:35px;"></div>
+            </div>
+
+            <!-- VIEW: DASHBOARD (INÍCIO) -->
+            <div id="view-dashboard" class="panel-view active">
+                <div class="welcome-box">
+                    <h1>Seja bem-vindo de volta!</h1>
+                    <p>Gerencie seus infoprodutos, acesse seus links de downloads ou assista seus cursos e treinos exclusivos.</p>
+                </div>
+
+                <div class="quick-stats">
+                    <div class="stat-card" style="cursor:pointer;" onclick="switchView('comprados', document.querySelector('.menu-item[onclick*=\'comprados\']'))">
+                        <div class="stat-icon" style="color:#00cc66; background:rgba(0,204,102,0.05);"><i class="fa-solid fa-circle-check"></i></div>
+                        <div class="stat-info">
+                            <h3 id="stat-adquiridos">0</h3>
+                            <p>Desbloqueados</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="color:var(--primary); background:rgba(229,9,20,0.05);"><i class="fa-solid fa-lock"></i></div>
+                        <div class="stat-info">
+                            <h3 id="stat-bloqueados">0</h3>
+                            <p>Trancados</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="color:#ffaa00; background:rgba(255,170,0,0.05);"><i class="fa-solid fa-box"></i></div>
+                        <div class="stat-info">
+                            <h3 id="stat-total">0</h3>
+                            <p>Catálogo Total</p>
+                        </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- VIEW: PRODUTOS COMPRADOS -->
+            <div id="view-comprados" class="panel-view">
+                <h2 class="view-title"><i class="fa-solid fa-circle-check" style="color: #00cc66;"></i> Seus Produtos Adquiridos</h2>
+                <p style="color:var(--text-secondary); margin-bottom:1.5rem; font-size:0.95rem;">Todos os seus infoprodutos desbloqueados prontos para download e acesso imediato.</p>
                 
-                <div class="player-workspace-grid">
-                    <div class="player-left-column">
-                        <div class="video-frame-pane">
-                            <iframe id="main-video-frame" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                        <div class="materials-container-box">
-                            <div class="materials-meta-info">
-                                <div class="materials-icon-wrapper"><i class="fa-solid fa-box-open"></i></div>
-                                <div class="materials-title-text">
-                                    <h5>Materiais & Ferramentas de Apoio</h5>
-                                    <p>Plugins, Drumkits e ficheiros anexados a esta formação.</p>
-                                </div>
-                            </div>
-                            <a href="#" target="_blank" id="btn-download-material" class="materials-download-action-btn">
-                                <i class="fa-solid fa-download"></i> Baixar Recursos
-                            </a>
-                        </div>
+                <!-- Barra de Filtros -->
+                <div class="filter-bar">
+                    <div class="search-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-comprados" class="search-input" placeholder="Pesquisar por título ou descrição..." oninput="renderComprados()">
                     </div>
-                    <div class="video-playlist-pane">
-                        <div class="playlist-header">
-                            <i class="fa-solid fa-layer-group" style="color: var(--primary);"></i> 
-                            <span id="player-course-title" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px;">CONTEÚDO DIGITAL</span>
-                        </div>
-                        <div id="playlist-tracks-container"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW: DRUMKITS -->
-        <section id="view-drumkits" class="panel-view">
-            <div id="drumkits-list-pane">
-                <div class="cards-grid" id="grid-drumkits"></div>
-            </div>
-        </section>
-
-        <!-- VIEW: FLP -->
-        <section id="view-flp" class="panel-view">
-            <div id="flp-list-pane">
-                <div class="cards-grid" id="grid-flp"></div>
-            </div>
-        </section>
-
-        <!-- VIEW: MEUS LOOPS KITS -->
-        <section id="view-loops" class="panel-view">
-            <div id="loops-list-pane">
-                <div class="cards-grid" id="grid-loops"></div>
-            </div>
-        </section>
-
-        <!-- VIEW: MEUS PACKS DE PLUGINS -->
-        <section id="view-plugins" class="panel-view">
-            <div id="plugins-list-pane">
-                <div class="cards-grid" id="grid-plugins"></div>
-            </div>
-        </section>
-
-        <!-- VIEW: MEUS EBOOKS -->
-        <section id="view-ebooks" class="panel-view">
-            <div id="ebooks-list-pane">
-                <div class="cards-grid" id="grid-ebooks"></div>
-            </div>
-        </section>
-
-        <!-- VIEW: NOTIFICAÇÕES -->
-        <section id="view-notificacoes" class="panel-view">
-            <div style="display: flex; flex-direction: column; gap: 1.2rem; max-width: 750px; margin: 0 auto;">
-                <div class="report-card" style="flex-direction: column; align-items: flex-start; gap: 0.6rem;">
-                    <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-                        <span style="font-family: var(--font-montserrat); font-weight: 700; color: var(--primary); font-size: 0.85rem;"><i class="fa-solid fa-circle-check"></i> PAINEL ATUALIZADO</span>
-                        <span style="font-size: 0.7rem; color: var(--text-secondary);">Agora</span>
-                    </div>
-                    <p style="font-size: 0.85rem; color: #eee; line-height: 1.5;">O teu painel VIP foi configurado com todas as categorias comerciais: Cursos, Drumkits, FLPs, Loops, Plugins e Ebooks com sucesso!</p>
+                    <select id="category-comprados" class="filter-select" onchange="renderComprados()">
+                        <option value="all">Todas as Categorias</option>
+                        <option value="cursos">Cursos Especiais</option>
+                        <option value="drumkits">Drum Kits Elite</option>
+                        <option value="flps">FLPs Prontos</option>
+                        <option value="loops">Loops & Melodias</option>
+                        <option value="plugins">Plugins & VSTs</option>
+                        <option value="ebooks">E-books & Guias</option>
+                    </select>
                 </div>
 
-                <div class="report-card" style="flex-direction: column; align-items: flex-start; gap: 0.6rem;">
-                    <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-                        <span style="font-family: var(--font-montserrat); font-weight: 700; color: #25D366; font-size: 0.85rem;"><i class="fa-solid fa-headset"></i> SUPORTE DIRETO ACTIVO</span>
-                        <span style="font-size: 0.7rem; color: var(--text-secondary);">Há 1 hora</span>
-                    </div>
-                    <p style="font-size: 0.85rem; color: #eee; line-height: 1.5;">Qualquer dúvida na instalação de plugins, download de ficheiros ou upgrades de conta, clica no botão do Suporte Técnico para atendimento via WhatsApp.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- PANE GLOBAL DE PRÉ-VISUALIZAÇÃO DE PRODUTOS -->
-        <section id="product-preview-pane" style="display: none; animation: viewFadeIn 0.5s ease;">
-            <div class="back-container-wrapper">
-                <div class="back-courses-btn" onclick="closeProductPreview()">
-                    <i class="fa-solid fa-arrow-left"></i> Voltar à Galeria de Produtos
-                </div>
+                <div class="grid-produtos" id="comprados-list"></div>
             </div>
 
-            <div class="product-preview-grid">
-                <div class="player-left-column">
-                    <div class="video-frame-pane">
-                        <iframe id="product-video-frame" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <!-- VIEW: CURSOS -->
+            <div id="view-cursos" class="panel-view">
+                <h2 class="view-title"><i class="fa-solid fa-graduation-cap"></i> Cursos Especiais</h2>
+                <p style="color:var(--text-secondary); margin-bottom:1.5rem; font-size:0.95rem;">Assista às suas aulas exclusivas e domine a produção musical.</p>
+                
+                <div class="filter-bar">
+                    <div class="search-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-cursos" class="search-input" placeholder="Pesquisar nos cursos disponíveis..." oninput="renderCursos()">
                     </div>
                 </div>
 
-                <div class="product-meta-sidebar">
-                    <img id="product-preview-img" src="" class="product-preview-thumb" alt="Thumb">
-                    <div class="product-info-title">
-                        <h2 id="product-preview-title">Nome do Produto</h2>
-                    </div>
-                    
-                    <div class="price-badge-container">
-                        <span class="price-label">Valor do Investimento</span>
-                        <span class="price-value" id="product-preview-price">Kz 0.00</span>
-                    </div>
+                <div class="grid-produtos" id="cursos-list"></div>
+            </div>
 
-                    <div class="product-action-stack" id="product-btn-stack">
-                        <!-- Gerado Dinamicamente via JavaScript -->
+            <!-- VIEW: DRUMKITS -->
+            <div id="view-drumkits" class="panel-view">
+                <h2 class="view-title"><i class="fa-solid fa-drum"></i> Drum Kits Elite</h2>
+                <p style="color:var(--text-secondary); margin-bottom:1.5rem; font-size:0.95rem;">Kits de bateria de alta performance para dar peso aos seus beats.</p>
+                
+                <div class="filter-bar">
+                    <div class="search-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-drumkits" class="search-input" placeholder="Pesquisar nos drum kits..." oninput="renderDrumkits()">
                     </div>
                 </div>
+
+                <div class="grid-produtos" id="drumkits-list"></div>
             </div>
-        </section>
 
-    </main>
+            <!-- VIEW: FLPS -->
+            <div id="view-flps" class="panel-view">
+                <h2 class="view-title"><i class="fa-solid fa-file-audio"></i> FLPs Prontos</h2>
+                <p style="color:var(--text-secondary); margin-bottom:1.5rem; font-size:0.95rem;">Projetos completos de FL Studio prontos para estudar, remixar ou usar.</p>
+                
+                <div class="filter-bar">
+                    <div class="search-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-flps" class="search-input" placeholder="Pesquisar nos FLPs..." oninput="renderFlps()">
+                    </div>
+                </div>
 
-    <!-- MOTOR DE INJEÇÃO DINÂMICA -->
+                <div class="grid-produtos" id="flps-list"></div>
+            </div>
+
+            <!-- VIEW: LOOPS -->
+            <div id="view-loops" class="panel-view">
+                <h2 class="view-title"><i class="fa-solid fa-music"></i> Loops & Melodias</h2>
+                <p style="color:var(--text-secondary); margin-bottom:1.5rem; font-size:0.95rem;">Melodias e progressões de acordes raras prontas para arrastar e soltar.</p>
+                
+                <div class="filter-bar">
+                    <div class="search-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-loops" class="search-input" placeholder="Pesquisar nos pacotes de loops..." oninput="renderLoops()">
+                    </div>
+                </div>
+
+                <div class="grid-produtos" id="loops-list"></div>
+            </div>
+
+            <!-- VIEW: PLUGINS -->
+            <div id="view-plugins" class="panel-view">
+                <h2 class="view-title"><i class="fa-solid fa-plug"></i> Plugins & VSTs</h2>
+                <p style="color:var(--text-secondary); margin-bottom:1.5rem; font-size:0.95rem;">Sintetizadores, efeitos e utilitários selecionados para o seu workflow.</p>
+                
+                <div class="filter-bar">
+                    <div class="search-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-plugins" class="search-input" placeholder="Pesquisar nos plugins..." oninput="renderPlugins()">
+                    </div>
+                </div>
+
+                <div class="grid-produtos" id="plugins-list"></div>
+            </div>
+
+            <!-- VIEW: EBOOKS -->
+            <div id="view-ebooks" class="panel-view">
+                <h2 class="view-title"><i class="fa-solid fa-book"></i> E-books & Guias</h2>
+                <p style="color:var(--text-secondary); margin-bottom:1.5rem; font-size:0.95rem;">Guias de mixagem, masterização, marketing musical e estratégias de venda.</p>
+                
+                <div class="filter-bar">
+                    <div class="search-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-ebooks" class="search-input" placeholder="Pesquisar nos e-books..." oninput="renderEbooks()">
+                    </div>
+                </div>
+
+                <div class="grid-produtos" id="ebooks-list"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- AREA DE MEMBROS (LMS) -->
+    <div id="lmsOverlay" class="lms-overlay">
+        <div class="lms-container">
+            <div class="lms-main">
+                <div class="lms-video-area">
+                    <iframe id="lmsVideoIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <div class="lms-info-area">
+                    <h2 id="lmsClassTitle">Título da Aula Ativa</h2>
+                    <p id="lmsCourseTitle" style="color: var(--primary); font-weight:600; margin-bottom: 0.5rem;">Nome do Curso</p>
+                    <a id="lmsDownloadMaterial" href="#" target="_blank" class="btn-action" style="width:fit-content; font-size:0.75rem; padding: 6px 12px; display:inline-flex;"><i class="fa-solid fa-download"></i> Baixar Material de Apoio</a>
+                </div>
+            </div>
+            
+            <div class="lms-sidebar">
+                <div class="lms-sidebar-header">
+                    <h3>Conteúdo do Curso</h3>
+                    <button class="btn-close-lms" onclick="closeLms()"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="lms-curriculum" id="lmsCurriculumList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PLAYER OVERLAY TRAILERS/DEMOS -->
+    <div id="playerOverlay" class="player-overlay">
+        <div class="player-container">
+            <div class="player-header">
+                <h3 id="playerTitle">Demonstração</h3>
+                <button class="btn-close-player" onclick="closePlayer()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="video-wrapper">
+                <iframe id="videoIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
     <script>
-        let currentProductSection = ''; 
-
-        const studentFile = localStorage.getItem('loggedStudentFile');
-        if (!studentFile) {
-            window.location.href = "index.html"; 
-        }
-
-        const script = document.createElement('script');
-        script.src = studentFile;
-        document.head.appendChild(script);
-
-        script.onload = function() {
-            setTimeout(() => {
-                const gLoader = document.getElementById('globalLoader');
-                if(gLoader) {
-                    gLoader.style.opacity = '0';
-                    setTimeout(() => gLoader.style.display = 'none', 500);
-                }
-            }, 800);
-
-            initMobileNav();
-            loadStudentData(); 
-        };
-
-        script.onerror = function() {
-            alert("Erro crítico ao carregar permissões.");
-            window.location.href = "index.html";
-        };
-
-        function showToast(message, type = 'info', icon = 'fa-circle-info') {
-            let container = document.getElementById('toastContainer');
-            if (!container) {
-                container = document.createElement('div');
-                container.id = 'toastContainer';
-                container.className = 'toast-container';
-                document.body.appendChild(container);
+        // SEGURANÇA BÁSICA
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.shiftKey && e.key === 'J') || (e.ctrlKey && e.key === 'U')) {
+                e.preventDefault();
             }
-            const toast = document.createElement('div');
-            toast.className = `toast-notification toast-${type}`;
-            toast.innerHTML = `<i class="fa-solid ${icon}"></i><span>${message}</span>`;
-            container.appendChild(toast);
-            
-            setTimeout(() => toast.classList.add('show'), 50);
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 500);
-            }, 3000);
-        }
+        });
 
-        function loadStudentData() {
-            if (typeof dadosAluno === 'undefined') {
-                showToast("Erro: Dados indisponíveis.", "warning", "fa-triangle-exclamation");
-                return;
-            }
-
-            document.getElementById('txt-user-name').innerHTML = `Olá, ${dadosAluno.usuario.nome} <span style="font-size: 1rem; color: var(--text-secondary); font-weight:400;">(@${dadosAluno.usuario.username})</span>`;
-            document.getElementById('txt-user-welcome').innerHTML = `Acesso de Agência ativo para: <span>${dadosAluno.usuario.email}</span>`;
-
-            document.getElementById('cnt-cursos').innerText = dadosAluno.cursos ? dadosAluno.cursos.length : 0;
-            document.getElementById('cnt-drumkits').innerText = dadosAluno.drumkits ? dadosAluno.drumkits.length : 0;
-            document.getElementById('cnt-flp').innerText = dadosAluno.flps ? dadosAluno.flps.length : 0;
-            document.getElementById('cnt-loops').innerText = dadosAluno.loops ? dadosAluno.loops.length : 0;
-            document.getElementById('cnt-plugins').innerText = dadosAluno.plugins ? dadosAluno.plugins.length : 0;
-            document.getElementById('cnt-ebooks').innerText = dadosAluno.ebooks ? dadosAluno.ebooks.length : 0;
-
-            // CARDS: CURSOS
-            const gridCursos = document.getElementById('grid-cursos');
-            if(dadosAluno.cursos && dadosAluno.cursos.length > 0) {
-                gridCursos.innerHTML = dadosAluno.cursos.map(c => `
-                    <div class="premium-card ${!c.desbloqueado ? 'locked' : ''}" onclick="handleCourseAction(${c.id}, ${c.desbloqueado}, '${c.titulo}')">
-                        <div class="thumb-wrapper">
-                            ${!c.desbloqueado ? `
-                                <div class="lock-overlay">
-                                    <div class="lock-icon-circle"><i class="fa-solid fa-lock"></i></div>
-                                    <span class="lock-text">Restrito</span>
-                                </div>
-                            ` : ''}
-                            <img src="${c.imagem}" class="card-thumb" alt="${c.titulo}">
-                        </div>
-                        <div class="card-body">
-                            <h4>${c.titulo}</h4>
-                            <button class="card-btn">
-                                <i class="fa-solid ${c.desbloqueado ? 'fa-play' : 'fa-brands fa-whatsapp'}"></i> 
-                                ${c.desbloqueado ? 'Acessar Treinamento' : 'Solicitar Upgrade'}
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            // CARDS: DRUMKITS
-            const gridDrumkits = document.getElementById('grid-drumkits');
-            if(dadosAluno.drumkits && dadosAluno.drumkits.length > 0) {
-                gridDrumkits.innerHTML = dadosAluno.drumkits.map(dk => `
-                    <div class="premium-card ${!dk.desbloqueado ? 'locked' : ''}" onclick="openProductPreview(${dk.id}, 'drumkits')">
-                        <div class="thumb-wrapper">
-                            ${!dk.desbloqueado ? `
-                                <div class="lock-overlay">
-                                    <div class="lock-icon-circle"><i class="fa-solid fa-lock"></i></div>
-                                    <span class="lock-text">Ver Demo</span>
-                                </div>
-                            ` : ''}
-                            <img src="${dk.imagem}" class="card-thumb" alt="${dk.titulo}">
-                        </div>
-                        <div class="card-body">
-                            <h4>${dk.titulo}</h4>
-                            <button class="card-btn">
-                                <i class="fa-solid fa-magnifying-glass"></i> Ver Detalhes
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            // CARDS: FLP
-            const gridFlp = document.getElementById('grid-flp');
-            if(dadosAluno.flps && dadosAluno.flps.length > 0) {
-                gridFlp.innerHTML = dadosAluno.flps.map(f => `
-                    <div class="premium-card ${!f.desbloqueado ? 'locked' : ''}" onclick="openProductPreview(${f.id}, 'flps')">
-                        <div class="thumb-wrapper">
-                            ${!f.desbloqueado ? `
-                                <div class="lock-overlay">
-                                    <div class="lock-icon-circle"><i class="fa-solid fa-lock"></i></div>
-                                    <span class="lock-text">Ver Demo</span>
-                                </div>
-                            ` : ''}
-                            <img src="${f.imagem}" class="card-thumb" alt="${f.titulo}">
-                        </div>
-                        <div class="card-body">
-                            <h4>${f.titulo}</h4>
-                            <button class="card-btn">
-                                <i class="fa-solid fa-magnifying-glass"></i> Ver Detalhes
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            // CARDS: LOOPS
-            const gridLoops = document.getElementById('grid-loops');
-            if(dadosAluno.loops && dadosAluno.loops.length > 0) {
-                gridLoops.innerHTML = dadosAluno.loops.map(l => `
-                    <div class="premium-card ${!l.desbloqueado ? 'locked' : ''}" onclick="openProductPreview(${l.id}, 'loops')">
-                        <div class="thumb-wrapper">
-                            ${!l.desbloqueado ? `
-                                <div class="lock-overlay">
-                                    <div class="lock-icon-circle"><i class="fa-solid fa-lock"></i></div>
-                                    <span class="lock-text">Ver Demo</span>
-                                </div>
-                            ` : ''}
-                            <img src="${l.imagem}" class="card-thumb" alt="${l.titulo}">
-                        </div>
-                        <div class="card-body">
-                            <h4>${l.titulo}</h4>
-                            <button class="card-btn">
-                                <i class="fa-solid fa-magnifying-glass"></i> Ver Detalhes
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            // CARDS: PLUGINS
-            const gridPlugins = document.getElementById('grid-plugins');
-            if(dadosAluno.plugins && dadosAluno.plugins.length > 0) {
-                gridPlugins.innerHTML = dadosAluno.plugins.map(p => `
-                    <div class="premium-card ${!p.desbloqueado ? 'locked' : ''}" onclick="openProductPreview(${p.id}, 'plugins')">
-                        <div class="thumb-wrapper">
-                            ${!p.desbloqueado ? `
-                                <div class="lock-overlay">
-                                    <div class="lock-icon-circle"><i class="fa-solid fa-lock"></i></div>
-                                    <span class="lock-text">Ver Demo</span>
-                                </div>
-                            ` : ''}
-                            <img src="${p.imagem}" class="card-thumb" alt="${p.titulo}">
-                        </div>
-                        <div class="card-body">
-                            <h4>${p.titulo}</h4>
-                            <button class="card-btn">
-                                <i class="fa-solid fa-magnifying-glass"></i> Ver Detalhes
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            // CARDS: EBOOKS
-            const gridEbooks = document.getElementById('grid-ebooks');
-            if(dadosAluno.ebooks && dadosAluno.ebooks.length > 0) {
-                gridEbooks.innerHTML = dadosAluno.ebooks.map(e => `
-                    <div class="premium-card ${!e.desbloqueado ? 'locked' : ''}" onclick="openProductPreview(${e.id}, 'ebooks')">
-                        <div class="thumb-wrapper">
-                            ${!e.desbloqueado ? `
-                                <div class="lock-overlay">
-                                    <div class="lock-icon-circle"><i class="fa-solid fa-lock"></i></div>
-                                    <span class="lock-text">Ver Demo</span>
-                                </div>
-                            ` : ''}
-                            <img src="${e.imagem}" class="card-thumb" alt="${e.titulo}">
-                        </div>
-                        <div class="card-body">
-                            <h4>${e.titulo}</h4>
-                            <button class="card-btn">
-                                <i class="fa-solid fa-magnifying-glass"></i> Ver Detalhes
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
-
-        // ==========================================
-        // SISTEMA DE PLAYER DE CURSOS
-        // ==========================================
-        function handleCourseAction(id, isUnlocked, title) {
-            if (!isUnlocked) {
-                openWhatsApp(`Compra do Curso: ${title}`);
-                return;
-            }
-            const iLoader = document.getElementById('innerLoader');
-            document.getElementById('cursos-list-pane').style.display = "none";
-            iLoader.style.display = "block";
-            setTimeout(() => {
-                document.body.classList.add('theatre-mode');
-                iLoader.style.display = "none";
-                openCoursePlayer(id);
-            }, 600);
-        }
-
-        function closeVideoReader() {
-            const iLoader = document.getElementById('innerLoader');
-            document.getElementById('courses-player-pane').style.display = "none";
-            document.getElementById('main-video-frame').src = "";
-            iLoader.style.display = "block";
-            setTimeout(() => {
-                document.body.classList.remove('theatre-mode');
-                iLoader.style.display = "none";
-                document.getElementById('cursos-list-pane').style.display = "block";
-            }, 500);
-        }
-
-        function openCoursePlayer(courseId) {
-            const curso = dadosAluno.cursos.find(c => c.id === courseId);
-            if(!curso || !curso.modulos || curso.modulos.length === 0) {
-                showToast("Módulos em processamento de upload.", "warning", "fa-video-slash");
-                closeVideoReader();
-                return;
-            }
-            document.getElementById('courses-player-pane').style.display = "block";
-            document.getElementById('player-course-title').innerText = curso.titulo.toUpperCase();
-
-            const materialBtn = document.getElementById('btn-download-material');
-            if(curso.linkMaterial) {
-                materialBtn.href = curso.linkMaterial;
-                materialBtn.style.opacity = "1";
-                materialBtn.style.pointerEvents = "auto";
-                materialBtn.innerHTML = `<i class="fa-solid fa-download"></i> Baixar Recursos`;
-            } else {
-                materialBtn.href = "#";
-                materialBtn.style.opacity = "0.4";
-                materialBtn.style.pointerEvents = "none";
-                materialBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Sem Anexos`;
-            }
-
-            const trackContainer = document.getElementById('playlist-tracks-container');
-            trackContainer.innerHTML = curso.modulos.map((modulo, modIndex) => `
-                <details class="module-wrapper" ${modIndex === 0 ? 'open' : ''}>
-                    <summary class="module-summary">
-                        <span><i class="fa-regular fa-folder" style="color: var(--primary); margin-right: 0.4rem;"></i> ${modulo.nome}</span>
-                        <i class="fa-solid fa-chevron-down chevron"></i>
-                    </summary>
-                    <div style="padding-bottom: 0.5rem;">
-                        ${modulo.aulas.map((aula, aulaIndex) => `
-                            <div class="playlist-track ${modIndex === 0 && aulaIndex === 0 ? 'active' : ''}" onclick="playTrackVideo('${aula.url}', this)">
-                                <i class="fa-solid fa-play"></i> ${aula.titulo}
-                            </div>
-                        `).join('')}
-                    </div>
-                </details>
-            `).join('');
-
-            try {
-                playTrackVideo(curso.modulos[0].aulas[0].url, trackContainer.querySelector('.playlist-track'));
-            } catch(e) {}
-        }
-
-        function playTrackVideo(url, element) {
-            document.querySelectorAll('.playlist-track').forEach(t => t.classList.remove('active'));
-            if(element) element.classList.add('active');
-            document.getElementById('main-video-frame').src = parseYoutubeUrl(url);
-        }
-
-        // ==========================================
-        // MOTOR DE PRÉ-VISUALIZAÇÃO DE PRODUTOS
-        // ==========================================
-        function openProductPreview(id, type) {
-            currentProductSection = type; 
-            
-            let lista = [];
-            let listPaneId = '';
-            
-            if(type === 'drumkits') { lista = dadosAluno.drumkits; listPaneId = 'drumkits-list-pane'; }
-            else if(type === 'flps') { lista = dadosAluno.flps; listPaneId = 'flp-list-pane'; }
-            else if(type === 'loops') { lista = dadosAluno.loops; listPaneId = 'loops-list-pane'; }
-            else if(type === 'plugins') { lista = dadosAluno.plugins; listPaneId = 'plugins-list-pane'; }
-            else if(type === 'ebooks') { lista = dadosAluno.ebooks; listPaneId = 'ebooks-list-pane'; }
-            
-            const produto = lista.find(p => p.id === id);
-            
-            if(!produto) {
-                showToast("Produto não localizado.", "warning", "fa-triangle-exclamation");
-                return;
-            }
-
-            const iLoader = document.getElementById('innerLoader');
-            document.getElementById(listPaneId).style.display = "none";
-            iLoader.style.display = "block";
-
-            setTimeout(() => {
-                document.body.classList.add('theatre-mode');
-                iLoader.style.display = "none";
-                
-                document.getElementById('product-preview-title').innerText = produto.titulo;
-                document.getElementById('product-preview-img').src = produto.imagem;
-                
-                const precoFormatado = produto.preco ? produto.preco : "Kz 6.500,00";
-                document.getElementById('product-preview-price').innerText = precoFormatado;
-                
-                const videoUrl = produto.videoDemo ? produto.videoDemo : "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
-                document.getElementById('product-video-frame').src = parseYoutubeUrl(videoUrl);
-
-                const btnStack = document.getElementById('product-btn-stack');
-                if(produto.desbloqueado) {
-                    btnStack.innerHTML = `
-                        <button class="btn-action-premium btn-download-unlocked" onclick="executeDownload('${produto.linkDownload}')">
-                            <i class="fa-solid fa-cloud-arrow-down"></i> Baixar Conteúdo Adquirido
-                        </button>
-                    `;
-                } else {
-                    btnStack.innerHTML = `
-                        <button class="btn-action-premium btn-download-locked" disabled>
-                            <i class="fa-solid fa-lock"></i> Download Bloqueado (Não Comprado)
-                        </button>
-                        <button class="btn-action-premium btn-buy-whatsapp" onclick="triggerProductPurchase('${produto.titulo}', '${precoFormatado}')">
-                            <i class="fa-brands fa-whatsapp"></i> Comprar via WhatsApp
-                        </button>
-                    `;
-                }
-
-                document.getElementById('product-preview-pane').style.display = "block";
-            }, 500);
-        }
-
-        function closeProductPreview() {
-            const iLoader = document.getElementById('innerLoader');
-            document.getElementById('product-preview-pane').style.display = "none";
-            document.getElementById('product-video-frame').src = "";
-            iLoader.style.display = "block";
-
-            setTimeout(() => {
-                document.body.classList.remove('theatre-mode');
-                iLoader.style.display = "none";
-                
-                let listPaneId = '';
-                if(currentProductSection === 'drumkits') listPaneId = 'drumkits-list-pane';
-                if(currentProductSection === 'flps') listPaneId = 'flp-list-pane';
-                if(currentProductSection === 'loops') listPaneId = 'loops-list-pane';
-                if(currentProductSection === 'plugins') listPaneId = 'plugins-list-pane';
-                if(currentProductSection === 'ebooks') listPaneId = 'ebooks-list-pane';
-
-                document.getElementById(listPaneId).style.display = "block";
-                switchView(currentProductSection === 'flps' ? 'flp' : currentProductSection, document.querySelector(`[onclick*="switchView('${currentProductSection === 'flps' ? 'flp' : currentProductSection}'"]`));
-            }, 400);
-        }
-
-        function executeDownload(url) {
-            showToast("A processar link seguro de transferência...", "success", "fa-arrow-down");
-            setTimeout(() => window.open(url, "_blank"), 600);
-        }
-
-        function triggerProductPurchase(titulo, preco) {
-            const mensagem = `*INTERESSE DE COMPRA - LOJA LONEKE*\n\nOlá Loneke! Quero adquirir o seguinte produto:\n📦 *Produto:* ${titulo}\n💰 *Valor:* ${preco}\n\nComo posso efetuar o pagamento para libertar o acesso no meu painel?`;
-            const url = `https://wa.me/244924034159?text=${encodeURIComponent(mensagem)}`;
-            window.open(url, "_blank");
-        }
-
-        // ==========================================
-        // UTILITÁRIOS GERAIS
-        // ==========================================
-        function parseYoutubeUrl(url) {
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = url.match(regExp);
-            return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}?autoplay=1` : url;
-        }
-
-        function openWhatsApp(contexto = "Geral") {
-            const texto = `*Suporte VIP - Loneke no Beat*\nOlá, preciso de suporte no meu painel do aluno.`;
-            const url = `https://wa.me/244924034159?text=${encodeURIComponent(texto)}`;
-            window.open(url, "_blank");
-        }
-
+        // GESTÃO DE VIEWS
         function switchView(targetView, menuElement) {
-            document.getElementById('courses-player-pane').style.display = "none";
-            document.getElementById('product-preview-pane').style.display = "none";
-            document.getElementById('main-video-frame').src = "";
-            document.getElementById('product-video-frame').src = "";
-            document.body.classList.remove('theatre-mode');
-
-            document.getElementById('cursos-list-pane').style.display = "block";
-            document.getElementById('drumkits-list-pane').style.display = "block";
-            document.getElementById('flp-list-pane').style.display = "block";
-            document.getElementById('loops-list-pane').style.display = "block";
-            document.getElementById('plugins-list-pane').style.display = "block";
-            document.getElementById('ebooks-list-pane').style.display = "block";
+            const sidebar = document.getElementById('sidebar');
+            if(sidebar) sidebar.classList.remove('open');
 
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
             if(menuElement) menuElement.classList.add('active');
@@ -1089,8 +1196,6 @@
                 const target = document.getElementById(`view-${targetView}`);
                 if (target) target.classList.add('active');
             }, 200);
-
-            document.getElementById('sidebar').classList.remove('open');
         }
 
         function initMobileNav() {
@@ -1101,9 +1206,529 @@
             }
         }
 
+        // TELA DE PROCESSAMENTO DINÂMICA
+        function triggerProcessing(message, duration, callback) {
+            const loader = document.getElementById('actionLoader');
+            const text = document.getElementById('actionLoaderText');
+            text.innerText = message;
+            loader.classList.add('active');
+            
+            setTimeout(() => {
+                loader.classList.remove('active');
+                if(callback) callback();
+            }, duration);
+        }
+
+        // PLAYER DE VÍDEO (COM TELA DE PROCESSAMENTO)
+        function openPlayer(videoUrl, title) {
+            triggerProcessing("Carregando vídeo demonstrativo...", 600, () => {
+                const overlay = document.getElementById('playerOverlay');
+                const iframe = document.getElementById('videoIframe');
+                const titleEl = document.getElementById('playerTitle');
+                
+                let finalUrl = videoUrl || "https://www.youtube.com/embed/dQw4w9WgXcQ"; 
+                titleEl.innerText = title;
+                
+                if(finalUrl.includes('youtube.com') || finalUrl.includes('youtu.be')) {
+                    let videoId = '';
+                    if(finalUrl.includes('youtu.be/')) {
+                        videoId = finalUrl.split('youtu.be/')[1].split('?')[0];
+                    } else if(finalUrl.includes('v=')) {
+                        videoId = finalUrl.split('v=')[1].split('&')[0];
+                    } else if(finalUrl.includes('embed/')) {
+                        videoId = finalUrl.split('embed/')[1].split('?')[0];
+                    }
+                    finalUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+                }
+
+                iframe.src = finalUrl;
+                overlay.classList.add('active');
+            });
+        }
+
+        function closePlayer() {
+            const overlay = document.getElementById('playerOverlay');
+            overlay.classList.remove('active');
+            setTimeout(() => {
+                document.getElementById('videoIframe').src = '';
+            }, 400);
+        }
+
+        // SISTEMA LMS (COM TELA DE PROCESSAMENTO)
+        let currentOpenCourse = null;
+
+        function openLms(courseId) {
+            triggerProcessing("Abrindo portal de aulas VIP...", 700, () => {
+                const curso = dadosAluno.cursos.find(c => c.id === courseId);
+                if (!curso) return;
+
+                currentOpenCourse = curso;
+                document.getElementById('lmsCourseTitle').innerText = curso.titulo;
+                document.getElementById('lmsDownloadMaterial').href = curso.linkMaterial || "#";
+
+                const listContainer = document.getElementById('lmsCurriculumList');
+                listContainer.innerHTML = '';
+
+                curso.modulos.forEach((modulo, indexMod) => {
+                    const modElement = document.createElement('div');
+                    modElement.className = `lms-module ${indexMod === 0 ? 'active' : ''}`;
+                    
+                    let classesHTML = '';
+                    modulo.aulas.forEach((aula, indexAula) => {
+                        classesHTML += `
+                            <div class="lms-class-item" onclick="loadLmsVideo('${aula.url}', '${aula.titulo}', this)">
+                                <i class="fa-solid fa-circle-play"></i>
+                                <span>${aula.titulo}</span>
+                            </div>
+                        `;
+                    });
+
+                    modElement.innerHTML = `
+                        <div class="lms-module-header" onclick="toggleLmsModule(this)">
+                            <span>${modulo.nome}</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="lms-module-content">
+                            ${classesHTML}
+                        </div>
+                    `;
+                    listContainer.appendChild(modElement);
+                });
+
+                if (curso.modulos.length > 0 && curso.modulos[0].aulas.length > 0) {
+                    const primeiraAula = curso.modulos[0].aulas[0];
+                    setTimeout(() => {
+                        const primeiroItemDom = document.querySelector('.lms-class-item');
+                        loadLmsVideo(primeiraAula.url, primeiraAula.titulo, primeiroItemDom);
+                    }, 100);
+                }
+
+                document.getElementById('lmsOverlay').classList.add('active');
+            });
+        }
+
+        function loadLmsVideo(url, title, element) {
+            document.querySelectorAll('.lms-class-item').forEach(el => el.classList.remove('active'));
+            if(element) element.classList.add('active');
+
+            document.getElementById('lmsClassTitle').innerText = title;
+
+            let embedUrl = url;
+            if(url.includes('youtube.com') || url.includes('youtu.be')) {
+                let videoId = '';
+                if(url.includes('youtu.be/')) {
+                    videoId = url.split('youtu.be/')[1].split('?')[0];
+                } else if(url.includes('v=')) {
+                    videoId = url.split('v=')[1].split('&')[0];
+                } else if(url.includes('embed/')) {
+                    videoId = url.split('embed/')[1].split('?')[0];
+                }
+                embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+            }
+            document.getElementById('lmsVideoIframe').src = embedUrl;
+        }
+
+        function toggleLmsModule(header) {
+            const modulo = header.parentElement;
+            modulo.classList.toggle('active');
+        }
+
+        function closeLms() {
+            const overlay = document.getElementById('lmsOverlay');
+            overlay.classList.remove('active');
+            setTimeout(() => {
+                document.getElementById('lmsVideoIframe').src = '';
+                currentOpenCourse = null;
+            }, 400);
+        }
+
+        // TERMINAR SESSÃO (COM ANIMAÇÃO DE LOGOUT)
         function logout() {
-            localStorage.clear();
-            window.location.href = "index.html";
+            triggerProcessing("Encerrando sua sessão VIP de forma segura...", 1500, () => {
+                localStorage.clear();
+                window.location.href = "index.html";
+            });
+        }
+
+        // CARREGAMENTO DINÂMICO (ANIMAÇÃO AO ABRIR)
+        window.onload = function() {
+            initMobileNav();
+            
+            const studentFile = localStorage.getItem('loggedStudentFile');
+            if(!studentFile) {
+                window.location.href = "index.html";
+                return;
+            }
+
+            const script = document.createElement('script');
+            script.src = studentFile;
+            
+            script.onload = function() {
+                if (typeof dadosAluno !== 'undefined') {
+                    document.getElementById('studentName').innerText = dadosAluno.usuario.nome;
+                    document.getElementById('studentEmail').innerText = dadosAluno.usuario.email;
+                    
+                    renderCursos();
+                    renderDrumkits();
+                    renderFlps();
+                    renderLoops();
+                    renderPlugins();
+                    renderEbooks();
+                    renderComprados(); 
+                    renderDashboard();  
+                    
+                    // Suaviza a transição de saída do Loader inicial
+                    const loader = document.getElementById('mainLoader');
+                    loader.classList.add('fade-out');
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                    }, 500);
+
+                } else {
+                    alert("Dados do aluno indisponíveis.");
+                    window.location.href = "index.html";
+                }
+            };
+
+            script.onerror = function() {
+                alert("Erro ao carregar banco de dados.");
+                window.location.href = "index.html";
+            };
+
+            document.head.appendChild(script);
+        };
+
+        // RENDER DE CATEGORIAS (BLOQUEADOS)
+        function renderCursos() {
+            const list = document.getElementById('cursos-list');
+            if(!list) return;
+            list.innerHTML = '';
+            let count = 0;
+            const searchVal = document.getElementById('search-cursos').value.toLowerCase();
+
+            dadosAluno.cursos.forEach(item => {
+                if (item.desbloqueado) return;
+                
+                // Filtro por texto
+                if (searchVal && !item.titulo.toLowerCase().includes(searchVal)) return;
+
+                count++;
+                const card = document.createElement('div');
+                card.className = `product-card`;
+                card.innerHTML = `
+                    <div class="product-thumb">
+                        <img src="${item.imagem}" alt="${item.titulo}">
+                        <div class="lock-overlay"><i class="fa-solid fa-lock"></i></div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${item.titulo}</h3>
+                        <p class="product-desc">Domine a produção deste estilo do início ao fim com módulos completos de engenharia de som.</p>
+                        <div class="product-actions">
+                            <button class="btn-action btn-video" onclick="openPlayer('${item.video || ''}', '${item.titulo} - Demonstração')"><i class="fa-solid fa-play"></i> Ver Demonstração</button>
+                            <a href="https://wa.me/244924034159?text=Olá Loneke, desejo desbloquear o curso: ${encodeURIComponent(item.titulo)}" target="_blank" class="btn-action btn-buy"><i class="fa-brands fa-whatsapp"></i> Comprar no WhatsApp</a>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+
+            if (count === 0) {
+                list.innerHTML = searchVal 
+                    ? `<div class="empty-state"><i class="fa-solid fa-magnifying-glass" style="color:var(--text-secondary);"></i><p>Nenhum curso correspondente encontrado.</p></div>`
+                    : `<div class="empty-state"><i class="fa-solid fa-circle-check" style="color:#00cc66;"></i><p>Excelente! Já desbloqueou todos os cursos da nossa plataforma.</p></div>`;
+            }
+        }
+
+        function renderDrumkits() {
+            const list = document.getElementById('drumkits-list');
+            if(!list) return;
+            list.innerHTML = '';
+            let count = 0;
+            const searchVal = document.getElementById('search-drumkits').value.toLowerCase();
+
+            dadosAluno.drumkits.forEach(item => {
+                if (item.desbloqueado) return;
+                
+                // Filtro por texto
+                if (searchVal && !item.titulo.toLowerCase().includes(searchVal)) return;
+
+                count++;
+                const card = document.createElement('div');
+                card.className = `product-card`;
+                card.innerHTML = `
+                    <div class="product-thumb">
+                        <img src="${item.imagem}" alt="${item.titulo}">
+                        <div class="lock-overlay"><i class="fa-solid fa-lock"></i></div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${item.titulo}</h3>
+                        <p class="product-desc">Pack de baterias profissionais e efeitos de altíssima qualidade prontos para bombar nas pistas.</p>
+                        <div class="product-actions">
+                            <button class="btn-action btn-video" onclick="openPlayer('${item.video || ''}', '${item.titulo} - Demonstração')"><i class="fa-solid fa-music"></i> Ouvir Demonstração</button>
+                            <a href="https://wa.me/244924034159?text=Olá Loneke, desejo adquirir o Drum Kit: ${encodeURIComponent(item.titulo)}" target="_blank" class="btn-action btn-buy"><i class="fa-brands fa-whatsapp"></i> Comprar no WhatsApp</a>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+
+            if (count === 0) {
+                list.innerHTML = searchVal 
+                    ? `<div class="empty-state"><i class="fa-solid fa-magnifying-glass" style="color:var(--text-secondary);"></i><p>Nenhum Drum Kit correspondente encontrado.</p></div>`
+                    : `<div class="empty-state"><i class="fa-solid fa-circle-check" style="color:#00cc66;"></i><p>Incrível! Todos os Drum Kits de Elite já foram liberados.</p></div>`;
+            }
+        }
+
+        function renderFlps() {
+            const list = document.getElementById('flps-list');
+            if(!list) return;
+            list.innerHTML = '';
+            let count = 0;
+            const searchVal = document.getElementById('search-flps').value.toLowerCase();
+
+            dadosAluno.flps.forEach(item => {
+                if (item.desbloqueado) return;
+                
+                // Filtro por texto
+                if (searchVal && !item.titulo.toLowerCase().includes(searchVal)) return;
+
+                count++;
+                const card = document.createElement('div');
+                card.className = `product-card`;
+                card.innerHTML = `
+                    <div class="product-thumb">
+                        <img src="${item.imagem}" alt="${item.titulo}">
+                        <div class="lock-overlay"><i class="fa-solid fa-lock"></i></div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${item.titulo}</h3>
+                        <p class="product-desc">Abra o projeto de produção completo e estude todas as técnicas de arranjo estrutural e mixagem.</p>
+                        <div class="product-actions">
+                            <button class="btn-action btn-video" onclick="openPlayer('${item.video || ''}', '${item.titulo} - Demonstração')"><i class="fa-solid fa-play"></i> Ver Demonstração</button>
+                            <a href="https://wa.me/244924034159?text=Olá Loneke, quero comprar o FLP do beat: ${encodeURIComponent(item.titulo)}" target="_blank" class="btn-action btn-buy"><i class="fa-brands fa-whatsapp"></i> Comprar no WhatsApp</a>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+
+            if (count === 0) {
+                list.innerHTML = searchVal 
+                    ? `<div class="empty-state"><i class="fa-solid fa-magnifying-glass" style="color:var(--text-secondary);"></i><p>Nenhum FLP correspondente encontrado.</p></div>`
+                    : `<div class="empty-state"><i class="fa-solid fa-circle-check" style="color:#00cc66;"></i><p>Incrível! Já tens acesso à biblioteca completa de FLPs.</p></div>`;
+            }
+        }
+
+        function renderLoops() {
+            const list = document.getElementById('loops-list');
+            if(!list) return;
+            list.innerHTML = '';
+            let count = 0;
+            const searchVal = document.getElementById('search-loops').value.toLowerCase();
+
+            dadosAluno.loops.forEach(item => {
+                if (item.desbloqueado) return;
+                
+                // Filtro por texto
+                if (searchVal && !item.titulo.toLowerCase().includes(searchVal)) return;
+
+                count++;
+                const card = document.createElement('div');
+                card.className = `product-card`;
+                card.innerHTML = `
+                    <div class="product-thumb">
+                        <img src="${item.imagem}" alt="${item.titulo}">
+                        <div class="lock-overlay"><i class="fa-solid fa-lock"></i></div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${item.titulo}</h3>
+                        <p class="product-desc">Melodias e progressões com separação em canais (STEMS) para acelerar a sua composição e workflow.</p>
+                        <div class="product-actions">
+                            <button class="btn-action btn-video" onclick="openPlayer('${item.video || ''}', '${item.titulo} - Demonstração')"><i class="fa-solid fa-headphones"></i> Ouvir Demonstração</button>
+                            <a href="https://wa.me/244924034159?text=Olá Loneke, desejo adquirir o pacote de Loops: ${encodeURIComponent(item.titulo)}" target="_blank" class="btn-action btn-buy"><i class="fa-brands fa-whatsapp"></i> Comprar no WhatsApp</a>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+
+            if (count === 0) {
+                list.innerHTML = searchVal 
+                    ? `<div class="empty-state"><i class="fa-solid fa-magnifying-glass" style="color:var(--text-secondary);"></i><p>Nenhum pacote de Loops correspondente encontrado.</p></div>`
+                    : `<div class="empty-state"><i class="fa-solid fa-circle-check" style="color:#00cc66;"></i><p>Todos os Loops & Progressões já estão na sua conta!</p></div>`;
+            }
+        }
+
+        // RENDER DE PRODUTOS ADQUIRIDOS (DESBLOQUEADOS COM FILTRO E BUSCA)
+        function renderComprados() {
+            const list = document.getElementById('comprados-list');
+            if(!list) return;
+            list.innerHTML = '';
+            
+            let count = 0;
+            const searchVal = document.getElementById('search-comprados').value.toLowerCase();
+            const categoryVal = document.getElementById('category-comprados').value;
+            
+            // Definição das categorias que serão varridas
+            const categorias = categoryVal === 'all' 
+                ? ['cursos', 'drumkits', 'flps', 'loops', 'plugins', 'ebooks'] 
+                : [categoryVal];
+            
+            const labels = {
+                cursos: 'CURSO VIP',
+                drumkits: 'DRUM KIT ELITE',
+                flps: 'FLP PRONTO',
+                loops: 'LOOPS & MELODIAS',
+                plugins: 'PLUGIN / VST',
+                ebooks: 'E-BOOK / GUIA'
+            };
+
+            categorias.forEach(cat => {
+                if (!dadosAluno[cat]) return;
+
+                dadosAluno[cat].forEach(item => {
+                    if (!item.desbloqueado) return; 
+                    
+                    // Lógica de Filtro por Pesquisa Textual (Procura no título ou descrição)
+                    const descText = item.descricao || 'Produto adquirido com acesso vitalício de download e updates garantidos.';
+                    if (searchVal && !item.titulo.toLowerCase().includes(searchVal) && !descText.toLowerCase().includes(searchVal)) {
+                        return;
+                    }
+
+                    count++;
+                    const card = document.createElement('div');
+                    card.className = `product-card`;
+                    
+                    let botaoAcesso = '';
+                    if (cat === 'cursos') {
+                        botaoAcesso = `
+                            <button class="btn-action" onclick="openLms(${item.id})"><i class="fa-solid fa-graduation-cap"></i> Acessar Curso</button>
+                        `;
+                    } else {
+                        let downloadUrl = item.linkDownload || "https://mediafire.com";
+                        botaoAcesso = `
+                            <a href="${downloadUrl}" target="_blank" class="btn-action"><i class="fa-solid fa-arrow-down-to-bracket"></i> Baixar Produto</a>
+                        `;
+                    }
+
+                    card.innerHTML = `
+                        <div class="product-thumb">
+                            <img src="${item.imagem}" alt="${item.titulo}">
+                        </div>
+                        <div class="product-info">
+                            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem;">
+                                <span style="font-size:0.75rem; color:var(--primary); font-weight:700; text-transform:uppercase;">${labels[cat]}</span>
+                                <span style="font-size:0.7rem; color:#00cc66; font-weight:600; background:rgba(0,204,102,0.1); padding:2px 8px; border-radius:12px;"><i class="fa-solid fa-circle-check"></i> Ativo</span>
+                            </div>
+                            <h3 class="product-title">${item.titulo}</h3>
+                            <p class="product-desc">${descText}</p>
+                            <div class="product-actions">
+                                <button class="btn-action btn-secondary" onclick="openPlayer('${item.video || ''}', '${item.titulo} - Demonstração')"><i class="fa-solid fa-play"></i> Ver Demonstração</button>
+                                ${botaoAcesso}
+                            </div>
+                        </div>
+                    `;
+                    list.appendChild(card);
+                });
+            });
+
+            if (count === 0) {
+                if (searchVal || categoryVal !== 'all') {
+                    list.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fa-solid fa-magnifying-glass" style="font-size:3.5rem; color:#444; margin-bottom:1.2rem;"></i>
+                            <h3 style="color:#fff; margin-bottom:0.5rem; font-family:'Montserrat';">Nenhum resultado encontrado</h3>
+                            <p style="font-size:0.85rem; max-width:400px; margin:0 auto; line-height:1.5;">Nenhum produto corresponde aos filtros aplicados. Tente alterar o texto ou a categoria pesquisada.</p>
+                        </div>
+                    `;
+                } else {
+                    list.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fa-solid fa-box-open" style="font-size:3.5rem; color:#444; margin-bottom:1.2rem;"></i>
+                            <h3 style="color:#fff; margin-bottom:0.5rem; font-family:'Montserrat';">Nenhum produto ativo encontrado</h3>
+                            <p style="font-size:0.85rem; max-width:400px; margin:0 auto; line-height:1.5;">Você ainda não possui itens adquiridos nesta conta. Vá para as abas de categorias para explorar a nossa montra e solicitar ativações!</p>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function renderPlugins() {
+            const list = document.getElementById('plugins-list');
+            if(!list) return; list.innerHTML = ''; let count = 0;
+            const searchVal = document.getElementById('search-plugins').value.toLowerCase();
+
+            dadosAluno.plugins.forEach(item => {
+                if (item.desbloqueado) return; 
+                
+                if (searchVal && !item.titulo.toLowerCase().includes(searchVal)) return;
+
+                count++;
+                const card = document.createElement('div'); card.className = `product-card`;
+                card.innerHTML = `
+                    <div class="product-thumb"><img src="${item.imagem}" alt="${item.titulo}"><div class="lock-overlay"><i class="fa-solid fa-lock"></i></div></div>
+                    <div class="product-info">
+                        <h3 class="product-title">${item.titulo}</h3><p class="product-desc">Instrumentos VSTs e Plugins de Processamento de Sinal recomendados para beats de Elite.</p>
+                        <div class="product-actions">
+                            <button class="btn-action btn-video" onclick="openPlayer('${item.video || ''}', '${item.titulo} - Demonstração')"><i class="fa-solid fa-plug"></i> Ver Demonstração</button>
+                            <a href="https://wa.me/244924034159?text=Olá Loneke, quero comprar o pack de Plugins: ${encodeURIComponent(item.titulo)}" target="_blank" class="btn-action btn-buy"><i class="fa-brands fa-whatsapp"></i> Comprar no WhatsApp</a>
+                        </div>
+                    </div>`;
+                list.appendChild(card);
+            });
+            if (count === 0) {
+                list.innerHTML = searchVal 
+                    ? `<div class="empty-state"><i class="fa-solid fa-magnifying-glass" style="color:var(--text-secondary);"></i><p>Nenhum plugin correspondente encontrado.</p></div>`
+                    : `<div class="empty-state"><i class="fa-solid fa-circle-check" style="color:#00cc66;"></i><p>Parabéns! Todos os Plugins e VSTs estão desbloqueados.</p></div>`;
+            }
+        }
+
+        function renderEbooks() {
+            const list = document.getElementById('ebooks-list');
+            if(!list) return; list.innerHTML = ''; let count = 0;
+            const searchVal = document.getElementById('search-ebooks').value.toLowerCase();
+
+            if(dadosAluno.ebooks) {
+                dadosAluno.ebooks.forEach(item => {
+                    if (item.desbloqueado) return; 
+                    
+                    if (searchVal && !item.titulo.toLowerCase().includes(searchVal)) return;
+
+                    count++;
+                    const card = document.createElement('div'); card.className = `product-card`;
+                    card.innerHTML = `
+                        <div class="product-thumb"><img src="${item.imagem}" alt="${item.titulo}"><div class="lock-overlay"><i class="fa-solid fa-lock"></i></div></div>
+                        <div class="product-info">
+                            <h3 class="product-title">${item.titulo}</h3><p class="product-desc">${item.descricao || 'Guias completos sobre marketing digital, lançamentos e estratégias profissionais.'}</p>
+                            <div class="product-actions">
+                                <button class="btn-action btn-video" onclick="openPlayer('${item.video || ''}', '${item.titulo} - Demonstração')"><i class="fa-solid fa-book"></i> Ver Demonstração</button>
+                                <a href="https://wa.me/244924034159?text=Olá Loneke, gostaria de comprar o e-book: ${encodeURIComponent(item.titulo)}" target="_blank" class="btn-action btn-buy"><i class="fa-brands fa-whatsapp"></i> Comprar no WhatsApp</a>
+                            </div>
+                        </div>`;
+                    list.appendChild(card);
+                });
+            }
+            if (count === 0) {
+                list.innerHTML = searchVal 
+                    ? `<div class="empty-state"><i class="fa-solid fa-magnifying-glass" style="color:var(--text-secondary);"></i><p>Nenhum e-book correspondente encontrado.</p></div>`
+                    : `<div class="empty-state"><i class="fa-solid fa-circle-check" style="color:#00cc66;"></i><p>Fantástico! Você já tem todos os E-books e materiais intelectuais.</p></div>`;
+            }
+        }
+
+        function renderDashboard() {
+            let totalCursos = dadosAluno.cursos ? dadosAluno.cursos.length : 0;
+            let totalDrumkits = dadosAluno.drumkits ? dadosAluno.drumkits.length : 0;
+            let totalFlps = dadosAluno.flps ? dadosAluno.flps.length : 0;
+            let totalLoops = dadosAluno.loops ? dadosAluno.loops.length : 0;
+            let totalPlugins = dadosAluno.plugins ? dadosAluno.plugins.length : 0;
+            let totalEbooks = dadosAluno.ebooks ? dadosAluno.ebooks.length : 0;
+            let totalGeral = totalCursos + totalDrumkits + totalFlps + totalLoops + totalPlugins + totalEbooks;
+            let adquiridos = 0;
+            const somarAdquiridos = (lista) => { if (lista) { lista.forEach(item => { if (item.desbloqueado) adquiridos++; }); } };
+            somarAdquiridos(dadosAluno.cursos); somarAdquiridos(dadosAluno.drumkits); somarAdquiridos(dadosAluno.flps); somarAdquiridos(dadosAluno.loops); somarAdquiridos(dadosAluno.plugins); somarAdquiridos(dadosAluno.ebooks);
+            document.getElementById('stat-total').innerText = totalGeral;
+            document.getElementById('stat-adquiridos').innerText = adquiridos;
+            document.getElementById('stat-bloqueados').innerText = totalGeral - adquiridos;
         }
     </script>
 </body>
