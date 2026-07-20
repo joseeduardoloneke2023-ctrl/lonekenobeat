@@ -1175,6 +1175,57 @@
             opacity: 1;
         }
 
+        /* --- AJUSTE DOS BOTÕES LADO A LADO NOS CARDS --- */
+        .card-actions-wrapper {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 0.5rem;
+            margin-top: auto;
+        }
+
+        .btn-card-action {
+            width: 100%;
+            background: var(--white);
+            color: #000000;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .btn-card-action:hover {
+            background: var(--primary);
+            color: var(--white);
+            box-shadow: 0 8px 20px rgba(229, 9, 20, 0.4);
+        }
+
+        .btn-card-cart {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--white);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-card-cart:hover {
+            background: #2ec4b6;
+            color: #ffffff;
+            border-color: #2ec4b6;
+            box-shadow: 0 8px 20px rgba(46, 196, 182, 0.3);
+        }
+
         /* --- RESPONSIVENESS --- */
         @media(max-width: 1024px) {
             .hero-headline { font-size: 3.2rem; }
@@ -1224,9 +1275,10 @@
             <a href="index.html" class="logo">LONEKE NO <span>BEAT</span></a>
             <nav class="nav-menu" id="navMenu">
                 <a href="index.html" class="nav-link">Home</a>
+                <a href="aulas.html" class="nav-link active">Ajuda</a>
                 <a href="catalogo.html" class="nav-link">Produtos</a>
                 <a href="#features" class="nav-link">Serviços</a>
-                <a href="aulas.html" class="nav-link active">Aulas</a>
+             
                 <a href="#about" class="nav-link">Sobre</a>
                 <a href="#contact" class="nav-link">Contato</a>
                 <a href="vip.html" class="nav-link">Cliente Vip</a>
@@ -1295,14 +1347,14 @@
         <section id="destaques" class="section-padding" style="position: relative;">
             <div class="container">
                 <div class="text-center">
-                    <h2 class="section-title">Lançamentos em Destaque</h2>
+                    <h2 class="section-title">Top Produtos Mais Vendidos</h2>
 
                 </div>
                 
                 <div class="featured-slider-container">
                     <button class="slider-arrow arrow-left" onclick="moveFeaturedSlider(-1)"><i class="fa-solid fa-chevron-left"></i></button>
                     <div class="featured-slider-track" id="featuredSliderTrack">
-                        <!-- Injetado dinamicamente: 7 produtos -->
+                        <!-- Injetado dinamicamente: 10 produtos mais vendidos -->
                     </div>
                     <button class="slider-arrow arrow-right" onclick="moveFeaturedSlider(1)"><i class="fa-solid fa-chevron-right"></i></button>
                 </div>
@@ -1526,7 +1578,7 @@
                 </div>
 
                 <p class="testimonial-quote">
-                    "O curso de instalar Plugins me ajudou a criar uma renda extra. Hoje faço instalações para produtores da minha cidade e consigo ganhar dinheiro praticamente todas as semanas. O conteúdo é muito bem explicado, mesmo para quem nunca fez uma instalação antes."
+                    "O curso de instalar Plugins me ajudou a criar uma renda extra. Hoje faço instalações para produtores da minha cidade e consigo ganhar dinheiro praticamente todas as semanas. O conteúdo é muito bem explained, mesmo para quem nunca fez uma instalação antes."
                 </p>
 
                 <div class="testimonial-author">
@@ -1924,7 +1976,8 @@
         }, 3500);
     }
 
-    function createProductCardHTML(prod) {
+
+function createProductCardHTML(prod) {
         return `
             <article class="product-card-premium reveal active" onclick="goToProductDetail(${prod.id})">
                 <div class="card-img-wrapper">
@@ -1939,13 +1992,20 @@
                         <span class="card-price-old">${prod.precoAntigo.toLocaleString('pt-AO')} Kz</span>
                         <span class="card-price-new">${prod.precoAtual.toLocaleString('pt-AO')} Kz</span>
                     </div>
-                    <button class="btn-card-action" onclick="goToProductDetail(${prod.id}); event.stopPropagation();">
-                        <i class="fa-solid fa-eye"></i> Ver Produto
-                    </button>
+                    <div class="card-actions-wrapper">
+                        <button class="btn-card-action" onclick="goToProductDetail(${prod.id}); event.stopPropagation();">
+                            <i class="fa-solid fa-eye"></i> Ver / Demo
+                        </button>
+                        <button class="btn-card-cart" title="Adicionar ao Carrinho" onclick="addItemToCart(event, ${prod.id})">
+                            <i class="fa-solid fa-cart-plus"></i>
+                        </button>
+                    </div>
                 </div>
             </article>
         `;
     }
+
+
 
     function goToProductDetail(id) {
         window.location.search = `?id=${id}`;
@@ -1997,10 +2057,10 @@
 
         const trackFeatured = document.getElementById("featuredSliderTrack");
         if (trackFeatured) {
-            const fDrumkits = produtos.filter(p => p.categoria.toLowerCase() === "drumkits").slice(0, 2);
-            const fCursos = produtos.filter(p => p.categoria.toLowerCase() === "cursos").slice(0, 2);
-            const fFlp = produtos.filter(p => p.categoria.toLowerCase() === "flp").slice(0, 3);
-            const poolFeatured = [...fDrumkits, ...fCursos, ...fFlp];
+            // Ordena todos os produtos do array pelo maior número de vendas e extrai os 10 primeiros
+            const poolFeatured = [...produtos]
+                .sort((a, b) => (b.vendas || 0) - (a.vendas || 0))
+                .slice(0, 10);
 
             trackFeatured.innerHTML = poolFeatured.map(prod => createProductCardHTML(prod)).join('');
             initSliderBehavior("featuredSliderTrack");
@@ -2076,7 +2136,7 @@
                                 </div>
                                 <!-- BOTÃO COMPRA AGORA COM LINK DO CHECKOUT EXTERNO -->
                                 <a href="${prod.linkCheckout || '#'}" target="_blank" class="btn btn-primary" style="width: 100%; padding: 1.2rem; border-radius: 12px; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;" onclick="showToast('Redirecionando para o Checkout Seguro...', 'fa-arrow-up-right-from-square')">
-                                    <i class="fa-solid fa-bolt"></i> Compra Agora 
+                                    <i class="fa-solid fa-bolt"></i> Comprar apenas este produto
                                 </a>
                                 <!-- BOTÃO ADICIONAR AO CARRINHO LOCAL -->
                                 <button class="btn btn-secondary" style="width: 100%; padding: 1.2rem; border-radius: 12px; font-size: 1.1rem;" onclick="addItemToCart(event, ${prod.id})">
@@ -2109,7 +2169,8 @@
         window.scrollTo({ top: 0 });
     }
 
-    function addItemToCart(event, id) {
+
+function addItemToCart(event, id) {
         if (event) event.stopPropagation();
         let cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
         const productSelected = produtos.find(p => p.id === id);
@@ -2137,17 +2198,28 @@
         
         const btn = event ? event.currentTarget : null;
         if (btn && btn.tagName === "BUTTON") {
-            const originalText = btn.innerHTML;
-            btn.innerHTML = `<i class="fa-solid fa-check"></i> Adicionado!`;
-            btn.style.background = "#2ec4b6";
-            btn.style.color = "#fff";
+            const originalHTML = btn.innerHTML;
+            
+            if (btn.classList.contains('btn-card-cart')) {
+                btn.innerHTML = `<i class="fa-solid fa-check"></i>`;
+                btn.style.background = "#2ec4b6";
+                btn.style.borderColor = "#2ec4b6";
+            } else {
+                btn.innerHTML = `<i class="fa-solid fa-check"></i> Adicionado!`;
+                btn.style.background = "#2ec4b6";
+                btn.style.color = "#fff";
+            }
+            
             setTimeout(() => {
-                btn.innerHTML = originalText;
+                btn.innerHTML = originalHTML;
                 btn.style.background = "";
                 btn.style.color = "";
+                btn.style.borderColor = "";
             }, 1500);
         }
     }
+
+
 
     function updateCartBadge() {
         let cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
