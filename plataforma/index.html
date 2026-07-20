@@ -48,7 +48,6 @@
         .form-control { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1.1rem; color: var(--white); font-size: 0.95rem; transition: all 0.3s; box-sizing: border-box; }
         .form-control:focus { border-color: var(--primary); outline: none; }
         
-        /* Ajuste de estilo para o elemento select */
         select.form-control {
             cursor: pointer;
             color: var(--white);
@@ -80,16 +79,16 @@
         }
         .forgot-link:hover { color: var(--primary); text-decoration: underline; }
 
-        .btn-login { width: 100%; padding: 1.1rem; background: var(--primary); border: none; color: white; font-weight: 600; border-radius: 12px; cursor: pointer; font-size: 1rem; transition: background 0.3s; }
+        .btn-login { width: 100%; padding: 1.1rem; background: var(--primary); border: none; color: white; font-weight: 600; border-radius: 12px; cursor: pointer; font-size: 1rem; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-login:hover { background: #b8070e; }
+        .btn-login:disabled { background: #555555; cursor: not-allowed; opacity: 0.6; }
+        
         #error-msg { color: #ff3333; font-size: 0.9rem; margin-top: 1rem; display: none; }
         
-        /* Container para separar os botões de forma elegante */
         .new { 
             margin-top: 1.2rem; 
         }
 
-        /* Botão Continuar Sem Conta melhorado (tamanho idêntico e estilo moderno) */
         .new-btn { 
             display: block;
             width: 100%; 
@@ -148,7 +147,9 @@
                 <a href="https://wa.me/244924034159?text=Ol%C3%A1%20Loneke!%20Esqueci-me%20da%20minha%20senha%20de%20acesso%20ao%20Painel%20VIP.%20Pode%20ajudar-me%3F" target="_blank" class="forgot-link">Esqueceu a senha?</a>
             </div>
 
-            <button type="submit" class="btn-login"><i class="fa-solid fa-right-to-bracket"></i> Entrar no Painel</button>
+            <button type="submit" class="btn-login" id="btnLoginSubmit">
+                <i class="fa-solid fa-right-to-bracket"></i> <span>Entrar no Painel</span>
+            </button>
 
             <div id="error-msg">Utilizador ou senha incorretos!</div>
         </form>
@@ -161,6 +162,8 @@
     <script>
         const btnTogglePass = document.getElementById('btnTogglePass');
         const passwordInput = document.getElementById('password');
+        const btnLoginSubmit = document.getElementById('btnLoginSubmit');
+        const btnLoginContent = btnLoginSubmit.innerHTML;
 
         btnTogglePass.addEventListener('click', function() {
             const isPassword = passwordInput.getAttribute('type') === 'password';
@@ -181,6 +184,10 @@
             const errorMsg = document.getElementById('error-msg');
             
             errorMsg.style.display = "none";
+
+            // Ativa o feedback visual de carregamento rápido e bloqueia cliques extras
+            btnLoginSubmit.disabled = true;
+            btnLoginSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>A processar...</span>`;
 
             const scriptId = "dynamic-student-script";
             const oldScript = document.getElementById(scriptId);
@@ -221,19 +228,24 @@
                             window.location.href = "vip.html";
                         }
                     } else {
-                        errorMsg.innerText = "Senha ou dados de acesso incorretos!";
-                        errorMsg.style.display = "block";
+                        exibirErro("Senha ou dados de acesso incorretos!");
                     }
                 } else {
-                    errorMsg.innerText = "Erro ao processar dados do utilizador.";
-                    errorMsg.style.display = "block";
+                    exibirErro("Erro ao processar dados do utilizador.");
                 }
             };
 
             script.onerror = function() {
-                errorMsg.innerText = "Utilizador ou E-mail não encontrado para este plano!";
-                errorMsg.style.display = "block";
+                exibirErro("Utilizador ou E-mail não encontrado para este plano!");
             };
+
+            // Função interna para resetar o botão e exibir o erro correto
+            function exibirErro(mensagem) {
+                errorMsg.innerText = mensagem;
+                errorMsg.style.display = "block";
+                btnLoginSubmit.disabled = false;
+                btnLoginSubmit.innerHTML = btnLoginContent;
+            }
 
             document.head.appendChild(script);
         });
