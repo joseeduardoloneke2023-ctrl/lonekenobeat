@@ -10,7 +10,7 @@ const produtos = [
         imagem: "img/prontos/FLP PEDRA.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 89,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/61ab5c2a-47fc-43a9-82da-ed654c808286",
         videoLink: "https://youtu.be/u1-_DwlJALg",
         destaque: true
@@ -25,7 +25,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT CU DOCE DE AFRO HOUSE.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 144,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/e3075be8-e8ee-4f3a-b997-5bae4d7a3443",
         videoLink: "https://youtu.be/u1-_DwlJALg",
         destaque: true
@@ -40,7 +40,7 @@ const produtos = [
         imagem: "img/prontos/CURSO COMO BAIXAR E INSTALAR QUALQUER PLUGIN E FAZER NO MINIMO 50.000KZ POR SEMANA + TRAFEGO PAGO.jpg",
         precoAntigo: 20000,
         precoAtual: 10000,
-        vendas: 164,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/7ab6b227-65e0-4d68-bf44-73ce78aa22a3",
         videoLink: "https://youtu.be/u1-_DwlJALg",
         destaque: true
@@ -55,7 +55,7 @@ const produtos = [
         imagem: "img/prontos/FLP I NEED YOU.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 56,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/01634129-ff36-46f2-b72d-a1ae385606a5",
         videoLink: "https://youtu.be/u1-_DwlJALg",
         destaque: true
@@ -70,7 +70,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT TABUA MISTA DE SEMBA.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 165,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/039f55f0-c609-4881-b46a-28a64d6c4715",
         videoLink: "https://youtu.be/u1-_DwlJALg",
         destaque: true
@@ -85,7 +85,7 @@ const produtos = [
         imagem: "img/prontos/CURSO DE PRODUÇÃO DE BEATS DE SEMBA DE ANGOLA MIX E MASTER NO FL STUDIO.jpg",
         precoAntigo: 20000,
         precoAtual: 10000,
-        vendas: 112,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/711b546e-d077-4600-8bd8-85a91b8a801c",
         videoLink: "https://youtu.be/u1-_DwlJALg",
         destaque: true
@@ -100,7 +100,7 @@ const produtos = [
         imagem: "img/prontos/FLP GUETHO ZOUK PIANO.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 82,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/c0bc98fd-23ac-4144-8d96-1f18a54c2f1f",
         videoLink: "https://youtu.be/u1-_DwlJALg",
         destaque: true
@@ -115,7 +115,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT FARIENTO DE AFRO HOUSE.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 156,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/d1ea3265-19aa-44cd-8e47-5afaa47053bd",
         videoLink: "https://youtu.be/u1-_DwlJALg",
         destaque: true
@@ -130,7 +130,7 @@ const produtos = [
         imagem: "img/prontos/FLP NÃO FICA TEIMOSO VAIS SOFRER.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 125,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/87b96538-3065-4252-8689-c31a0b2cf082",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -145,7 +145,7 @@ const produtos = [
         imagem: "img/prontos/CURSO COMO CRIAR E VENDER DRUMKITS E FAZER 50.000KZ POR SEMANA + TRAFEGO PAGO.jpg",
         precoAntigo: 20000,
         precoAtual: 10000,
-        vendas: 178,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/46d9c31a-f4e1-4494-9b66-8e16d051cf1b",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -160,7 +160,7 @@ const produtos = [
         imagem: "img/prontos/FLP SEMBA MORENA.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 95,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/6bfe4434-4f79-48ea-9d21-d842fab8da64",
         videoLink: "https://youtu.be/u1-_DwlJALg",
         destaque: true
@@ -175,7 +175,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT KUDURO ADOÇO.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 91,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/58d5f291-0490-4e78-a9a4-72a116113124",
         videoLink: "https://youtu.be/u1-_DwlJALg",
         destaque: true
@@ -190,7 +190,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT TABUA MISTA DE GUETHO ZOUK.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 104,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/4a3dabfa-f3b1-49ba-b0a3-dade1e73e37e",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -205,7 +205,7 @@ const produtos = [
         imagem: "img/prontos/FLP NOSSO AMOR ESTA CUIAR.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 118,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/9d4a8232-b2bd-4d85-8e29-38ff5d090312",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -220,7 +220,7 @@ const produtos = [
         imagem: "img/prontos/CURSO DE PRODUÇÃO DE BEATS DE AFRO HOUSE KUDURO DE ANGOLA MIX E MASTER NO FL STUDIO.jpg",
         precoAntigo: 20000,
         precoAtual: 10000,
-        vendas: 156,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/617bd593-ef1b-463c-bdb1-57cf12ae7708",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -235,7 +235,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT CU DOCE DE AFRO BEAT.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 189,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/447444ef-9c4c-4522-840f-bd31e484a226",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -250,7 +250,7 @@ const produtos = [
         imagem: "img/prontos/FLP AFRO HOUSE - PRA MATAR - ME PROD.LONEKE NO BEAT.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 154,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/74065855-e6b2-4b94-82e2-4a4ead40f8b3",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -265,7 +265,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT TABUA MISTA DE AFRO HOUSE.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 189,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/bc8c9596-0f88-4714-a395-3187655c144f",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -280,7 +280,7 @@ const produtos = [
         imagem: "img/prontos/CURSO DE COMO BAIXAR DISTRIBUIR MUSICAS NAS PLATAFORMAS DE STREAM.jpg",
         precoAntigo: 20000,
         precoAtual: 10000,
-        vendas: 87,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/6d483db2-e118-4cc0-bd80-8380e3b9ffea",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -295,7 +295,7 @@ const produtos = [
         imagem: "img/prontos/FLP PESO PESADO.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 95,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/15922098-0441-4f2b-860c-54816bf5f3fc",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -310,7 +310,7 @@ const produtos = [
         imagem: "img/prontos/FLP APANHOU TEC TEC.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 98,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/31e08a8d-de48-4109-838e-43a5bcafdf59",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -325,7 +325,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT NOVA GERAÇÃO DE AFRO HOUSE.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 119,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/e84f4eb3-dd1d-439a-bb4b-f86295022135",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -340,7 +340,7 @@ const produtos = [
         imagem: "img/prontos/FLP GUETHO ZOUK RIJO.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 89,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/fdf600fa-3f7b-4463-a8a0-59513c74e1a5",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -355,7 +355,7 @@ const produtos = [
         imagem: "img/prontos/FLP NÃO TOMARAM BANHO.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 143,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/5bca4630-760c-41e5-ab30-e19acd287d90",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -370,7 +370,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT CÚ DOCE DE GUETHO ZOUK.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 95,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/aaa23235-6e4b-4b04-9830-d19e4c5c4764",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -385,7 +385,7 @@ const produtos = [
         imagem: "img/prontos/CURSO COMO GANHAR NO MINIMO 50.000KZ POR MÊS CRIANDO ARTES GRAFICA + TRAFEGO PAGO.jpg",
         precoAntigo: 20000,
         precoAtual: 10000,
-        vendas: 132,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/513dd20d-335e-4980-8cb9-c578123fc0eb",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -400,7 +400,7 @@ const produtos = [
         imagem: "img/prontos/FLP TENHO SIDA.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 104,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/c44fdca7-f2b1-4146-8fdf-26c5e1a013f8",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -415,7 +415,7 @@ const produtos = [
         imagem: "img/prontos/FLP PERIGOSA.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 134,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/06166c98-9975-4ba2-851c-8812c4924330",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -430,7 +430,7 @@ const produtos = [
         imagem: "img/prontos/DRUMKIT TABUA MISTA KUDURO MELODICO.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 215,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/e7e2540e-58c0-4482-8293-1b20adfa2db4",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -445,7 +445,7 @@ const produtos = [
         imagem: "img/prontos/FLP MONEY FOLLOW.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 78,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/a6f3f4de-bfba-468f-9288-2568e595997d",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -460,7 +460,7 @@ const produtos = [
         imagem: "img/prontos/CURSO DE PRODUÇÃO DE BEATS DE GUETHO ZOUK DE ANGOLA MIX E MASTER NO FL STUDIO.jpg",
         precoAntigo: 20000,
         precoAtual: 10000,
-        vendas: 142,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/bf3d79dc-35a0-4f6e-a653-5f32d9b31b4d",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -475,7 +475,7 @@ const produtos = [
         imagem: "img/prontos/FLP BAZA SÓ.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 142,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/8c71f68b-1707-440c-9f8f-5e1f5a269fbf",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -490,7 +490,7 @@ const produtos = [
         imagem: "img/prontos/FLP TODO MAL QUE EU TE FIZ.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 143,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/00f7931d-e6d3-42f9-a185-dc9cfc510aea",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -505,7 +505,7 @@ const produtos = [
         imagem: "img/prontos/FLP DRENA NA UK.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 65,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/6bf29ea0-a2e2-423b-bf73-cc6b3c6a1295",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
@@ -520,7 +520,7 @@ const produtos = [
         imagem: "img/prontos/FLP PROLONGADO.jpg",
         precoAntigo: 3000,
         precoAtual: 500,
-        vendas: 61,
+        vendas: 0,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/5dda1673-fe9d-4635-86da-25512f2ff275",
         videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         destaque: true
