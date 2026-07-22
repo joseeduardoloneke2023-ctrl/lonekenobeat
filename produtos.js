@@ -12,7 +12,7 @@ const produtos = [
         precoAtual: 500,
         vendas: 89,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/61ab5c2a-47fc-43a9-82da-ed654c808286",
-        videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        videoLink: "https://youtu.be/u1-_DwlJALg",
         destaque: false
     },
     {
@@ -27,7 +27,7 @@ const produtos = [
         precoAtual: 500,
         vendas: 144,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/e3075be8-e8ee-4f3a-b997-5bae4d7a3443",
-        videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        videoLink: "https://youtu.be/u1-_DwlJALg",
         destaque: false
     },
     {
@@ -42,7 +42,7 @@ const produtos = [
         precoAtual: 10000,
         vendas: 164,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/7ab6b227-65e0-4d68-bf44-73ce78aa22a3",
-        videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        videoLink: "https://youtu.be/u1-_DwlJALg",
         destaque: true
     },
     {
@@ -57,7 +57,7 @@ const produtos = [
         precoAtual: 500,
         vendas: 56,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/01634129-ff36-46f2-b72d-a1ae385606a5",
-        videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        videoLink: "https://youtu.be/u1-_DwlJALg",
         destaque: false
     },
     {
@@ -72,7 +72,7 @@ const produtos = [
         precoAtual: 500,
         vendas: 165,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/039f55f0-c609-4881-b46a-28a64d6c4715",
-        videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        videoLink: "https://youtu.be/u1-_DwlJALg",
         destaque: true
     },
     {
@@ -87,7 +87,7 @@ const produtos = [
         precoAtual: 10000,
         vendas: 112,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/711b546e-d077-4600-8bd8-85a91b8a801c",
-        videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        videoLink: "https://youtu.be/u1-_DwlJALg",
         destaque: true
     },
     {
@@ -102,7 +102,7 @@ const produtos = [
         precoAtual: 500,
         vendas: 82,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/c0bc98fd-23ac-4144-8d96-1f18a54c2f1f",
-        videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        videoLink: "https://youtu.be/u1-_DwlJALg",
         destaque: true
     },
     {
@@ -117,7 +117,7 @@ const produtos = [
         precoAtual: 500,
         vendas: 156,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/d1ea3265-19aa-44cd-8e47-5afaa47053bd",
-        videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        videoLink: "https://youtu.be/u1-_DwlJALg",
         destaque: false
     },
     {
@@ -162,7 +162,7 @@ const produtos = [
         precoAtual: 500,
         vendas: 95,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/6bfe4434-4f79-48ea-9d21-d842fab8da64",
-        videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        videoLink: "https://youtu.be/u1-_DwlJALg",
         destaque: false
     },
     {
@@ -177,7 +177,7 @@ const produtos = [
         precoAtual: 500,
         vendas: 91,
         linkCheckout: "https://paygooo.goootrafego.com/checkout/58d5f291-0490-4e78-a9a4-72a116113124",
-        videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        videoLink: "https://youtu.be/u1-_DwlJALg",
         destaque: false
     },
     {
