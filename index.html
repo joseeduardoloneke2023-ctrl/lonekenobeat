@@ -1757,7 +1757,7 @@
                 </button>
                 <div class="faq-content">
                     <p>
-                        Sim. Além dos nossos produtos, oferecemos aulas compradas e presenciais sobre Produção Musical, FL Studio, Mixagem e Masterização. Também publicamos conteúdos gratuitos regularmente no YouTube e das nossas redes sociais para ajudar produtores a evoluírem.
+                        Sim. Além dos nossos produtos, oferecemos aulas compradas e presenciais sobre Produção Musical, FL Studio, Mixagem e Masterização. Também publicamos conteúdos gratuitos regularly no YouTube e das nossas redes sociais para ajudar produtores a evoluírem.
                     </p>
                 </div>
             </div>
@@ -2134,12 +2134,8 @@ function createProductCardHTML(prod) {
                                     <span style="text-decoration: line-through; color: #666; font-size: 1.1rem;">De ${prod.precoAntigo.toLocaleString('pt-AO')} Kz</span>
                                     <span style="font-family: var(--font-montserrat); font-size: 2.5rem; font-weight: 700; color: var(--white);">Por ${prod.precoAtual.toLocaleString('pt-AO')} Kz</span>
                                 </div>
-                                <!-- BOTÃO COMPRA AGORA COM LINK DO CHECKOUT EXTERNO -->
-                                <a href="${prod.linkCheckout || '#'}" target="_blank" class="btn btn-primary" style="width: 100%; padding: 1.2rem; border-radius: 12px; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;" onclick="showToast('Redirecionando para o Checkout Seguro...', 'fa-arrow-up-right-from-square')">
-                                    <i class="fa-solid fa-bolt"></i> Comprar com Cartão Visa
-                                </a>
                                 <!-- BOTÃO ADICIONAR AO CARRINHO LOCAL -->
-                                <button class="btn btn-secondary" style="width: 100%; padding: 1.2rem; border-radius: 12px; font-size: 1.1rem;" onclick="addItemToCart(event, ${prod.id})">
+                                <button class="btn btn-primary" style="width: 100%; padding: 1.2rem; border-radius: 12px; font-size: 1.1rem;" onclick="addItemToCart(event, ${prod.id})">
                                     <i class="fa-solid fa-cart-shopping"></i> Adicionar ao Carrinho
                                 </button>
                             </div>
