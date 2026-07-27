@@ -7,317 +7,390 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
         :root {
             --primary: #E50914;
-            --primary-glow: rgba(229, 9, 20, 0.15);
-            --primary-hover: #b8070e;
-            --dark-gray: #202124;
-            --bg: #111111;
-            --card-bg: #1B1B1B;
+            --primary-glow: rgba(229, 9, 20, 0.35);
+            --primary-hover: #ff1a25;
+            --bg: #070709;
+            --card-bg: rgba(18, 18, 24, 0.75);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --card-border-hover: rgba(229, 9, 20, 0.4);
             --white: #FFFFFF;
-            --text-secondary: #BDBDBD;
-            --glass-border: rgba(255, 255, 255, 0.05);
-            --font-poppins: 'Poppins', sans-serif;
-            --font-montserrat: 'Montserrat', sans-serif;
-            --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            --transition-fast: all 0.2s ease;
-            --success: #2ec4b6;
-            --info: #3a86ff;
-            --warning: #ffb703;
+            --text-main: #F3F4F6;
+            --text-secondary: #9CA3AF;
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+            --font-heading: 'Outfit', sans-serif;
+            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            --success: #10B981;
+            --success-glow: rgba(16, 185, 129, 0.2);
+            --info: #3B82F6;
+            --warning: #F59E0B;
+            --radius-lg: 24px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { background-color: var(--bg); color: var(--white); font-family: var(--font-poppins); }
-        body { min-height: 100vh; line-height: 1.6; position: relative; }
+        
+        html { 
+            background-color: var(--bg); 
+            color: var(--text-main); 
+            font-family: var(--font-main);
+            scroll-behavior: smooth;
+        }
+
+        body { 
+            min-height: 100vh; 
+            line-height: 1.6; 
+            position: relative;
+            background: radial-gradient(circle at 50% 0%, rgba(229, 9, 20, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 0% 100%, rgba(59, 130, 246, 0.04) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
         a { text-decoration: none; color: inherit; }
 
-        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        .container { width: 100%; max-width: 1240px; margin: 0 auto; padding: 0 1.5rem; }
         
+        /* Loading Screen */
         .loading-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #0d0d0d; z-index: 15000; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; transition: opacity 0.4s ease, visibility 0.4s;
+            background: #050507; z-index: 15000; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s;
+            backdrop-filter: blur(10px);
         }
         .loading-screen.hidden { opacity: 0; visibility: hidden; }
 
+        /* Header */
         header {
             position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
-            padding: 1.5rem 0; background-color: rgba(17, 17, 17, 0.95);
-            backdrop-filter: blur(15px); border-bottom: 1px solid var(--glass-border);
+            padding: 1.25rem 0; background-color: rgba(7, 7, 9, 0.8);
+            backdrop-filter: blur(20px); border-bottom: 1px solid var(--card-border);
         }
         .nav-container { display: flex; align-items: center; justify-content: space-between; }
-        .logo { font-family: var(--font-montserrat); font-size: 1.5rem; font-weight: 700; letter-spacing: -1px; }
-        .logo span { color: var(--primary); }
+        .logo { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; text-transform: uppercase; }
+        .logo span { color: var(--primary); text-shadow: 0 0 12px var(--primary-glow); }
+        .back-link {
+            font-size: 0.85rem; color: var(--text-secondary); font-weight: 500;
+            display: flex; align-items: center; gap: 0.5rem; transition: var(--transition);
+            padding: 0.5rem 1rem; border-radius: var(--radius-sm); background: rgba(255,255,255,0.03);
+            border: 1px solid var(--card-border);
+        }
+        .back-link:hover { color: var(--white); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); }
 
+        /* Main Layout */
         .checkout-wrapper {
-            padding-top: 140px;
-            padding-bottom: 6rem;
+            padding-top: 130px;
+            padding-bottom: 5rem;
             display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            gap: 3rem;
+            grid-template-columns: 1.25fr 0.75fr;
+            gap: 2.5rem;
+            align-items: start;
         }
 
         .checkout-box {
             background: var(--card-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
             padding: 2.5rem;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            backdrop-filter: blur(20px);
         }
 
         .checkout-title {
-            font-family: var(--font-montserrat);
-            font-size: 1.6rem;
+            font-family: var(--font-heading);
+            font-size: 1.35rem;
             font-weight: 700;
             margin-bottom: 2rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 1rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            color: var(--white);
         }
+        .checkout-title i { color: var(--primary); font-size: 1.2rem; }
 
+        /* Form Controls */
         .form-group { margin-bottom: 1.5rem; }
-        .form-group label { display: block; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem; font-weight: 500; }
+        .form-group label { display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
         .form-control {
-            width: 100%; background: var(--bg); border: 1px solid rgba(255,255,255,0.08);
-            padding: 1rem; border-radius: 10px; color: var(--white); font-size: 0.95rem;
-            transition: var(--transition-fast);
+            width: 100%; background: rgba(10, 10, 12, 0.8); border: 1px solid var(--card-border);
+            padding: 1rem 1.25rem; border-radius: var(--radius-md); color: var(--white); font-size: 0.95rem;
+            font-family: var(--font-main); transition: var(--transition);
         }
-        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary-glow); }
+        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); background: rgba(15, 15, 20, 0.95); }
+        .form-control::placeholder { color: rgba(255, 255, 255, 0.25); }
 
-        .phone-container { display: flex; gap: 0.5rem; }
-        .select-indicativo { max-width: 130px; cursor: pointer; }
+        .phone-container { display: flex; gap: 0.75rem; }
+        .select-indicativo { max-width: 140px; cursor: pointer; }
 
+        /* Payment Methods */
         .payment-methods-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 0.8rem;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 1rem;
             margin-bottom: 2rem;
         }
 
         .method-card {
-            background: var(--bg);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 12px;
-            padding: 1.2rem 0.3rem;
+            background: rgba(10, 10, 12, 0.6);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 1.2rem 0.5rem;
             text-align: center;
             cursor: pointer;
-            transition: var(--transition-fast);
+            transition: var(--transition);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 0.6rem;
+            gap: 0.75rem;
             height: 110px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .method-card i { font-size: 1.6rem; color: var(--text-secondary); }
+        .method-card i { font-size: 1.75rem; color: var(--text-secondary); transition: var(--transition); }
         .method-card .method-icon-img {
-            height: 32px; width: auto; object-fit: contain;
-            filter: grayscale(100%) opacity(0.6); transition: var(--transition-fast);
+            height: 32px; width: auto; max-width: 85%; object-fit: contain;
+            filter: grayscale(100%) opacity(0.5); transition: var(--transition);
         }
-        .method-card span { font-size: 0.75rem; font-weight: 600; line-height: 1.2; color: var(--text-secondary); }
-        .method-card:hover { border-color: rgba(229, 9, 20, 0.4); }
+        .method-card span { font-size: 0.8rem; font-weight: 600; line-height: 1.2; color: var(--text-secondary); transition: var(--transition); }
+        
+        .method-card:hover {
+            border-color: var(--card-border-hover);
+            transform: translateY(-3px);
+            background: rgba(229, 9, 20, 0.05);
+        }
         
         .method-card.active {
             border-color: var(--primary);
-            background: rgba(229, 9, 20, 0.04);
+            background: radial-gradient(circle at center, rgba(229, 9, 20, 0.15) 0%, rgba(229, 9, 20, 0.02) 100%);
+            box-shadow: 0 8px 25px rgba(229, 9, 20, 0.15);
         }
-        .method-card.active i { color: var(--primary); }
-        .method-card.active .method-icon-img { filter: grayscale(0%) opacity(1); }
-        .method-card.active span { color: var(--white); }
+        .method-card.active::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+        }
+        .method-card.active i { color: var(--white); transform: scale(1.1); }
+        .method-card.active .method-icon-img { filter: grayscale(0%) opacity(1); transform: scale(1.05); }
+        .method-card.active span { color: var(--white); font-weight: 700; }
 
+        /* Dynamic Panels */
         .dynamic-payment-panel {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px dashed rgba(255, 255, 255, 0.1);
-            padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem; display: none;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            padding: 1.75rem; border-radius: var(--radius-md); margin-top: 1.5rem; display: none;
+            animation: fadeIn 0.4s ease;
         }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
         .copy-row {
             display: flex; align-items: center; justify-content: space-between;
-            background: var(--bg); padding: 0.8rem 1rem; border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.05); margin-top: 0.5rem; margin-bottom: 1rem;
+            background: rgba(10, 10, 12, 0.9); padding: 0.85rem 1.2rem; border-radius: var(--radius-sm);
+            border: 1px solid var(--card-border); margin-top: 0.5rem; margin-bottom: 1.25rem;
         }
 
-        .copy-row code { font-family: monospace; font-size: 1rem; color: #fff; letter-spacing: 0.5px; }
+        .copy-row code { font-family: 'Courier New', Courier, monospace; font-size: 1.05rem; font-weight: 700; color: #38BDF8; letter-spacing: 0.5px; word-break: break-all; }
 
         .btn-copy-action {
-            background: rgba(255, 255, 255, 0.08); border: none; color: var(--white);
-            padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer;
-            font-size: 0.75rem; font-weight: 600; display: flex; align-items: center;
-            gap: 0.3rem; transition: var(--transition-fast);
+            background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255,255,255,0.1); color: var(--white);
+            padding: 0.5rem 0.9rem; border-radius: var(--radius-sm); cursor: pointer;
+            font-size: 0.78rem; font-weight: 600; font-family: var(--font-main); display: flex; align-items: center;
+            gap: 0.4rem; transition: var(--transition); flex-shrink: 0;
         }
-        .btn-copy-action:hover { background: var(--info); }
+        .btn-copy-action:hover { background: var(--info); border-color: var(--info); transform: translateY(-1px); }
 
+        /* Dropzone */
         .dropzone-wrapper { margin-top: 0.5rem; }
         .dropzone-area {
-            border: 2px dashed rgba(255, 255, 255, 0.15); background: rgba(0, 0, 0, 0.25);
-            border-radius: 12px; padding: 2rem 1.5rem; text-align: center; cursor: pointer;
-            transition: var(--transition-smooth); position: relative;
+            border: 2px dashed rgba(255, 255, 255, 0.15); background: rgba(10, 10, 12, 0.5);
+            border-radius: var(--radius-md); padding: 2.2rem 1.5rem; text-align: center; cursor: pointer;
+            transition: var(--transition); position: relative;
         }
-        .dropzone-area:hover, .dropzone-area.dragover { border-color: var(--primary); background: rgba(229, 9, 20, 0.03); }
-        .dropzone-area i { font-size: 2.2rem; color: var(--text-secondary); margin-bottom: 0.8rem; transition: var(--transition-fast); }
-        .dropzone-area:hover i { color: var(--primary); transform: translateY(-3px); }
-        .dropzone-text { font-size: 0.9rem; font-weight: 500; color: var(--white); }
-        .dropzone-hint { font-size: 0.75rem; color: var(--text-secondary); display: block; margin-top: 0.3rem; }
+        .dropzone-area:hover, .dropzone-area.dragover { border-color: var(--primary); background: rgba(229, 9, 20, 0.04); }
+        .dropzone-area i { font-size: 2.5rem; color: var(--text-secondary); margin-bottom: 0.8rem; transition: var(--transition); }
+        .dropzone-area:hover i { color: var(--primary); transform: translateY(-4px); }
+        .dropzone-text { font-size: 0.95rem; font-weight: 600; color: var(--white); }
+        .dropzone-hint { font-size: 0.78rem; color: var(--text-secondary); display: block; margin-top: 0.4rem; }
         
         .dropzone-preview {
             display: flex; align-items: center; justify-content: space-between;
-            background: rgba(46, 196, 182, 0.08); border: 1px solid rgba(46, 196, 182, 0.3);
-            padding: 0.8rem 1rem; border-radius: 8px; margin-top: 0.8rem;
+            background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 0.9rem 1.25rem; border-radius: var(--radius-sm); margin-top: 1rem;
         }
-        .dropzone-preview-info { display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; color: #fff; overflow: hidden; }
-        .dropzone-preview-info i { color: var(--success); font-size: 1.1rem; }
-        .dropzone-filename { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 280px; }
-        .btn-clear-file { background: none; border: none; color: #ff4d4d; cursor: pointer; font-size: 1.1rem; padding: 0 0.2rem; }
+        .dropzone-preview-info { display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem; color: var(--white); overflow: hidden; }
+        .dropzone-preview-info i { color: var(--success); font-size: 1.2rem; }
+        .dropzone-filename { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 280px; font-weight: 500; }
+        .btn-clear-file { background: none; border: none; color: #EF4444; cursor: pointer; font-size: 1.2rem; transition: var(--transition); }
+        .btn-clear-file:hover { transform: scale(1.2); }
 
+        /* Order Summary Box */
         .order-summary {
-            background: linear-gradient(145deg, #1e1e1e 0%, #121212 100%);
-            border-radius: 20px; padding: 2.5rem; border: 1px solid var(--glass-border); height: fit-content;
+            background: var(--card-bg);
+            border-radius: var(--radius-lg); padding: 2.25rem; border: 1px solid var(--card-border);
+            position: sticky; top: 110px; box-shadow: 0 30px 60px rgba(0,0,0,0.4); backdrop-filter: blur(20px);
         }
 
         .summary-item {
             display: flex; align-items: center; gap: 1rem;
-            margin-bottom: 1.2rem; padding-bottom: 1.2rem;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
+            margin-bottom: 1rem; padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
             position: relative;
         }
-        .summary-item img { width: 55px; height: 55px; border-radius: 8px; object-fit: cover; }
-        .summary-details h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.2rem; max-width: 180px; }
-        .summary-details p { color: var(--text-secondary); font-size: 0.8rem; }
+        .summary-item img { width: 56px; height: 56px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--card-border); }
+        .summary-details h4 { font-size: 0.92rem; font-weight: 600; margin-bottom: 0.2rem; color: var(--white); max-width: 190px; }
+        .summary-details p { color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; }
 
         .btn-remove-item {
-            background: rgba(255, 77, 77, 0.1); border: none; color: #ff4d4d;
-            width: 32px; height: 32px; border-radius: 8px; cursor: pointer;
+            background: rgba(239, 68, 68, 0.1); border: none; color: #EF4444;
+            width: 32px; height: 32px; border-radius: var(--radius-sm); cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            margin-left: auto; transition: var(--transition-fast);
+            margin-left: auto; transition: var(--transition);
         }
-        .btn-remove-item:hover { background: #ff4d4d; color: #fff; transform: scale(1.05); }
+        .btn-remove-item:hover { background: #EF4444; color: var(--white); transform: scale(1.08); }
 
-        .discount-container-panel {
-            background: rgba(255, 183, 3, 0.08); border: 1px dashed var(--warning);
-            border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem; text-align: center;
-        }
-        .btn-apply-discount {
-            width: 100%; background: var(--warning); color: #000; border: none;
-            padding: 0.8rem; border-radius: 8px; font-weight: 700; font-size: 0.9rem;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            gap: 0.5rem; transition: var(--transition-smooth);
-        }
-        .btn-apply-discount:hover { background: #e0a200; transform: translateY(-1px); }
-        .btn-apply-discount.applied { background: var(--success); color: #fff; cursor: not-allowed; transform: none; }
-
-        .total-container-box {
-            margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid rgba(255,255,255,0.05);
-        }
-
-        .total-row {
-            display: flex; justify-content: space-between; align-items: center;
-            font-family: var(--font-montserrat); margin-bottom: 0.8rem;
-        }
-        .total-row span { font-size: 0.95rem; color: var(--text-secondary); }
-        .total-row div { display: flex; align-items: center; gap: 0.5rem; }
-        .total-row strong { font-size: 1.5rem; color: var(--white); }
-
-        .btn-checkout {
-            width: 100%; background: var(--primary); color: var(--white);
-            padding: 1.2rem; border-radius: 12px; font-weight: 600; font-size: 1rem;
-            cursor: pointer; margin-top: 1.5rem; transition: var(--transition-smooth);
-            box-shadow: 0 4px 20px var(--primary-glow); display: flex; align-items: center;
-            justify-content: center; gap: 0.5rem; border: none;
-        }
-        .btn-checkout:hover { background: var(--primary-hover); transform: translateY(-2px); }
-
-        .btn-whatsapp-negotiate {
-            width: 100%; background: #25D366; color: #fff;
-            padding: 1rem; border-radius: 12px; font-weight: 600; font-size: 0.95rem;
-            cursor: pointer; margin-top: 0.8rem; border: none;
-            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-            transition: var(--transition-smooth);
-        }
-        .btn-whatsapp-negotiate:hover { background: #20ba5a; transform: translateY(-1px); }
-
-        .toast-container { position: fixed; top: 30px; right: 30px; z-index: 10005; display: flex; flex-direction: column; gap: 0.8rem; }
-        .toast-card {
-            background: #252525; color: #fff; padding: 1rem 1.5rem;
-            border-radius: 10px; border-left: 4px solid var(--primary);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4); font-size: 0.9rem;
-            font-weight: 500; display: flex; align-items: center; gap: 0.8rem;
-            transform: translateX(120%); animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            min-width: 320px; max-width: 420px;
-        }
-        .toast-card.success { border-left-color: var(--success); }
-        .toast-card.info { border-left-color: var(--info); }
-        .toast-card i { font-size: 1.1rem; }
-        .toast-card.success i { color: var(--success); }
-        .toast-card.info i { color: var(--info); }
-        @keyframes slideIn { to { transform: translateX(0); } }
-        @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
-
-        .payment-screen-overlay {
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
-            position: fixed; top:0; left:0; width:100%; height:100%;
-            z-index: 9999; display:none; align-items:center; justify-content:center; padding: 2rem;
-        }
-        .payment-modal {
-            background: var(--card-bg); border: 1px solid var(--glass-border);
-            padding: 3rem; border-radius: 20px; max-width: 500px; width: 100%;
-            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
-        .spinner {
-            width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.1);
-            border-top-color: var(--primary); border-radius: 50%;
-            margin: 1.5rem auto; animation: spin 1s linear infinite;
-        }
-
+        /* Order Bumps */
         .order-bump-container {
-            background: rgba(229, 9, 20, 0.03);
+            background: linear-gradient(135deg, rgba(229, 9, 20, 0.08) 0%, rgba(0, 0, 0, 0.3) 100%);
             border: 1px dashed var(--primary);
-            border-radius: 12px;
-            padding: 1.2rem;
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
             margin-bottom: 1.5rem;
-            margin-top: 1rem;
-            box-shadow: 0 4px 15px rgba(229, 9, 20, 0.05);
+            margin-top: 1.25rem;
         }
         .bump-title {
-            font-family: var(--font-montserrat);
-            font-size: 0.9rem;
+            font-family: var(--font-heading);
+            font-size: 0.88rem;
             font-weight: 700;
-            color: #fff;
-            margin-bottom: 0.8rem;
+            color: var(--white);
+            margin-bottom: 0.85rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .bump-title span { color: var(--primary); }
         .bump-item {
             display: flex;
             align-items: center;
-            gap: 0.8rem;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 0.8rem;
-            border-radius: 8px;
+            gap: 0.85rem;
+            background: rgba(10, 10, 12, 0.7);
+            padding: 0.85rem;
+            border-radius: var(--radius-sm);
             margin-bottom: 0.6rem;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            transition: var(--transition-fast);
+            border: 1px solid var(--card-border);
+            transition: var(--transition);
         }
         .bump-item:last-child { margin-bottom: 0; }
-        .bump-item:hover { border-color: rgba(229, 9, 20, 0.3); }
-        .bump-item img { width: 45px; height: 45px; border-radius: 6px; object-fit: cover; }
+        .bump-item:hover { border-color: rgba(229, 9, 20, 0.4); background: rgba(15, 15, 20, 0.9); }
+        .bump-item img { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; }
         .bump-info { flex: 1; }
-        .bump-info h4 { font-size: 0.85rem; font-weight: 600; color: #fff; margin-bottom: 0.1rem; }
-        .bump-info p { font-size: 0.75rem; color: var(--text-secondary); line-height: 1.3; margin-bottom: 0.2rem; }
-        .bump-price { font-size: 0.8rem; font-weight: 700; color: var(--success); display: block; }
-        .bump-checkbox { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
+        .bump-info h4 { font-size: 0.85rem; font-weight: 600; color: var(--white); margin-bottom: 0.15rem; }
+        .bump-info p { font-size: 0.75rem; color: var(--text-secondary); line-height: 1.3; margin-bottom: 0.25rem; }
+        .bump-price { font-size: 0.82rem; font-weight: 700; color: var(--success); display: block; }
+        .bump-checkbox { width: 20px; height: 20px; accent-color: var(--primary); cursor: pointer; border-radius: 4px; }
 
-        @media(max-width: 968px) {
-            .checkout-wrapper { grid-template-columns: 1fr; gap: 2rem; }
-            .payment-methods-grid { grid-template-columns: 1fr; }
-            .toast-container { right: 50%; transform: translateX(50%); top: 20px; width: calc(100% - 40px); }
+        /* Discount Banner */
+        .discount-container-panel {
+            background: rgba(245, 158, 11, 0.08); border: 1px dashed var(--warning);
+            border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem; text-align: center;
+        }
+        .btn-apply-discount {
+            width: 100%; background: var(--warning); color: #000; border: none;
+            padding: 0.85rem; border-radius: var(--radius-sm); font-weight: 700; font-size: 0.88rem;
+            font-family: var(--font-main); cursor: pointer; display: flex; align-items: center; justify-content: center;
+            gap: 0.5rem; transition: var(--transition); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
+        }
+        .btn-apply-discount:hover { background: #d98206; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(245, 158, 11, 0.3); }
+        .btn-apply-discount.applied { background: var(--success); color: var(--white); cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* Totals */
+        .total-container-box {
+            margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--card-border);
+        }
+
+        .total-row {
+            display: flex; justify-content: space-between; align-items: center;
+            font-family: var(--font-heading); margin-bottom: 0.75rem;
+        }
+        .total-row span { font-size: 0.95rem; color: var(--text-secondary); font-weight: 500; }
+        .total-row div { display: flex; align-items: center; gap: 0.5rem; }
+        .total-row strong { font-size: 1.45rem; color: var(--white); font-weight: 700; }
+
+        /* Buttons */
+        .btn-checkout {
+            width: 100%; background: var(--primary); color: var(--white);
+            padding: 1.15rem; border-radius: var(--radius-md); font-weight: 700; font-size: 1rem;
+            font-family: var(--font-main); cursor: pointer; margin-top: 1.5rem; transition: var(--transition);
+            box-shadow: 0 8px 25px var(--primary-glow); display: flex; align-items: center;
+            justify-content: center; gap: 0.6rem; border: none; letter-spacing: 0.3px;
+        }
+        .btn-checkout:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 12px 30px rgba(229, 9, 20, 0.5); }
+
+        .btn-whatsapp-negotiate {
+            width: 100%; background: rgba(37, 211, 102, 0.1); color: #25D366;
+            border: 1px solid rgba(37, 211, 102, 0.3);
+            padding: 0.95rem; border-radius: var(--radius-md); font-weight: 600; font-size: 0.9rem;
+            font-family: var(--font-main); cursor: pointer; margin-top: 0.85rem;
+            display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+            transition: var(--transition);
+        }
+        .btn-whatsapp-negotiate:hover { background: #25D366; color: var(--white); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3); }
+
+        /* Toast Notifications */
+        .toast-container { position: fixed; top: 30px; right: 30px; z-index: 10005; display: flex; flex-direction: column; gap: 0.8rem; }
+        .toast-card {
+            background: rgba(20, 20, 26, 0.95); color: var(--white); padding: 1.1rem 1.5rem;
+            border-radius: var(--radius-md); border-left: 4px solid var(--primary);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6); font-size: 0.9rem; backdrop-filter: blur(10px);
+            font-weight: 500; display: flex; align-items: center; gap: 0.85rem;
+            transform: translateX(120%); animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            min-width: 320px; max-width: 420px; border-top: 1px solid var(--card-border);
+            border-right: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border);
+        }
+        .toast-card.success { border-left-color: var(--success); }
+        .toast-card.info { border-left-color: var(--info); }
+        .toast-card i { font-size: 1.2rem; }
+        .toast-card.success i { color: var(--success); }
+        .toast-card.info i { color: var(--info); }
+        @keyframes slideIn { to { transform: translateX(0); } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
+
+        /* Modal Overlay */
+        .payment-screen-overlay {
+            background: rgba(5, 5, 7, 0.85); backdrop-filter: blur(15px);
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            z-index: 9999; display:none; align-items:center; justify-content:center; padding: 2rem;
+        }
+        .payment-modal {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            padding: 3rem 2.5rem; border-radius: var(--radius-lg); max-width: 480px; width: 100%;
+            text-align: center; box-shadow: 0 30px 70px rgba(0,0,0,0.7);
+        }
+        .spinner {
+            width: 48px; height: 48px; border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--primary); border-radius: 50%;
+            margin: 1.75rem auto; animation: spin 0.9s linear infinite;
+        }
+
+        @media(max-width: 992px) {
+            .checkout-wrapper { grid-template-columns: 1fr; gap: 2rem; padding-top: 110px; }
+            .order-summary { position: static; }
+            .payment-methods-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media(max-width: 640px) {
+            .payment-methods-grid { grid-template-columns: repeat(2, 1fr); }
+            .checkout-box, .order-summary { padding: 1.5rem; }
+            .toast-container { right: 50%; transform: translateX(50%); top: 20px; width: calc(100% - 30px); }
+            .toast-card { min-width: 100%; }
         }
         
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -326,8 +399,8 @@
 <body>
 
     <div class="loading-screen" id="loadingScreen">
-        <div class="logo" style="font-size: 2rem; margin-bottom: 0.5rem;">LONEKE NO<span> BEAT</span></div>
-        <p style="color: var(--text-secondary); font-size: 0.85rem; letter-spacing: 1px;">A processar os dados do carrinho seguro...</p>
+        <div class="logo" style="font-size: 2.2rem; margin-bottom: 0.5rem;">LONEKE NO<span> BEAT</span></div>
+        <p style="color: var(--text-secondary); font-size: 0.88rem; letter-spacing: 1px;">A processar os dados do carrinho seguro...</p>
         <div class="spinner"></div>
     </div>
 
@@ -336,7 +409,7 @@
     <header>
         <div class="container nav-container">
             <a href="index.html" class="logo">LONEKE NO <span> BEAT</span></a>
-            <a href="catalogo.html" style="font-size: 0.9rem; color: var(--text-secondary);"><i class="fa-solid fa-chevron-left"></i> Voltar ao catálogo</a>
+            <a href="catalogo.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Voltar ao catálogo</a>
         </div>
     </header>
 
@@ -363,7 +436,7 @@
                                 <option value="+244" selected>🇦🇴 +244</option>
                                 <option value="+351">🇵🇹 +351</option>
                                 <option value="+55">🇧🇷 +55</option>
-                                <option value="+258">🇲🇿 +258</option>
+                                <option value="+258">🇲ℤ +258</option>
                                 <option value="+238">🇨𝑽 +238</option>
                                 <option value="+245">🇬𝑾 +245</option>
                                 <option value="+239">🇸𝑻 +239</option>
@@ -379,23 +452,31 @@
                             <img src="img/express.png" alt="Multicaixa Express" class="method-icon-img">
                             <span>Multicaixa Express</span>
                         </div>
+                        <div class="method-card" data-method="kwik" id="methodKwikCard">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRU9GrScbzkKgIVLC4eHJZGjR7sXpWUFP4dskacz0jaj9QbTFpdKTL1Zw&s=10" alt="KWIK" class="method-icon-img">
+                            <span>KWIK</span>
+                        </div>
                         <div class="method-card" data-method="transf_ao" id="methodTransfAoCard">
                             <i class="fa-solid fa-building-columns"></i>
-                            <span>Transferência AO</span>
+                            <span>Transferência Bancária Nacional</span>
                         </div>
-                        <div class="method-card" data-method="transf_eu" id="methodTransfEuCard">
-                            <i class="fa-solid fa-globe"></i>
-                            <span>Transferência Europa</span>
+                        <div class="method-card" data-method="unitel_money" id="methodUnitelCard">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOZFCtzTX_-6zqlools3X0r9ZFyGkUJFqgh0ZFpOOvnzhmChDzY7jZPx6E&s=10" alt="Unitel Money" class="method-icon-img">
+                            <span>Unitel Money</span>
                         </div>
-                        <div class="method-card" data-method="ref_bancaria" id="methodRefCard">
-                            <i class="fa-solid fa-barcode"></i>
-                            <span>Referência Bancária</span>
+                        <div class="method-card" data-method="paypal" id="methodPaypalCard">
+                            <img src="https://www.edukasoftware.com/wp-content/uploads/2025/11/paypal_2014_logo_detail.png" alt="PayPal" class="method-icon-img">
+                            <span>PayPal</span>
+                        </div>
+                        <div class="method-card" data-method="wise" id="methodWiseCard">
+                            <img src="https://framerusercontent.com/images/yZuru7tpCe3J01en5KxrKcRb1VA.png?width=1920&height=1080" alt="Wise" class="method-icon-img">
+                            <span>Wise</span>
                         </div>
                     </div>
 
                     <!-- MÉTODOS DE PAGAMENTO DINÂMICOS -->
                     <div class="dynamic-payment-panel" id="panel-multicaixa" style="display: block;">
-                        <label style="color: var(--text-secondary); font-size: 0.85rem;">Número de Telefone Express (Clique à direita para copiar):</label>
+                        <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Número de Telefone Express (Clique à direita para copiar):</label>
                         <div class="copy-row">
                             <code id="txtExpressNum">924034159</code>
                             <button type="button" class="btn-copy-action" onclick="copySimpleText('txtExpressNum')">
@@ -423,10 +504,45 @@
                         </div>
                     </div>
 
+                    <!-- PAINEL KWIK -->
+                    <div class="dynamic-payment-panel" id="panel-kwik">
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Nome do Titular da Conta KWIK:</label>
+                            <p style="font-weight: 700; font-size: 1.05rem; color: var(--white); margin-left: 0.2rem;">José Eduardo Loneke</p>
+                        </div>
+
+                        <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">IBAN KWIK (Clique para copiar sem o AO06):</label>
+                        <div class="copy-row">
+                            <code id="txtIbanKwik">AO06042000000000024129475</code>
+                            <button type="button" class="btn-copy-action" onclick="copyCleanIban('txtIbanKwik', 'AO06')">
+                                <i class="fa-solid fa-copy"></i> Copiar
+                            </button>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Carregar Comprovativo de Transferência KWIK (PDF, JPG, PNG)</label>
+                            <div class="dropzone-wrapper">
+                                <div class="dropzone-area" id="dropzoneKwik" onclick="document.getElementById('fileReceiptKwik').click()">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    <p class="dropzone-text">Arraste o ficheiro aqui ou clique para fazer upload</p>
+                                    <span class="dropzone-hint">Formatos aceites: PDF, JPEG, PNG (Máx 10MB)</span>
+                                    <input type="file" id="fileReceiptKwik" style="display: none;" accept="application/pdf, image/jpeg, image/jpg, image/png">
+                                </div>
+                                <div class="dropzone-preview" id="previewKwik" style="display: none;">
+                                    <div class="dropzone-preview-info">
+                                        <i class="fa-solid fa-file-circle-check"></i>
+                                        <span class="dropzone-filename" id="filenameKwik">ficheiro.pdf</span>
+                                    </div>
+                                    <button type="button" class="btn-clear-file" onclick="clearFileSelection('Kwik', event)">&times;</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="dynamic-payment-panel" id="panel-transf_ao">
-                        <div class="form-group" style="margin-bottom: 0.8rem;">
-                            <label style="color: var(--text-secondary); font-size: 0.85rem;">Titular da Conta:</label>
-                            <p style="font-weight: 600; font-size: 1rem; color: #fff; margin-left: 0.2rem;">José eduardo loneke</p>
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Titular da Conta:</label>
+                            <p style="font-weight: 700; font-size: 1.05rem; color: var(--white); margin-left: 0.2rem;">José Eduardo Loneke</p>
                         </div>
                         <div class="form-group">
                             <label for="bankSelectAO">Selecione o seu Banco:</label>
@@ -440,7 +556,7 @@
                         </div>
                         
                         <div id="ibanDisplayBoxAO" style="display: none;">
-                            <label style="color: var(--text-secondary); font-size: 0.85rem;">IBAN de Destino (Clique à direita para copiar sem o AO06):</label>
+                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">IBAN de Destino (Clique para copiar sem o AO06):</label>
                             <div class="copy-row">
                                 <code id="txtIbanAO">AO06000000000000000000000</code>
                                 <button type="button" class="btn-copy-action" onclick="copyCleanIban('txtIbanAO', 'AO06')">
@@ -469,72 +585,127 @@
                         </div>
                     </div>
 
-                    <div class="dynamic-payment-panel" id="panel-transf_eu">
-                        <div class="form-group" style="margin-bottom: 0.8rem;">
-                            <label style="color: var(--text-secondary); font-size: 0.85rem;">Titular da Conta:</label>
-                            <p style="font-weight: 600; font-size: 1rem; color: #fff; margin-left: 0.2rem;">José eduardo loneke</p>
+                    <div class="dynamic-payment-panel" id="panel-unitel_money">
+                        <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Entidade (Clique à direita para copiar):</label>
+                        <div class="copy-row">
+                            <code id="txtUnitelEntidade">00930</code>
+                            <button type="button" class="btn-copy-action" onclick="copySimpleText('txtUnitelEntidade')">
+                                <i class="fa-solid fa-copy"></i> Copiar
+                            </button>
                         </div>
 
-                        <label style="color: var(--text-secondary); font-size: 0.85rem;">IBAN Europeu (Clique à direita para copiar sem o LU16):</label>
+                        <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Referência (Clique à direita para copiar):</label>
                         <div class="copy-row">
-                            <code id="txtIbanEU">LU164080000044225147</code>
-                            <button type="button" class="btn-copy-action" onclick="copyCleanIban('txtIbanEU', 'LU16')">
+                            <code id="txtUnitelNumero">936380720</code>
+                            <button type="button" class="btn-copy-action" onclick="copySimpleText('txtUnitelNumero')">
                                 <i class="fa-solid fa-copy"></i> Copiar
                             </button>
                         </div>
 
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label>Carregar Comprovativo de Transferência (PDF, JPG, PNG)</label>
+                            <label>Carregar Comprovativo de Pagamento Unitel Money (PDF, JPG, PNG)</label>
                             <div class="dropzone-wrapper">
-                                <div class="dropzone-area" id="dropzoneEU" onclick="document.getElementById('fileReceiptEU').click()">
+                                <div class="dropzone-area" id="dropzoneUnitel" onclick="document.getElementById('fileReceiptUnitel').click()">
                                     <i class="fa-solid fa-cloud-arrow-up"></i>
                                     <p class="dropzone-text">Arraste o ficheiro aqui ou clique para fazer upload</p>
                                     <span class="dropzone-hint">Formatos aceites: PDF, JPEG, PNG (Máx 10MB)</span>
-                                    <input type="file" id="fileReceiptEU" style="display: none;" accept="application/pdf, image/jpeg, image/jpg, image/png">
+                                    <input type="file" id="fileReceiptUnitel" style="display: none;" accept="application/pdf, image/jpeg, image/jpg, image/png">
                                 </div>
-                                <div class="dropzone-preview" id="previewEU" style="display: none;">
+                                <div class="dropzone-preview" id="previewUnitel" style="display: none;">
                                     <div class="dropzone-preview-info">
                                         <i class="fa-solid fa-file-circle-check"></i>
-                                        <span class="dropzone-filename" id="filenameEU">ficheiro.pdf</span>
+                                        <span class="dropzone-filename" id="filenameUnitel">ficheiro.pdf</span>
                                     </div>
-                                    <button type="button" class="btn-clear-file" onclick="clearFileSelection('EU', event)">&times;</button>
+                                    <button type="button" class="btn-clear-file" onclick="clearFileSelection('Unitel', event)">&times;</button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="dynamic-payment-panel" id="panel-ref_bancaria">
-                        <label style="color: var(--text-secondary); font-size: 0.85rem;">Entidade (Clique à direita para copiar):</label>
-                        <div class="copy-row">
-                            <code id="txtRefEntidade">10116</code>
-                            <button type="button" class="btn-copy-action" onclick="copySimpleText('txtRefEntidade')">
-                                <i class="fa-solid fa-copy"></i> Copiar
-                            </button>
+                    <!-- PAINEL PAYPAL -->
+                    <div class="dynamic-payment-panel" id="panel-paypal">
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">E-mail do PayPal (Clique à direita para copiar):</label>
+                            <div class="copy-row">
+                                <code id="txtPaypalEmail">joseeduardoloneke2023@gmail.com</code>
+                                <button type="button" class="btn-copy-action" onclick="copySimpleText('txtPaypalEmail')">
+                                    <i class="fa-solid fa-copy"></i> Copiar
+                                </button>
+                            </div>
                         </div>
 
-                        <label style="color: var(--text-secondary); font-size: 0.85rem;">Referência (Clique à direita para copiar):</label>
-                        <div class="copy-row">
-                            <code id="txtRefNumero">936380720</code>
-                            <button type="button" class="btn-copy-action" onclick="copySimpleText('txtRefNumero')">
-                                <i class="fa-solid fa-copy"></i> Copiar
-                            </button>
+                        <div style="margin-bottom: 1.5rem; text-align: center;">
+                            <a id="btnPaypalDirect" href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=joseeduardoloneke2023@gmail.com&currency_code=EUR" target="_blank" class="btn-checkout" style="background: #0070ba; color: #fff; padding: 0.9rem; font-size: 0.95rem; margin-top: 0; box-shadow: 0 4px 15px rgba(0, 112, 186, 0.3);">
+                                <i class="fa-brands fa-paypal"></i> Abrir e Pagar via PayPal
+                            </a>
+                            <span style="font-size: 0.78rem; color: var(--text-secondary); display: block; margin-top: 0.5rem;">
+                                Você pode pagar diretamente pela sua conta PayPal e depois anexar o comprovativo abaixo.
+                            </span>
                         </div>
 
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label>Carregar Comprovativo de Pagamento por Referência (PDF, JPG, PNG)</label>
+                            <label>Carregar Comprovativo de Pagamento PayPal (PDF, JPG, PNG)</label>
                             <div class="dropzone-wrapper">
-                                <div class="dropzone-area" id="dropzoneRef" onclick="document.getElementById('fileReceiptRef').click()">
+                                <div class="dropzone-area" id="dropzonePaypal" onclick="document.getElementById('fileReceiptPaypal').click()">
                                     <i class="fa-solid fa-cloud-arrow-up"></i>
                                     <p class="dropzone-text">Arraste o ficheiro aqui ou clique para fazer upload</p>
                                     <span class="dropzone-hint">Formatos aceites: PDF, JPEG, PNG (Máx 10MB)</span>
-                                    <input type="file" id="fileReceiptRef" style="display: none;" accept="application/pdf, image/jpeg, image/jpg, image/png">
+                                    <input type="file" id="fileReceiptPaypal" style="display: none;" accept="application/pdf, image/jpeg, image/jpg, image/png">
                                 </div>
-                                <div class="dropzone-preview" id="previewRef" style="display: none;">
+                                <div class="dropzone-preview" id="previewPaypal" style="display: none;">
                                     <div class="dropzone-preview-info">
                                         <i class="fa-solid fa-file-circle-check"></i>
-                                        <span class="dropzone-filename" id="filenameRef">ficheiro.pdf</span>
+                                        <span class="dropzone-filename" id="filenamePaypal">ficheiro.pdf</span>
                                     </div>
-                                    <button type="button" class="btn-clear-file" onclick="clearFileSelection('Ref', event)">&times;</button>
+                                    <button type="button" class="btn-clear-file" onclick="clearFileSelection('Paypal', event)">&times;</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PAINEL WISE -->
+                    <div class="dynamic-payment-panel" id="panel-wise">
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Nome do Titular da Conta Wise:</label>
+                            <p style="font-weight: 700; font-size: 1.05rem; color: var(--white); margin-left: 0.2rem;">José Eduardo Loneke</p>
+                        </div>
+
+                        <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">IBAN Completo (Clique à direita para copiar):</label>
+                        <div class="copy-row">
+                            <code id="txtIbanWise">BE83 9675 7696 0915</code>
+                            <button type="button" class="btn-copy-action" onclick="copySimpleText('txtIbanWise')">
+                                <i class="fa-solid fa-copy"></i> Copiar
+                            </button>
+                        </div>
+
+                        <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">SWIFT / BIC (Clique à direita para copiar):</label>
+                        <div class="copy-row">
+                            <code id="txtSwiftWise">TRWIBEB1XXX</code>
+                            <button type="button" class="btn-copy-action" onclick="copySimpleText('txtSwiftWise')">
+                                <i class="fa-solid fa-copy"></i> Copiar
+                            </button>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Moeda da Conta:</label>
+                            <p style="font-weight: 700; font-size: 0.98rem; color: var(--success); margin-left: 0.2rem;">EURO (€)</p>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Carregar Comprovativo de Transferência Wise (PDF, JPG, PNG)</label>
+                            <div class="dropzone-wrapper">
+                                <div class="dropzone-area" id="dropzoneWise" onclick="document.getElementById('fileReceiptWise').click()">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    <p class="dropzone-text">Arraste o ficheiro aqui ou clique para fazer upload</p>
+                                    <span class="dropzone-hint">Formatos aceites: PDF, JPEG, PNG (Máx 10MB)</span>
+                                    <input type="file" id="fileReceiptWise" style="display: none;" accept="application/pdf, image/jpeg, image/jpg, image/png">
+                                </div>
+                                <div class="dropzone-preview" id="previewWise" style="display: none;">
+                                    <div class="dropzone-preview-info">
+                                        <i class="fa-solid fa-file-circle-check"></i>
+                                        <span class="dropzone-filename" id="filenameWise">ficheiro.pdf</span>
+                                    </div>
+                                    <button type="button" class="btn-clear-file" onclick="clearFileSelection('Wise', event)">&times;</button>
                                 </div>
                             </div>
                         </div>
@@ -549,13 +720,13 @@
                 <div id="summaryItemsContainer"></div>
 
                 <div id="orderBumpContainer" class="order-bump-container" style="display: none;">
-                    <h3 class="bump-title"><i class="fa-solid fa-fire"></i> OPA! <span>OFERTA ESPECIAL</span></h3>
+                    <h3 class="bump-title"><i class="fa-solid fa-bolt" style="color: var(--warning);"></i> Oferta <span>Especial</span></h3>
                     <div id="bumpItemsList"></div>
                 </div>
                 
                 <div id="discountActionContainer" class="discount-container-panel" style="display: none;">
-                    <p style="font-size: 0.8rem; margin-bottom: 0.6rem; color: var(--warning); font-weight: 500;">
-                        🎉 Parabéns! A sua compra qualifica-se para um desconto especial.
+                    <p style="font-size: 0.82rem; margin-bottom: 0.75rem; color: var(--warning); font-weight: 600;">
+                        🎉 A sua compra qualifica-se para um desconto exclusivo!
                     </p>
                     <button type="button" id="btnApplyDiscount25" class="btn-apply-discount">
                         <i class="fa-solid fa-percent"></i> Aplicar Desconto de 12%
@@ -566,8 +737,8 @@
                     <div class="total-row">
                         <span>Total (AKZ):</span>
                         <div>
-                            <strong id="valTotalKz">0</strong>
-                            <button type="button" class="btn-copy-action" onclick="copyCleanTotal('valTotalKz')" title="Copiar apenas os números">
+                            <strong id="valTotalKz">0,00 Kz</strong>
+                            <button type="button" class="btn-copy-action" onclick="copyCleanTotal('valTotalKz')" title="Copiar valor">
                                 <i class="fa-solid fa-copy"></i>
                             </button>
                         </div>
@@ -575,17 +746,17 @@
                     <div class="total-row">
                         <span>Total (EUR):</span>
                         <div>
-                            <strong id="valTotalEur" style="color: #2ec4b6;">0</strong>
-                            <button type="button" class="btn-copy-action" onclick="copyCleanTotal('valTotalEur')" title="Copiar apenas os números">
+                            <strong id="valTotalEur" style="color: var(--success);">0,00 €</strong>
+                            <button type="button" class="btn-copy-action" onclick="copyCleanTotal('valTotalEur')" title="Copiar valor">
                                 <i class="fa-solid fa-copy"></i>
                             </button>
                         </div>
                     </div>
-                    <p style="font-size:0.75rem; color:var(--text-secondary); text-align:right; margin-top:-5px;">Câmbio Comercial: 1 EUR = 1.000 Kz</p>
+                    <p style="font-size:0.75rem; color:var(--text-secondary); text-align:right; margin-top:-2px;">Câmbio Comercial: 1 EUR = 1.000 Kz</p>
                 </div>
 
                 <button type="button" class="btn-checkout" id="btnPlaceOrder">
-                    <i class="fa-solid fa-lock"></i> Processar Pedido com Segurança
+                    <i class="fa-solid fa-lock"></i> Processar Pedido Seguro
                 </button>
 
                 <button type="button" class="btn-whatsapp-negotiate" id="btnWhatsappNegotiate">
@@ -701,7 +872,7 @@
                     <div class="bump-info">
                         <h4>${item.titulo}</h4>
                         <p>${item.descricao}</p>
-                        <span class="bump-price">${item.preco.toLocaleString('pt-AO')} Kz</span>
+                        <span class="bump-price">${item.preco.toLocaleString('pt-AO', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Kz</span>
                     </div>
                 </div>
             `;
@@ -756,7 +927,7 @@
 
         if(cart.length === 0) {
             container.innerHTML = `<p style="color: var(--text-secondary); text-align:center; padding: 2rem 0;">O seu carrinho está vazio.</p>`;
-            displayKz.innerText = "0 Kz";
+            displayKz.innerText = "0,00 Kz";
             displayEur.innerText = "0,00 €";
             discountContainer.style.display = "none";
             btnPlaceOrder.disabled = true;
@@ -775,7 +946,7 @@
                     <img src="${item.imagem}" onerror="this.onerror=null; this.src='img/express.png';" alt="${item.titulo}">
                     <div class="summary-details">
                         <h4>${item.titulo}</h4>
-                        <p>Qtd: ${item.quantity} &bull; ${(item.preco * item.quantity).toLocaleString('pt-AO')} Kz</p>
+                        <p>Qtd: ${item.quantity} &bull; ${(item.preco * item.quantity).toLocaleString('pt-AO', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Kz</p>
                     </div>
                     <button type="button" class="btn-remove-item" onclick="removeProductFromCheckout(${index})" title="Remover este item">
                         <i class="fa-solid fa-trash-can"></i>
@@ -795,8 +966,13 @@
         let totalCalculadoKz = discountApplied ? (originalTotalKz * 0.88) : originalTotalKz;
         let totalCalculadoEur = totalCalculadoKz / EXCHANGE_RATE;
 
-        displayKz.innerText = `${totalCalculadoKz.toLocaleString('pt-AO')} Kz`;
+        displayKz.innerText = `${totalCalculadoKz.toLocaleString('pt-AO', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Kz`;
         displayEur.innerText = `${totalCalculadoEur.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} €`;
+
+        const paypalBtn = document.getElementById("btnPaypalDirect");
+        if (paypalBtn) {
+            paypalBtn.href = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=joseeduardoloneke2023@gmail.com&currency_code=EUR&amount=${totalCalculadoEur.toFixed(2)}`;
+        }
     }
 
     function removeProductFromCheckout(index) {
@@ -861,7 +1037,9 @@
                 
                 selectedMethod = card.getAttribute("data-method");
                 document.querySelectorAll(".dynamic-payment-panel").forEach(p => p.style.display = "none");
-                document.getElementById(`panel-${selectedMethod}`).style.display = "block";
+                
+                const activePanel = document.getElementById(`panel-${selectedMethod}`);
+                if (activePanel) activePanel.style.display = "block";
                 
                 showToast(`Método alterado para: ${card.querySelector('span').innerText}`, "info");
             });
@@ -886,11 +1064,13 @@
     }
 
     function initDropzoneHandlers() {
-        ['Express', 'AO', 'EU', 'Ref'].forEach(type => {
+        ['Express', 'Kwik', 'AO', 'Unitel', 'Paypal', 'Wise'].forEach(type => {
             const dropzone = document.getElementById(`dropzone${type}`);
             const input = document.getElementById(`fileReceipt${type}`);
             const preview = document.getElementById(`preview${type}`);
             const filenameText = document.getElementById(`filename${type}`);
+
+            if(!dropzone || !input) return;
 
             input.addEventListener("change", (e) => {
                 if(e.target.files.length) {
@@ -952,7 +1132,7 @@
         const cleanNumber = rawText.replace(/[^\d.,]/g, '').trim();
 
         navigator.clipboard.writeText(cleanNumber).then(() => {
-            showToast(`Valor numérico copiado: ${cleanNumber}`, "success");
+            showToast(`Valor copiado com cêntimos: ${cleanNumber}`, "success");
         }).catch(err => {
             console.error("Falha ao copiar valor:", err);
         });
@@ -995,6 +1175,17 @@
             modal.innerHTML = `<h3>A processar comprovativo</h3><p>A enviar comprovativo de pagamento por e-mail e a preparar o redirecionamento seguro para o WhatsApp...</p><div class="spinner"></div>`;
             triggerManualTransferEmail(modal, email, fullWhatsApp, name, "Multicaixa Express (Manual)", fileInput.files[0]);
         }
+
+        else if(selectedMethod === "kwik") {
+            const fileInput = document.getElementById("fileReceiptKwik");
+            if(!fileInput.files.length) {
+                showToast("Por favor, faça o upload do comprovativo da transferência KWIK.", "info");
+                return;
+            }
+            overlay.style.display = "flex";
+            modal.innerHTML = `<h3>A processar comprovativo</h3><p>A enviar comprovativo de pagamento por e-mail e a preparar o redirecionamento seguro para o WhatsApp...</p><div class="spinner"></div>`;
+            triggerManualTransferEmail(modal, email, fullWhatsApp, name, "Transferência KWIK (AO06042000000000024129475)", fileInput.files[0]);
+        }
         
         else if(selectedMethod === "transf_ao") {
             const banco = document.getElementById("bankSelectAO").value;
@@ -1011,27 +1202,38 @@
             modal.innerHTML = `<h3>A processar comprovativo</h3><p>A enviar comprovativo de pagamento por e-mail e a preparar o redirecionamento seguro para o WhatsApp...</p><div class="spinner"></div>`;
             triggerManualTransferEmail(modal, email, fullWhatsApp, name, `Transferência Bancária Nacional (Angola) - Banco: ${banco}`, fileInput.files[0]);
         }
-        
-        else if(selectedMethod === "transf_eu") {
-            const fileInput = document.getElementById("fileReceiptEU");
+
+        else if(selectedMethod === "unitel_money") {
+            const fileInput = document.getElementById("fileReceiptUnitel");
             if(!fileInput.files.length) {
-                showToast("Por favor, faça o upload do comprovativo da transferência europeia efetuada.", "info");
+                showToast("Por favor, faça o upload do comprovativo do pagamento Unitel Money.", "info");
                 return;
             }
             overlay.style.display = "flex";
             modal.innerHTML = `<h3>A processar comprovativo</h3><p>A enviar comprovativo de pagamento por e-mail e a preparar o redirecionamento seguro para o WhatsApp...</p><div class="spinner"></div>`;
-            triggerManualTransferEmail(modal, email, fullWhatsApp, name, "Transferência Bancária Internacional (Europa - IBAN LU)", fileInput.files[0]);
+            triggerManualTransferEmail(modal, email, fullWhatsApp, name, "Pagamento Unitel Money (Entidade 00930)", fileInput.files[0]);
         }
 
-        else if(selectedMethod === "ref_bancaria") {
-            const fileInput = document.getElementById("fileReceiptRef");
+        else if(selectedMethod === "paypal") {
+            const fileInput = document.getElementById("fileReceiptPaypal");
             if(!fileInput.files.length) {
-                showToast("Por favor, faça o upload do comprovativo do pagamento por referência.", "info");
+                showToast("Por favor, faça o upload do comprovativo do pagamento PayPal.", "info");
                 return;
             }
             overlay.style.display = "flex";
             modal.innerHTML = `<h3>A processar comprovativo</h3><p>A enviar comprovativo de pagamento por e-mail e a preparar o redirecionamento seguro para o WhatsApp...</p><div class="spinner"></div>`;
-            triggerManualTransferEmail(modal, email, fullWhatsApp, name, "Pagamento por Referência Bancária (Entidade 10116)", fileInput.files[0]);
+            triggerManualTransferEmail(modal, email, fullWhatsApp, name, "Pagamento PayPal (joseeduardoloneke2023@gmail.com)", fileInput.files[0]);
+        }
+
+        else if(selectedMethod === "wise") {
+            const fileInput = document.getElementById("fileReceiptWise");
+            if(!fileInput.files.length) {
+                showToast("Por favor, faça o upload do comprovativo da transferência Wise.", "info");
+                return;
+            }
+            overlay.style.display = "flex";
+            modal.innerHTML = `<h3>A processar comprovativo</h3><p>A enviar comprovativo de pagamento por e-mail e a preparar o redirecionamento seguro para o WhatsApp...</p><div class="spinner"></div>`;
+            triggerManualTransferEmail(modal, email, fullWhatsApp, name, "Transferência Wise (BE83 9675 7696 0915 - EUR)", fileInput.files[0]);
         }
     }
 
@@ -1044,7 +1246,6 @@
 
         let comprovativoLink = "Ficheiro enviado em anexo direto no e-mail";
 
-        // Novo upload estável com suporte CORS nativo para localhost/127.0.0.1
         try {
             const uploadFormData = new FormData();
             uploadFormData.append("file", fileObject);
@@ -1095,7 +1296,6 @@
         formData.append("Link_Visualizacao_Comprovativo", comprovativoLink);
         formData.append("Resumo_Do_Pedido", emailText);
         
-        // ENVIO EM ANEXO DIRETOR PARA O FORMSUBMIT
         formData.append("attachment", fileObject);
 
         fetch(FORMSUBMIT_URL, {
@@ -1115,12 +1315,12 @@
             window.open(urlWhatsAppCompleto, '_blank');
 
             modal.innerHTML = `
-                <i class="fa-solid fa-circle-check" style="font-size: 4rem; color: var(--success);"></i>
-                <h2 style="font-family: var(--font-montserrat); margin-top: 1.5rem;">Pedido Processado!</h2>
-                <p style="color: var(--text-secondary); margin-top: 0.8rem; font-size: 0.95rem;">
+                <i class="fa-solid fa-circle-check" style="font-size: 3.5rem; color: var(--success);"></i>
+                <h2 style="font-family: var(--font-heading); margin-top: 1.25rem;">Pedido Processado!</h2>
+                <p style="color: var(--text-secondary); margin-top: 0.6rem; font-size: 0.95rem;">
                     As informações e o ficheiro em anexo foram enviados com sucesso.
                 </p>
-                <div style="background: rgba(46, 196, 182, 0.05); padding: 1rem; border-radius: 10px; margin: 1.5rem 0; font-size: 0.85rem; border: 1px dashed var(--success); text-align: left;">
+                <div style="background: rgba(16, 185, 129, 0.08); padding: 1rem; border-radius: var(--radius-sm); margin: 1.5rem 0; font-size: 0.85rem; border: 1px dashed var(--success); text-align: left;">
                     ⏱️ <strong>O que acontece agora?</strong> Assim que o pagamento for verificado (pelo anexo no e-mail ou via WhatsApp), o acesso será validado e enviado para: <strong style="color:#fff;">${customerEmail}</strong>.
                 </div>
                 <a href="${urlWhatsAppCompleto}" target="_blank" class="btn-checkout" style="background:#25D366; color: #fff; text-decoration: none; margin-bottom: 0.6rem;">
