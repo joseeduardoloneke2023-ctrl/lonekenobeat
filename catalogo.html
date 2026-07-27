@@ -1118,7 +1118,6 @@
         }
 
         const vendas = prod.vendas !== undefined ? prod.vendas : 0;
-        const linkCheckout = prod.linkCheckout || "#";
         const sugestoes = produtos.filter(p => p.id !== prod.id).slice(0, 4);
 
         let videoEmbedUrl = "https://www.youtube.com/embed/dQw4w9WgXcQ"; 
@@ -1180,10 +1179,7 @@
                                     <span id="detailPriceDisplay" style="font-family: var(--font-montserrat); font-size: 2.5rem; font-weight: 700; color: var(--white);">Por ${prod.precoAtual.toLocaleString('pt-AO')} Kz</span>
                                 </div>
                                 <div style="display: flex; flex-direction: column; gap: 1rem;">
-                                    <a id="detailCheckoutBtn" href="${linkCheckout}" target="_blank" class="btn btn-vip" style="width: 100%; padding: 1.2rem; border-radius: 12px; font-size: 1.1rem;" onclick="showNotification('Redirecionando para o checkout seguro...', 'fa-shield-halved')">
-                                        <i class="fa-solid fa-bolt"></i> Comprar com Cartão Visa
-                                    </a>
-                                    <button id="detailCartBtn" class="btn btn-primary" style="width: 100%; padding: 1.2rem; border-radius: 12px; font-size: 1.1rem; background-color: transparent; border: 1px solid var(--primary);" onclick="addItemToCart(event, ${prod.id}, 1)">
+                                    <button id="detailCartBtn" class="btn btn-primary" style="width: 100%; padding: 1.2rem; border-radius: 12px; font-size: 1.1rem;" onclick="addItemToCart(event, ${prod.id}, 1)">
                                         <i class="fa-solid fa-cart-shopping"></i> Adicionar ao Carrinho
                                     </button>
                                 </div>
@@ -1219,26 +1215,18 @@
         const btn2 = document.getElementById('plan-2');
         const priceDisplay = document.getElementById('detailPriceDisplay');
         const cartBtn = document.getElementById('detailCartBtn');
-        const checkoutBtn = document.getElementById('detailCheckoutBtn');
 
         if (plan === 1) {
             if(btn1) btn1.classList.add('active');
             if(btn2) btn2.classList.remove('active');
             if(priceDisplay) priceDisplay.innerHTML = `Por ${prod.precoAtual.toLocaleString('pt-AO')} Kz`;
             if(cartBtn) cartBtn.setAttribute('onclick', `addItemToCart(event, ${prod.id}, 1)`);
-            if(checkoutBtn) checkoutBtn.href = prod.linkCheckout || "#";
         } else {
             if(btn1) btn1.classList.remove('active');
             if(btn2) btn2.classList.add('active');
             const valorParcela = (prod.precoAtual / 2) + 500;
             if(priceDisplay) priceDisplay.innerHTML = `Por ${valorParcela.toLocaleString('pt-AO')} Kz <small style="font-size:1.1rem; color:var(--primary); font-weight:500;">(1ª Prestação)</small>`;
             if(cartBtn) cartBtn.setAttribute('onclick', `addItemToCart(event, ${prod.id}, 2)`);
-            
-            if(checkoutBtn && prod.linkCheckout) {
-                let urlDinamica = prod.linkCheckout;
-                urlDinamica += (urlDinamica.includes('?') ? '&' : '?') + 'prestacoes=2';
-                checkoutBtn.href = urlDinamica;
-            }
         }
     }
 
