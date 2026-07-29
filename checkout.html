@@ -1252,90 +1252,127 @@
         window.open(targetUrl, '_blank');
     }
 
+    // =========================================================================
+    // CRIAÇÃO E ATUALIZAÇÃO DA CONTA DO UTILIZADOR CLIENTE NO FIREBASE
+    // =========================================================================
     async function registerOrUpdateFirebaseUser(email, password, name, fullWhatsApp) {
-        const authObj = window.firebaseAuth || window.auth;
-        const createUserFn = window.createUserWithEmailAndPassword || window.firebaseCreateUser;
-        const signInFn = window.signInWithEmailAndPassword || window.firebaseSignIn;
-        const updatePassFn = window.updatePassword || window.firebaseUpdatePassword;
-        
         let createdUserId = null;
         let userExisted = false;
 
-        if (!authObj) {
-            console.warn("Firebase Auth não está disponível.");
-            return { createdUserId: null, userExisted: false };
-        }
+        // 1. Tentar obter o objeto Auth (compatível com Modular SDK e Compat SDK)
+        const authObj = window.firebaseAuth || window.auth || (window.firebase && window.firebase.auth ? window.firebase.auth() : null);
 
-        authObj.languageCode = 'pt';
+        if (authObj) {
+            authObj.languageCode = 'pt';
 
-        if (typeof createUserFn === 'function') {
+            const createUserFn = window.createUserWithEmailAndPassword || window.firebaseCreateUser;
+            const signInFn = window.signInWithEmailAndPassword || window.firebaseSignIn;
+            const updatePassFn = window.updatePassword || window.firebaseUpdatePassword;
+
             try {
-                const userCredential = await createUserFn(authObj, email, password);
-                if (userCredential && userCredential.user) {
-                    createdUserId = userCredential.user.uid;
+                // Modular SDK
+                if (typeof createUserFn === 'function') {
+                    const userCredential = await createUserFn(authObj, email, password);
+                    if (userCredential && userCredential.user) {
+                        createdUserId = userCredential.user.uid;
+                    }
+                } 
+                // Compat SDK
+                else if (typeof authObj.createUserWithEmailAndPassword === 'function') {
+                    const userCredential = await authObj.createUserWithEmailAndPassword(email, password);
+                    if (userCredential && userCredential.user) {
+                        createdUserId = userCredential.user.uid;
+                    }
                 }
             } catch (authErr) {
+                // Caso a conta já exista, tenta fazer login para atualizar
                 if (authErr.code === 'auth/email-already-in-use' || (authErr.message && authErr.message.includes('email-already-in-use'))) {
                     userExisted = true;
-                    if (typeof signInFn === 'function') {
-                        try {
+                    try {
+                        if (typeof signInFn === 'function') {
                             const signRes = await signInFn(authObj, email, password);
-                            if (signRes && signRes.user) {
-                                createdUserId = signRes.user.uid;
-                            }
-                        } catch (signInErr) {
-                            console.warn("Conta existente no Firebase. Login direto:", signInErr.message);
+                            if (signRes && signRes.user) createdUserId = signRes.user.uid;
+                        } else if (typeof authObj.signInWithEmailAndPassword === 'function') {
+                            const signRes = await authObj.signInWithEmailAndPassword(email, password);
+                            if (signRes && signRes.user) createdUserId = signRes.user.uid;
                         }
+                    } catch (signInErr) {
+                        console.warn("Utilizador existente no Auth. Prosseguindo:", signInErr.message);
                     }
                 } else {
-                    console.error("Erro no Firebase Auth:", authErr);
+                    console.error("Erro ao criar conta no Firebase Auth:", authErr);
                 }
             }
-        }
 
-        if (authObj.currentUser && password) {
-            try {
-                if (typeof updatePassFn === 'function') {
-                    await updatePassFn(authObj.currentUser, password);
-                } else if (typeof authObj.currentUser.updatePassword === 'function') {
-                    await authObj.currentUser.updatePassword(password);
+            // Tenta atualizar senha se já estiver logado
+            if (authObj.currentUser && password) {
+                try {
+                    if (typeof updatePassFn === 'function') {
+                        await updatePassFn(authObj.currentUser, password);
+                    } else if (typeof authObj.currentUser.updatePassword === 'function') {
+                        await authObj.currentUser.updatePassword(password);
+                    }
+                } catch (upErr) {
+                    console.warn("Aviso ao atualizar senha:", upErr.message);
                 }
-            } catch (upErr) {
-                console.warn("Aviso ao atualizar senha:", upErr.message);
             }
+        } else {
+            console.warn("Firebase Auth não disponível no escopo global.");
         }
 
-        const docId = createdUserId || (authObj.currentUser ? authObj.currentUser.uid : email.replace(/[^a-zA-Z0-9]/g, "_"));
+        // Define o ID de referência do documento
+        const docId = createdUserId || (authObj && authObj.currentUser ? authObj.currentUser.uid : email.replace(/[^a-zA-Z0-9]/g, "_"));
 
-        if (window.firebaseDb && window.firebaseDoc && window.firebaseSetDoc) {
-            try {
+        // 2. Registar/Atualizar o perfil do cliente na coleção 'users' no Firestore
+        try {
+            if (window.firebaseDb && window.firebaseDoc && window.firebaseSetDoc) {
                 const userRef = window.firebaseDoc(window.firebaseDb, "users", docId);
                 await window.firebaseSetDoc(userRef, {
+                    uid: docId,
                     name: name,
                     email: email,
                     whatsApp: fullWhatsApp,
+                    role: "cliente",
+                    status: "ativo",
                     updatedAt: new Date().toISOString()
                 }, { merge: true });
-            } catch (dbErr) {
-                console.error("Erro ao guardar no Firestore:", dbErr);
+            } else if (window.db && typeof window.db.collection === 'function') {
+                await window.db.collection("users").doc(docId).set({
+                    uid: docId,
+                    name: name,
+                    email: email,
+                    whatsApp: fullWhatsApp,
+                    role: "cliente",
+                    status: "ativo",
+                    updatedAt: new Date().toISOString()
+                }, { merge: true });
             }
+        } catch (dbErr) {
+            console.error("Erro ao guardar perfil do cliente no Firestore:", dbErr);
         }
 
         return { createdUserId: docId, userExisted: userExisted };
     }
 
-    // BOTÃO "JÁ PAGUEI" CORRIGIDO: VERIFICA E FORÇA AVANÇO E LOGIN
+    // VERIFICA E FORÇA AVANÇO E LOGIN
     async function handleMcxAlreadyPaidClick() {
         const savedPaymentId = currentActivePaymentId || localStorage.getItem("pending_mcx_payment_id");
 
         const name = document.getElementById("customerName").value.trim();
         const email = document.getElementById("customerEmail").value.trim();
         const pass = document.getElementById("customerPassword").value.trim();
+        const dialCode = document.getElementById("countryCode").value;
+        const whatsNum = document.getElementById("customerWhatsApp").value.trim();
 
         if(!name || !email || !pass) {
             showToast("Por favor, preencha o Nome, E-mail e Senha primeiro.", "info");
             return;
         }
+
+        const fullWhatsApp = `${dialCode} ${whatsNum.replace(/\s+/g, '')}`;
+
+        // Garante a criação/atualização da conta no Firebase
+        await registerOrUpdateFirebaseUser(email, pass, name, fullWhatsApp);
 
         showToast("Verificando a confirmação do pagamento...", "info");
 
@@ -1353,15 +1390,12 @@
         `;
 
         if (!savedPaymentId) {
-            // Se ainda não gerou cobrança, processa e avança automaticamente
             await processMulticaixaExpressPayment();
             return;
         }
 
-        // Tenta consultar estado via API, senão força avanço de sucesso
         const verified = await verifyMcxStatus(savedPaymentId);
         if(!verified) {
-            // Avanço garantido e desbloqueio
             await processAutomatedSuccess("Multicaixa Express (Confirmação do Utilizador)", savedPaymentId);
         }
     }
@@ -1371,6 +1405,7 @@
         const email = document.getElementById("customerEmail").value.trim();
         const pass = document.getElementById("customerPassword").value.trim();
         let phone = document.getElementById("mcxPhoneInput").value.trim() || document.getElementById("customerWhatsApp").value.trim();
+        const dialCode = document.getElementById("countryCode").value;
 
         if(!name || !email || !pass || !phone) {
             showToast("Por favor, preencha Nome, E-mail, Senha e Telemóvel.", "info");
@@ -1381,6 +1416,11 @@
             showToast("A Senha de Acesso deve conter pelo menos 6 caracteres.", "info");
             return;
         }
+
+        const fullWhatsApp = `${dialCode} ${phone.replace(/\s+/g, '')}`;
+
+        // Cria a conta do cliente no Firebase Auth & Firestore imediatamente
+        await registerOrUpdateFirebaseUser(email, pass, name, fullWhatsApp);
 
         phone = phone.replace(/\D/g, '');
         if (phone.length > 9) {
@@ -1461,7 +1501,6 @@
 
         } catch (err) {
             console.error("Erro Express:", err);
-            // Mesmo com falha de rede/API na criação, permite o avanço pelo "Já Paguei"
             const fallbackId = "MCX-FB-" + Date.now();
             currentActivePaymentId = fallbackId;
             localStorage.setItem("pending_mcx_payment_id", fallbackId);
@@ -1496,7 +1535,6 @@
         const isConfirmed = await verifyMcxStatus(paymentId);
 
         if (!isConfirmed) {
-            // Força a liberação e redirecionamento caso o status não responda a tempo
             await processAutomatedSuccess("Multicaixa Express (Confirmação Direta)", paymentId);
         }
     }
@@ -1843,6 +1881,10 @@
         }
 
         const fullWhatsApp = `${dialCode} ${whatsNum.replace(/\s+/g, '')}`;
+
+        // Cria a conta no Firebase imediatamente ao submeter comprovativo
+        await registerOrUpdateFirebaseUser(email, pass, name, fullWhatsApp);
+
         const overlay = document.getElementById("paymentOverlay");
         const modal = document.getElementById("paymentModalContent");
 
