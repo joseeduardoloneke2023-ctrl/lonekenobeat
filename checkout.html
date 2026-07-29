@@ -510,6 +510,11 @@
                         <button type="button" class="btn-checkout" id="btnMcxPay" onclick="processMulticaixaExpressPayment()" style="background: #E50914; margin-top: 0;">
                             <i class="fa-solid fa-mobile-screen-button"></i> Pagar via Multicaixa Express
                         </button>
+                        
+                        <!-- BOTÃO "JÁ PAGUEI" ADICIONADO POR BAIXO -->
+                        <button type="button" class="btn-checkout" id="btnMcxAlreadyPaid" onclick="handleMcxAlreadyPaidClick()" style="background: var(--success); margin-top: 0.85rem; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);">
+                            <i class="fa-solid fa-circle-check"></i> Já Paguei (Verificar Pagamento)
+                        </button>
                     </div>
 
                     <!-- STRIPE -->
@@ -1154,7 +1159,7 @@
         btn.style.opacity = "1";
         btn.style.cursor = "not-allowed";
 
-        showToast("Desconto de 12% validado e aplicado com sucesso ao seu pedido!", "success");
+        showToast("Desconto de 12% validado e applied com sucesso ao seu pedido!", "success");
         loadCartData();
     }
 
@@ -1327,6 +1332,37 @@
         }
 
         return { createdUserId: docId, userExisted: userExisted };
+    }
+
+    // AÇÃO AO CLICAR NO BOTÃO "JÁ PAGUEI" DIRETO NO PAINEL
+    async function handleMcxAlreadyPaidClick() {
+        const savedPaymentId = currentActivePaymentId || localStorage.getItem("pending_mcx_payment_id");
+
+        if (!savedPaymentId) {
+            // Se ainda não foi gerada a cobrança, executa o pedido primeiro
+            await processMulticaixaExpressPayment();
+            return;
+        }
+
+        showToast("Verificando a confirmação do pagamento...", "info");
+
+        const overlay = document.getElementById("paymentOverlay");
+        const modal = document.getElementById("paymentModalContent");
+        overlay.style.display = "flex";
+
+        modal.innerHTML = `
+            <i class="fa-solid fa-mobile-screen-button" style="font-size: 3.5rem; color: var(--primary);"></i>
+            <h3 style="margin-top: 1rem; font-family: var(--font-heading);">Verificando Pagamento...</h3>
+            <p style="margin-top:0.8rem; font-size:0.9rem; color:var(--text-secondary);">
+                Confirmando a transação no Multicaixa Express...
+            </p>
+            <div class="spinner" style="margin: 1.2rem auto;"></div>
+            <button type="button" class="btn-checkout" id="btnManualCheckNow" onclick="checkPaymentStatusNow('${savedPaymentId}')" style="background: var(--success); margin-top: 0;">
+                <i class="fa-solid fa-arrows-rotate"></i> Tentar Novamente
+            </button>
+        `;
+
+        await checkPaymentStatusNow(savedPaymentId);
     }
 
     // INTEGRAÇÃO PAYGOO: MULTICAIXA EXPRESS AUTOMÁTICO
