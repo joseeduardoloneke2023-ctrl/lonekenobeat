@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo de Produtos | Loneke no Beat Premium Infoproducts</title>
-    <meta name="description" content="Explore nosso catálogo de Drum Kits, Loop Kits, FLPs, Plugins e Cursos Exclusivos criados por Loneke no Beat. Efetue seu download imediato.">
-    <meta name="keywords" content="drum kits, loop kits, flp, cursos de produção musical, plugins vst, loneke no beat">
+    <meta name="description" content="Explore nosso catálogo de Beats, Drum Kits, Loop Kits, FLPs, Plugins e Cursos Exclusivos criados por Loneke no Beat. Efetue seu download imediato.">
+    <meta name="keywords" content="beats, drum kits, loop kits, flp, cursos de produção musical, plugins vst, loneke no beat">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://lonekenobeat.com/catalogo.html">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -446,84 +446,82 @@
         }
 
         /* Grelha de dois botões lado a lado nos Cards */
-.card-actions-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.6rem;
-    width: 100%;
-    margin-top: auto;
-}
-.btn-card-view {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.05);
-    color: #fff;
-    padding: 0.75rem;
-    border-radius: 10px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-.btn-card-view:hover { background: rgba(255,255,255,0.15); }
+        .card-actions-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+            width: 100%;
+            margin-top: auto;
+        }
+        .btn-card-view {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.05);
+            color: #fff;
+            padding: 0.75rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-card-view:hover { background: rgba(255,255,255,0.15); }
 
-.btn-card-add {
-    background: #E50914;
-    border: none;
-    color: #fff;
-    padding: 0.75rem;
-    border-radius: 10px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-.btn-card-add:hover { background: #b8070e; }
+        .btn-card-add {
+            background: #E50914;
+            border: none;
+            color: #fff;
+            padding: 0.75rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-card-add:hover { background: #b8070e; }
 
-/* Bloco interativo das parcelas dentro do Modal */
-.payment-plans-wrapper {
-    margin-bottom: 1.5rem;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.05);
-    padding: 1rem;
-    border-radius: 12px;
-}
-.payment-plans-title {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #aaa;
-    margin-bottom: 0.8rem;
-}
-.plans-grid-buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.8rem;
-}
-.btn-plan-select {
-    background: #1a1a1a;
-    border: 1px solid rgba(255,255,255,0.08);
-    color: #aaa;
-    padding: 0.8rem;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.2rem;
-}
-.btn-plan-select strong { font-size: 0.95rem; color: #fff; }
-.btn-plan-select span { font-size: 0.75rem; }
-.btn-plan-select.active {
-    background: rgba(229, 9, 20, 0.08);
-    border-color: #E50914;
-    color: #fff;
-}
-.btn-plan-select.active strong { color: #E50914; }
-
-
-
+        /* Bloco interativo das parcelas ou licenças dentro do Modal */
+        .payment-plans-wrapper {
+            margin-bottom: 1.5rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 1rem;
+            border-radius: 12px;
+        }
+        .payment-plans-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #aaa;
+            margin-bottom: 0.8rem;
+        }
+        .plans-grid-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+        }
+        .btn-plan-select {
+            background: #1a1a1a;
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #aaa;
+            padding: 0.8rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2rem;
+            text-align: center;
+        }
+        .btn-plan-select strong { font-size: 0.95rem; color: #fff; }
+        .btn-plan-select span { font-size: 0.75rem; }
+        .btn-plan-select.active {
+            background: rgba(229, 9, 20, 0.08);
+            border-color: #E50914;
+            color: #fff;
+        }
+        .btn-plan-select.active strong { color: #E50914; }
 
         .detail-grid {
             display: grid;
@@ -745,13 +743,11 @@
             <a href="index.html" class="logo">LONEKE NO <span>BEAT</span></a>
             <nav class="nav-menu" id="navMenu">
                 <a href="index.html" class="nav-link">Home</a>
-   
                 <a href="catalogo.html" class="nav-link">Produtos</a>
                 <a href="index.html#features" class="nav-link">Serviços</a>
                 <a href="index.html#about" class="nav-link">Sobre</a>
                 <a href="index.html#contact" class="nav-link">Contato</a>
-             
-                <a href="/plataforma/index.html" class="nav-link btn-vip" onclick="showNotification('Acessando Área VIP...', 'fa-crown')">Login</a>
+                <a href="/plataforma/login.html" class="nav-link btn-vip" onclick="showNotification('Acessando Área VIP...', 'fa-crown')">Login</a>
             </nav>
             <div class="menu-toggle" id="menuToggle">
                 <i class="fa-solid fa-bars"></i>
@@ -774,6 +770,7 @@
                     </div>
                     <div class="category-tabs" id="categoryTabs">
                         <button class="tab-btn active" data-category="all">Todos os Produtos</button>
+                        <button class="tab-btn" data-category="beats">Beats</button>
                         <button class="tab-btn" data-category="drumkits">Drum Kits</button>
                         <button class="tab-btn" data-category="loops">Loop Kits</button>
                         <button class="tab-btn" data-category="flp">FLP</button>
@@ -781,7 +778,6 @@
                         <button class="tab-btn" data-category="plugins">Packs de Plugins</button>
                         <button class="tab-btn" data-category="ebooks">E-books</button>
                     </div>
-                    
                 </div>
 
                 <div class="suggestion-grid" id="catalogGrid">
@@ -793,7 +789,6 @@
         </section>
     </main>
 
-  
     <footer>
         <div class="container footer-grid">
             <div class="footer-brand">
@@ -818,6 +813,7 @@
             <div class="footer-links">
                 <h7>Categorias</h7>
                 <ul>
+                    <li><a href="catalogo.html?cat=beats">Beats</a></li>
                     <li><a href="catalogo.html?cat=drumkits">Drum Kits</a></li>
                     <li><a href="catalogo.html?cat=loops">Loop Kits</a></li>
                     <li><a href="catalogo.html?cat=flp">FLP Projects</a></li>
@@ -892,17 +888,15 @@
         initMobileMenu();
         initScrollTop();
         updateCartBadge();
-        initFakePurchaseNotifications(); // Inicializa motor de notificações
+        initFakePurchaseNotifications();
 
         const urlParams = new URLSearchParams(window.location.search);
-        const productParam = urlParams.get('produto') || urlParams.get('id'); // Aceita ?produto=nome-do-produto ou legado ?id=X
+        const productParam = urlParams.get('produto') || urlParams.get('id');
         const categoryParam = urlParams.get('cat');
 
         if (productParam) {
-            // Procura o produto pelo slug gerado a partir do seu título
             let prod = produtos.find(p => slugify(p.titulo) === productParam);
             
-            // Caso não encontre por slug e o parâmetro seja numérico, tenta encontrar por ID (Retrocompatibilidade)
             if (!prod && !isNaN(productParam)) {
                 prod = produtos.find(p => p.id === parseInt(productParam));
             }
@@ -958,7 +952,7 @@
         }, 600);
     }
 
-   function createProductCardHTML(prod) {
+    function createProductCardHTML(prod) {
         const vendas = prod.vendas !== undefined ? prod.vendas : 0;
         return `
             <article class="product-card-premium reveal active" onclick="goToProductDetail(${prod.id})">
@@ -987,7 +981,6 @@
         `;
     }
 
-    // Altera a URL para utilizar o Slug do nome do produto ao invés do ID
     function goToProductDetail(id) {
         const prod = produtos.find(p => p.id === id);
         if (prod) {
@@ -1134,8 +1127,8 @@
             }
         }
 
-        // Validação: Apenas Cursos com valor igual ou superior a 10.000 Kz ganham parcelamento
-        const permiteParcelas = prod.categoria.toLowerCase().includes('curso') && prod.precoAtual >= 10000;
+        const isBeat = prod.categoria.toLowerCase().includes('beat');
+        const permiteParcelas = !isBeat && prod.categoria.toLowerCase().includes('curso') && prod.precoAtual >= 10000;
 
         main.innerHTML = `
             <section class="section-padding" style="padding-top: 140px;">
@@ -1158,6 +1151,34 @@
                             
                             <div style="background: rgba(255,255,255,0.02); padding: 2rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.04); margin-bottom: 2rem;">
                                 
+                                ${isBeat ? `
+                                <div class="payment-plans-wrapper">
+                                    <div class="payment-plans-title"><i class="fa-solid fa-compact-disc"></i> Escolha a Licença do Beat:</div>
+                                    <div class="plans-grid-buttons" style="grid-template-columns: 1fr; gap: 0.5rem;">
+                                        <button type="button" id="license-basic" class="btn-plan-select active" onclick="selectBeatLicense(${prod.id}, 'basic', 3000)">
+                                            <strong>Basic Lease (5.000 Kz)</strong>
+                                            <span>Inclui: MP3 </span>
+                                        </button>
+                                        <button type="button" id="license-standard" class="btn-plan-select" onclick="selectBeatLicense(${prod.id}, 'standard', 7500)">
+                                            <strong>Standard Lease (7.500 Kz)</strong>
+                                            <span>Inclui: MP3 + WAV </span>
+                                        </button>
+                                        <button type="button" id="license-premium" class="btn-plan-select" onclick="selectBeatLicense(${prod.id}, 'premium', 15000)">
+                                            <strong>Premium Lease (15.000 Kz)</strong>
+                                            <span>Inclui: MP3 + WAV + Stems </span>
+                                        </button>
+                                        <button type="button" id="license-unlimited" class="btn-plan-select" onclick="selectBeatLicense(${prod.id}, 'unlimited', 30000)">
+                                            <strong>Unlimited Lease (30.000 Kz)</strong>
+                                            <span>Inclui: Uso comercial alargado </span>
+                                        </button>
+                                        <button type="button" id="license-exclusive" class="btn-plan-select" onclick="selectBeatLicense(${prod.id}, 'exclusive', 100000)">
+                                            <strong>Exclusive License (100.000 Kz)</strong>
+                                            <span>Inclui: Exclusividade e remoção da loja </span>
+                                        </button>
+                                    </div>
+                                </div>
+                                ` : ''}
+
                                 ${permiteParcelas ? `
                                 <div class="payment-plans-wrapper">
                                     <div class="payment-plans-title"><i class="fa-solid fa-credit-card"></i> Opções de Pagamento:</div>
@@ -1176,10 +1197,10 @@
 
                                 <div style="display:flex; flex-direction:column; gap:0.2rem; margin-bottom:1.5rem;">
                                     <span style="text-decoration: line-through; color: #666; font-size: 1.1rem;">De ${prod.precoAntigo.toLocaleString('pt-AO')} Kz</span>
-                                    <span id="detailPriceDisplay" style="font-family: var(--font-montserrat); font-size: 2.5rem; font-weight: 700; color: var(--white);">Por ${prod.precoAtual.toLocaleString('pt-AO')} Kz</span>
+                                    <span id="detailPriceDisplay" style="font-family: var(--font-montserrat); font-size: 2.5rem; font-weight: 700; color: var(--white);">Por ${isBeat ? '3.000' : prod.precoAtual.toLocaleString('pt-AO')} Kz</span>
                                 </div>
                                 <div style="display: flex; flex-direction: column; gap: 1rem;">
-                                    <button id="detailCartBtn" class="btn btn-primary" style="width: 100%; padding: 1.2rem; border-radius: 12px; font-size: 1.1rem;" onclick="addItemToCart(event, ${prod.id}, 1)">
+                                    <button id="detailCartBtn" class="btn btn-primary" style="width: 100%; padding: 1.2rem; border-radius: 12px; font-size: 1.1rem;" onclick="addItemToCart(event, ${prod.id}, 1 ${isBeat ? ", 'basic', 3000" : ""})">
                                         <i class="fa-solid fa-cart-shopping"></i> Adicionar ao Carrinho
                                     </button>
                                 </div>
@@ -1195,7 +1216,7 @@
                     </div>
 
                     <div style="margin-top: 6rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 4rem;">
-                        <h2 class="section-title" style="font-size: 1.8rem; margin-bottom: 0.5rem;"> Quem comprou este item também se interested por:</h2>
+                        <h2 class="section-title" style="font-size: 1.8rem; margin-bottom: 0.5rem;">Quem comprou este item também se interessou por:</h2>
                         <div class="suggestion-grid">
                             ${sugestoes.map(item => createProductCardHTML(item)).join('')}
                         </div>
@@ -1204,6 +1225,26 @@
             </section>
         `;
         window.scrollTo({ top: 0 });
+    }
+
+    // Gerenciador interativo de licenças de beats
+    function selectBeatLicense(id, licenseType, price) {
+        const prod = produtos.find(p => p.id === id);
+        if (!prod) return;
+
+        ['basic', 'standard', 'premium', 'unlimited', 'exclusive'].forEach(l => {
+            const btn = document.getElementById(`license-${l}`);
+            if(btn) btn.classList.remove('active');
+        });
+
+        const activeBtn = document.getElementById(`license-${licenseType}`);
+        if(activeBtn) activeBtn.classList.add('active');
+
+        const priceDisplay = document.getElementById('detailPriceDisplay');
+        const cartBtn = document.getElementById('detailCartBtn');
+
+        if(priceDisplay) priceDisplay.innerHTML = `Por ${price.toLocaleString('pt-AO')} Kz`;
+        if(cartBtn) cartBtn.setAttribute('onclick', `addItemToCart(event, ${prod.id}, 1, '${licenseType}', ${price})`);
     }
 
     // Gerenciador interativo de planos de pagamento
@@ -1230,36 +1271,45 @@
         }
     }
 
-    function addItemToCart(event, id, prestacoes = 1) {
+    function addItemToCart(event, id, prestacoes = 1, licenseType = null, customPrice = null) {
         event.stopPropagation();
         let cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
         const productSelected = produtos.find(p => p.id === id);
 
         if (!productSelected) return;
 
-        // Identificador único para evitar conflito se o mesmo item for adicionado com planos diferentes
-        const cartItemId = prestacoes === 2 ? `${id}_p2` : `${id}`;
-        const itemIndex = cart.findIndex(item => item.id === cartItemId || item.id === id);
+        let cartItemId = `${id}`;
+        let precoFinal = customPrice !== null ? customPrice : productSelected.precoAtual;
+        let tituloFinal = productSelected.titulo;
+        
+        if (prestacoes === 2) {
+            cartItemId = `${id}_p2`;
+            precoFinal = (productSelected.precoAtual / 2) + 500;
+            tituloFinal += " (1ª Prestação)";
+        } else if (licenseType) {
+            cartItemId = `${id}_${licenseType}`;
+            const licenseNames = {
+                'basic': 'Basic Lease (MP3)',
+                'standard': 'Standard Lease (MP3 + WAV)',
+                'premium': 'Premium Lease (MP3 + WAV + Stems)',
+                'unlimited': 'Unlimited Lease (Uso comercial alargado)',
+                'exclusive': 'Exclusive License (Exclusividade)'
+            };
+            tituloFinal += ` [${licenseNames[licenseType] || licenseType}]`;
+        }
+
+        const itemIndex = cart.findIndex(item => item.id === cartItemId);
         
         if (itemIndex > -1) {
-            showNotification("Este item já se encontra no carrinho!", "fa-circle-exclamation");
+            showNotification("Este item com esta licença já se encontra no carrinho!", "fa-circle-exclamation");
             return;
         } else {
-            let precoFinal = productSelected.precoAtual;
-            let tituloFinal = productSelected.titulo;
-            
-            if (prestacoes === 2) {
-                precoFinal = (productSelected.precoAtual / 2) + 500;
-                tituloFinal += " (1ª Prestação)";
-            }
-
             cart.push({
-                id: productSelected.id,
+                id: cartItemId,
                 titulo: tituloFinal,
                 imagem: productSelected.imagem,
                 preco: precoFinal,
-                quantity: 1,
-                prestacoes: prestacoes
+                quantity: 1
             });
         }
 
@@ -1281,7 +1331,6 @@
             }, 1500);
         }
     }
-
 
     function updateCartBadge() {
         let cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
