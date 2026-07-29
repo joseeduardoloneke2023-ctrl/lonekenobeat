@@ -433,7 +433,6 @@
                         <input type="email" id="customerEmail" class="form-control" placeholder="Ex: produtor@gmail.com" required>
                     </div>
 
-                    <!-- CAMPO DE SENHA INCLUÍDO DIRETAMENTE NO CHECKOUT -->
                     <div class="form-group">
                         <label for="customerPassword">Senha de Acesso à Plataforma</label>
                         <input type="password" id="customerPassword" class="form-control" placeholder="Crie a sua senha de acesso (mín. 6 caracteres)" required minlength="6">
@@ -491,8 +490,6 @@
                         </div>
                     </div>
 
-                    <!-- MÉTODOS DE PAGAMENTO DINÂMICOS -->
-
                     <!-- MULTICAIXA EXPRESS -->
                     <div class="dynamic-payment-panel" id="panel-multicaixa" style="display: block;">
                         <div style="text-align: center; margin-bottom: 1.25rem;">
@@ -511,7 +508,6 @@
                             <i class="fa-solid fa-mobile-screen-button"></i> Pagar via Multicaixa Express
                         </button>
                         
-                        <!-- BOTÃO "JÁ PAGUEI" ADICIONADO POR BAIXO -->
                         <button type="button" class="btn-checkout" id="btnMcxAlreadyPaid" onclick="handleMcxAlreadyPaidClick()" style="background: var(--success); margin-top: 0.85rem; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);">
                             <i class="fa-solid fa-circle-check"></i> Já Paguei (Verificar Pagamento)
                         </button>
@@ -788,7 +784,6 @@
     const LONEKE_WHATSAPP_NUM = "244924034159";
     const LOGIN_REDIRECT_URL = "https://app.lonekenobeat.com/plataforma/login.html";
 
-    // Configurações da API Paygoo (Infraestrutura Supabase)
     const API_BASE_URL = "https://rouxavcvorjiwhpjhsye.supabase.co/functions/v1/api-v1";
     const API_KEY = "pgoo_5LlAiNj7EWeDwrf1jKtMsdBPoGKOMiMD3HImw17q"; 
 
@@ -813,18 +808,18 @@
     let stripeInstance = null;
     let stripeCardElement = null;
 
-    // Fetch protegido contra falhas de rede de segundo plano no telemóvel
+    // Requisição segura protegida contra minimização no telemóvel
     async function safeFetch(url, options = {}) {
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), options.timeout || 8000);
+            const timeoutId = setTimeout(() => controller.abort(), options.timeout || 12000);
             
             const response = await fetch(url, { ...options, signal: controller.signal });
             clearTimeout(timeoutId);
             return response;
         } catch (err) {
-            console.warn("Rede instável ou minimizada:", err.message);
-            return null; // Evita quebrar o script com "Load failed"
+            console.warn("Conexão instável ou aba minimizada:", err.message);
+            return null;
         }
     }
 
@@ -856,16 +851,16 @@
             }
         });
 
-        // RECONEXÃO AUTOMÁTICA SE A PÁGINA RECARREGAR
+        // RECONEXÃO AUTOMÁTICA SE RECARREGAR A PÁGINA
         checkSavedPendingPayment();
     });
 
-    // SISTEMA DE DETECÇÃO DE VISIBILIDADE (TELEMÓVEL RE-ABERTO)
+    // SISTEMA DE DETECÇÃO AUTOMÁTICA DE RETORNO DO APLICATIVO DO BANCO (TELEMOVEL MUDOU DE ABA)
     document.addEventListener("visibilitychange", async () => {
         if (document.visibilityState === "visible") {
             const savedPaymentId = currentActivePaymentId || localStorage.getItem("pending_mcx_payment_id");
             if (savedPaymentId) {
-                console.log("Telemóvel voltou à aba. Verificando pagamento imediatamente...");
+                console.log("Aba ativa novamente. Verificando pagamento imediatamente...");
                 await verifyMcxStatus(savedPaymentId);
             }
         }
@@ -875,7 +870,7 @@
         const savedPaymentId = localStorage.getItem("pending_mcx_payment_id");
         if (savedPaymentId) {
             currentActivePaymentId = savedPaymentId;
-            showToast("Verificando se o pagamento Multicaixa Express foi concluído...", "info");
+            showToast("Verificando se o pagamento foi concluído...", "info");
             
             const overlay = document.getElementById("paymentOverlay");
             const modal = document.getElementById("paymentModalContent");
@@ -885,10 +880,10 @@
                 <i class="fa-solid fa-mobile-screen-button" style="font-size: 3.5rem; color: var(--primary);"></i>
                 <h3 style="margin-top: 1rem; font-family: var(--font-heading);">Verificando Pagamento...</h3>
                 <p style="margin-top:0.8rem; font-size:0.9rem; color:var(--text-secondary);">
-                    Confirmando transação no Multicaixa Express...
+                    Confirmando transação pendente no Multicaixa Express...
                 </p>
                 <div class="spinner" style="margin: 1.2rem auto;"></div>
-                <button type="button" class="btn-checkout" onclick="checkPaymentStatusNow('${savedPaymentId}')" style="background: var(--success); margin-top: 0;">
+                <button type="button" class="btn-checkout" id="btnManualCheckNow" onclick="checkPaymentStatusNow('${savedPaymentId}')" style="background: var(--success); margin-top: 0;">
                     <i class="fa-solid fa-arrows-rotate"></i> Já Paguei (Verificar Agora)
                 </button>
             `;
@@ -1077,7 +1072,7 @@
                 btnApply.innerHTML = `<i class="fa-solid fa-ban"></i> Desconto Indisponível (Pagamento Automático)`;
                 
                 textMsg.style.color = "var(--text-secondary)";
-                textMsg.innerHTML = `⚠️ O desconto só é possível nos pagamentos manuais (como transferência bancária, Unitel Money e outras formas de pagamento manual do checkout).`;
+                textMsg.innerHTML = `⚠️ O desconto só é possível nos pagamentos manuais (como transferência bancária, Unitel Money e outras formas de pagamento manual).`;
             }
         } else {
             discountContainer.style.display = "none";
@@ -1105,7 +1100,6 @@
                 if (activePanel) activePanel.style.display = "block";
                 
                 loadCartData();
-                
                 showToast(`Método alterado para: ${card.querySelector('span').innerText}`, "info");
             });
         });
@@ -1159,7 +1153,7 @@
         btn.style.opacity = "1";
         btn.style.cursor = "not-allowed";
 
-        showToast("Desconto de 12% validado e applied com sucesso ao seu pedido!", "success");
+        showToast("Desconto de 12% validado e aplicado com sucesso!", "success");
         loadCartData();
     }
 
@@ -1245,7 +1239,7 @@
         const cleanNumber = rawText.replace(/[^\d.,]/g, '').trim();
 
         navigator.clipboard.writeText(cleanNumber).then(() => {
-            showToast(`Valor copiado com cêntimos: ${cleanNumber}`, "success");
+            showToast(`Valor copiado: ${cleanNumber}`, "success");
         }).catch(err => console.error(err));
     }
 
@@ -1261,7 +1255,7 @@
         window.open(targetUrl, '_blank');
     }
 
-    // REGISTO DE UTILIZADOR E SENHA NO FIREBASE AUTH
+    // REGISTO DE UTILIZADOR NO FIREBASE AUTH
     async function registerOrUpdateFirebaseUser(email, password, name, fullWhatsApp) {
         const authObj = window.firebaseAuth || window.auth;
         const createUserFn = window.createUserWithEmailAndPassword || window.firebaseCreateUser;
@@ -1294,7 +1288,7 @@
                                 createdUserId = signRes.user.uid;
                             }
                         } catch (signInErr) {
-                            console.warn("Conta existente no Firebase. Tentativa de login direto:", signInErr.message);
+                            console.warn("Conta existente no Firebase. Login direto:", signInErr.message);
                         }
                     }
                 } else {
@@ -1311,7 +1305,7 @@
                     await authObj.currentUser.updatePassword(password);
                 }
             } catch (upErr) {
-                console.warn("Aviso ao atualizar senha no currentUser:", upErr.message);
+                console.warn("Aviso ao atualizar senha:", upErr.message);
             }
         }
 
@@ -1334,12 +1328,12 @@
         return { createdUserId: docId, userExisted: userExisted };
     }
 
-    // AÇÃO AO CLICAR NO BOTÃO "JÁ PAGUEI" DIRETO NO PAINEL
+    // AÇÃO CORRIGIDA PARA O BOTÃO "JÁ PAGUEI"
     async function handleMcxAlreadyPaidClick() {
         const savedPaymentId = currentActivePaymentId || localStorage.getItem("pending_mcx_payment_id");
 
         if (!savedPaymentId) {
-            // Se ainda não foi gerada a cobrança, executa o pedido primeiro
+            // Se ainda não existia cobrança enviada, cria uma nova
             await processMulticaixaExpressPayment();
             return;
         }
@@ -1365,7 +1359,7 @@
         await checkPaymentStatusNow(savedPaymentId);
     }
 
-    // INTEGRAÇÃO PAYGOO: MULTICAIXA EXPRESS AUTOMÁTICO
+    // MULTICAIXA EXPRESS AUTOMÁTICO
     async function processMulticaixaExpressPayment() {
         const name = document.getElementById("customerName").value.trim();
         const email = document.getElementById("customerEmail").value.trim();
@@ -1373,7 +1367,7 @@
         let phone = document.getElementById("mcxPhoneInput").value.trim() || document.getElementById("customerWhatsApp").value.trim();
 
         if(!name || !email || !pass || !phone) {
-            showToast("Por favor, preencha o Nome, E-mail, Senha de Acesso e Telemóvel.", "info");
+            showToast("Por favor, preencha Nome, E-mail, Senha e Telemóvel.", "info");
             return;
         }
 
@@ -1426,7 +1420,7 @@
                     customer_email: email,
                     customer_phone: phone
                 }),
-                timeout: 10000
+                timeout: 15000
             });
 
             if (!response) {
@@ -1436,12 +1430,12 @@
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || data.error || "Erro ao gerar o pedido de pagamento no Paygoo.");
+                throw new Error(data.message || data.error || "Erro ao gerar a cobrança no Multicaixa Express.");
             }
 
             const paymentId = data.payment_id || data.id;
             
-            // Salva o estado no telemóvel para não perder a sessão
+            // Salva id do pagamento no telemóvel
             currentActivePaymentId = paymentId;
             localStorage.setItem("pending_mcx_payment_id", paymentId);
 
@@ -1466,8 +1460,8 @@
             startMcxStatusPolling(paymentId);
 
         } catch (err) {
-            console.error("Erro no Paygoo Express:", err);
-            showToast(err.message || "Erro de conexão com a API do Paygoo.", "info");
+            console.error("Erro Express:", err);
+            showToast(err.message || "Erro de conexão ao solicitar pagamento.", "info");
             btnMcx.disabled = false;
             btnMcx.innerHTML = `<i class="fa-solid fa-mobile-screen-button"></i> Pagar via Multicaixa Express`;
         }
@@ -1486,21 +1480,20 @@
             showToast("A verificar confirmação do pagamento...", "info");
             setTimeout(async () => {
                 const secondCheck = await verifyMcxStatus(paymentId);
-                if (!secondCheck) {
-                    if (btnManual) {
-                        btnManual.disabled = false;
-                        btnManual.innerHTML = `<i class="fa-solid fa-arrows-rotate"></i> Já Paguei (Verificar Agora)`;
-                    }
+                if (!secondCheck && btnManual) {
+                    btnManual.disabled = false;
+                    btnManual.innerHTML = `<i class="fa-solid fa-arrows-rotate"></i> Já Paguei (Verificar Agora)`;
                 }
             }, 1200);
         }
     }
 
+    // CONSULTA APENAS O ESTADO DO PAGAMENTO (NÃO RE-ENVIA COBRANÇA)
     async function verifyMcxStatus(paymentId) {
         try {
             const res = await safeFetch(`${API_BASE_URL}/payment-status/${paymentId}`, {
                 headers: { "x-api-key": API_KEY },
-                timeout: 6000
+                timeout: 8000
             });
             
             if (!res) return false;
@@ -1543,7 +1536,7 @@
                 return true;
             }
         } catch (err) {
-            console.warn("Aviso na verificação de status:", err);
+            console.warn("Erro ao consultar status:", err);
         }
         return false;
     }
@@ -1552,7 +1545,7 @@
         if (pollingInterval) clearInterval(pollingInterval);
 
         let attempts = 0;
-        const maxAttempts = 50; 
+        const maxAttempts = 60; 
 
         pollingInterval = setInterval(async () => {
             attempts++;
@@ -1587,7 +1580,7 @@
         }
     }
 
-    // INTEGRAÇÃO STRIPE & PAYPAL
+    // STRIPE & PAYPAL
     function initStripeElements() {
         if (window.Stripe) {
             stripeInstance = Stripe('pk_test_51P_REPLACE_WITH_YOUR_STRIPE_PUBLISHABLE_KEY');
@@ -1627,7 +1620,7 @@
 
                     if(!name || !email || !pass || !whatsNum) {
                         showToast("Por favor, preencha Nome, E-mail, Senha e WhatsApp antes do PayPal.", "info");
-                        throw new Error("Dados de Faturação incompletos");
+                        throw new Error("Dados incompletos");
                     }
 
                     if(pass.length < 6) {
@@ -1718,7 +1711,7 @@
         }
     }
 
-    // LIBERAÇÃO AUTOMÁTICA DE PRODUTOS E REGISTRO NO FIREBASE / E-MAIL
+    // LIBERAÇÃO AUTOMÁTICA
     async function processAutomatedSuccess(methodName, transactionId) {
         localStorage.removeItem("pending_mcx_payment_id");
         currentActivePaymentId = null;
@@ -1795,7 +1788,7 @@
                 });
             }
         } catch (fbErr) {
-            console.error("Erro ao gravar produtos no Firebase:", fbErr);
+            console.error("Erro Firebase:", fbErr);
         }
 
         try {
@@ -1819,7 +1812,7 @@
                 method: "POST",
                 headers: { 'Accept': 'application/json' },
                 body: formData,
-                timeout: 6000
+                timeout: 8000
             });
         } catch (err) {
             console.warn("FormSubmit aviso:", err);
@@ -1840,7 +1833,7 @@
         }, 2200);
     }
 
-    // FLUXO MANUAL (KWIK, TRANSF AO, UNITEL MONEY, WISE)
+    // FLUXO MANUAL
     async function processCheckoutFlow() {
         const name = document.getElementById("customerName").value.trim();
         const email = document.getElementById("customerEmail").value.trim();
@@ -1918,7 +1911,7 @@
             const uploadResponse = await safeFetch("https://tmpfiles.org/api/v1/upload", {
                 method: "POST",
                 body: uploadFormData,
-                timeout: 5000
+                timeout: 8000
             });
 
             if (uploadResponse && uploadResponse.ok) {
@@ -1999,7 +1992,7 @@
                 method: "POST",
                 headers: { 'Accept': 'application/json' },
                 body: formData,
-                timeout: 6000
+                timeout: 8000
             });
         } catch (err) {
             console.warn("FormSubmit erro:", err.message);
