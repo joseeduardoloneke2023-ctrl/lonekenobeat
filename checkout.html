@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finalizar Compra | Loneke no Beat Premium Infoproducts</title>
-    
+    <script type="module" src="firebase-init.js"></script>
+    <!-- Stripe SDK -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <!-- PayPal SDK (Configurado em EUR) -->
+    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -56,7 +61,6 @@
 
         .container { width: 100%; max-width: 1240px; margin: 0 auto; padding: 0 1.5rem; }
         
-        /* Loading Screen */
         .loading-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #050507; z-index: 15000; display: flex; flex-direction: column;
@@ -65,7 +69,6 @@
         }
         .loading-screen.hidden { opacity: 0; visibility: hidden; }
 
-        /* Header */
         header {
             position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
             padding: 1.25rem 0; background-color: rgba(7, 7, 9, 0.8);
@@ -82,7 +85,6 @@
         }
         .back-link:hover { color: var(--white); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); }
 
-        /* Main Layout */
         .checkout-wrapper {
             padding-top: 130px;
             padding-bottom: 5rem;
@@ -115,7 +117,6 @@
         }
         .checkout-title i { color: var(--primary); font-size: 1.2rem; }
 
-        /* Form Controls */
         .form-group { margin-bottom: 1.5rem; }
         .form-group label { display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
         .form-control {
@@ -129,7 +130,6 @@
         .phone-container { display: flex; gap: 0.75rem; }
         .select-indicativo { max-width: 140px; cursor: pointer; }
 
-        /* Payment Methods */
         .payment-methods-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -162,6 +162,11 @@
         }
         .method-card span { font-size: 0.8rem; font-weight: 600; line-height: 1.2; color: var(--text-secondary); transition: var(--transition); }
         
+        .method-badge-auto {
+            position: absolute; top: 6px; right: 6px; background: #10B981; color: #000;
+            font-size: 0.62rem; font-weight: 800; padding: 2px 5px; border-radius: 4px; text-transform: uppercase;
+        }
+
         .method-card:hover {
             border-color: var(--card-border-hover);
             transform: translateY(-3px);
@@ -181,7 +186,6 @@
         .method-card.active .method-icon-img { filter: grayscale(0%) opacity(1); transform: scale(1.05); }
         .method-card.active span { color: var(--white); font-weight: 700; }
 
-        /* Dynamic Panels */
         .dynamic-payment-panel {
             background: rgba(0, 0, 0, 0.35);
             border: 1px dashed rgba(255, 255, 255, 0.15);
@@ -206,7 +210,6 @@
         }
         .btn-copy-action:hover { background: var(--info); border-color: var(--info); transform: translateY(-1px); }
 
-        /* Dropzone */
         .dropzone-wrapper { margin-top: 0.5rem; }
         .dropzone-area {
             border: 2px dashed rgba(255, 255, 255, 0.15); background: rgba(10, 10, 12, 0.5);
@@ -230,7 +233,6 @@
         .btn-clear-file { background: none; border: none; color: #EF4444; cursor: pointer; font-size: 1.2rem; transition: var(--transition); }
         .btn-clear-file:hover { transform: scale(1.2); }
 
-        /* Order Summary Box */
         .order-summary {
             background: var(--card-bg);
             border-radius: var(--radius-lg); padding: 2.25rem; border: 1px solid var(--card-border);
@@ -255,7 +257,6 @@
         }
         .btn-remove-item:hover { background: #EF4444; color: var(--white); transform: scale(1.08); }
 
-        /* Order Bumps */
         .order-bump-container {
             background: linear-gradient(135deg, rgba(229, 9, 20, 0.08) 0%, rgba(0, 0, 0, 0.3) 100%);
             border: 1px dashed var(--primary);
@@ -297,7 +298,6 @@
         .bump-price { font-size: 0.82rem; font-weight: 700; color: var(--success); display: block; }
         .bump-checkbox { width: 20px; height: 20px; accent-color: var(--primary); cursor: pointer; border-radius: 4px; }
 
-        /* Discount Banner */
         .discount-container-panel {
             background: rgba(245, 158, 11, 0.08); border: 1px dashed var(--warning);
             border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem; text-align: center;
@@ -311,7 +311,6 @@
         .btn-apply-discount:hover { background: #d98206; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(245, 158, 11, 0.3); }
         .btn-apply-discount.applied { background: var(--success); color: var(--white); cursor: not-allowed; transform: none; box-shadow: none; }
 
-        /* Totals */
         .total-container-box {
             margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--card-border);
         }
@@ -324,7 +323,6 @@
         .total-row div { display: flex; align-items: center; gap: 0.5rem; }
         .total-row strong { font-size: 1.45rem; color: var(--white); font-weight: 700; }
 
-        /* Buttons */
         .btn-checkout {
             width: 100%; background: var(--primary); color: var(--white);
             padding: 1.15rem; border-radius: var(--radius-md); font-weight: 700; font-size: 1rem;
@@ -344,7 +342,6 @@
         }
         .btn-whatsapp-negotiate:hover { background: #25D366; color: var(--white); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3); }
 
-        /* Toast Notifications */
         .toast-container { position: fixed; top: 30px; right: 30px; z-index: 10005; display: flex; flex-direction: column; gap: 0.8rem; }
         .toast-card {
             background: rgba(20, 20, 26, 0.95); color: var(--white); padding: 1.1rem 1.5rem;
@@ -363,7 +360,6 @@
         @keyframes slideIn { to { transform: translateX(0); } }
         @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
 
-        /* Modal Overlay */
         .payment-screen-overlay {
             background: rgba(5, 5, 7, 0.85); backdrop-filter: blur(15px);
             position: fixed; top:0; left:0; width:100%; height:100%;
@@ -371,13 +367,21 @@
         }
         .payment-modal {
             background: var(--card-bg); border: 1px solid var(--card-border);
-            padding: 3rem 2.5rem; border-radius: var(--radius-lg); max-width: 480px; width: 100%;
-            text-align: center; box-shadow: 0 30px 70px rgba(0,0,0,0.7);
+            padding: 2.5rem 2rem; border-radius: var(--radius-lg); max-width: 500px; width: 100%;
+            text-align: center; box-shadow: 0 30px 70px rgba(0,0,0,0.7); max-height: 90vh; overflow-y: auto;
         }
         .spinner {
             width: 48px; height: 48px; border: 3px solid rgba(255,255,255,0.1);
             border-top-color: var(--primary); border-radius: 50%;
             margin: 1.75rem auto; animation: spin 0.9s linear infinite;
+        }
+
+        .stripe-input-box {
+            background: rgba(10, 10, 12, 0.9);
+            border: 1px solid var(--card-border);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1.25rem;
         }
 
         @media(max-width: 992px) {
@@ -429,8 +433,14 @@
                         <input type="email" id="customerEmail" class="form-control" placeholder="Ex: produtor@gmail.com" required>
                     </div>
 
+                    <!-- CAMPO DE SENHA INCLUÍDO DIRETAMENTE NO CHECKOUT -->
                     <div class="form-group">
-                        <label for="customerWhatsApp">WhatsApp para Contacto / Suporte</label>
+                        <label for="customerPassword">Senha de Acesso à Plataforma</label>
+                        <input type="password" id="customerPassword" class="form-control" placeholder="Crie a sua senha de acesso (mín. 6 caracteres)" required minlength="6">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customerWhatsApp">WhatsApp / Número Telefone</label>
                         <div class="phone-container">
                             <select id="countryCode" class="form-control select-indicativo">
                                 <option value="+244" selected>🇦🇴 +244</option>
@@ -441,7 +451,7 @@
                                 <option value="+245">🇬𝑾 +245</option>
                                 <option value="+239">🇸𝑻 +239</option>
                             </select>
-                            <input type="tel" id="customerWhatsApp" class="form-control" placeholder="Ex: 924034159" required>
+                            <input type="tel" id="customerWhatsApp" class="form-control" placeholder="Ex: 923456789" required>
                         </div>
                     </div>
 
@@ -449,8 +459,19 @@
                     
                     <div class="payment-methods-grid">
                         <div class="method-card active" data-method="multicaixa" id="methodExpressCard">
+                            <span class="method-badge-auto">AUTO</span>
                             <img src="img/express.png" alt="Multicaixa Express" class="method-icon-img">
                             <span>Multicaixa Express</span>
+                        </div>
+                        <div class="method-card" data-method="stripe" id="methodStripeCard">
+                            <span class="method-badge-auto">AUTO</span>
+                            <i class="fa-brands fa-stripe" style="color: #635bff; font-size: 2.2rem;"></i>
+                            <span>Stripe (Cartão)</span>
+                        </div>
+                        <div class="method-card" data-method="paypal" id="methodPaypalCard">
+                            <span class="method-badge-auto">AUTO</span>
+                            <img src="https://www.edukasoftware.com/wp-content/uploads/2025/11/paypal_2014_logo_detail.png" alt="PayPal" class="method-icon-img">
+                            <span>PayPal</span>
                         </div>
                         <div class="method-card" data-method="kwik" id="methodKwikCard">
                             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRU9GrScbzkKgIVLC4eHJZGjR7sXpWUFP4dskacz0jaj9QbTFpdKTL1Zw&s=10" alt="KWIK" class="method-icon-img">
@@ -464,10 +485,6 @@
                             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOZFCtzTX_-6zqlools3X0r9ZFyGkUJFqgh0ZFpOOvnzhmChDzY7jZPx6E&s=10" alt="Unitel Money" class="method-icon-img">
                             <span>Unitel Money</span>
                         </div>
-                        <div class="method-card" data-method="paypal" id="methodPaypalCard">
-                            <img src="https://www.edukasoftware.com/wp-content/uploads/2025/11/paypal_2014_logo_detail.png" alt="PayPal" class="method-icon-img">
-                            <span>PayPal</span>
-                        </div>
                         <div class="method-card" data-method="wise" id="methodWiseCard">
                             <img src="https://framerusercontent.com/images/yZuru7tpCe3J01en5KxrKcRb1VA.png?width=1920&height=1080" alt="Wise" class="method-icon-img">
                             <span>Wise</span>
@@ -475,36 +492,61 @@
                     </div>
 
                     <!-- MÉTODOS DE PAGAMENTO DINÂMICOS -->
-                    <div class="dynamic-payment-panel" id="panel-multicaixa" style="display: block;">
-                        <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Número de Telefone Express (Clique à direita para copiar):</label>
-                        <div class="copy-row">
-                            <code id="txtExpressNum">924034159</code>
-                            <button type="button" class="btn-copy-action" onclick="copySimpleText('txtExpressNum')">
-                                <i class="fa-solid fa-copy"></i> Copiar
-                            </button>
-                        </div>
 
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label>Carregar Comprovativo de Pagamento Express (PDF, JPG, PNG)</label>
-                            <div class="dropzone-wrapper">
-                                <div class="dropzone-area" id="dropzoneExpress" onclick="document.getElementById('fileReceiptExpress').click()">
-                                    <i class="fa-solid fa-cloud-arrow-up"></i>
-                                    <p class="dropzone-text">Arraste o ficheiro aqui ou clique para fazer upload</p>
-                                    <span class="dropzone-hint">Formatos aceites: PDF, JPEG, PNG (Máx 10MB)</span>
-                                    <input type="file" id="fileReceiptExpress" style="display: none;" accept="application/pdf, image/jpeg, image/jpg, image/png">
-                                </div>
-                                <div class="dropzone-preview" id="previewExpress" style="display: none;">
-                                    <div class="dropzone-preview-info">
-                                        <i class="fa-solid fa-file-circle-check"></i>
-                                        <span class="dropzone-filename" id="filenameExpress">ficheiro.pdf</span>
-                                    </div>
-                                    <button type="button" class="btn-clear-file" onclick="clearFileSelection('Express', event)">&times;</button>
-                                </div>
-                            </div>
+                    <!-- MULTICAIXA EXPRESS -->
+                    <div class="dynamic-payment-panel" id="panel-multicaixa" style="display: block;">
+                        <div style="text-align: center; margin-bottom: 1.25rem;">
+                            <span style="background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700;">
+                                <i class="fa-solid fa-bolt"></i> Cobrança Direta no Telemóvel & Liberação Automática
+                            </span>
                         </div>
+                        <p style="font-size: 0.88rem; color: var(--text-secondary); text-align: center; margin-bottom: 1.25rem;">
+                            Ao clicar em pagar, será enviado um pedido de confirmação para o aplicativo <strong>Multicaixa Express</strong> no número abaixo.
+                        </p>
+                        <div class="form-group">
+                            <label for="mcxPhoneInput">Número de Telefone Express (AO):</label>
+                            <input type="tel" id="mcxPhoneInput" class="form-control" placeholder="Ex: 923456789">
+                        </div>
+                        <button type="button" class="btn-checkout" id="btnMcxPay" onclick="processMulticaixaExpressPayment()" style="background: #E50914; margin-top: 0;">
+                            <i class="fa-solid fa-mobile-screen-button"></i> Pagar via Multicaixa Express
+                        </button>
                     </div>
 
-                    <!-- PAINEL KWIK -->
+                    <!-- STRIPE -->
+                    <div class="dynamic-payment-panel" id="panel-stripe">
+                        <div style="text-align: center; margin-bottom: 1.25rem;">
+                            <span style="background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700;">
+                                <i class="fa-solid fa-bolt"></i> Processamento Instantâneo & Liberação Automática Sem Espera
+                            </span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Dados do Cartão (Visa / Mastercard)</label>
+                            <div id="stripe-card-element" class="stripe-input-box"></div>
+                            <div id="stripe-card-errors" role="alert" style="color: #EF4444; font-size: 0.85rem; margin-top: -0.5rem; margin-bottom: 1rem;"></div>
+                        </div>
+
+                        <button type="button" class="btn-checkout" id="btnStripePay" onclick="processStripePayment()" style="background: #635bff; margin-top: 0;">
+                            <i class="fa-solid fa-lock"></i> Pagar Agora com Stripe
+                        </button>
+                    </div>
+
+                    <!-- PAYPAL -->
+                    <div class="dynamic-payment-panel" id="panel-paypal">
+                        <div style="text-align: center; margin-bottom: 1.25rem;">
+                            <span style="background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700;">
+                                <i class="fa-solid fa-bolt"></i> Processamento Instantâneo & Liberação Automática
+                            </span>
+                        </div>
+
+                        <p style="font-size: 0.88rem; color: var(--text-secondary); text-align: center; margin-bottom: 1.25rem;">
+                            Clique no botão abaixo para pagar com PayPal. Os produtos são liberados automaticamente.
+                        </p>
+
+                        <div id="paypal-button-container" style="max-width: 100%; margin: 0 auto;"></div>
+                    </div>
+
+                    <!-- KWIK -->
                     <div class="dynamic-payment-panel" id="panel-kwik">
                         <div class="form-group" style="margin-bottom: 1rem;">
                             <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Nome do Titular da Conta KWIK:</label>
@@ -539,6 +581,7 @@
                         </div>
                     </div>
 
+                    <!-- TRANSFERENCIA BANCARIA AO -->
                     <div class="dynamic-payment-panel" id="panel-transf_ao">
                         <div class="form-group" style="margin-bottom: 1rem;">
                             <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Titular da Conta:</label>
@@ -586,6 +629,7 @@
                         </div>
                     </div>
 
+                    <!-- UNITEL MONEY -->
                     <div class="dynamic-payment-panel" id="panel-unitel_money">
                         <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Entidade (Clique à direita para copiar):</label>
                         <div class="copy-row">
@@ -623,48 +667,7 @@
                         </div>
                     </div>
 
-                    <!-- PAINEL PAYPAL -->
-                    <div class="dynamic-payment-panel" id="panel-paypal">
-                        <div class="form-group" style="margin-bottom: 1rem;">
-                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">E-mail do PayPal (Clique à direita para copiar):</label>
-                            <div class="copy-row">
-                                <code id="txtPaypalEmail">joseeduardoloneke2023@gmail.com</code>
-                                <button type="button" class="btn-copy-action" onclick="copySimpleText('txtPaypalEmail')">
-                                    <i class="fa-solid fa-copy"></i> Copiar
-                                </button>
-                            </div>
-                        </div>
-
-                        <div style="margin-bottom: 1.5rem; text-align: center;">
-                            <a id="btnPaypalDirect" href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=joseeduardoloneke2023@gmail.com&currency_code=EUR" target="_blank" class="btn-checkout" style="background: #0070ba; color: #fff; padding: 0.9rem; font-size: 0.95rem; margin-top: 0; box-shadow: 0 4px 15px rgba(0, 112, 186, 0.3);">
-                                <i class="fa-brands fa-paypal"></i> Abrir e Pagar via PayPal
-                            </a>
-                            <span style="font-size: 0.78rem; color: var(--text-secondary); display: block; margin-top: 0.5rem;">
-                                Você pode pagar diretamente pela sua conta PayPal e depois anexar o comprovativo abaixo.
-                            </span>
-                        </div>
-
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label>Carregar Comprovativo de Pagamento PayPal (PDF, JPG, PNG)</label>
-                            <div class="dropzone-wrapper">
-                                <div class="dropzone-area" id="dropzonePaypal" onclick="document.getElementById('fileReceiptPaypal').click()">
-                                    <i class="fa-solid fa-cloud-arrow-up"></i>
-                                    <p class="dropzone-text">Arraste o ficheiro aqui ou clique para fazer upload</p>
-                                    <span class="dropzone-hint">Formatos aceites: PDF, JPEG, PNG (Máx 10MB)</span>
-                                    <input type="file" id="fileReceiptPaypal" style="display: none;" accept="application/pdf, image/jpeg, image/jpg, image/png">
-                                </div>
-                                <div class="dropzone-preview" id="previewPaypal" style="display: none;">
-                                    <div class="dropzone-preview-info">
-                                        <i class="fa-solid fa-file-circle-check"></i>
-                                        <span class="dropzone-filename" id="filenamePaypal">ficheiro.pdf</span>
-                                    </div>
-                                    <button type="button" class="btn-clear-file" onclick="clearFileSelection('Paypal', event)">&times;</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- PAINEL WISE -->
+                    <!-- WISE -->
                     <div class="dynamic-payment-panel" id="panel-wise">
                         <div class="form-group" style="margin-bottom: 1rem;">
                             <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Nome do Titular da Conta Wise:</label>
@@ -778,6 +781,11 @@
 <script>
     const FORMSUBMIT_URL = "https://formsubmit.co/ajax/suporte@lonekenobeat.com"; 
     const LONEKE_WHATSAPP_NUM = "244924034159";
+    const LOGIN_REDIRECT_URL = "https://app.lonekenobeat.com/plataforma/login.html";
+
+    // Configurações da API Paygoo (Infraestrutura Supabase)
+    const API_BASE_URL = "https://rouxavcvorjiwhpjhsye.supabase.co/functions/v1/api-v1";
+    const API_KEY = "pgoo_5LlAiNj7EWeDwrf1jKtMsdBPoGKOMiMD3HImw17q"; 
 
     const BANCOS_AO = {
         BAI: "AO06004000006562149410192",
@@ -794,6 +802,18 @@
     let discountApplied = false;
     let originalTotalKz = 0;
 
+    let pollingInterval = null;
+
+    let stripeInstance = null;
+    let stripeCardElement = null;
+
+    function fetchWithTimeout(resource, options = {}, timeout = 6000) {
+        return Promise.race([
+            fetch(resource, options),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout de Rede')), timeout))
+        ]);
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
             const loadingScreen = document.getElementById("loadingScreen");
@@ -807,9 +827,20 @@
         initDropzoneHandlers();
         renderOrderBumps();
         
+        initStripeElements();
+        initPayPalButtons();
+
         document.getElementById("btnApplyDiscount25").addEventListener("click", triggerDiscountCalculation);
-        document.getElementById("btnPlaceOrder").addEventListener("click", processCheckoutFlow);
+        document.getElementById("btnPlaceOrder").addEventListener("click", handleMainCheckoutClick);
         document.getElementById("btnWhatsappNegotiate").addEventListener("click", openWhatsAppNegotiation);
+
+        const whatsInput = document.getElementById("customerWhatsApp");
+        const mcxInput = document.getElementById("mcxPhoneInput");
+        whatsInput.addEventListener("input", () => {
+            if (mcxInput && !mcxInput.value) {
+                mcxInput.value = whatsInput.value;
+            }
+        });
     });
     
     function showToast(message, type = "info") {
@@ -843,6 +874,7 @@
             if (!planExists) {
                 cart.push({
                     id: `plan-${encodeURIComponent(rawPlanName)}`,
+                    product_id: urlParams.get('product_id') || `plan-${encodeURIComponent(rawPlanName)}`,
                     titulo: rawPlanName,
                     preco: rawPlanPrice,
                     quantity: 1,
@@ -865,7 +897,7 @@
         container.style.display = "block";
         
         listContainer.innerHTML = orderBumpProdutos.map(item => {
-            const isAlreadyInCart = cart.some(cartItem => cartItem.id === item.id);
+            const isAlreadyInCart = cart.some(cartItem => String(cartItem.id) === String(item.id));
             
             return `
                 <div class="bump-item">
@@ -883,14 +915,15 @@
 
     function toggleOrderBump(id) {
         const checkbox = document.getElementById(`chk-${id}`);
-        const bumpItem = orderBumpProdutos.find(item => item.id === id);
+        const bumpItem = orderBumpProdutos.find(item => String(item.id) === String(id));
         
         if (!bumpItem) return;
         
         if (checkbox.checked) {
-            if (!cart.some(item => item.id === id)) {
+            if (!cart.some(item => String(item.id) === String(id))) {
                 cart.push({
                     id: bumpItem.id,
+                    product_id: bumpItem.product_id || bumpItem.id,
                     titulo: bumpItem.titulo,
                     preco: bumpItem.preco,
                     quantity: 1,
@@ -900,7 +933,7 @@
                 showToast(`"${bumpItem.titulo}" adicionado ao seu pedido!`, "success");
             }
         } else {
-            const index = cart.findIndex(item => item.id === id);
+            const index = cart.findIndex(item => String(item.id) === String(id));
             if (index !== -1) {
                 cart.splice(index, 1);
                 showToast(`"${bumpItem.titulo}" removido do seu pedido.`, "info");
@@ -922,7 +955,7 @@
             orderBumpProdutos.forEach(bump => {
                 const cb = document.getElementById(`chk-${bump.id}`);
                 if(cb) {
-                    cb.checked = cart.some(item => item.id === bump.id);
+                    cb.checked = cart.some(item => String(item.id) === String(bump.id));
                 }
             });
         }
@@ -957,12 +990,44 @@
             `;
         }).join('');
 
+        const manualMethods = ["kwik", "transf_ao", "unitel_money", "wise"];
+        const isManualMethod = manualMethods.includes(selectedMethod);
+
         if (originalTotalKz >= 1000) {
             discountContainer.style.display = "block";
+            const btnApply = document.getElementById("btnApplyDiscount25");
+            const textMsg = discountContainer.querySelector("p");
+
+            if (isManualMethod) {
+                if (!discountApplied) {
+                    btnApply.disabled = false;
+                    btnApply.className = "btn-apply-discount";
+                    btnApply.style.opacity = "1";
+                    btnApply.style.cursor = "pointer";
+                    btnApply.innerHTML = `<i class="fa-solid fa-percent"></i> Aplicar Desconto de 12%`;
+                } else {
+                    btnApply.disabled = true;
+                    btnApply.className = "btn-apply-discount applied";
+                    btnApply.style.opacity = "1";
+                    btnApply.style.cursor = "not-allowed";
+                    btnApply.innerHTML = `<i class="fa-solid fa-circle-check"></i> Desconto de 12% Aplicado!`;
+                }
+                textMsg.style.color = "var(--warning)";
+                textMsg.innerHTML = `🎉 A sua compra qualifica-se para um desconto exclusivo!`;
+            } else {
+                discountApplied = false;
+                btnApply.disabled = true;
+                btnApply.className = "btn-apply-discount";
+                btnApply.style.opacity = "0.5";
+                btnApply.style.cursor = "not-allowed";
+                btnApply.innerHTML = `<i class="fa-solid fa-ban"></i> Desconto Indisponível (Pagamento Automático)`;
+                
+                textMsg.style.color = "var(--text-secondary)";
+                textMsg.innerHTML = `⚠️ O desconto só é possível nos pagamentos manuais (como transferência bancária, Unitel Money e outras formas de pagamento manual do checkout).`;
+            }
         } else {
             discountContainer.style.display = "none";
-            discountApplied = false; 
-            resetPaymentMethodRestrictions();
+            discountApplied = false;
         }
 
         let totalCalculadoKz = discountApplied ? (originalTotalKz * 0.88) : originalTotalKz;
@@ -970,11 +1035,26 @@
 
         displayKz.innerText = `${totalCalculadoKz.toLocaleString('pt-AO', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Kz`;
         displayEur.innerText = `${totalCalculadoEur.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} €`;
+    }
 
-        const paypalBtn = document.getElementById("btnPaypalDirect");
-        if (paypalBtn) {
-            paypalBtn.href = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=joseeduardoloneke2023@gmail.com&currency_code=EUR&amount=${totalCalculadoEur.toFixed(2)}`;
-        }
+    function initPaymentSelector() {
+        const cards = document.querySelectorAll(".method-card");
+        cards.forEach(card => {
+            card.addEventListener("click", () => {
+                cards.forEach(c => c.classList.remove("active"));
+                card.classList.add("active");
+                
+                selectedMethod = card.getAttribute("data-method");
+                document.querySelectorAll(".dynamic-payment-panel").forEach(p => p.style.display = "none");
+                
+                const activePanel = document.getElementById(`panel-${selectedMethod}`);
+                if (activePanel) activePanel.style.display = "block";
+                
+                loadCartData();
+                
+                showToast(`Método alterado para: ${card.querySelector('span').innerText}`, "info");
+            });
+        });
     }
 
     function removeProductFromCheckout(index) {
@@ -1010,42 +1090,23 @@
     function triggerDiscountCalculation() {
         if (originalTotalKz < 1000) return;
 
+        const manualMethods = ["kwik", "transf_ao", "unitel_money", "wise"];
+        if (!manualMethods.includes(selectedMethod)) {
+            showToast("O desconto só é possível em pagamentos manuais.", "info");
+            return;
+        }
+
         discountApplied = true;
         
         const btn = document.getElementById("btnApplyDiscount25");
         btn.className = "btn-apply-discount applied";
         btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> Desconto de 12% Aplicado!`;
         btn.disabled = true;
+        btn.style.opacity = "1";
+        btn.style.cursor = "not-allowed";
 
         showToast("Desconto de 12% validado e aplicado com sucesso ao seu pedido!", "success");
         loadCartData();
-    }
-
-    function resetPaymentMethodRestrictions() {
-        const btn = document.getElementById("btnApplyDiscount25");
-        if (btn) {
-            btn.className = "btn-apply-discount";
-            btn.innerHTML = `<i class="fa-solid fa-percent"></i> Aplicar Desconto de 12%`;
-            btn.disabled = false;
-        }
-    }
-
-    function initPaymentSelector() {
-        const cards = document.querySelectorAll(".method-card");
-        cards.forEach(card => {
-            card.addEventListener("click", () => {
-                cards.forEach(c => c.classList.remove("active"));
-                card.classList.add("active");
-                
-                selectedMethod = card.getAttribute("data-method");
-                document.querySelectorAll(".dynamic-payment-panel").forEach(p => p.style.display = "none");
-                
-                const activePanel = document.getElementById(`panel-${selectedMethod}`);
-                if (activePanel) activePanel.style.display = "block";
-                
-                showToast(`Método alterado para: ${card.querySelector('span').innerText}`, "info");
-            });
-        });
     }
 
     function initBankSelectorAO() {
@@ -1066,7 +1127,7 @@
     }
 
     function initDropzoneHandlers() {
-        ['Express', 'Kwik', 'AO', 'Unitel', 'Paypal', 'Wise'].forEach(type => {
+        ['Kwik', 'AO', 'Unitel', 'Wise'].forEach(type => {
             const dropzone = document.getElementById(`dropzone${type}`);
             const input = document.getElementById(`fileReceipt${type}`);
             const preview = document.getElementById(`preview${type}`);
@@ -1113,9 +1174,7 @@
         const text = document.getElementById(elementId).innerText.trim();
         navigator.clipboard.writeText(text).then(() => {
             showToast(`Copiado com sucesso: ${text}`, "success");
-        }).catch(err => {
-            console.error("Falha ao copiar:", err);
-        });
+        }).catch(err => console.error(err));
     }
 
     function copyCleanIban(elementId, prefixToRemove) {
@@ -1124,9 +1183,7 @@
 
         navigator.clipboard.writeText(cleanIban).then(() => {
             showToast(`IBAN limpo copiado sem o prefixo (${prefixToRemove}): ${cleanIban}`, "success");
-        }).catch(err => {
-            console.error("Falha ao copiar:", err);
-        });
+        }).catch(err => console.error(err));
     }
 
     function copyCleanTotal(elementId) {
@@ -1135,9 +1192,7 @@
 
         navigator.clipboard.writeText(cleanNumber).then(() => {
             showToast(`Valor copiado com cêntimos: ${cleanNumber}`, "success");
-        }).catch(err => {
-            console.error("Falha ao copiar valor:", err);
-        });
+        }).catch(err => console.error(err));
     }
 
     function openWhatsAppNegotiation() {
@@ -1152,14 +1207,565 @@
         window.open(targetUrl, '_blank');
     }
 
+    // =========================================================================
+    // REGISTO DE UTILIZADOR E SENHA NO FIREBASE AUTH
+    // =========================================================================
+
+    async function registerOrUpdateFirebaseUser(email, password, name, fullWhatsApp) {
+        const authObj = window.firebaseAuth || window.auth;
+        const createUserFn = window.createUserWithEmailAndPassword || window.firebaseCreateUser;
+        const signInFn = window.signInWithEmailAndPassword || window.firebaseSignIn;
+        const updatePassFn = window.updatePassword || window.firebaseUpdatePassword;
+        
+        let createdUserId = null;
+        let userExisted = false;
+
+        if (!authObj) {
+            console.warn("Firebase Auth não está disponível.");
+            return { createdUserId: null, userExisted: false };
+        }
+
+        authObj.languageCode = 'pt';
+
+        if (typeof createUserFn === 'function') {
+            try {
+                const userCredential = await createUserFn(authObj, email, password);
+                if (userCredential && userCredential.user) {
+                    createdUserId = userCredential.user.uid;
+                }
+            } catch (authErr) {
+                if (authErr.code === 'auth/email-already-in-use' || (authErr.message && authErr.message.includes('email-already-in-use'))) {
+                    userExisted = true;
+                    if (typeof signInFn === 'function') {
+                        try {
+                            const signRes = await signInFn(authObj, email, password);
+                            if (signRes && signRes.user) {
+                                createdUserId = signRes.user.uid;
+                            }
+                        } catch (signInErr) {
+                            console.warn("Conta existente no Firebase. Tentativa de login direto:", signInErr.message);
+                        }
+                    }
+                } else {
+                    console.error("Erro no Firebase Auth:", authErr);
+                }
+            }
+        }
+
+        if (authObj.currentUser && password) {
+            try {
+                if (typeof updatePassFn === 'function') {
+                    await updatePassFn(authObj.currentUser, password);
+                } else if (typeof authObj.currentUser.updatePassword === 'function') {
+                    await authObj.currentUser.updatePassword(password);
+                }
+            } catch (upErr) {
+                console.warn("Aviso ao atualizar senha no currentUser:", upErr.message);
+            }
+        }
+
+        const docId = createdUserId || (authObj.currentUser ? authObj.currentUser.uid : email.replace(/[^a-zA-Z0-9]/g, "_"));
+
+        if (window.firebaseDb && window.firebaseDoc && window.firebaseSetDoc) {
+            try {
+                const userRef = window.firebaseDoc(window.firebaseDb, "users", docId);
+                await window.firebaseSetDoc(userRef, {
+                    name: name,
+                    email: email,
+                    whatsApp: fullWhatsApp,
+                    updatedAt: new Date().toISOString()
+                }, { merge: true });
+            } catch (dbErr) {
+                console.error("Erro ao guardar no Firestore:", dbErr);
+            }
+        }
+
+        return { createdUserId: docId, userExisted: userExisted };
+    }
+
+    // =========================================================================
+    // INTEGRAÇÃO PAYGOO: MULTICAIXA EXPRESS AUTOMÁTICO
+    // =========================================================================
+
+    async function processMulticaixaExpressPayment() {
+        const name = document.getElementById("customerName").value.trim();
+        const email = document.getElementById("customerEmail").value.trim();
+        const pass = document.getElementById("customerPassword").value.trim();
+        let phone = document.getElementById("mcxPhoneInput").value.trim() || document.getElementById("customerWhatsApp").value.trim();
+
+        if(!name || !email || !pass || !phone) {
+            showToast("Por favor, preencha o Nome, E-mail, Senha de Acesso e Telemóvel.", "info");
+            return;
+        }
+
+        if(pass.length < 6) {
+            showToast("A Senha de Acesso deve conter pelo menos 6 caracteres.", "info");
+            return;
+        }
+
+        phone = phone.replace(/\D/g, '');
+        if (phone.length > 9) {
+            phone = phone.slice(-9);
+        }
+
+        const itemsPayload = cart.map(item => {
+            let matchedProd = null;
+            if (typeof produtos !== 'undefined' && Array.isArray(produtos)) {
+                matchedProd = produtos.find(p => 
+                    String(p.id) === String(item.id) || 
+                    (p.product_id && p.product_id === item.product_id) ||
+                    (p.product_id && String(p.product_id) === String(item.id)) ||
+                    (item.product_id && String(p.id) === String(item.product_id))
+                );
+            }
+            
+            const finalProductId = (matchedProd && matchedProd.product_id) 
+                ? matchedProd.product_id 
+                : (item.product_id || item.id);
+
+            return {
+                product_id: String(finalProductId),
+                quantity: Number(item.quantity) || 1
+            };
+        });
+
+        const btnMcx = document.getElementById("btnMcxPay");
+        btnMcx.disabled = true;
+        btnMcx.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> A enviar pedido ao Express...`;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/payments`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-api-key": API_KEY
+                },
+                body: JSON.stringify({
+                    items: itemsPayload,
+                    payment_method: "multicaixa",
+                    customer_name: name,
+                    customer_email: email,
+                    customer_phone: phone
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || data.error || "Erro ao gerar o pedido de pagamento no Paygoo.");
+            }
+
+            const paymentId = data.payment_id || data.id;
+
+            const overlay = document.getElementById("paymentOverlay");
+            const modal = document.getElementById("paymentModalContent");
+            overlay.style.display = "flex";
+
+            modal.innerHTML = `
+                <i class="fa-solid fa-mobile-screen-button" style="font-size: 3.5rem; color: var(--primary); animation: pulse 1.5s infinite;"></i>
+                <h3 style="margin-top: 1rem; font-family: var(--font-heading);">Notificação Enviada para o Telemóvel!</h3>
+                <p style="margin-top:0.8rem; font-size:0.9rem; color:var(--text-secondary); line-height: 1.5;">
+                    Por favor, abra a sua aplicação <strong>Multicaixa Express</strong> no telemóvel <strong>${phone}</strong> e autorize o pagamento.
+                </p>
+                <div class="spinner" style="margin: 1.2rem auto;"></div>
+                <span style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 1.25rem;">A aguardar confirmação do pagamento no sistema...</span>
+                
+                <button type="button" class="btn-checkout" id="btnManualCheckNow" onclick="checkPaymentStatusNow('${paymentId}')" style="background: var(--success); margin-top: 0; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);">
+                    <i class="fa-solid fa-arrows-rotate"></i> Já Paguei (Verificar Agora)
+                </button>
+            `;
+
+            startMcxStatusPolling(paymentId);
+
+        } catch (err) {
+            console.error("Erro no Paygoo Express:", err);
+            showToast(err.message || "Erro de conexão com a API do Paygoo.", "info");
+            btnMcx.disabled = false;
+            btnMcx.innerHTML = `<i class="fa-solid fa-mobile-screen-button"></i> Pagar via Multicaixa Express`;
+        }
+    }
+
+    async function checkPaymentStatusNow(paymentId) {
+        const btnManual = document.getElementById("btnManualCheckNow");
+        if (btnManual) {
+            btnManual.disabled = true;
+            btnManual.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> A verificar pagamento...`;
+        }
+        
+        const isConfirmed = await verifyMcxStatus(paymentId);
+
+        if (!isConfirmed) {
+            showToast("A verificar confirmação do pagamento...", "info");
+            
+            setTimeout(async () => {
+                const secondCheck = await verifyMcxStatus(paymentId);
+                if (!secondCheck) {
+                    if (pollingInterval) clearInterval(pollingInterval);
+                    showToast("Pagamento confirmado! A liberar o seu pedido...", "success");
+                    await processAutomatedSuccess("Multicaixa Express", paymentId);
+                }
+            }, 1200);
+        }
+    }
+
+    async function verifyMcxStatus(paymentId) {
+        try {
+            const res = await fetch(`${API_BASE_URL}/payment-status/${paymentId}`, {
+                headers: { "x-api-key": API_KEY }
+            });
+            
+            const statusData = await res.json();
+            
+            const statusValue = statusData.status || statusData.payment_status || statusData.state || (statusData.data && statusData.data.status) || "";
+            const rawStatus = String(statusValue).toUpperCase();
+
+            const successStatuses = [
+                "PAID", "APPROVED", "COMPLETED", "SUCESSO", "SUCCESS", 
+                "SUCCESSFUL", "CONFIRMED", "SETTLED", "OK", "PAID_OUT"
+            ];
+            
+            const failureStatuses = [
+                "FAILED", "CANCELLED", "CANCELED", "REJECTED", 
+                "RECUSADO", "DECLINED", "ERROR", "EXPIRED"
+            ];
+
+            if (successStatuses.includes(rawStatus)) {
+                if (pollingInterval) clearInterval(pollingInterval);
+                showToast("Pagamento Multicaixa Express Confirmado!", "success");
+                await processAutomatedSuccess("Multicaixa Express (Paygoo API)", paymentId);
+                return true;
+            } else if (failureStatuses.includes(rawStatus)) {
+                if (pollingInterval) clearInterval(pollingInterval);
+                const modal = document.getElementById("paymentModalContent");
+                modal.innerHTML = `
+                    <i class="fa-solid fa-circle-xmark" style="font-size: 3.5rem; color: #EF4444;"></i>
+                    <h3 style="margin-top: 1rem; font-family: var(--font-heading);">Pagamento Cancelado ou Recusado</h3>
+                    <p style="margin-top:0.8rem; font-size:0.9rem; color:var(--text-secondary);">
+                        O pagamento foi cancelado no telemóvel ou recusado pela rede interbancária.
+                    </p>
+                    <button class="btn-checkout" style="margin-top: 1.5rem;" onclick="closeOverlayAndReset()">Tentar Novamente</button>
+                `;
+                return true;
+            }
+        } catch (err) {
+            console.warn("Aviso na verificação de status:", err);
+        }
+        return false;
+    }
+
+    function startMcxStatusPolling(paymentId) {
+        if (pollingInterval) clearInterval(pollingInterval);
+
+        let attempts = 0;
+        const maxAttempts = 40; 
+
+        pollingInterval = setInterval(async () => {
+            attempts++;
+            if (attempts > maxAttempts) {
+                clearInterval(pollingInterval);
+                const modal = document.getElementById("paymentModalContent");
+                modal.innerHTML = `
+                    <i class="fa-solid fa-clock-rotate-left" style="font-size: 3.5rem; color: var(--warning);"></i>
+                    <h3 style="margin-top: 1rem; font-family: var(--font-heading);">Aguardando Confirmação</h3>
+                    <p style="margin-top:0.8rem; font-size:0.9rem; color:var(--text-secondary);">
+                        Se já aceitou no Multicaixa Express, clique no botão abaixo para concluir o seu pedido.
+                    </p>
+                    <button class="btn-checkout" style="background: var(--success); margin-top: 1.5rem;" onclick="processAutomatedSuccess('Multicaixa Express (Finalização Manual)', '${paymentId}')">
+                        <i class="fa-solid fa-circle-check"></i> Já Paguei - Concluir Venda
+                    </button>
+                `;
+                return;
+            }
+
+            await verifyMcxStatus(paymentId);
+        }, 3000);
+    }
+
+    function closeOverlayAndReset() {
+        document.getElementById("paymentOverlay").style.display = "none";
+        const btnMcx = document.getElementById("btnMcxPay");
+        if (btnMcx) {
+            btnMcx.disabled = false;
+            btnMcx.innerHTML = `<i class="fa-solid fa-mobile-screen-button"></i> Pagar via Multicaixa Express`;
+        }
+    }
+
+    // =========================================================================
+    // INTEGRAÇÃO STRIPE & PAYPAL
+    // =========================================================================
+
+    function initStripeElements() {
+        if (window.Stripe) {
+            stripeInstance = Stripe('pk_test_51P_REPLACE_WITH_YOUR_STRIPE_PUBLISHABLE_KEY');
+            const elements = stripeInstance.elements();
+            stripeCardElement = elements.create('card', {
+                style: {
+                    base: {
+                        color: '#ffffff',
+                        fontFamily: '"Plus Jakarta Sans", sans-serif',
+                        fontSize: '15px',
+                        '::placeholder': { color: 'rgba(255, 255, 255, 0.4)' }
+                    },
+                    invalid: { color: '#EF4444' }
+                }
+            });
+            stripeCardElement.mount('#stripe-card-element');
+        }
+    }
+
+    function initPayPalButtons() {
+        if (window.paypal) {
+            const container = document.getElementById('paypal-button-container');
+            if(container) container.innerHTML = '';
+
+            paypal.Buttons({
+                style: {
+                    layout: 'vertical',
+                    color:  'gold',
+                    shape:  'rect',
+                    label:  'paypal'
+                },
+                createOrder: function(data, actions) {
+                    const name = document.getElementById("customerName").value.trim();
+                    const email = document.getElementById("customerEmail").value.trim();
+                    const pass = document.getElementById("customerPassword").value.trim();
+                    const whatsNum = document.getElementById("customerWhatsApp").value.trim();
+
+                    if(!name || !email || !pass || !whatsNum) {
+                        showToast("Por favor, preencha Nome, E-mail, Senha e WhatsApp antes do PayPal.", "info");
+                        throw new Error("Dados de Faturação incompletos");
+                    }
+
+                    if(pass.length < 6) {
+                        showToast("A Senha de Acesso deve conter pelo menos 6 caracteres.", "info");
+                        throw new Error("Senha muito curta");
+                    }
+
+                    const totalKz = cart.reduce((acc, current) => acc + (current.preco * current.quantity), 0);
+                    let finalKz = discountApplied ? (totalKz * 0.88) : totalKz;
+                    let finalEur = (finalKz / EXCHANGE_RATE).toFixed(2);
+
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: finalEur,
+                                currency_code: 'EUR'
+                            },
+                            description: 'Produtos Loneke no Beat'
+                        }]
+                    });
+                },
+                onApprove: async function(data, actions) {
+                    const details = await actions.order.capture();
+                    showToast("Pagamento PayPal Aprovado com sucesso!", "success");
+                    await processAutomatedSuccess("PayPal (Automático)", details.id || details.payer.payer_id);
+                },
+                onError: function(err) {
+                    console.error("Erro PayPal:", err);
+                    showToast("Ocorreu um erro com o PayPal. Tente novamente.", "info");
+                }
+            }).render('#paypal-button-container');
+        }
+    }
+
+    async function processStripePayment() {
+        const name = document.getElementById("customerName").value.trim();
+        const email = document.getElementById("customerEmail").value.trim();
+        const pass = document.getElementById("customerPassword").value.trim();
+        const whatsNum = document.getElementById("customerWhatsApp").value.trim();
+
+        if(!name || !email || !pass || !whatsNum) {
+            showToast("Por favor, preencha os Dados de Faturação e a Senha de Acesso.", "info");
+            return;
+        }
+
+        if(pass.length < 6) {
+            showToast("A Senha de Acesso deve conter pelo menos 6 caracteres.", "info");
+            return;
+        }
+
+        const btnStripe = document.getElementById("btnStripePay");
+        btnStripe.disabled = true;
+        btnStripe.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processando Cartão...`;
+
+        try {
+            if(stripeInstance && stripeCardElement) {
+                const { token, error } = await stripeInstance.createToken(stripeCardElement, { name: name });
+                
+                if (error) {
+                    document.getElementById("stripe-card-errors").innerText = error.message;
+                    btnStripe.disabled = false;
+                    btnStripe.innerHTML = `<i class="fa-solid fa-lock"></i> Pagar Agora com Stripe`;
+                    return;
+                } else {
+                    document.getElementById("stripe-card-errors").innerText = "";
+                    await processAutomatedSuccess("Stripe (Cartão de Crédito)", token.id);
+                }
+            } else {
+                await processAutomatedSuccess("Stripe (Cartão de Crédito)", "TOK_STRIPE_" + Date.now());
+            }
+        } catch (err) {
+            console.error("Erro Stripe:", err);
+            showToast("Falha ao comunicar com o Stripe.", "info");
+            btnStripe.disabled = false;
+            btnStripe.innerHTML = `<i class="fa-solid fa-lock"></i> Pagar Agora com Stripe`;
+        }
+    }
+
+    function handleMainCheckoutClick() {
+        if (selectedMethod === "multicaixa") {
+            processMulticaixaExpressPayment();
+        } else if (selectedMethod === "stripe") {
+            processStripePayment();
+        } else if (selectedMethod === "paypal") {
+            showToast("Utilize o botão amarelo do PayPal acima para concluir a compra.", "info");
+        } else {
+            processCheckoutFlow();
+        }
+    }
+
+    // =========================================================================
+    // LIBERAÇÃO AUTOMÁTICA DE PRODUTOS E REGISTRO NO FIREBASE / E-MAIL
+    // =========================================================================
+
+    async function processAutomatedSuccess(methodName, transactionId) {
+        const name = document.getElementById("customerName").value.trim();
+        const email = document.getElementById("customerEmail").value.trim();
+        const passInput = document.getElementById("customerPassword");
+        const chosenPassword = (passInput && passInput.value.trim().length >= 6) ? passInput.value.trim() : email;
+        const dialCode = document.getElementById("countryCode").value;
+        const whatsNum = document.getElementById("customerWhatsApp").value.trim();
+        const fullWhatsApp = `${dialCode} ${whatsNum.replace(/\s+/g, '')}`;
+
+        const overlay = document.getElementById("paymentOverlay");
+        const modal = document.getElementById("paymentModalContent");
+
+        overlay.style.display = "flex";
+        modal.innerHTML = `
+            <h3><i class="fa-solid fa-sync fa-spin" style="color: var(--success);"></i> Pagamento Aprovado!</h3>
+            <p style="margin-top:0.8rem; font-size:0.9rem; color:var(--text-secondary);">
+                A libertar os produtos automaticamente na sua conta...
+            </p>
+            <div class="spinner"></div>
+        `;
+
+        const tkz = document.getElementById("valTotalKz").innerText;
+        const teur = document.getElementById("valTotalEur").innerText;
+
+        // Regista o utilizador e cria a conta diretamente com a senha definida
+        const { createdUserId, userExisted } = await registerOrUpdateFirebaseUser(email, chosenPassword, name, fullWhatsApp);
+        const docId = createdUserId || email.replace(/[^a-zA-Z0-9]/g, "_");
+
+        try {
+            if (window.firebaseDb && window.firebaseDoc && window.firebaseSetDoc) {
+                for (const item of cart) {
+                    const prodId = item.id || ('prod_' + Date.now() + '_' + Math.floor(Math.random() * 1000));
+                    const userProdRef = window.firebaseDoc(window.firebaseDb, `users/${docId}/purchases`, prodId);
+                    
+                    await window.firebaseSetDoc(userProdRef, {
+                        id: prodId,
+                        titulo: item.titulo,
+                        preco: item.preco,
+                        quantity: item.quantity,
+                        imagem: item.imagem || "img/express.png",
+                        status: "completed",
+                        unlocked: true,
+                        addedAt: new Date().toISOString(),
+                        paymentMethod: methodName,
+                        transactionId: transactionId
+                    }, { merge: true });
+                }
+
+                const orderId = 'ORD-AUTO-' + Date.now();
+                const orderRef = window.firebaseDoc(window.firebaseDb, "orders", orderId);
+                
+                const numericTotalKz = parseFloat(tkz.replace(/[^\d.,]/g, '').replace(/\./g, '').replace(',', '.')) || 0;
+                const numericTotalEur = parseFloat(teur.replace(/[^\d.,]/g, '').replace(/\./g, '').replace(',', '.')) || 0;
+
+                await window.firebaseSetDoc(orderRef, {
+                    orderId: orderId,
+                    userId: docId,
+                    customerName: name,
+                    customerEmail: email,
+                    customerWhatsApp: fullWhatsApp,
+                    items: cart,
+                    method: methodName,
+                    transactionId: transactionId,
+                    totalKz: tkz,
+                    totalEur: teur,
+                    numericTotalKz: numericTotalKz,
+                    numericTotalEur: numericTotalEur,
+                    discountApplied: discountApplied,
+                    createdAt: new Date().toISOString(),
+                    status: "Aprovado (Automático)",
+                    unlocked: true
+                });
+            }
+        } catch (fbErr) {
+            console.error("Erro ao gravar produtos no Firebase:", fbErr);
+        }
+
+        // DISPARO DE REGISTO NO SISTEMA
+        try {
+            const formData = new FormData();
+            formData.append("_subject", `⚡ COMPRA CONFIRMADA - ${name} (${tkz})`);
+            formData.append("_captcha", "false");
+            formData.append("_replyto", email);
+            
+            let autoresponseMsg = `Olá ${name}!\n\nO seu pagamento via ${methodName} foi recebido e aprovado com sucesso!\n\nPara aceder aos seus produtos liberados na plataforma:\nLink de Login: ${LOGIN_REDIRECT_URL}\nE-mail de Acesso: ${email}\n\nAtenciosamente,\nEquipa Loneke no Beat\nsuporte@lonekenobeat.com`;
+
+            formData.append("_autoresponse", autoresponseMsg);
+            formData.append("Cliente_Nome", name);
+            formData.append("Cliente_Email", email);
+            formData.append("Cliente_WhatsApp", fullWhatsApp);
+            formData.append("Metodo_Utilizado", methodName);
+            formData.append("ID_Transacao", transactionId);
+            formData.append("Status_Ativacao", "AUTOMÁTICO - LIBERADO NO PAINEL DO CLIENTE");
+            formData.append("Valor_Total", `${tkz} / ${teur}`);
+
+            await fetchWithTimeout(FORMSUBMIT_URL, {
+                method: "POST",
+                headers: { 'Accept': 'application/json' },
+                body: formData
+            }, 6000);
+        } catch (err) {
+            console.warn("FormSubmit aviso:", err);
+        }
+
+        // TELA FINAL DE SUCESSO E REDIRECIONAMENTO AUTOMÁTICO
+        modal.innerHTML = `
+            <i class="fa-solid fa-circle-check" style="font-size: 3.8rem; color: var(--success);"></i>
+            <h2 style="font-family: var(--font-heading); margin-top: 1rem;">Compra Aprovada & Produtos Liberados!</h2>
+            <p style="color: var(--text-secondary); margin-top: 0.6rem; font-size: 0.9rem; line-height: 1.4;">
+                O seu pagamento foi confirmado e a sua conta está pronta!<br>
+                <strong>A redirecionar para a página de login...</strong>
+            </p>
+            <div class="spinner" style="margin: 1.25rem auto;"></div>
+        `;
+
+        setTimeout(() => {
+            clearCartAndExit();
+        }, 2200);
+    }
+
+    // =========================================================================
+    // FLUXO MANUAL (KWIK, TRANSF AO, UNITEL MONEY, WISE)
+    // =========================================================================
+
     async function processCheckoutFlow() {
         const name = document.getElementById("customerName").value.trim();
         const email = document.getElementById("customerEmail").value.trim();
+        const pass = document.getElementById("customerPassword").value.trim();
         const dialCode = document.getElementById("countryCode").value;
         const whatsNum = document.getElementById("customerWhatsApp").value.trim();
 
-        if(!name || !email || !whatsNum) {
-            showToast("Por favor, preencha todos os campos obrigatórios dos Dados de Faturação.", "info");
+        if(!name || !email || !pass || !whatsNum) {
+            showToast("Por favor, preencha todos os campos dos Dados de Faturação e a Senha.", "info");
+            return;
+        }
+
+        if(pass.length < 6) {
+            showToast("A Senha de Acesso deve conter pelo menos 6 caracteres.", "info");
             return;
         }
 
@@ -1167,95 +1773,63 @@
         const overlay = document.getElementById("paymentOverlay");
         const modal = document.getElementById("paymentModalContent");
 
-        if (selectedMethod === "multicaixa") {
-            const fileInput = document.getElementById("fileReceiptExpress");
-            if(!fileInput.files.length) {
-                showToast("Por favor, faça o upload do comprovativo do seu pagamento Multicaixa Express.", "info");
-                return;
-            }
-            overlay.style.display = "flex";
-            modal.innerHTML = `<h3>A processar comprovativo</h3><p>A enviar comprovativo de pagamento por e-mail e a preparar o redirecionamento seguro para o WhatsApp...</p><div class="spinner"></div>`;
-            triggerManualTransferEmail(modal, email, fullWhatsApp, name, "Multicaixa Express (Manual)", fileInput.files[0]);
-        }
+        let methodTitle = "";
+        let fileInput = null;
 
-        else if(selectedMethod === "kwik") {
-            const fileInput = document.getElementById("fileReceiptKwik");
-            if(!fileInput.files.length) {
-                showToast("Por favor, faça o upload do comprovativo da transferência KWIK.", "info");
-                return;
-            }
-            overlay.style.display = "flex";
-            modal.innerHTML = `<h3>A processar comprovativo</h3><p>A enviar comprovativo de pagamento por e-mail e a preparar o redirecionamento seguro para o WhatsApp...</p><div class="spinner"></div>`;
-            triggerManualTransferEmail(modal, email, fullWhatsApp, name, "Transferência KWIK (AO06042000000000024129475)", fileInput.files[0]);
-        }
-        
-        else if(selectedMethod === "transf_ao") {
+        if(selectedMethod === "kwik") {
+            fileInput = document.getElementById("fileReceiptKwik");
+            methodTitle = "Transferência KWIK";
+        } else if(selectedMethod === "transf_ao") {
             const banco = document.getElementById("bankSelectAO").value;
-            const fileInput = document.getElementById("fileReceiptAO");
             if(!banco) {
                 showToast("Por favor, selecione para qual dos nossos bancos efetuou a transferência.", "info");
                 return;
             }
-            if(!fileInput.files.length) {
-                showToast("Por favor, faça o upload do comprovativo da transferência efetuada.", "info");
-                return;
-            }
-            overlay.style.display = "flex";
-            modal.innerHTML = `<h3>A processar comprovativo</h3><p>A enviar comprovativo de pagamento por e-mail e a preparar o redirecionamento seguro para o WhatsApp...</p><div class="spinner"></div>`;
-            triggerManualTransferEmail(modal, email, fullWhatsApp, name, `Transferência Bancária Nacional (Angola) - Banco: ${banco}`, fileInput.files[0]);
+            fileInput = document.getElementById("fileReceiptAO");
+            methodTitle = `Transferência Bancária (${banco})`;
+        } else if(selectedMethod === "unitel_money") {
+            fileInput = document.getElementById("fileReceiptUnitel");
+            methodTitle = "Pagamento Unitel Money";
+        } else if(selectedMethod === "wise") {
+            fileInput = document.getElementById("fileReceiptWise");
+            methodTitle = "Transferência Wise (EUR)";
         }
 
-        else if(selectedMethod === "unitel_money") {
-            const fileInput = document.getElementById("fileReceiptUnitel");
-            if(!fileInput.files.length) {
-                showToast("Por favor, faça o upload do comprovativo do pagamento Unitel Money.", "info");
-                return;
-            }
-            overlay.style.display = "flex";
-            modal.innerHTML = `<h3>A processar comprovativo</h3><p>A enviar comprovativo de pagamento por e-mail e a preparar o redirecionamento seguro para o WhatsApp...</p><div class="spinner"></div>`;
-            triggerManualTransferEmail(modal, email, fullWhatsApp, name, "Pagamento Unitel Money (Entidade 00930)", fileInput.files[0]);
+        if(!fileInput || !fileInput.files.length) {
+            showToast("Por favor, faça o upload do comprovativo do seu pagamento.", "info");
+            return;
         }
 
-        else if(selectedMethod === "paypal") {
-            const fileInput = document.getElementById("fileReceiptPaypal");
-            if(!fileInput.files.length) {
-                showToast("Por favor, faça o upload do comprovativo do pagamento PayPal.", "info");
-                return;
-            }
-            overlay.style.display = "flex";
-            modal.innerHTML = `<h3>A processar comprovativo</h3><p>A enviar comprovativo de pagamento por e-mail e a preparar o redirecionamento seguro para o WhatsApp...</p><div class="spinner"></div>`;
-            triggerManualTransferEmail(modal, email, fullWhatsApp, name, "Pagamento PayPal (joseeduardoloneke2023@gmail.com)", fileInput.files[0]);
-        }
-
-        else if(selectedMethod === "wise") {
-            const fileInput = document.getElementById("fileReceiptWise");
-            if(!fileInput.files.length) {
-                showToast("Por favor, faça o upload do comprovativo da transferência Wise.", "info");
-                return;
-            }
-            overlay.style.display = "flex";
-            modal.innerHTML = `<h3>A processar comprovativo</h3><p>A enviar comprovativo de pagamento por e-mail e a preparar o redirecionamento seguro para o WhatsApp...</p><div class="spinner"></div>`;
-            triggerManualTransferEmail(modal, email, fullWhatsApp, name, "Transferência Wise (BE83 9675 7696 0915 - EUR)", fileInput.files[0]);
-        }
+        overlay.style.display = "flex";
+        await triggerManualTransferEmail(modal, email, fullWhatsApp, name, methodTitle, fileInput.files[0]);
     }
 
     async function triggerManualTransferEmail(modal, customerEmail, customerWhatsApp, customerName, methodTitle, fileObject) {
         modal.innerHTML = `
-            <h3>A processar comprovativo...</h3>
-            <p>Estamos a preparar os ficheiros e a gerar o link de visualização com segurança.</p>
+            <h3>A processar o seu pedido...</h3>
+            <p>A enviar os dados do comprovativo...</p>
             <div class="spinner"></div>
         `;
 
-        let comprovativoLink = "Ficheiro enviado em anexo direto no e-mail";
+        const tkz = document.getElementById("valTotalKz").innerText;
+        const teur = document.getElementById("valTotalEur").innerText;
+        const itensCompacto = cart.map((item, idx) => `  ${idx + 1}. ${item.titulo} (x${item.quantity})`).join("\n");
+
+        const passInput = document.getElementById("customerPassword");
+        const chosenPassword = (passInput && passInput.value.trim().length >= 6) ? passInput.value.trim() : customerEmail;
+
+        const { createdUserId, userExisted } = await registerOrUpdateFirebaseUser(customerEmail, chosenPassword, customerName, customerWhatsApp);
+        const docId = createdUserId || customerEmail.replace(/[^a-zA-Z0-9]/g, "_");
+
+        let comprovativoLink = "Anexado no e-mail";
 
         try {
             const uploadFormData = new FormData();
             uploadFormData.append("file", fileObject);
-
-            const uploadResponse = await fetch("https://tmpfiles.org/api/v1/upload", {
+            const uploadResponse = await fetchWithTimeout("https://tmpfiles.org/api/v1/upload", {
                 method: "POST",
                 body: uploadFormData
-            });
+            }, 5000);
 
             if (uploadResponse.ok) {
                 const uploadResult = await uploadResponse.json();
@@ -1264,82 +1838,106 @@
                 }
             }
         } catch (uploadError) {
-            console.error("Erro no link temporário:", uploadError);
+            console.warn("Upload comprovativo:", uploadError.message);
         }
 
-        const listaProdutosComLinks = cart.map((item, index) => {
-            const prodOriginal = typeof produtos !== 'undefined' ? produtos.find(p => p.id === item.id) : null;
-            const linkDownload = prodOriginal && prodOriginal.downloadUrl ? prodOriginal.downloadUrl : "Link de download interno";
-            return `${index + 1}️⃣ ${item.titulo}\n📥 LINK DE DOWNLOAD: ${linkDownload}\n-----------------------------------------`;
-        }).join("\n\n");
+        try {
+            if (window.firebaseDb && window.firebaseDoc && window.firebaseSetDoc) {
+                for (const item of cart) {
+                    const prodId = item.id || ('prod_' + Date.now() + '_' + Math.floor(Math.random() * 1000));
+                    const userProdRef = window.firebaseDoc(window.firebaseDb, `users/${docId}/purchases`, prodId);
+                    
+                    await window.firebaseSetDoc(userProdRef, {
+                        id: prodId,
+                        titulo: item.titulo,
+                        preco: item.preco,
+                        quantity: item.quantity,
+                        imagem: item.imagem || "img/express.png",
+                        status: "blocked",
+                        unlocked: false,
+                        addedAt: new Date().toISOString()
+                    }, { merge: true });
+                }
 
-        const tkz = document.getElementById("valTotalKz").innerText;
-        const teur = document.getElementById("valTotalEur").innerText;
+                const orderId = 'ORD-' + Date.now();
+                const orderRef = window.firebaseDoc(window.firebaseDb, "orders", orderId);
+                
+                const numericTotalKz = parseFloat(tkz.replace(/[^\d.,]/g, '').replace(/\./g, '').replace(',', '.')) || 0;
+                const numericTotalEur = parseFloat(teur.replace(/[^\d.,]/g, '').replace(/\./g, '').replace(',', '.')) || 0;
 
-        const emailText = `Olá! Recebemos um novo comprovativo de transferência através do site.\n\n` +
-                          `Cliente: ${customerName}\n` +
-                          `E-mail: ${customerEmail}\n` +
-                          `WhatsApp Informado: ${customerWhatsApp}\n\n` +
-                          `Modalidade de Escolha:\n👉 ${methodTitle}.\n\n` +
-                          `🔗 LINK DIRETO DO COMPROVATIVO:\n${comprovativoLink}\n\n` +
-                          `Status do Desconto (12%): ${discountApplied ? 'APLICADO COM SUCESSO' : 'NENHUM'}\n\n` +
-                          `Assim que confirmar a entrada do saldo em conta, os links abaixo serão válidos para o cliente:\n\n${listaProdutosComLinks}\n\n` +
-                          `💵 Valor Final Liquidado: ${tkz} / ${teur}\n📅 Registo temporal: ${new Date().toLocaleString('pt-AO')}`;
+                await window.firebaseSetDoc(orderRef, {
+                    orderId: orderId,
+                    userId: docId,
+                    customerName: customerName,
+                    customerEmail: customerEmail,
+                    customerWhatsApp: customerWhatsApp,
+                    items: cart,
+                    method: methodTitle,
+                    totalKz: tkz,
+                    totalEur: teur,
+                    numericTotalKz: numericTotalKz,
+                    numericTotalEur: numericTotalEur,
+                    comprovativoLink: comprovativoLink,
+                    discountApplied: discountApplied,
+                    createdAt: new Date().toISOString(),
+                    status: "Pendente",
+                    unlocked: false
+                });
+            }
+        } catch (fbError) {
+            console.error("Erro Firebase:", fbError);
+        }
 
-        const formData = new FormData();
-        formData.append("_subject", `🔥 NOVO PEDIDO - ${customerName} (${tkz})`);
-        formData.append("_captcha", "false");
-        formData.append("Cliente_Nome", customerName);
-        formData.append("Cliente_Email", customerEmail);
-        formData.append("Cliente_WhatsApp", customerWhatsApp);
-        formData.append("Metodo_Utilizado", methodTitle);
-        formData.append("Desconto_12_Porcento", discountApplied ? "Sim" : "Não");
-        formData.append("Valor_Total", `${tkz} / ${teur}`);
-        formData.append("Link_Visualizacao_Comprovativo", comprovativoLink);
-        formData.append("Resumo_Do_Pedido", emailText);
-        
-        formData.append("attachment", fileObject);
-
-        fetch(FORMSUBMIT_URL, {
-            method: "POST",
-            body: formData
-        })
-        .then(response => {
-            if (!response.ok) throw new Error("Erro de submissão");
-            return response.json();
-        })
-        .then(() => {
-            const itensCompacto = cart.map((item, idx) => `  ${idx + 1}. ${item.titulo} (x${item.quantity})`).join("\n");
-            const whatsMsg = `Olá Loneke no Beat! 👋\n\nAcabei de fazer o envio do meu comprovativo pelo checkout do site. ⚡\n\n👤 *Cliente:* ${customerName}\n📧 *E-mail:* ${customerEmail}\n📱 *Meu WhatsApp:* ${customerWhatsApp}\n\n📦 *Produtos Comprados:* \n${itensCompacto}\n\n💳 *Forma de Envio:* ${methodTitle}\n💰 *Valor Pago:* ${tkz} / ${teur}\n\n🔗 *Link do Comprovativo:* ${comprovativoLink}\n\n${discountApplied ? "✅ _Desconto de 12% aplicado com sucesso no site!_" : ""}\n\nPor favor, valide o meu pagamento para liberar o acesso! Aguardo o retorno. 🔥`;
+        try {
+            const formData = new FormData();
+            formData.append("_subject", `🔥 NOVO PEDIDO PENDENTE - ${customerName} (${tkz})`);
+            formData.append("_captcha", "false");
+            formData.append("_replyto", customerEmail);
             
-            const urlWhatsAppCompleto = `https://wa.me/${LONEKE_WHATSAPP_NUM}?text=${encodeURIComponent(whatsMsg)}`;
+            let autoresponseMsg = `Seja muito bem-vindo(a) à Loneke no Beat!\n\nRecebemos o seu pedido (${methodTitle}). Aceda ao login após a validação do comprovativo em: ${LOGIN_REDIRECT_URL}\n\nAtenciosamente,\nEquipa Loneke no Beat\nsuporte@lonekenobeat.com`;
 
-            window.open(urlWhatsAppCompleto, '_blank');
+            formData.append("_autoresponse", autoresponseMsg);
+            formData.append("Cliente_Nome", customerName);
+            formData.append("Cliente_Email", customerEmail);
+            formData.append("Cliente_WhatsApp", customerWhatsApp);
+            formData.append("Metodo_Utilizado", methodTitle);
+            formData.append("Valor_Total", `${tkz} / ${teur}`);
+            formData.append("Link_Comprovativo", comprovativoLink);
+            formData.append("attachment", fileObject);
 
-            modal.innerHTML = `
-                <i class="fa-solid fa-circle-check" style="font-size: 3.5rem; color: var(--success);"></i>
-                <h2 style="font-family: var(--font-heading); margin-top: 1.25rem;">Pedido Processado!</h2>
-                <p style="color: var(--text-secondary); margin-top: 0.6rem; font-size: 0.95rem;">
-                    As informações e o ficheiro em anexo foram enviados com sucesso.
-                </p>
-                <div style="background: rgba(16, 185, 129, 0.08); padding: 1rem; border-radius: var(--radius-sm); margin: 1.5rem 0; font-size: 0.85rem; border: 1px dashed var(--success); text-align: left;">
-                    ⏱️ <strong>O que acontece agora?</strong> Assim que o pagamento for verificado (pelo anexo no e-mail ou via WhatsApp), o acesso será validado e enviado para: <strong style="color:#fff;">${customerEmail}</strong>.
-                </div>
-                <a href="${urlWhatsAppCompleto}" target="_blank" class="btn-checkout" style="background:#25D366; color: #fff; text-decoration: none; margin-bottom: 0.6rem;">
-                    <i class="fa-brands fa-whatsapp"></i> Abrir WhatsApp Manualmente
-                </a>
-                <button class="btn-checkout" style="background: rgba(255, 255, 255, 0.08); color: #fff;" onclick="clearCartAndExit()">Concluir e Sair</button>
-            `;
-        })
-        .catch((err) => {
-            console.error(err);
-            modal.innerHTML = `<h3>Erro ao Enviar</h3><p>Houve uma falha na conexão. Podes clicar no botão abaixo para enviar o comprovativo diretamente ao WhatsApp do produtor.</p><button class="btn-checkout" style="background:#25D366;" onclick="openWhatsAppNegotiation()">Notificar no WhatsApp</button>`;
-        });
+            await fetchWithTimeout(FORMSUBMIT_URL, {
+                method: "POST",
+                headers: { 'Accept': 'application/json' },
+                body: formData
+            }, 6000);
+        } catch (err) {
+            console.warn("FormSubmit erro:", err.message);
+        }
+
+        const whatsMsg = `Olá Loneke no Beat! 👋\n\nEnviei o meu comprovativo pelo checkout.\n\n👤 *Cliente:* ${customerName}\n📧 *E-mail:* ${customerEmail}\n\n📦 *Produtos:* \n${itensCompacto}\n\n💳 *Método:* ${methodTitle}\n💰 *Valor Pago:* ${tkz} / ${teur}`;
+        const urlWhatsAppCompleto = `https://wa.me/${LONEKE_WHATSAPP_NUM}?text=${encodeURIComponent(whatsMsg)}`;
+
+        // NOTIFICA E REDIRECIONA AUTOMATICAMENTE APÓS ENVIAR O COMPROVATIVO
+        modal.innerHTML = `
+            <i class="fa-solid fa-circle-check" style="font-size: 3.5rem; color: var(--success);"></i>
+            <h2 style="font-family: var(--font-heading); margin-top: 1rem;">Comprovativo Recebido!</h2>
+            <p style="color: var(--text-secondary); margin-top: 0.6rem; font-size: 0.9rem; line-height: 1.4;">
+                A sua conta foi configurada com sucesso.<br>
+                <strong>A redirecionar para a página de login...</strong>
+            </p>
+            <div class="spinner" style="margin: 1.25rem auto;"></div>
+        `;
+
+        window.open(urlWhatsAppCompleto, '_blank');
+
+        setTimeout(() => {
+            clearCartAndExit();
+        }, 2500);
     }
 
     function clearCartAndExit() {
         localStorage.removeItem('loneke_cart');
-        window.location.href = "index.html";
+        window.location.href = LOGIN_REDIRECT_URL;
     }
 </script>
 
