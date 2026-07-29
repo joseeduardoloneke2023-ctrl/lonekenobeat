@@ -434,11 +434,6 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="customerPassword">Senha de Acesso à Plataforma</label>
-                        <input type="password" id="customerPassword" class="form-control" placeholder="Crie a sua senha de acesso (mín. 6 caracteres)" required minlength="6">
-                    </div>
-
-                    <div class="form-group">
                         <label for="customerWhatsApp">WhatsApp / Número Telefone</label>
                         <div class="phone-container">
                             <select id="countryCode" class="form-control select-indicativo">
@@ -782,7 +777,7 @@
 <script>
     const FORMSUBMIT_URL = "https://formsubmit.co/ajax/suporte@lonekenobeat.com"; 
     const LONEKE_WHATSAPP_NUM = "244924034159";
-    const LOGIN_REDIRECT_URL = "https://app.lonekenobeat.com/plataforma/login.html";
+    const REGISTER_REDIRECT_URL = "https://app.lonekenobeat.com/plataforma/cadastro.html";
 
     const API_BASE_URL = "https://rouxavcvorjiwhpjhsye.supabase.co/functions/v1/api-v1";
     const API_KEY = "pgoo_5LlAiNj7EWeDwrf1jKtMsdBPoGKOMiMD3HImw17q"; 
@@ -1252,78 +1247,10 @@
         window.open(targetUrl, '_blank');
     }
 
-    // =========================================================================
-    // CRIAÇÃO E ATUALIZAÇÃO DA CONTA DO UTILIZADOR CLIENTE NO FIREBASE E FIRESTORE
-    // =========================================================================
-    async function registerOrUpdateFirebaseUser(email, password, name, fullWhatsApp) {
-        let createdUserId = null;
-        let userExisted = false;
+    // REGISTO BÁSICO DA COMPRA/PEDIDO NO FIRESTORE
+    async function recordFirebaseOrder(email, name, fullWhatsApp) {
+        const docId = email.replace(/[^a-zA-Z0-9]/g, "_");
 
-        // 1. Tentar obter o objeto Auth (compatível com Modular SDK e Compat SDK)
-        const authObj = window.firebaseAuth || window.auth || (window.firebase && window.firebase.auth ? window.firebase.auth() : null);
-
-        if (authObj) {
-            authObj.languageCode = 'pt';
-
-            const createUserFn = window.createUserWithEmailAndPassword || window.firebaseCreateUser;
-            const signInFn = window.signInWithEmailAndPassword || window.firebaseSignIn;
-            const updatePassFn = window.updatePassword || window.firebaseUpdatePassword;
-
-            try {
-                // Modular SDK
-                if (typeof createUserFn === 'function') {
-                    const userCredential = await createUserFn(authObj, email, password);
-                    if (userCredential && userCredential.user) {
-                        createdUserId = userCredential.user.uid;
-                    }
-                } 
-                // Compat SDK
-                else if (typeof authObj.createUserWithEmailAndPassword === 'function') {
-                    const userCredential = await authObj.createUserWithEmailAndPassword(email, password);
-                    if (userCredential && userCredential.user) {
-                        createdUserId = userCredential.user.uid;
-                    }
-                }
-            } catch (authErr) {
-                // Caso a conta já exista no Firebase Auth
-                if (authErr.code === 'auth/email-already-in-use' || (authErr.message && authErr.message.includes('email-already-in-use'))) {
-                    userExisted = true;
-                    try {
-                        if (typeof signInFn === 'function') {
-                            const signRes = await signInFn(authObj, email, password);
-                            if (signRes && signRes.user) createdUserId = signRes.user.uid;
-                        } else if (typeof authObj.signInWithEmailAndPassword === 'function') {
-                            const signRes = await authObj.signInWithEmailAndPassword(email, password);
-                            if (signRes && signRes.user) createdUserId = signRes.user.uid;
-                        }
-                    } catch (signInErr) {
-                        console.warn("Utilizador existente no Auth. Prosseguindo:", signInErr.message);
-                    }
-                } else {
-                    console.error("Erro ao criar conta no Firebase Auth:", authErr);
-                }
-            }
-
-            // Tenta atualizar senha se o utilizador já estiver autenticado
-            if (authObj.currentUser && password) {
-                try {
-                    if (typeof updatePassFn === 'function') {
-                        await updatePassFn(authObj.currentUser, password);
-                    } else if (typeof authObj.currentUser.updatePassword === 'function') {
-                        await authObj.currentUser.updatePassword(password);
-                    }
-                } catch (upErr) {
-                    console.warn("Aviso ao atualizar senha:", upErr.message);
-                }
-            }
-        } else {
-            console.warn("Firebase Auth não disponível no escopo global.");
-        }
-
-        // Define o ID do documento do utilizador na tabela/coleção users
-        const docId = createdUserId || (authObj && authObj.currentUser ? authObj.currentUser.uid : email.replace(/[^a-zA-Z0-9]/g, "_"));
-
-        // 2. Garante a criação/atualização do perfil na coleção 'users' do Firestore
         try {
             const userData = {
                 uid: docId,
@@ -1331,8 +1258,7 @@
                 email: email,
                 whatsApp: fullWhatsApp,
                 role: "cliente",
-                status: "ativo",
-                createdAt: new Date().toISOString(),
+                status: "pendente_cadastro",
                 updatedAt: new Date().toISOString()
             };
 
@@ -1343,31 +1269,29 @@
                 await window.db.collection("users").doc(docId).set(userData, { merge: true });
             }
         } catch (dbErr) {
-            console.error("Erro ao guardar perfil do cliente na tabela users do Firestore:", dbErr);
+            console.error("Erro ao guardar dados no Firestore:", dbErr);
         }
 
-        return { createdUserId: docId, userExisted: userExisted };
+        return docId;
     }
 
-    // VERIFICA E FORÇA AVANÇO E LOGIN
+    // VERIFICA E FORÇA AVANÇO
     async function handleMcxAlreadyPaidClick() {
         const savedPaymentId = currentActivePaymentId || localStorage.getItem("pending_mcx_payment_id");
 
         const name = document.getElementById("customerName").value.trim();
         const email = document.getElementById("customerEmail").value.trim();
-        const pass = document.getElementById("customerPassword").value.trim();
         const dialCode = document.getElementById("countryCode").value;
         const whatsNum = document.getElementById("customerWhatsApp").value.trim();
 
-        if(!name || !email || !pass) {
-            showToast("Por favor, preencha o Nome, E-mail e Senha primeiro.", "info");
+        if(!name || !email) {
+            showToast("Por favor, preencha o Nome e E-mail primeiro.", "info");
             return;
         }
 
         const fullWhatsApp = `${dialCode} ${whatsNum.replace(/\s+/g, '')}`;
 
-        // Regista a conta na tabela users antes de prosseguir
-        await registerOrUpdateFirebaseUser(email, pass, name, fullWhatsApp);
+        await recordFirebaseOrder(email, name, fullWhatsApp);
 
         showToast("Verificando a confirmação do pagamento...", "info");
 
@@ -1398,24 +1322,17 @@
     async function processMulticaixaExpressPayment() {
         const name = document.getElementById("customerName").value.trim();
         const email = document.getElementById("customerEmail").value.trim();
-        const pass = document.getElementById("customerPassword").value.trim();
         let phone = document.getElementById("mcxPhoneInput").value.trim() || document.getElementById("customerWhatsApp").value.trim();
         const dialCode = document.getElementById("countryCode").value;
 
-        if(!name || !email || !pass || !phone) {
-            showToast("Por favor, preencha Nome, E-mail, Senha e Telemóvel.", "info");
-            return;
-        }
-
-        if(pass.length < 6) {
-            showToast("A Senha de Acesso deve conter pelo menos 6 caracteres.", "info");
+        if(!name || !email || !phone) {
+            showToast("Por favor, preencha Nome, E-mail e Telemóvel.", "info");
             return;
         }
 
         const fullWhatsApp = `${dialCode} ${phone.replace(/\s+/g, '')}`;
 
-        // Regista a conta do cliente na tabela 'users'
-        await registerOrUpdateFirebaseUser(email, pass, name, fullWhatsApp);
+        await recordFirebaseOrder(email, name, fullWhatsApp);
 
         phone = phone.replace(/\D/g, '');
         if (phone.length > 9) {
@@ -1508,10 +1425,10 @@
                 <i class="fa-solid fa-mobile-screen-button" style="font-size: 3.5rem; color: var(--primary);"></i>
                 <h3 style="margin-top: 1rem; font-family: var(--font-heading);">Notificação Solicitada</h3>
                 <p style="margin-top:0.8rem; font-size:0.9rem; color:var(--text-secondary);">
-                    Se já concluiu o pagamento no Multicaixa Express, clique no botão abaixo para ir para o login.
+                    Se já concluiu o pagamento no Multicaixa Express, clique no botão abaixo para criar a sua conta.
                 </p>
                 <button type="button" class="btn-checkout" id="btnManualCheckNow" onclick="checkPaymentStatusNow('${fallbackId}')" style="background: var(--success); margin-top: 1.5rem;">
-                    <i class="fa-solid fa-circle-check"></i> Já Paguei (Avançar para Login)
+                    <i class="fa-solid fa-circle-check"></i> Já Paguei (Criar Conta)
                 </button>
             `;
         } finally {
@@ -1579,10 +1496,10 @@
                         <i class="fa-solid fa-clock-rotate-left" style="font-size: 3.5rem; color: var(--warning);"></i>
                         <h3 style="margin-top: 1rem; font-family: var(--font-heading);">Aguardando Confirmação</h3>
                         <p style="margin-top:0.8rem; font-size:0.9rem; color:var(--text-secondary);">
-                            Se já aceitou no Multicaixa Express, clique abaixo para abrir a sua conta.
+                            Se já aceitou no Multicaixa Express, clique abaixo para criar a sua conta.
                         </p>
                         <button class="btn-checkout" style="background: var(--success); margin-top: 1.5rem;" onclick="processAutomatedSuccess('Multicaixa Express (Finalização)', '${paymentId}')">
-                            <i class="fa-solid fa-circle-check"></i> Já Paguei - Entrar na Conta
+                            <i class="fa-solid fa-circle-check"></i> Já Paguei - Criar Conta
                         </button>
                     `;
                 }
@@ -1638,17 +1555,11 @@
                 createOrder: function(data, actions) {
                     const name = document.getElementById("customerName").value.trim();
                     const email = document.getElementById("customerEmail").value.trim();
-                    const pass = document.getElementById("customerPassword").value.trim();
                     const whatsNum = document.getElementById("customerWhatsApp").value.trim();
 
-                    if(!name || !email || !pass || !whatsNum) {
-                        showToast("Por favor, preencha Nome, E-mail, Senha e WhatsApp antes do PayPal.", "info");
+                    if(!name || !email || !whatsNum) {
+                        showToast("Por favor, preencha Nome, E-mail e WhatsApp antes do PayPal.", "info");
                         throw new Error("Dados incompletos");
-                    }
-
-                    if(pass.length < 6) {
-                        showToast("A Senha de Acesso deve conter pelo menos 6 caracteres.", "info");
-                        throw new Error("Senha muito curta");
                     }
 
                     const totalKz = cart.reduce((acc, current) => acc + (current.preco * current.quantity), 0);
@@ -1681,16 +1592,10 @@
     async function processStripePayment() {
         const name = document.getElementById("customerName").value.trim();
         const email = document.getElementById("customerEmail").value.trim();
-        const pass = document.getElementById("customerPassword").value.trim();
         const whatsNum = document.getElementById("customerWhatsApp").value.trim();
 
-        if(!name || !email || !pass || !whatsNum) {
-            showToast("Por favor, preencha os Dados de Faturação e a Senha de Acesso.", "info");
-            return;
-        }
-
-        if(pass.length < 6) {
-            showToast("A Senha de Acesso deve conter pelo menos 6 caracteres.", "info");
+        if(!name || !email || !whatsNum) {
+            showToast("Por favor, preencha os Dados de Faturação.", "info");
             return;
         }
 
@@ -1734,7 +1639,7 @@
         }
     }
 
-    // LIBERAÇÃO AUTOMÁTICA E REDIRECIONAMENTO IMEDIATO
+    // LIBERAÇÃO AUTOMÁTICA E REDIRECIONAMENTO IMEDIATO PARA CADASTRO
     async function processAutomatedSuccess(methodName, transactionId) {
         if (pollingInterval) clearInterval(pollingInterval);
         localStorage.removeItem("pending_mcx_payment_id");
@@ -1742,8 +1647,6 @@
 
         const name = document.getElementById("customerName").value.trim() || "Cliente";
         const email = document.getElementById("customerEmail").value.trim();
-        const passInput = document.getElementById("customerPassword");
-        const chosenPassword = (passInput && passInput.value.trim().length >= 6) ? passInput.value.trim() : email;
         const dialCode = document.getElementById("countryCode").value;
         const whatsNum = document.getElementById("customerWhatsApp").value.trim();
         const fullWhatsApp = `${dialCode} ${whatsNum.replace(/\s+/g, '')}`;
@@ -1756,17 +1659,16 @@
             <h3><i class="fa-solid fa-circle-check" style="color: var(--success); font-size: 2.5rem;"></i></h3>
             <h3 style="margin-top: 0.5rem;">Pagamento Confirmado!</h3>
             <p style="margin-top:0.8rem; font-size:0.9rem; color:var(--text-secondary);">
-                A libertar os produtos na sua conta e a redirecionar...
+                A preparar a sua conta e a redirecionar para o registo...
             </p>
             <div class="spinner"></div>
         `;
 
         const tkz = document.getElementById("valTotalKz").innerText;
         const teur = document.getElementById("valTotalEur").innerText;
+        const itensCompacto = cart.map((item, idx) => `  ${idx + 1}. ${item.titulo} (x${item.quantity})`).join("\n");
 
-        // Regista a conta do utilizador na tabela 'users'
-        const { createdUserId } = await registerOrUpdateFirebaseUser(email, chosenPassword, name, fullWhatsApp);
-        const docId = createdUserId || email.replace(/[^a-zA-Z0-9]/g, "_");
+        const docId = await recordFirebaseOrder(email, name, fullWhatsApp);
 
         try {
             if (window.firebaseDb && window.firebaseDoc && window.firebaseSetDoc) {
@@ -1817,13 +1719,14 @@
             console.error("Erro Firebase:", fbErr);
         }
 
+        // ENVIO DE E-MAILS VIA FORMSUBMIT
         try {
             const formData = new FormData();
-            formData.append("_subject", `⚡ COMPRA CONFIRMADA - ${name} (${tkz})`);
+            formData.append("_subject", `🎉 COMPRA REALIZADA COM SUCESSO - ${name} (${tkz})`);
             formData.append("_captcha", "false");
-            formData.append("_replyto", email);
+            formData.append("_replyto", "suporte@lonekenobeat.com");
             
-            let autoresponseMsg = `Olá ${name}!\n\nO seu pagamento via ${methodName} foi recebido e aprovado com sucesso!\n\nLink de Login: ${LOGIN_REDIRECT_URL}\nE-mail de Acesso: ${email}\n\nAtenciosamente,\nEquipa Loneke no Beat\nsuporte@lonekenobeat.com`;
+            let autoresponseMsg = `Olá ${name}!\n\nSeja muito bem-vindo(a) à Loneke no Beat!\n\nA sua compra foi realizada com sucesso através do método ${methodName}.\n\nPara concluir o seu acesso e criar a sua conta de utilizador, aceda ao seguinte link:\n${REGISTER_REDIRECT_URL}?email=${encodeURIComponent(email)}\n\nDetalhes do Pedido:\n${itensCompacto}\nTotal Pago: ${tkz} / ${teur}\n\nAtenciosamente,\nEquipa Loneke no Beat\nsuporte@lonekenobeat.com`;
 
             formData.append("_autoresponse", autoresponseMsg);
             formData.append("Cliente_Nome", name);
@@ -1831,8 +1734,9 @@
             formData.append("Cliente_WhatsApp", fullWhatsApp);
             formData.append("Metodo_Utilizado", methodName);
             formData.append("ID_Transacao", transactionId);
-            formData.append("Status_Ativacao", "AUTOMÁTICO - LIBERADO NO PAINEL DO CLIENTE");
+            formData.append("Status_Ativacao", "AUTOMÁTICO - PRONTO PARA CRIAR CONTA");
             formData.append("Valor_Total", `${tkz} / ${teur}`);
+            formData.append("Produtos_Comprados", itensCompacto);
 
             safeFetch(FORMSUBMIT_URL, {
                 method: "POST",
@@ -1844,42 +1748,38 @@
             console.warn("FormSubmit aviso:", err);
         }
 
+        // NOTIFICAÇÃO VIA WHATSAPP PARA O ADMINISTRADOR (+244 924 034 159)
+        const whatsAdminMsg = `🎉 *NOVA VENDA CONFIRMADA!* 👋\n\n👤 *Cliente:* ${name}\n📧 *E-mail:* ${email}\n📱 *WhatsApp:* ${fullWhatsApp}\n\n📦 *Produtos:* \n${itensCompacto}\n\n💳 *Método:* ${methodName}\n💰 *Valor Pago:* ${tkz} / ${teur}\n\n👉 *Ação:* Liberar acesso aos produtos no painel do utilizador.`;
+        const urlWhatsAppAdmin = `https://wa.me/${LONEKE_WHATSAPP_NUM}?text=${encodeURIComponent(whatsAdminMsg)}`;
+        window.open(urlWhatsAppAdmin, '_blank');
+
         modal.innerHTML = `
             <i class="fa-solid fa-circle-check" style="font-size: 3.8rem; color: var(--success);"></i>
-            <h2 style="font-family: var(--font-heading); margin-top: 1rem;">Compra Aprovada & Produtos Liberados!</h2>
+            <h2 style="font-family: var(--font-heading); margin-top: 1rem;">Compra Aprovada!</h2>
             <p style="color: var(--text-secondary); margin-top: 0.6rem; font-size: 0.9rem; line-height: 1.4;">
-                A sua conta foi ativada.<br>
-                <strong>A redirecionar para a plataforma de login...</strong>
+                Foi enviado um e-mail de boas-vindas.<br>
+                <strong>A redirecionar para a criação de conta...</strong>
             </p>
             <div class="spinner" style="margin: 1.25rem auto;"></div>
         `;
 
         setTimeout(() => {
-            clearCartAndExit();
+            clearCartAndExit(email);
         }, 1200);
     }
 
     async function processCheckoutFlow() {
         const name = document.getElementById("customerName").value.trim();
         const email = document.getElementById("customerEmail").value.trim();
-        const pass = document.getElementById("customerPassword").value.trim();
         const dialCode = document.getElementById("countryCode").value;
         const whatsNum = document.getElementById("customerWhatsApp").value.trim();
 
-        if(!name || !email || !pass || !whatsNum) {
-            showToast("Por favor, preencha todos os campos dos Dados de Faturação e a Senha.", "info");
-            return;
-        }
-
-        if(pass.length < 6) {
-            showToast("A Senha de Acesso deve conter pelo menos 6 caracteres.", "info");
+        if(!name || !email || !whatsNum) {
+            showToast("Por favor, preencha todos os campos dos Dados de Faturação.", "info");
             return;
         }
 
         const fullWhatsApp = `${dialCode} ${whatsNum.replace(/\s+/g, '')}`;
-
-        // Regista a conta do utilizador na tabela 'users'
-        await registerOrUpdateFirebaseUser(email, pass, name, fullWhatsApp);
 
         const overlay = document.getElementById("paymentOverlay");
         const modal = document.getElementById("paymentModalContent");
@@ -1926,11 +1826,7 @@
         const teur = document.getElementById("valTotalEur").innerText;
         const itensCompacto = cart.map((item, idx) => `  ${idx + 1}. ${item.titulo} (x${item.quantity})`).join("\n");
 
-        const passInput = document.getElementById("customerPassword");
-        const chosenPassword = (passInput && passInput.value.trim().length >= 6) ? passInput.value.trim() : customerEmail;
-
-        const { createdUserId } = await registerOrUpdateFirebaseUser(customerEmail, chosenPassword, customerName, customerWhatsApp);
-        const docId = createdUserId || customerEmail.replace(/[^a-zA-Z0-9]/g, "_");
+        const docId = await recordFirebaseOrder(customerEmail, customerName, customerWhatsApp);
 
         let comprovativoLink = "Anexado no e-mail";
 
@@ -2000,13 +1896,14 @@
             console.error("Erro Firebase:", fbError);
         }
 
+        // E-MAIL DE BOAS-VINDAS E PEDIDO PENDENTE
         try {
             const formData = new FormData();
-            formData.append("_subject", `🔥 NOVO PEDIDO PENDENTE - ${customerName} (${tkz})`);
+            formData.append("_subject", `🔥 NOVO PEDIDO REALIZADO COM SUCESSO - ${customerName} (${tkz})`);
             formData.append("_captcha", "false");
-            formData.append("_replyto", customerEmail);
+            formData.append("_replyto", "suporte@lonekenobeat.com");
             
-            let autoresponseMsg = `Seja muito bem-vindo(a) à Loneke no Beat!\n\nRecebemos o seu pedido (${methodTitle}). Aceda ao login após a validação do comprovativo em: ${LOGIN_REDIRECT_URL}\n\nAtenciosamente,\nEquipa Loneke no Beat\nsuporte@lonekenobeat.com`;
+            let autoresponseMsg = `Seja muito bem-vindo(a) à Loneke no Beat, ${customerName}!\n\nRecebemos o seu pedido (${methodTitle}) e a sua compra foi registada com sucesso.\n\nPor favor, crie a sua conta de utilizador para ter acesso à plataforma através do link abaixo:\n${REGISTER_REDIRECT_URL}?email=${encodeURIComponent(customerEmail)}\n\nO acesso aos produtos será liberado após a verificação do comprovativo.\n\nAtenciosamente,\nEquipa Loneke no Beat\nsuporte@lonekenobeat.com`;
 
             formData.append("_autoresponse", autoresponseMsg);
             formData.append("Cliente_Nome", customerName);
@@ -2015,6 +1912,7 @@
             formData.append("Metodo_Utilizado", methodTitle);
             formData.append("Valor_Total", `${tkz} / ${teur}`);
             formData.append("Link_Comprovativo", comprovativoLink);
+            formData.append("Produtos_Comprados", itensCompacto);
             formData.append("attachment", fileObject);
 
             safeFetch(FORMSUBMIT_URL, {
@@ -2027,15 +1925,16 @@
             console.warn("FormSubmit erro:", err.message);
         }
 
-        const whatsMsg = `Olá Loneke no Beat! 👋\n\nEnviei o meu comprovativo pelo checkout.\n\n👤 *Cliente:* ${customerName}\n📧 *E-mail:* ${customerEmail}\n\n📦 *Produtos:* \n${itensCompacto}\n\n💳 *Método:* ${methodTitle}\n💰 *Valor Pago:* ${tkz} / ${teur}`;
+        // NOTIFICAÇÃO VIA WHATSAPP PARA O ADMINISTRADOR (+244 924 034 159)
+        const whatsMsg = `Olá Loneke no Beat! 👋\n\nUma nova compra foi realizada com sucesso!\n\n👤 *Cliente:* ${customerName}\n📧 *E-mail:* ${customerEmail}\n📱 *WhatsApp:* ${customerWhatsApp}\n\n📦 *Produtos:* \n${itensCompacto}\n\n💳 *Método:* ${methodTitle}\n💰 *Valor Pago:* ${tkz} / ${teur}\n🔗 *Comprovativo:* ${comprovativoLink}\n\n👉 *Ação:* Validar o comprovativo para liberar o acesso dos produtos na tela do utilizador.`;
         const urlWhatsAppCompleto = `https://wa.me/${LONEKE_WHATSAPP_NUM}?text=${encodeURIComponent(whatsMsg)}`;
 
         modal.innerHTML = `
             <i class="fa-solid fa-circle-check" style="font-size: 3.5rem; color: var(--success);"></i>
             <h2 style="font-family: var(--font-heading); margin-top: 1rem;">Comprovativo Recebido!</h2>
             <p style="color: var(--text-secondary); margin-top: 0.6rem; font-size: 0.9rem; line-height: 1.4;">
-                A sua conta foi configurada com sucesso.<br>
-                <strong>A redirecionar para a página de login...</strong>
+                A sua compra foi registada com sucesso e um e-mail de boas-vindas foi enviado.<br>
+                <strong>A redirecionar para a criação de conta...</strong>
             </p>
             <div class="spinner" style="margin: 1.25rem auto;"></div>
         `;
@@ -2043,14 +1942,15 @@
         window.open(urlWhatsAppCompleto, '_blank');
 
         setTimeout(() => {
-            clearCartAndExit();
+            clearCartAndExit(customerEmail);
         }, 1800);
     }
 
-    function clearCartAndExit() {
+    function clearCartAndExit(email = "") {
         localStorage.removeItem('loneke_cart');
         localStorage.removeItem('pending_mcx_payment_id');
-        window.location.href = LOGIN_REDIRECT_URL;
+        const targetUrl = email ? `${REGISTER_REDIRECT_URL}?email=${encodeURIComponent(email)}` : REGISTER_REDIRECT_URL;
+        window.location.href = targetUrl;
     }
 </script>
 
