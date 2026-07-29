@@ -486,7 +486,7 @@
                             <span>Unitel Money</span>
                         </div>
                         <div class="method-card" data-method="wise" id="methodWiseCard">
-                            <img src="https://framerusercontent.com/images/yZuru7tpCe3J01en5KxrKcRb1VA.png?width=1920&height=1080" alt="Wise" class="method-icon-img">
+                            <img src="https://framerusercontent.com/images/yZuru7tpCe3J01en5KxrKbRb1VA.png?width=1920&height=1080" alt="Wise" class="method-icon-img">
                             <span>Wise</span>
                         </div>
                     </div>
@@ -568,7 +568,7 @@
                                     <i class="fa-solid fa-cloud-arrow-up"></i>
                                     <p class="dropzone-text">Arraste o ficheiro aqui ou clique para fazer upload</p>
                                     <span class="dropzone-hint">Formatos aceites: PDF, JPEG, PNG (Máx 10MB)</span>
-                                    <input type="file" id="fileReceiptKwik" style="display: none;" accept="application/pdf, image/jpeg, image/jpg, image/png">
+                                    <input type="file" id="fileReceiptKwik" style="display: none;" accept="application/pdf, image/jpeg, image/png">
                                 </div>
                                 <div class="dropzone-preview" id="previewKwik" style="display: none;">
                                     <div class="dropzone-preview-info">
@@ -616,7 +616,7 @@
                                     <i class="fa-solid fa-cloud-arrow-up"></i>
                                     <p class="dropzone-text">Arraste o ficheiro aqui ou clique para fazer upload</p>
                                     <span class="dropzone-hint">Formatos aceites: PDF, JPEG, PNG (Máx 10MB)</span>
-                                    <input type="file" id="fileReceiptAO" style="display: none;" accept="application/pdf, image/jpeg, image/jpg, image/png">
+                                    <input type="file" id="fileReceiptAO" style="display: none;" accept="application/pdf, image/jpeg, image/png">
                                 </div>
                                 <div class="dropzone-preview" id="previewAO" style="display: none;">
                                     <div class="dropzone-preview-info">
@@ -654,7 +654,7 @@
                                     <i class="fa-solid fa-cloud-arrow-up"></i>
                                     <p class="dropzone-text">Arraste o ficheiro aqui ou clique para fazer upload</p>
                                     <span class="dropzone-hint">Formatos aceites: PDF, JPEG, PNG (Máx 10MB)</span>
-                                    <input type="file" id="fileReceiptUnitel" style="display: none;" accept="application/pdf, image/jpeg, image/jpg, image/png">
+                                    <input type="file" id="fileReceiptUnitel" style="display: none;" accept="application/pdf, image/jpeg, image/png">
                                 </div>
                                 <div class="dropzone-preview" id="previewUnitel" style="display: none;">
                                     <div class="dropzone-preview-info">
@@ -702,7 +702,7 @@
                                     <i class="fa-solid fa-cloud-arrow-up"></i>
                                     <p class="dropzone-text">Arraste o ficheiro aqui ou clique para fazer upload</p>
                                     <span class="dropzone-hint">Formatos aceites: PDF, JPEG, PNG (Máx 10MB)</span>
-                                    <input type="file" id="fileReceiptWise" style="display: none;" accept="application/pdf, image/jpeg, image/jpg, image/png">
+                                    <input type="file" id="fileReceiptWise" style="display: none;" accept="application/pdf, image/jpeg, image/png">
                                 </div>
                                 <div class="dropzone-preview" id="previewWise" style="display: none;">
                                     <div class="dropzone-preview-info">
@@ -803,15 +803,24 @@
     let originalTotalKz = 0;
 
     let pollingInterval = null;
+    let currentActivePaymentId = null; 
 
     let stripeInstance = null;
     let stripeCardElement = null;
 
-    function fetchWithTimeout(resource, options = {}, timeout = 6000) {
-        return Promise.race([
-            fetch(resource, options),
-            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout de Rede')), timeout))
-        ]);
+    // Fetch protegido contra falhas de rede de segundo plano no telemóvel
+    async function safeFetch(url, options = {}) {
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), options.timeout || 8000);
+            
+            const response = await fetch(url, { ...options, signal: controller.signal });
+            clearTimeout(timeoutId);
+            return response;
+        } catch (err) {
+            console.warn("Rede instável ou minimizada:", err.message);
+            return null; // Evita quebrar o script com "Load failed"
+        }
     }
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -841,7 +850,47 @@
                 mcxInput.value = whatsInput.value;
             }
         });
+
+        // RECONEXÃO AUTOMÁTICA SE A PÁGINA RECARREGAR
+        checkSavedPendingPayment();
     });
+
+    // SISTEMA DE DETECÇÃO DE VISIBILIDADE (TELEMÓVEL RE-ABERTO)
+    document.addEventListener("visibilitychange", async () => {
+        if (document.visibilityState === "visible") {
+            const savedPaymentId = currentActivePaymentId || localStorage.getItem("pending_mcx_payment_id");
+            if (savedPaymentId) {
+                console.log("Telemóvel voltou à aba. Verificando pagamento imediatamente...");
+                await verifyMcxStatus(savedPaymentId);
+            }
+        }
+    });
+
+    async function checkSavedPendingPayment() {
+        const savedPaymentId = localStorage.getItem("pending_mcx_payment_id");
+        if (savedPaymentId) {
+            currentActivePaymentId = savedPaymentId;
+            showToast("Verificando se o pagamento Multicaixa Express foi concluído...", "info");
+            
+            const overlay = document.getElementById("paymentOverlay");
+            const modal = document.getElementById("paymentModalContent");
+            overlay.style.display = "flex";
+
+            modal.innerHTML = `
+                <i class="fa-solid fa-mobile-screen-button" style="font-size: 3.5rem; color: var(--primary);"></i>
+                <h3 style="margin-top: 1rem; font-family: var(--font-heading);">Verificando Pagamento...</h3>
+                <p style="margin-top:0.8rem; font-size:0.9rem; color:var(--text-secondary);">
+                    Confirmando transação no Multicaixa Express...
+                </p>
+                <div class="spinner" style="margin: 1.2rem auto;"></div>
+                <button type="button" class="btn-checkout" onclick="checkPaymentStatusNow('${savedPaymentId}')" style="background: var(--success); margin-top: 0;">
+                    <i class="fa-solid fa-arrows-rotate"></i> Já Paguei (Verificar Agora)
+                </button>
+            `;
+
+            startMcxStatusPolling(savedPaymentId);
+        }
+    }
     
     function showToast(message, type = "info") {
         const container = document.getElementById("toastContainer");
@@ -1207,10 +1256,7 @@
         window.open(targetUrl, '_blank');
     }
 
-    // =========================================================================
     // REGISTO DE UTILIZADOR E SENHA NO FIREBASE AUTH
-    // =========================================================================
-
     async function registerOrUpdateFirebaseUser(email, password, name, fullWhatsApp) {
         const authObj = window.firebaseAuth || window.auth;
         const createUserFn = window.createUserWithEmailAndPassword || window.firebaseCreateUser;
@@ -1283,10 +1329,7 @@
         return { createdUserId: docId, userExisted: userExisted };
     }
 
-    // =========================================================================
     // INTEGRAÇÃO PAYGOO: MULTICAIXA EXPRESS AUTOMÁTICO
-    // =========================================================================
-
     async function processMulticaixaExpressPayment() {
         const name = document.getElementById("customerName").value.trim();
         const email = document.getElementById("customerEmail").value.trim();
@@ -1334,7 +1377,7 @@
         btnMcx.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> A enviar pedido ao Express...`;
 
         try {
-            const response = await fetch(`${API_BASE_URL}/payments`, {
+            const response = await safeFetch(`${API_BASE_URL}/payments`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -1346,8 +1389,13 @@
                     customer_name: name,
                     customer_email: email,
                     customer_phone: phone
-                })
+                }),
+                timeout: 10000
             });
+
+            if (!response) {
+                throw new Error("Falha na conexão de rede. Verifique a sua internet e tente novamente.");
+            }
 
             const data = await response.json();
 
@@ -1356,6 +1404,10 @@
             }
 
             const paymentId = data.payment_id || data.id;
+            
+            // Salva o estado no telemóvel para não perder a sessão
+            currentActivePaymentId = paymentId;
+            localStorage.setItem("pending_mcx_payment_id", paymentId);
 
             const overlay = document.getElementById("paymentOverlay");
             const modal = document.getElementById("paymentModalContent");
@@ -1396,13 +1448,13 @@
 
         if (!isConfirmed) {
             showToast("A verificar confirmação do pagamento...", "info");
-            
             setTimeout(async () => {
                 const secondCheck = await verifyMcxStatus(paymentId);
                 if (!secondCheck) {
-                    if (pollingInterval) clearInterval(pollingInterval);
-                    showToast("Pagamento confirmado! A liberar o seu pedido...", "success");
-                    await processAutomatedSuccess("Multicaixa Express", paymentId);
+                    if (btnManual) {
+                        btnManual.disabled = false;
+                        btnManual.innerHTML = `<i class="fa-solid fa-arrows-rotate"></i> Já Paguei (Verificar Agora)`;
+                    }
                 }
             }, 1200);
         }
@@ -1410,10 +1462,13 @@
 
     async function verifyMcxStatus(paymentId) {
         try {
-            const res = await fetch(`${API_BASE_URL}/payment-status/${paymentId}`, {
-                headers: { "x-api-key": API_KEY }
+            const res = await safeFetch(`${API_BASE_URL}/payment-status/${paymentId}`, {
+                headers: { "x-api-key": API_KEY },
+                timeout: 6000
             });
             
+            if (!res) return false;
+
             const statusData = await res.json();
             
             const statusValue = statusData.status || statusData.payment_status || statusData.state || (statusData.data && statusData.data.status) || "";
@@ -1431,11 +1486,15 @@
 
             if (successStatuses.includes(rawStatus)) {
                 if (pollingInterval) clearInterval(pollingInterval);
+                localStorage.removeItem("pending_mcx_payment_id");
+                currentActivePaymentId = null;
                 showToast("Pagamento Multicaixa Express Confirmado!", "success");
                 await processAutomatedSuccess("Multicaixa Express (Paygoo API)", paymentId);
                 return true;
             } else if (failureStatuses.includes(rawStatus)) {
                 if (pollingInterval) clearInterval(pollingInterval);
+                localStorage.removeItem("pending_mcx_payment_id");
+                currentActivePaymentId = null;
                 const modal = document.getElementById("paymentModalContent");
                 modal.innerHTML = `
                     <i class="fa-solid fa-circle-xmark" style="font-size: 3.5rem; color: #EF4444;"></i>
@@ -1457,7 +1516,7 @@
         if (pollingInterval) clearInterval(pollingInterval);
 
         let attempts = 0;
-        const maxAttempts = 40; 
+        const maxAttempts = 50; 
 
         pollingInterval = setInterval(async () => {
             attempts++;
@@ -1482,6 +1541,8 @@
     }
 
     function closeOverlayAndReset() {
+        localStorage.removeItem("pending_mcx_payment_id");
+        currentActivePaymentId = null;
         document.getElementById("paymentOverlay").style.display = "none";
         const btnMcx = document.getElementById("btnMcxPay");
         if (btnMcx) {
@@ -1490,10 +1551,7 @@
         }
     }
 
-    // =========================================================================
     // INTEGRAÇÃO STRIPE & PAYPAL
-    // =========================================================================
-
     function initStripeElements() {
         if (window.Stripe) {
             stripeInstance = Stripe('pk_test_51P_REPLACE_WITH_YOUR_STRIPE_PUBLISHABLE_KEY');
@@ -1624,11 +1682,11 @@
         }
     }
 
-    // =========================================================================
     // LIBERAÇÃO AUTOMÁTICA DE PRODUTOS E REGISTRO NO FIREBASE / E-MAIL
-    // =========================================================================
-
     async function processAutomatedSuccess(methodName, transactionId) {
+        localStorage.removeItem("pending_mcx_payment_id");
+        currentActivePaymentId = null;
+
         const name = document.getElementById("customerName").value.trim();
         const email = document.getElementById("customerEmail").value.trim();
         const passInput = document.getElementById("customerPassword");
@@ -1652,7 +1710,6 @@
         const tkz = document.getElementById("valTotalKz").innerText;
         const teur = document.getElementById("valTotalEur").innerText;
 
-        // Regista o utilizador e cria a conta diretamente com a senha definida
         const { createdUserId, userExisted } = await registerOrUpdateFirebaseUser(email, chosenPassword, name, fullWhatsApp);
         const docId = createdUserId || email.replace(/[^a-zA-Z0-9]/g, "_");
 
@@ -1705,7 +1762,6 @@
             console.error("Erro ao gravar produtos no Firebase:", fbErr);
         }
 
-        // DISPARO DE REGISTO NO SISTEMA
         try {
             const formData = new FormData();
             formData.append("_subject", `⚡ COMPRA CONFIRMADA - ${name} (${tkz})`);
@@ -1723,16 +1779,16 @@
             formData.append("Status_Ativacao", "AUTOMÁTICO - LIBERADO NO PAINEL DO CLIENTE");
             formData.append("Valor_Total", `${tkz} / ${teur}`);
 
-            await fetchWithTimeout(FORMSUBMIT_URL, {
+            await safeFetch(FORMSUBMIT_URL, {
                 method: "POST",
                 headers: { 'Accept': 'application/json' },
-                body: formData
-            }, 6000);
+                body: formData,
+                timeout: 6000
+            });
         } catch (err) {
             console.warn("FormSubmit aviso:", err);
         }
 
-        // TELA FINAL DE SUCESSO E REDIRECIONAMENTO AUTOMÁTICO
         modal.innerHTML = `
             <i class="fa-solid fa-circle-check" style="font-size: 3.8rem; color: var(--success);"></i>
             <h2 style="font-family: var(--font-heading); margin-top: 1rem;">Compra Aprovada & Produtos Liberados!</h2>
@@ -1748,10 +1804,7 @@
         }, 2200);
     }
 
-    // =========================================================================
     // FLUXO MANUAL (KWIK, TRANSF AO, UNITEL MONEY, WISE)
-    // =========================================================================
-
     async function processCheckoutFlow() {
         const name = document.getElementById("customerName").value.trim();
         const email = document.getElementById("customerEmail").value.trim();
@@ -1826,12 +1879,13 @@
         try {
             const uploadFormData = new FormData();
             uploadFormData.append("file", fileObject);
-            const uploadResponse = await fetchWithTimeout("https://tmpfiles.org/api/v1/upload", {
+            const uploadResponse = await safeFetch("https://tmpfiles.org/api/v1/upload", {
                 method: "POST",
-                body: uploadFormData
-            }, 5000);
+                body: uploadFormData,
+                timeout: 5000
+            });
 
-            if (uploadResponse.ok) {
+            if (uploadResponse && uploadResponse.ok) {
                 const uploadResult = await uploadResponse.json();
                 if (uploadResult.status === "success" && uploadResult.data && uploadResult.data.url) {
                     comprovativoLink = uploadResult.data.url;
@@ -1905,11 +1959,12 @@
             formData.append("Link_Comprovativo", comprovativoLink);
             formData.append("attachment", fileObject);
 
-            await fetchWithTimeout(FORMSUBMIT_URL, {
+            await safeFetch(FORMSUBMIT_URL, {
                 method: "POST",
                 headers: { 'Accept': 'application/json' },
-                body: formData
-            }, 6000);
+                body: formData,
+                timeout: 6000
+            });
         } catch (err) {
             console.warn("FormSubmit erro:", err.message);
         }
@@ -1917,7 +1972,6 @@
         const whatsMsg = `Olá Loneke no Beat! 👋\n\nEnviei o meu comprovativo pelo checkout.\n\n👤 *Cliente:* ${customerName}\n📧 *E-mail:* ${customerEmail}\n\n📦 *Produtos:* \n${itensCompacto}\n\n💳 *Método:* ${methodTitle}\n💰 *Valor Pago:* ${tkz} / ${teur}`;
         const urlWhatsAppCompleto = `https://wa.me/${LONEKE_WHATSAPP_NUM}?text=${encodeURIComponent(whatsMsg)}`;
 
-        // NOTIFICA E REDIRECIONA AUTOMATICAMENTE APÓS ENVIAR O COMPROVATIVO
         modal.innerHTML = `
             <i class="fa-solid fa-circle-check" style="font-size: 3.5rem; color: var(--success);"></i>
             <h2 style="font-family: var(--font-heading); margin-top: 1rem;">Comprovativo Recebido!</h2>
@@ -1937,6 +1991,7 @@
 
     function clearCartAndExit() {
         localStorage.removeItem('loneke_cart');
+        localStorage.removeItem('pending_mcx_payment_id');
         window.location.href = LOGIN_REDIRECT_URL;
     }
 </script>
