@@ -1253,7 +1253,7 @@
     }
 
     // =========================================================================
-    // CRIAÇÃO E ATUALIZAÇÃO DA CONTA DO UTILIZADOR CLIENTE NO FIREBASE
+    // CRIAÇÃO E ATUALIZAÇÃO DA CONTA DO UTILIZADOR CLIENTE NO FIREBASE E FIRESTORE
     // =========================================================================
     async function registerOrUpdateFirebaseUser(email, password, name, fullWhatsApp) {
         let createdUserId = null;
@@ -1285,7 +1285,7 @@
                     }
                 }
             } catch (authErr) {
-                // Caso a conta já exista, tenta fazer login para atualizar
+                // Caso a conta já exista no Firebase Auth
                 if (authErr.code === 'auth/email-already-in-use' || (authErr.message && authErr.message.includes('email-already-in-use'))) {
                     userExisted = true;
                     try {
@@ -1304,7 +1304,7 @@
                 }
             }
 
-            // Tenta atualizar senha se já estiver logado
+            // Tenta atualizar senha se o utilizador já estiver autenticado
             if (authObj.currentUser && password) {
                 try {
                     if (typeof updatePassFn === 'function') {
@@ -1320,35 +1320,30 @@
             console.warn("Firebase Auth não disponível no escopo global.");
         }
 
-        // Define o ID de referência do documento
+        // Define o ID do documento do utilizador na tabela/coleção users
         const docId = createdUserId || (authObj && authObj.currentUser ? authObj.currentUser.uid : email.replace(/[^a-zA-Z0-9]/g, "_"));
 
-        // 2. Registar/Atualizar o perfil do cliente na coleção 'users' no Firestore
+        // 2. Garante a criação/atualização do perfil na coleção 'users' do Firestore
         try {
+            const userData = {
+                uid: docId,
+                name: name,
+                email: email,
+                whatsApp: fullWhatsApp,
+                role: "cliente",
+                status: "ativo",
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
             if (window.firebaseDb && window.firebaseDoc && window.firebaseSetDoc) {
                 const userRef = window.firebaseDoc(window.firebaseDb, "users", docId);
-                await window.firebaseSetDoc(userRef, {
-                    uid: docId,
-                    name: name,
-                    email: email,
-                    whatsApp: fullWhatsApp,
-                    role: "cliente",
-                    status: "ativo",
-                    updatedAt: new Date().toISOString()
-                }, { merge: true });
+                await window.firebaseSetDoc(userRef, userData, { merge: true });
             } else if (window.db && typeof window.db.collection === 'function') {
-                await window.db.collection("users").doc(docId).set({
-                    uid: docId,
-                    name: name,
-                    email: email,
-                    whatsApp: fullWhatsApp,
-                    role: "cliente",
-                    status: "ativo",
-                    updatedAt: new Date().toISOString()
-                }, { merge: true });
+                await window.db.collection("users").doc(docId).set(userData, { merge: true });
             }
         } catch (dbErr) {
-            console.error("Erro ao guardar perfil do cliente no Firestore:", dbErr);
+            console.error("Erro ao guardar perfil do cliente na tabela users do Firestore:", dbErr);
         }
 
         return { createdUserId: docId, userExisted: userExisted };
@@ -1371,7 +1366,7 @@
 
         const fullWhatsApp = `${dialCode} ${whatsNum.replace(/\s+/g, '')}`;
 
-        // Garante a criação/atualização da conta no Firebase
+        // Regista a conta na tabela users antes de prosseguir
         await registerOrUpdateFirebaseUser(email, pass, name, fullWhatsApp);
 
         showToast("Verificando a confirmação do pagamento...", "info");
@@ -1419,7 +1414,7 @@
 
         const fullWhatsApp = `${dialCode} ${phone.replace(/\s+/g, '')}`;
 
-        // Cria a conta do cliente no Firebase Auth & Firestore imediatamente
+        // Regista a conta do cliente na tabela 'users'
         await registerOrUpdateFirebaseUser(email, pass, name, fullWhatsApp);
 
         phone = phone.replace(/\D/g, '');
@@ -1769,6 +1764,7 @@
         const tkz = document.getElementById("valTotalKz").innerText;
         const teur = document.getElementById("valTotalEur").innerText;
 
+        // Regista a conta do utilizador na tabela 'users'
         const { createdUserId } = await registerOrUpdateFirebaseUser(email, chosenPassword, name, fullWhatsApp);
         const docId = createdUserId || email.replace(/[^a-zA-Z0-9]/g, "_");
 
@@ -1882,7 +1878,7 @@
 
         const fullWhatsApp = `${dialCode} ${whatsNum.replace(/\s+/g, '')}`;
 
-        // Cria a conta no Firebase imediatamente ao submeter comprovativo
+        // Regista a conta do utilizador na tabela 'users'
         await registerOrUpdateFirebaseUser(email, pass, name, fullWhatsApp);
 
         const overlay = document.getElementById("paymentOverlay");
