@@ -452,11 +452,21 @@
                     <h2 class="checkout-title" style="margin-top: 3rem;"><i class="fa-solid fa-credit-card"></i> Escolha o Método de Pagamento</h2>
                     
                     <div class="payment-methods-grid">
-                        <div class="method-card active" data-method="multicaixa" id="methodExpressCard">
-                            <span class="method-badge-auto">AUTO</span>
-                            <img src="img/express.png" alt="Multicaixa Express" class="method-icon-img">
-                            <span>Multicaixa Express</span>
+                        <!-- MANUAIS PRIMEIRO -->
+                        <div class="method-card active" data-method="kwik" id="methodKwikCard">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRU9GrScbzkKgIVLC4eHJZGjR7sXpWUFP4dskacz0jaj9QbTFpdKTL1Zw&s=10" alt="KWIK" class="method-icon-img">
+                            <span>KWIK</span>
                         </div>
+                        <div class="method-card" data-method="transf_ao" id="methodTransfAoCard">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>Transferência Bancária Nacional</span>
+                        </div>
+                        <div class="method-card" data-method="wise" id="methodWiseCard">
+                            <img src="https://framerusercontent.com/images/yZuru7tpCe3J01en5KxrKbRb1VA.png?width=1920&height=1080" alt="Wise" class="method-icon-img">
+                            <span>Wise</span>
+                        </div>
+
+                        <!-- AUTOMÁTICOS DEPOIS -->
                         <div class="method-card" data-method="stripe" id="methodStripeCard">
                             <span class="method-badge-auto">AUTO</span>
                             <i class="fa-brands fa-stripe" style="color: #635bff; font-size: 2.2rem;"></i>
@@ -467,83 +477,10 @@
                             <img src="https://www.edukasoftware.com/wp-content/uploads/2025/11/paypal_2014_logo_detail.png" alt="PayPal" class="method-icon-img">
                             <span>PayPal</span>
                         </div>
-                        <div class="method-card" data-method="kwik" id="methodKwikCard">
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRU9GrScbzkKgIVLC4eHJZGjR7sXpWUFP4dskacz0jaj9QbTFpdKTL1Zw&s=10" alt="KWIK" class="method-icon-img">
-                            <span>KWIK</span>
-                        </div>
-                        <div class="method-card" data-method="transf_ao" id="methodTransfAoCard">
-                            <i class="fa-solid fa-building-columns"></i>
-                            <span>Transferência Bancária Nacional</span>
-                        </div>
-                        <div class="method-card" data-method="unitel_money" id="methodUnitelCard">
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOZFCtzTX_-6zqlools3X0r9ZFyGkUJFqgh0ZFpOOvnzhmChDzY7jZPx6E&s=10" alt="Unitel Money" class="method-icon-img">
-                            <span>Unitel Money</span>
-                        </div>
-                        <div class="method-card" data-method="wise" id="methodWiseCard">
-                            <img src="https://framerusercontent.com/images/yZuru7tpCe3J01en5KxrKbRb1VA.png?width=1920&height=1080" alt="Wise" class="method-icon-img">
-                            <span>Wise</span>
-                        </div>
-                    </div>
-
-                    <!-- MULTICAIXA EXPRESS -->
-                    <div class="dynamic-payment-panel" id="panel-multicaixa" style="display: block;">
-                        <div style="text-align: center; margin-bottom: 1.25rem;">
-                            <span style="background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700;">
-                                <i class="fa-solid fa-bolt"></i> Cobrança Direta no Telemóvel & Liberação Automática
-                            </span>
-                        </div>
-                        <p style="font-size: 0.88rem; color: var(--text-secondary); text-align: center; margin-bottom: 1.25rem;">
-                            Ao clicar em pagar, será enviado um pedido de confirmação para o aplicativo <strong>Multicaixa Express</strong> no número abaixo.
-                        </p>
-                        <div class="form-group">
-                            <label for="mcxPhoneInput">Número de Telefone Express (AO):</label>
-                            <input type="tel" id="mcxPhoneInput" class="form-control" placeholder="Ex: 923456789">
-                        </div>
-                        <button type="button" class="btn-checkout" id="btnMcxPay" onclick="processMulticaixaExpressPayment()" style="background: #E50914; margin-top: 0;">
-                            <i class="fa-solid fa-mobile-screen-button"></i> Pagar via Multicaixa Express
-                        </button>
-                        
-                        <button type="button" class="btn-checkout" id="btnMcxAlreadyPaid" onclick="handleMcxAlreadyPaidClick()" style="background: var(--success); margin-top: 0.85rem; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);">
-                            <i class="fa-solid fa-circle-check"></i> Já Paguei (Verificar Pagamento)
-                        </button>
-                    </div>
-
-                    <!-- STRIPE -->
-                    <div class="dynamic-payment-panel" id="panel-stripe">
-                        <div style="text-align: center; margin-bottom: 1.25rem;">
-                            <span style="background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700;">
-                                <i class="fa-solid fa-bolt"></i> Processamento Instantâneo & Liberação Automática Sem Espera
-                            </span>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Dados do Cartão (Visa / Mastercard)</label>
-                            <div id="stripe-card-element" class="stripe-input-box"></div>
-                            <div id="stripe-card-errors" role="alert" style="color: #EF4444; font-size: 0.85rem; margin-top: -0.5rem; margin-bottom: 1rem;"></div>
-                        </div>
-
-                        <button type="button" class="btn-checkout" id="btnStripePay" onclick="processStripePayment()" style="background: #635bff; margin-top: 0;">
-                            <i class="fa-solid fa-lock"></i> Pagar Agora com Stripe
-                        </button>
-                    </div>
-
-                    <!-- PAYPAL -->
-                    <div class="dynamic-payment-panel" id="panel-paypal">
-                        <div style="text-align: center; margin-bottom: 1.25rem;">
-                            <span style="background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700;">
-                                <i class="fa-solid fa-bolt"></i> Processamento Instantâneo & Liberação Automática
-                            </span>
-                        </div>
-
-                        <p style="font-size: 0.88rem; color: var(--text-secondary); text-align: center; margin-bottom: 1.25rem;">
-                            Clique no botão abaixo para pagar com PayPal. Os produtos são liberados automaticamente.
-                        </p>
-
-                        <div id="paypal-button-container" style="max-width: 100%; margin: 0 auto;"></div>
                     </div>
 
                     <!-- KWIK -->
-                    <div class="dynamic-payment-panel" id="panel-kwik">
+                    <div class="dynamic-payment-panel" id="panel-kwik" style="display: block;">
                         <div class="form-group" style="margin-bottom: 1rem;">
                             <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Nome do Titular da Conta KWIK:</label>
                             <p style="font-weight: 700; font-size: 1.05rem; color: var(--white); margin-left: 0.2rem;">José Eduardo Loneke</p>
@@ -625,44 +562,6 @@
                         </div>
                     </div>
 
-                    <!-- UNITEL MONEY -->
-                    <div class="dynamic-payment-panel" id="panel-unitel_money">
-                        <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Entidade (Clique à direita para copiar):</label>
-                        <div class="copy-row">
-                            <code id="txtUnitelEntidade">00930</code>
-                            <button type="button" class="btn-copy-action" onclick="copySimpleText('txtUnitelEntidade')">
-                                <i class="fa-solid fa-copy"></i> Copiar
-                            </button>
-                        </div>
-
-                        <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Referência (Clique à direita para copiar):</label>
-                        <div class="copy-row">
-                            <code id="txtUnitelNumero">936380720</code>
-                            <button type="button" class="btn-copy-action" onclick="copySimpleText('txtUnitelNumero')">
-                                <i class="fa-solid fa-copy"></i> Copiar
-                            </button>
-                        </div>
-
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label>Carregar Comprovativo de Pagamento Unitel Money (PDF, JPG, PNG)</label>
-                            <div class="dropzone-wrapper">
-                                <div class="dropzone-area" id="dropzoneUnitel" onclick="document.getElementById('fileReceiptUnitel').click()">
-                                    <i class="fa-solid fa-cloud-arrow-up"></i>
-                                    <p class="dropzone-text">Arraste o ficheiro aqui ou clique para fazer upload</p>
-                                    <span class="dropzone-hint">Formatos aceites: PDF, JPEG, PNG (Máx 10MB)</span>
-                                    <input type="file" id="fileReceiptUnitel" style="display: none;" accept="application/pdf, image/jpeg, image/png">
-                                </div>
-                                <div class="dropzone-preview" id="previewUnitel" style="display: none;">
-                                    <div class="dropzone-preview-info">
-                                        <i class="fa-solid fa-file-circle-check"></i>
-                                        <span class="dropzone-filename" id="filenameUnitel">ficheiro.pdf</span>
-                                    </div>
-                                    <button type="button" class="btn-clear-file" onclick="clearFileSelection('Unitel', event)">&times;</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- WISE -->
                     <div class="dynamic-payment-panel" id="panel-wise">
                         <div class="form-group" style="margin-bottom: 1rem;">
@@ -709,6 +608,40 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- STRIPE -->
+                    <div class="dynamic-payment-panel" id="panel-stripe">
+                        <div style="text-align: center; margin-bottom: 1.25rem;">
+                            <span style="background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700;">
+                                <i class="fa-solid fa-bolt"></i> Processamento Instantâneo & Liberação Automática Sem Espera
+                            </span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Dados do Cartão (Visa / Mastercard)</label>
+                            <div id="stripe-card-element" class="stripe-input-box"></div>
+                            <div id="stripe-card-errors" role="alert" style="color: #EF4444; font-size: 0.85rem; margin-top: -0.5rem; margin-bottom: 1rem;"></div>
+                        </div>
+
+                        <button type="button" class="btn-checkout" id="btnStripePay" onclick="processStripePayment()" style="background: #635bff; margin-top: 0;">
+                            <i class="fa-solid fa-lock"></i> Pagar Agora com Stripe
+                        </button>
+                    </div>
+
+                    <!-- PAYPAL -->
+                    <div class="dynamic-payment-panel" id="panel-paypal">
+                        <div style="text-align: center; margin-bottom: 1.25rem;">
+                            <span style="background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700;">
+                                <i class="fa-solid fa-bolt"></i> Processamento Instantâneo & Liberação Automática
+                            </span>
+                        </div>
+
+                        <p style="font-size: 0.88rem; color: var(--text-secondary); text-align: center; margin-bottom: 1.25rem;">
+                            Clique no botão abaixo para pagar com PayPal. Os produtos são liberados automaticamente.
+                        </p>
+
+                        <div id="paypal-button-container" style="max-width: 100%; margin: 0 auto;"></div>
                     </div>
 
                 </form>
@@ -779,9 +712,6 @@
     const LONEKE_WHATSAPP_NUM = "244924034159";
     const REGISTER_REDIRECT_URL = "https://app.lonekenobeat.com/plataforma/cadastro.html";
 
-    const API_BASE_URL = "https://rouxavcvorjiwhpjhsye.supabase.co/functions/v1/api-v1";
-    const API_KEY = "pgoo_5LlAiNj7EWeDwrf1jKtMsdBPoGKOMiMD3HImw17q"; 
-
     const BANCOS_AO = {
         BAI: "AO06004000006562149410192",
         BFA: "AO06000600006591444830109",
@@ -790,15 +720,12 @@
         BPC: "AO06001000750328463101137"
     };
 
-    let selectedMethod = "multicaixa";
+    let selectedMethod = "kwik";
     let cart = [];
     const EXCHANGE_RATE = 1000; 
 
     let discountApplied = false;
     let originalTotalKz = 0;
-
-    let pollingInterval = null;
-    let currentActivePaymentId = null; 
 
     let stripeInstance = null;
     let stripeCardElement = null;
@@ -836,53 +763,7 @@
         document.getElementById("btnApplyDiscount25").addEventListener("click", triggerDiscountCalculation);
         document.getElementById("btnPlaceOrder").addEventListener("click", handleMainCheckoutClick);
         document.getElementById("btnWhatsappNegotiate").addEventListener("click", openWhatsAppNegotiation);
-
-        const whatsInput = document.getElementById("customerWhatsApp");
-        const mcxInput = document.getElementById("mcxPhoneInput");
-        whatsInput.addEventListener("input", () => {
-            if (mcxInput && !mcxInput.value) {
-                mcxInput.value = whatsInput.value;
-            }
-        });
-
-        checkSavedPendingPayment();
     });
-
-    document.addEventListener("visibilitychange", async () => {
-        if (document.visibilityState === "visible") {
-            const savedPaymentId = currentActivePaymentId || localStorage.getItem("pending_mcx_payment_id");
-            if (savedPaymentId) {
-                console.log("Aba ativa novamente. Verificando pagamento imediatamente...");
-                await verifyMcxStatus(savedPaymentId);
-            }
-        }
-    });
-
-    async function checkSavedPendingPayment() {
-        const savedPaymentId = localStorage.getItem("pending_mcx_payment_id");
-        if (savedPaymentId) {
-            currentActivePaymentId = savedPaymentId;
-            showToast("Verificando se o pagamento foi concluído...", "info");
-            
-            const overlay = document.getElementById("paymentOverlay");
-            const modal = document.getElementById("paymentModalContent");
-            overlay.style.display = "flex";
-
-            modal.innerHTML = `
-                <i class="fa-solid fa-mobile-screen-button" style="font-size: 3.5rem; color: var(--primary);"></i>
-                <h3 style="margin-top: 1rem; font-family: var(--font-heading);">Verificando Pagamento...</h3>
-                <p style="margin-top:0.8rem; font-size:0.9rem; color:var(--text-secondary);">
-                    Confirmando transação pendente no Multicaixa Express...
-                </p>
-                <div class="spinner" style="margin: 1.2rem auto;"></div>
-                <button type="button" class="btn-checkout" id="btnManualCheckNow" onclick="checkPaymentStatusNow('${savedPaymentId}')" style="background: var(--success); margin-top: 0;">
-                    <i class="fa-solid fa-arrows-rotate"></i> Já Paguei (Verificar Agora)
-                </button>
-            `;
-
-            startMcxStatusPolling(savedPaymentId);
-        }
-    }
     
     function showToast(message, type = "info") {
         const container = document.getElementById("toastContainer");
@@ -1031,7 +912,7 @@
             `;
         }).join('');
 
-        const manualMethods = ["kwik", "transf_ao", "unitel_money", "wise"];
+        const manualMethods = ["kwik", "transf_ao", "wise"];
         const isManualMethod = manualMethods.includes(selectedMethod);
 
         if (originalTotalKz >= 1000) {
@@ -1064,7 +945,7 @@
                 btnApply.innerHTML = `<i class="fa-solid fa-ban"></i> Desconto Indisponível (Pagamento Automático)`;
                 
                 textMsg.style.color = "var(--text-secondary)";
-                textMsg.innerHTML = `⚠️ O desconto só é possível nos pagamentos manuais (como transferência bancária, Unitel Money e outras formas de pagamento manual).`;
+                textMsg.innerHTML = `⚠️ O desconto só é possível nos pagamentos manuais (como transferência bancária, KWIK e Wise).`;
             }
         } else {
             discountContainer.style.display = "none";
@@ -1130,7 +1011,7 @@
     function triggerDiscountCalculation() {
         if (originalTotalKz < 1000) return;
 
-        const manualMethods = ["kwik", "transf_ao", "unitel_money", "wise"];
+        const manualMethods = ["kwik", "transf_ao", "wise"];
         if (!manualMethods.includes(selectedMethod)) {
             showToast("O desconto só é possível em pagamentos manuais.", "info");
             return;
@@ -1167,7 +1048,7 @@
     }
 
     function initDropzoneHandlers() {
-        ['Kwik', 'AO', 'Unitel', 'Wise'].forEach(type => {
+        ['Kwik', 'AO', 'Wise'].forEach(type => {
             const dropzone = document.getElementById(`dropzone${type}`);
             const input = document.getElementById(`fileReceipt${type}`);
             const preview = document.getElementById(`preview${type}`);
@@ -1273,252 +1154,6 @@
         }
 
         return docId;
-    }
-
-    // VERIFICA E FORÇA AVANÇO
-    async function handleMcxAlreadyPaidClick() {
-        const savedPaymentId = currentActivePaymentId || localStorage.getItem("pending_mcx_payment_id");
-
-        const name = document.getElementById("customerName").value.trim();
-        const email = document.getElementById("customerEmail").value.trim();
-        const dialCode = document.getElementById("countryCode").value;
-        const whatsNum = document.getElementById("customerWhatsApp").value.trim();
-
-        if(!name || !email) {
-            showToast("Por favor, preencha o Nome e E-mail primeiro.", "info");
-            return;
-        }
-
-        const fullWhatsApp = `${dialCode} ${whatsNum.replace(/\s+/g, '')}`;
-
-        await recordFirebaseOrder(email, name, fullWhatsApp);
-
-        showToast("Verificando a confirmação do pagamento...", "info");
-
-        const overlay = document.getElementById("paymentOverlay");
-        const modal = document.getElementById("paymentModalContent");
-        overlay.style.display = "flex";
-
-        modal.innerHTML = `
-            <i class="fa-solid fa-mobile-screen-button" style="font-size: 3.5rem; color: var(--primary);"></i>
-            <h3 style="margin-top: 1rem; font-family: var(--font-heading);">Verificando Pagamento...</h3>
-            <p style="margin-top:0.8rem; font-size:0.9rem; color:var(--text-secondary);">
-                A confirmar transação no Multicaixa Express...
-            </p>
-            <div class="spinner" style="margin: 1.2rem auto;"></div>
-        `;
-
-        if (!savedPaymentId) {
-            await processMulticaixaExpressPayment();
-            return;
-        }
-
-        const verified = await verifyMcxStatus(savedPaymentId);
-        if(!verified) {
-            await processAutomatedSuccess("Multicaixa Express (Confirmação do Utilizador)", savedPaymentId);
-        }
-    }
-
-    async function processMulticaixaExpressPayment() {
-        const name = document.getElementById("customerName").value.trim();
-        const email = document.getElementById("customerEmail").value.trim();
-        let phone = document.getElementById("mcxPhoneInput").value.trim() || document.getElementById("customerWhatsApp").value.trim();
-        const dialCode = document.getElementById("countryCode").value;
-
-        if(!name || !email || !phone) {
-            showToast("Por favor, preencha Nome, E-mail e Telemóvel.", "info");
-            return;
-        }
-
-        const fullWhatsApp = `${dialCode} ${phone.replace(/\s+/g, '')}`;
-
-        await recordFirebaseOrder(email, name, fullWhatsApp);
-
-        phone = phone.replace(/\D/g, '');
-        if (phone.length > 9) {
-            phone = phone.slice(-9);
-        }
-
-        const itemsPayload = cart.map(item => {
-            let matchedProd = null;
-            if (typeof produtos !== 'undefined' && Array.isArray(produtos)) {
-                matchedProd = produtos.find(p => 
-                    String(p.id) === String(item.id) || 
-                    (p.product_id && p.product_id === item.product_id) ||
-                    (p.product_id && String(p.product_id) === String(item.id)) ||
-                    (item.product_id && String(p.id) === String(item.product_id))
-                );
-            }
-            
-            const finalProductId = (matchedProd && matchedProd.product_id) 
-                ? matchedProd.product_id 
-                : (item.product_id || item.id);
-
-            return {
-                product_id: String(finalProductId),
-                quantity: Number(item.quantity) || 1
-            };
-        });
-
-        const btnMcx = document.getElementById("btnMcxPay");
-        btnMcx.disabled = true;
-        btnMcx.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> A enviar pedido ao Express...`;
-
-        try {
-            const response = await safeFetch(`${API_BASE_URL}/payments`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "x-api-key": API_KEY
-                },
-                body: JSON.stringify({
-                    items: itemsPayload,
-                    payment_method: "multicaixa",
-                    customer_name: name,
-                    customer_email: email,
-                    customer_phone: phone
-                }),
-                timeout: 15000
-            });
-
-            let paymentId = "MCX-" + Date.now();
-
-            if (response && response.ok) {
-                const data = await response.json();
-                paymentId = data.payment_id || data.id || paymentId;
-            }
-
-            currentActivePaymentId = paymentId;
-            localStorage.setItem("pending_mcx_payment_id", paymentId);
-
-            const overlay = document.getElementById("paymentOverlay");
-            const modal = document.getElementById("paymentModalContent");
-            overlay.style.display = "flex";
-
-            modal.innerHTML = `
-                <i class="fa-solid fa-mobile-screen-button" style="font-size: 3.5rem; color: var(--primary);"></i>
-                <h3 style="margin-top: 1rem; font-family: var(--font-heading);">Notificação Enviada para o Telemóvel!</h3>
-                <p style="margin-top:0.8rem; font-size:0.9rem; color:var(--text-secondary); line-height: 1.5;">
-                    Por favor, abra o aplicativo <strong>Multicaixa Express</strong> no telemóvel <strong>${phone}</strong> e autorize o pagamento.
-                </p>
-                <div class="spinner" style="margin: 1.2rem auto;"></div>
-                <span style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 1.25rem;">A aguardar confirmação do pagamento no sistema...</span>
-                
-                <button type="button" class="btn-checkout" id="btnManualCheckNow" onclick="checkPaymentStatusNow('${paymentId}')" style="background: var(--success); margin-top: 0; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);">
-                    <i class="fa-solid fa-circle-check"></i> Já Paguei (Verificar Agora)
-                </button>
-            `;
-
-            startMcxStatusPolling(paymentId);
-
-        } catch (err) {
-            console.error("Erro Express:", err);
-            const fallbackId = "MCX-FB-" + Date.now();
-            currentActivePaymentId = fallbackId;
-            localStorage.setItem("pending_mcx_payment_id", fallbackId);
-            
-            const overlay = document.getElementById("paymentOverlay");
-            const modal = document.getElementById("paymentModalContent");
-            overlay.style.display = "flex";
-
-            modal.innerHTML = `
-                <i class="fa-solid fa-mobile-screen-button" style="font-size: 3.5rem; color: var(--primary);"></i>
-                <h3 style="margin-top: 1rem; font-family: var(--font-heading);">Notificação Solicitada</h3>
-                <p style="margin-top:0.8rem; font-size:0.9rem; color:var(--text-secondary);">
-                    Se já concluiu o pagamento no Multicaixa Express, clique no botão abaixo para criar a sua conta.
-                </p>
-                <button type="button" class="btn-checkout" id="btnManualCheckNow" onclick="checkPaymentStatusNow('${fallbackId}')" style="background: var(--success); margin-top: 1.5rem;">
-                    <i class="fa-solid fa-circle-check"></i> Já Paguei (Criar Conta)
-                </button>
-            `;
-        } finally {
-            btnMcx.disabled = false;
-            btnMcx.innerHTML = `<i class="fa-solid fa-mobile-screen-button"></i> Pagar via Multicaixa Express`;
-        }
-    }
-
-    async function checkPaymentStatusNow(paymentId) {
-        const btnManual = document.getElementById("btnManualCheckNow");
-        if (btnManual) {
-            btnManual.disabled = true;
-            btnManual.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> A verificar e libertar produtos...`;
-        }
-        
-        const isConfirmed = await verifyMcxStatus(paymentId);
-
-        if (!isConfirmed) {
-            await processAutomatedSuccess("Multicaixa Express (Confirmação Direta)", paymentId);
-        }
-    }
-
-    async function verifyMcxStatus(paymentId) {
-        try {
-            const res = await safeFetch(`${API_BASE_URL}/payment-status/${paymentId}`, {
-                headers: { "x-api-key": API_KEY },
-                timeout: 8000
-            });
-            
-            if (!res) return false;
-
-            const statusData = await res.json();
-            const statusValue = statusData.status || statusData.payment_status || statusData.state || (statusData.data && statusData.data.status) || "";
-            const rawStatus = String(statusValue).toUpperCase();
-
-            const successStatuses = [
-                "PAID", "APPROVED", "COMPLETED", "SUCESSO", "SUCCESS", 
-                "SUCCESSFUL", "CONFIRMED", "SETTLED", "OK", "PAID_OUT"
-            ];
-
-            if (successStatuses.includes(rawStatus)) {
-                if (pollingInterval) clearInterval(pollingInterval);
-                await processAutomatedSuccess("Multicaixa Express (Paygoo API)", paymentId);
-                return true;
-            }
-        } catch (err) {
-            console.warn("Erro ao consultar status:", err);
-        }
-        return false;
-    }
-
-    function startMcxStatusPolling(paymentId) {
-        if (pollingInterval) clearInterval(pollingInterval);
-
-        let attempts = 0;
-        const maxAttempts = 20;
-
-        pollingInterval = setInterval(async () => {
-            attempts++;
-            if (attempts > maxAttempts) {
-                clearInterval(pollingInterval);
-                const modal = document.getElementById("paymentModalContent");
-                if (modal) {
-                    modal.innerHTML = `
-                        <i class="fa-solid fa-clock-rotate-left" style="font-size: 3.5rem; color: var(--warning);"></i>
-                        <h3 style="margin-top: 1rem; font-family: var(--font-heading);">Aguardando Confirmação</h3>
-                        <p style="margin-top:0.8rem; font-size:0.9rem; color:var(--text-secondary);">
-                            Se já aceitou no Multicaixa Express, clique abaixo para criar a sua conta.
-                        </p>
-                        <button class="btn-checkout" style="background: var(--success); margin-top: 1.5rem;" onclick="processAutomatedSuccess('Multicaixa Express (Finalização)', '${paymentId}')">
-                            <i class="fa-solid fa-circle-check"></i> Já Paguei - Criar Conta
-                        </button>
-                    `;
-                }
-                return;
-            }
-
-            await verifyMcxStatus(paymentId);
-        }, 3000);
-    }
-
-    function closeOverlayAndReset() {
-        localStorage.removeItem("pending_mcx_payment_id");
-        currentActivePaymentId = null;
-        document.getElementById("paymentOverlay").style.display = "none";
-        const btnMcx = document.getElementById("btnMcxPay");
-        if (btnMcx) {
-            btnMcx.disabled = false;
-            btnMcx.innerHTML = `<i class="fa-solid fa-mobile-screen-button"></i> Pagar via Multicaixa Express`;
-        }
     }
 
     function initStripeElements() {
@@ -1628,9 +1263,7 @@
     }
 
     function handleMainCheckoutClick() {
-        if (selectedMethod === "multicaixa") {
-            processMulticaixaExpressPayment();
-        } else if (selectedMethod === "stripe") {
+        if (selectedMethod === "stripe") {
             processStripePayment();
         } else if (selectedMethod === "paypal") {
             showToast("Utilize o botão amarelo do PayPal acima para concluir a compra.", "info");
@@ -1639,12 +1272,8 @@
         }
     }
 
-    // LIBERAÇÃO AUTOMÁTICA E REDIRECIONAMENTO IMEDIATO PARA CADASTRO
+    // LIBERAÇÃO AUTOMÁTICA E REDIRECIONAMENTO IMEDIATO PARA CADASTRO (PARA STRIPE E PAYPAL)
     async function processAutomatedSuccess(methodName, transactionId) {
-        if (pollingInterval) clearInterval(pollingInterval);
-        localStorage.removeItem("pending_mcx_payment_id");
-        currentActivePaymentId = null;
-
         const name = document.getElementById("customerName").value.trim() || "Cliente";
         const email = document.getElementById("customerEmail").value.trim();
         const dialCode = document.getElementById("countryCode").value;
@@ -1798,9 +1427,6 @@
             }
             fileInput = document.getElementById("fileReceiptAO");
             methodTitle = `Transferência Bancária (${banco})`;
-        } else if(selectedMethod === "unitel_money") {
-            fileInput = document.getElementById("fileReceiptUnitel");
-            methodTitle = "Pagamento Unitel Money";
         } else if(selectedMethod === "wise") {
             fileInput = document.getElementById("fileReceiptWise");
             methodTitle = "Transferência Wise (EUR)";
