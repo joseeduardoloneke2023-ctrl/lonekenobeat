@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-
         :root {
             --primary: #E50914;
             --primary-glow: rgba(229, 9, 20, 0.15);
@@ -203,7 +202,6 @@
             color: var(--white);
         }
 
-        /* --- ENGINE DE FILTROS & PESQUISA --- */
         .filter-section {
             background: var(--card-bg);
             border: 1px solid var(--glass-border);
@@ -445,7 +443,6 @@
             box-shadow: 0 8px 20px rgba(229, 9, 20, 0.4);
         }
 
-        /* Grelha de dois botões lado a lado nos Cards */
         .card-actions-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -481,7 +478,6 @@
         }
         .btn-card-add:hover { background: #b8070e; }
 
-        /* Bloco interativo das parcelas ou licenças dentro do Modal */
         .payment-plans-wrapper {
             margin-bottom: 1.5rem;
             background: rgba(255,255,255,0.02);
@@ -743,7 +739,7 @@
             <a href="index.html" class="logo">LONEKE NO <span>BEAT</span></a>
             <nav class="nav-menu" id="navMenu">
                 <a href="index.html" class="nav-link">Home</a>
-                <a href="aulas.html" class="nav-link">Ajuda</a>
+              
                 <a href="catalogo.html" class="nav-link">Produtos</a>
                 <a href="index.html#features" class="nav-link">Serviços</a>
                 <a href="index.html#about" class="nav-link">Sobre</a>
@@ -760,8 +756,8 @@
         <section class="section-padding" style="padding-top: 140px; min-height: 80vh;">
             <div class="container">
                 <div class="text-center">
-                    <h1 class="section-title">Biblioteca Digital</h1>
-                    <p class="section-subtitle">Ache ferramentas acústicas ideais para suas tracks com os filtros avançados.</p>
+                    <h1 class="section-title">PRODUTOS DISPONÍVEIS</h1>
+                    <p class="section-subtitle">O melhor produto do mercado, com valor que cabe no seu bolso, aproveite os preços promocionais e desfrute da qualidade dos melhores produtos do mercado. Obrigado</p>
                 </div>
 
                 <div class="filter-section">
@@ -771,13 +767,17 @@
                     </div>
                     <div class="category-tabs" id="categoryTabs">
                         <button class="tab-btn active" data-category="all">Todos os Produtos</button>
-                        <button class="tab-btn" data-category="beats">Beats</button>
-                        <button class="tab-btn" data-category="drumkits">Drum Kits</button>
+
                         <button class="tab-btn" data-category="loops">Loop Kits</button>
                         <button class="tab-btn" data-category="flp">FLP</button>
-                        <button class="tab-btn" data-category="cursos">Cursos Online</button>
-                        <button class="tab-btn" data-category="plugins">Packs de Plugins</button>
+                        <button class="tab-btn" data-category="cursos">Cursos</button>
+                        <button class="tab-btn" data-category="plugins">Plugins</button>
+                        <button class="tab-btn" data-category="daw">Daw</button>
+                        <button class="tab-btn" data-category="packdeplugins">Packs de Plugins</button>
                         <button class="tab-btn" data-category="ebooks">E-books</button>
+                        <button class="tab-btn" data-category="drumkitscomaulas">Drum Kits Estilo musical com Aulas</button>
+                        <button class="tab-btn" data-category="drumkitssemaulas">Drum Kits Estilo musical sem Aulas</button>
+                        <button class="tab-btn" data-category="drumkitsartista">Drum Kits Artista</button>
                     </div>
                 </div>
 
@@ -815,7 +815,9 @@
                 <h7>Categorias</h7>
                 <ul>
                     <li><a href="catalogo.html?cat=beats">Beats</a></li>
-                    <li><a href="catalogo.html?cat=drumkits">Drum Kits</a></li>
+                    <li><a href="catalogo.html?cat=drumkitscomaulas">Drum Kits com Aulas</a></li>
+                    <li><a href="catalogo.html?cat=drumkitssemaulas">Drum Kits sem Aulas</a></li>
+                    <li><a href="catalogo.html?cat=drumkitsartista">Drum Kits Artista</a></li>
                     <li><a href="catalogo.html?cat=loops">Loop Kits</a></li>
                     <li><a href="catalogo.html?cat=flp">FLP Projects</a></li>
                     <li><a href="catalogo.html?cat=cursos">Cursos Online</a></li>
@@ -871,18 +873,26 @@
         { nome: "Djamila Diogo", forma: "Referência Bancária", valor: "18.500 Kz" }
     ];
 
-    // Helper para gerar Slugs elegantes a partir do Título do Produto
     function slugify(text) {
         return text
             .toString()
             .toLowerCase()
             .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "") // Remove acentos
-            .replace(/\s+/g, '-')           // Substitui espaços por hifens
-            .replace(/[^\w\-]+/g, '')       // Remove caracteres especiais
-            .replace(/\-\-+/g, '-')         // Previne hifens duplicados
-            .replace(/^-+/, '')             // Remove hifens no início
-            .replace(/-+$/, '');            // Remove hifens no final
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/\s+/g, '-')
+            .replace(/[^\w\-]+/g, '')
+            .replace(/\-\-+/g, '-')
+            .replace(/^-+/, '')
+            .replace(/-+$/, '');
+    }
+
+    // Salva estado da busca, filtro e página no navegador
+    function saveCatalogState() {
+        sessionStorage.setItem('loneke_catalog_state', JSON.stringify({
+            selectedCategory,
+            filterSearchQuery,
+            currentPage
+        }));
     }
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -908,11 +918,29 @@
                 renderProductDetailPage(null);
             }
         } else {
+            // Restaura o estado salvo previamente, caso exista
+            const savedState = sessionStorage.getItem('loneke_catalog_state');
+            if (savedState) {
+                try {
+                    const state = JSON.parse(savedState);
+                    if (state.selectedCategory) selectedCategory = state.selectedCategory;
+                    if (state.filterSearchQuery !== undefined) filterSearchQuery = state.filterSearchQuery;
+                    if (state.currentPage) currentPage = state.currentPage;
+                } catch(e) {}
+            }
+
             if (categoryParam) {
                 selectedCategory = categoryParam.toLowerCase();
-                updateActiveTabUI(selectedCategory);
             }
+
             initCatalogEvents();
+            updateActiveTabUI(selectedCategory);
+
+            const searchInput = document.getElementById("catalogSearch");
+            if (searchInput && filterSearchQuery) {
+                searchInput.value = filterSearchQuery;
+            }
+
             renderCatalogEngine();
         }
     });
@@ -997,6 +1025,7 @@
             searchInput.addEventListener("input", (e) => {
                 filterSearchQuery = e.target.value.toLowerCase().trim();
                 currentPage = 1;
+                saveCatalogState();
                 renderCatalogEngine();
             });
         }
@@ -1008,6 +1037,7 @@
                 
                 selectedCategory = tab.getAttribute("data-category");
                 currentPage = 1;
+                saveCatalogState();
                 renderCatalogEngine();
             });
         });
@@ -1092,6 +1122,7 @@
 
     function changePage(pageNumber) {
         currentPage = pageNumber;
+        saveCatalogState();
         renderCatalogEngine();
         window.scrollTo({ top: document.getElementById("mainContent").offsetTop - 40, behavior: "smooth" });
     }
@@ -1100,14 +1131,14 @@
         const main = document.getElementById("mainContent");
         
         if (!id) {
-            main.innerHTML = `<div class="container section-padding text-center"><h2>Produto não encontrado</h2><a href="catalogo.html" class="btn btn-primary mt-2">Voltar ao Catálogo</a></div>`;
+            main.innerHTML = `<div class="container section-padding text-center"><h2>Produto não encontrado</h2><a href="catalogo.html" onclick="if(window.history.length > 1){ window.history.back(); return false; }" class="btn btn-primary mt-2">Voltar ao Catálogo</a></div>`;
             return;
         }
 
         const prod = produtos.find(p => p.id === id);
 
         if (!prod) {
-            main.innerHTML = `<div class="container section-padding text-center"><h2>Produto não encontrado</h2><a href="catalogo.html" class="btn btn-primary mt-2">Voltar ao Catálogo</a></div>`;
+            main.innerHTML = `<div class="container section-padding text-center"><h2>Produto não encontrado</h2><a href="catalogo.html" onclick="if(window.history.length > 1){ window.history.back(); return false; }" class="btn btn-primary mt-2">Voltar ao Catálogo</a></div>`;
             return;
         }
 
@@ -1134,7 +1165,7 @@
         main.innerHTML = `
             <section class="section-padding" style="padding-top: 140px;">
                 <div class="container">
-                    <a href="catalogo.html" style="color: var(--primary); display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem; font-weight: 600;">
+                    <a href="catalogo.html" onclick="if(window.history.length > 1){ window.history.back(); return false; }" style="color: var(--primary); display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem; font-weight: 600;">
                         <i class="fa-solid fa-arrow-left"></i> Voltar para o Catálogo de Produtos
                     </a>
                     
@@ -1228,7 +1259,6 @@
         window.scrollTo({ top: 0 });
     }
 
-    // Gerenciador interativo de licenças de beats
     function selectBeatLicense(id, licenseType, price) {
         const prod = produtos.find(p => p.id === id);
         if (!prod) return;
@@ -1248,7 +1278,6 @@
         if(cartBtn) cartBtn.setAttribute('onclick', `addItemToCart(event, ${prod.id}, 1, '${licenseType}', ${price})`);
     }
 
-    // Gerenciador interativo de planos de pagamento
     function selectPaymentPlan(id, plan) {
         const prod = produtos.find(p => p.id === id);
         if (!prod) return;
