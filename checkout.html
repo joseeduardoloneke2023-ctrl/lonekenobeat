@@ -128,7 +128,7 @@
 
         .payment-methods-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
             margin-bottom: 2rem;
         }
@@ -223,6 +223,22 @@
         .dropzone-filename { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 280px; font-weight: 500; }
         .btn-clear-file { background: none; border: none; color: #EF4444; cursor: pointer; font-size: 1.2rem; transition: var(--transition); }
         .btn-clear-file:hover { transform: scale(1.2); }
+
+        .whatsapp-support-box {
+            margin-top: 2rem;
+            padding: 1.25rem;
+            background: rgba(37, 211, 102, 0.08);
+            border: 1px dashed rgba(37, 211, 102, 0.4);
+            border-radius: var(--radius-md);
+            text-align: center;
+        }
+
+        .whatsapp-support-box p {
+            font-size: 0.88rem;
+            color: var(--text-main);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
 
         .order-summary {
             background: var(--card-bg);
@@ -370,11 +386,10 @@
         @media(max-width: 992px) {
             .checkout-wrapper { grid-template-columns: 1fr; gap: 2rem; padding-top: 110px; }
             .order-summary { position: static; }
-            .payment-methods-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media(max-width: 640px) {
-            .payment-methods-grid { grid-template-columns: repeat(2, 1fr); }
+            .payment-methods-grid { grid-template-columns: 1fr; }
             .checkout-box, .order-summary { padding: 1.5rem; }
             .toast-container { right: 50%; transform: translateX(50%); top: 20px; width: calc(100% - 30px); }
             .toast-card { min-width: 100%; }
@@ -435,17 +450,9 @@
                     <h2 class="checkout-title" style="margin-top: 3rem;"><i class="fa-solid fa-credit-card"></i> Escolha o Método de Pagamento Manual</h2>
                     
                     <div class="payment-methods-grid">
-                        <div class="method-card active" data-method="kwik" id="methodKwikCard">
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRU9GrScbzkKgIVLC4eHJZGjR7sXpWUFP4dskacz0jaj9QbTFpdKTL1Zw&s=10" alt="KWIK" class="method-icon-img">
-                            <span>KWIK</span>
-                        </div>
-                        <div class="method-card" data-method="transf_ao" id="methodTransfAoCard">
+                        <div class="method-card active" data-method="bfa" id="methodBfaCard">
                             <i class="fa-solid fa-building-columns"></i>
-                            <span>Transferência Bancária Nacional</span>
-                        </div>
-                        <div class="method-card" data-method="unitel_money" id="methodUnitelCard">
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOZFCtzTX_-6zqlools3X0r9ZFyGkUJFqgh0ZFpOOvnzhmChDzY7jZPx6E&s=10" alt="Unitel Money" class="method-icon-img">
-                            <span>Unitel Money</span>
+                            <span>Transferência Bancária (BFA)</span>
                         </div>
                         <div class="method-card" data-method="wise" id="methodWiseCard">
                             <img src="https://framerusercontent.com/images/yZuru7tpCe3J01en5KxrKbRb1VA.png?width=1920&height=1080" alt="Wise" class="method-icon-img">
@@ -453,122 +460,36 @@
                         </div>
                     </div>
 
-                    <!-- KWIK -->
-                    <div class="dynamic-payment-panel" id="panel-kwik" style="display: block;">
+                    <!-- TRANSFERENCIA BANCARIA BFA -->
+                    <div class="dynamic-payment-panel" id="panel-bfa" style="display: block;">
                         <div class="form-group" style="margin-bottom: 1rem;">
-                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Nome do Titular da Conta KWIK:</label>
+                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Titular da Conta BFA:</label>
                             <p style="font-weight: 700; font-size: 1.05rem; color: var(--white); margin-left: 0.2rem;">José Eduardo Loneke</p>
                         </div>
 
-                        <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">IBAN KWIK (Clique para copiar sem o AO06):</label>
+                        <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">IBAN BFA (Clique para copiar sem o AO06):</label>
                         <div class="copy-row">
-                            <code id="txtIbanKwik">AO06042000000000024129475</code>
-                            <button type="button" class="btn-copy-action" onclick="copyCleanIban('txtIbanKwik', 'AO06')">
+                            <code id="txtIbanBfa">AO06000600006591444830109</code>
+                            <button type="button" class="btn-copy-action" onclick="copyCleanIban('txtIbanBfa', 'AO06')">
                                 <i class="fa-solid fa-copy"></i> Copiar
                             </button>
-                        </div>
-
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label>Carregar Comprovativo de Transferência KWIK (PDF, JPG, PNG)</label>
-                            <div class="dropzone-wrapper">
-                                <div class="dropzone-area" id="dropzoneKwik" onclick="document.getElementById('fileReceiptKwik').click()">
-                                    <i class="fa-solid fa-cloud-arrow-up"></i>
-                                    <p class="dropzone-text">Arraste o ficheiro aqui ou clique para fazer upload</p>
-                                    <span class="dropzone-hint">Formatos aceites: PDF, JPEG, PNG (Máx 10MB)</span>
-                                    <input type="file" id="fileReceiptKwik" style="display: none;" accept="application/pdf, image/jpeg, image/png">
-                                </div>
-                                <div class="dropzone-preview" id="previewKwik" style="display: none;">
-                                    <div class="dropzone-preview-info">
-                                        <i class="fa-solid fa-file-circle-check"></i>
-                                        <span class="dropzone-filename" id="filenameKwik">ficheiro.pdf</span>
-                                    </div>
-                                    <button type="button" class="btn-clear-file" onclick="clearFileSelection('Kwik', event)">&times;</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- TRANSFERENCIA BANCARIA AO -->
-                    <div class="dynamic-payment-panel" id="panel-transf_ao">
-                        <div class="form-group" style="margin-bottom: 1rem;">
-                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Titular da Conta:</label>
-                            <p style="font-weight: 700; font-size: 1.05rem; color: var(--white); margin-left: 0.2rem;">José Eduardo Loneke</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="bankSelectAO">Selecione o seu Banco:</label>
-                            <select id="bankSelectAO" class="form-control">
-                                <option value="" disabled selected>-- Escolha um banco da lista --</option>
-                                <option value="BAI">BAI</option>
-                                <option value="BFA">BFA</option>
-                                <option value="BCI">BCI</option>
-                                <option value="BIC">BIC</option>
-                                <option value="BPC">BPC</option>
-                            </select>
-                        </div>
-                        
-                        <div id="ibanDisplayBoxAO" style="display: none;">
-                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">IBAN de Destino (Clique para copiar sem o AO06):</label>
-                            <div class="copy-row">
-                                <code id="txtIbanAO">AO06000000000000000000000</code>
-                                <button type="button" class="btn-copy-action" onclick="copyCleanIban('txtIbanAO', 'AO06')">
-                                    <i class="fa-solid fa-copy"></i> Copiar
-                                </button>
-                            </div>
                         </div>
 
                         <div class="form-group" style="margin-bottom: 0;">
                             <label>Carregar Comprovativo de Transferência (PDF, JPG, PNG)</label>
                             <div class="dropzone-wrapper">
-                                <div class="dropzone-area" id="dropzoneAO" onclick="document.getElementById('fileReceiptAO').click()">
+                                <div class="dropzone-area" id="dropzoneBfa" onclick="document.getElementById('fileReceiptBfa').click()">
                                     <i class="fa-solid fa-cloud-arrow-up"></i>
                                     <p class="dropzone-text">Arraste o ficheiro aqui ou clique para fazer upload</p>
                                     <span class="dropzone-hint">Formatos aceites: PDF, JPEG, PNG (Máx 10MB)</span>
-                                    <input type="file" id="fileReceiptAO" style="display: none;" accept="application/pdf, image/jpeg, image/png">
+                                    <input type="file" id="fileReceiptBfa" style="display: none;" accept="application/pdf, image/jpeg, image/png">
                                 </div>
-                                <div class="dropzone-preview" id="previewAO" style="display: none;">
+                                <div class="dropzone-preview" id="previewBfa" style="display: none;">
                                     <div class="dropzone-preview-info">
                                         <i class="fa-solid fa-file-circle-check"></i>
-                                        <span class="dropzone-filename" id="filenameAO">ficheiro.pdf</span>
+                                        <span class="dropzone-filename" id="filenameBfa">ficheiro.pdf</span>
                                     </div>
-                                    <button type="button" class="btn-clear-file" onclick="clearFileSelection('AO', event)">&times;</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- UNITEL MONEY -->
-                    <div class="dynamic-payment-panel" id="panel-unitel_money">
-                        <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Entidade (Clique à direita para copiar):</label>
-                        <div class="copy-row">
-                            <code id="txtUnitelEntidade">00930</code>
-                            <button type="button" class="btn-copy-action" onclick="copySimpleText('txtUnitelEntidade')">
-                                <i class="fa-solid fa-copy"></i> Copiar
-                            </button>
-                        </div>
-
-                        <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Referência (Clique à direita para copiar):</label>
-                        <div class="copy-row">
-                            <code id="txtUnitelNumero">936380720</code>
-                            <button type="button" class="btn-copy-action" onclick="copySimpleText('txtUnitelNumero')">
-                                <i class="fa-solid fa-copy"></i> Copiar
-                            </button>
-                        </div>
-
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label>Carregar Comprovativo de Pagamento Unitel Money (PDF, JPG, PNG)</label>
-                            <div class="dropzone-wrapper">
-                                <div class="dropzone-area" id="dropzoneUnitel" onclick="document.getElementById('fileReceiptUnitel').click()">
-                                    <i class="fa-solid fa-cloud-arrow-up"></i>
-                                    <p class="dropzone-text">Arraste o ficheiro aqui ou clique para fazer upload</p>
-                                    <span class="dropzone-hint">Formatos aceites: PDF, JPEG, PNG (Máx 10MB)</span>
-                                    <input type="file" id="fileReceiptUnitel" style="display: none;" accept="application/pdf, image/jpeg, image/png">
-                                </div>
-                                <div class="dropzone-preview" id="previewUnitel" style="display: none;">
-                                    <div class="dropzone-preview-info">
-                                        <i class="fa-solid fa-file-circle-check"></i>
-                                        <span class="dropzone-filename" id="filenameUnitel">ficheiro.pdf</span>
-                                    </div>
-                                    <button type="button" class="btn-clear-file" onclick="clearFileSelection('Unitel', event)">&times;</button>
+                                    <button type="button" class="btn-clear-file" onclick="clearFileSelection('Bfa', event)">&times;</button>
                                 </div>
                             </div>
                         </div>
@@ -622,6 +543,14 @@
                         </div>
                     </div>
 
+                    <!-- NÃ0 TEM ESTAS FORMAS DE PAGAMENTO? ATENDIMENTO VIA WHATSAPP -->
+                    <div class="whatsapp-support-box">
+                        <p><i class="fa-brands fa-whatsapp" style="color: #25D366; font-size: 1.1rem; margin-right: 0.4rem;"></i> Não possui estas formas de pagamento?</p>
+                        <button type="button" class="btn-whatsapp-negotiate" onclick="openWhatsAppNegotiation()" style="margin-top: 0;">
+                            <i class="fa-brands fa-whatsapp"></i> Falar no WhatsApp para outras formas
+                        </button>
+                    </div>
+
                 </form>
             </section>
 
@@ -640,7 +569,7 @@
                         🎉 A sua compra qualifica-se para um desconto exclusivo!
                     </p>
                     <button type="button" id="btnApplyDiscount25" class="btn-apply-discount">
-                        <i class="fa-solid fa-percent"></i> Aplicar Desconto de 12%
+                        <i class="fa-solid fa-percent"></i> Aplicar Desconto de 10%
                     </button>
                 </div>
 
@@ -655,7 +584,7 @@
                         </div>
                     </div>
                     <div class="total-row">
-                        <span>Total (EUR):</span>
+                        <span>Total (EUR/USD):</span>
                         <div>
                             <strong id="valTotalEur" style="color: var(--success);">0,00 €</strong>
                             <button type="button" class="btn-copy-action" onclick="copyCleanTotal('valTotalEur')" title="Copiar valor">
@@ -663,7 +592,7 @@
                             </button>
                         </div>
                     </div>
-                    <p style="font-size:0.75rem; color:var(--text-secondary); text-align:right; margin-top:-2px;">Câmbio Comercial: 1 EUR = 1.000 Kz</p>
+                    <p style="font-size:0.75rem; color:var(--text-secondary); text-align:right; margin-top:-2px;">Câmbio Comercial: 1 EUR / USD = 500 Kz</p>
                 </div>
 
                 <button type="button" class="btn-checkout" id="btnPlaceOrder">
@@ -690,17 +619,9 @@
     const LONEKE_WHATSAPP_NUM = "244924034159";
     const REGISTER_REDIRECT_URL = "https://app.lonekenobeat.com/plataforma/cadastro.html";
 
-    const BANCOS_AO = {
-        BAI: "AO06004000006562149410192",
-        BFA: "AO06000600006591444830109",
-        BCI: "AO06000500006474488210197",
-        BIC: "AO06000500006474488210197",
-        BPC: "AO06001000750328463101137"
-    };
-
-    let selectedMethod = "kwik";
+    let selectedMethod = "bfa";
     let cart = [];
-    const EXCHANGE_RATE = 1000; 
+    const EXCHANGE_RATE = 500; 
 
     let discountApplied = false;
     let originalTotalKz = 0;
@@ -728,7 +649,6 @@
         initCartWithPlanContext();
         loadCartData();
         initPaymentSelector();
-        initBankSelectorAO();
         initDropzoneHandlers();
         renderOrderBumps();
 
@@ -857,7 +777,7 @@
         if(cart.length === 0) {
             container.innerHTML = `<p style="color: var(--text-secondary); text-align:center; padding: 2rem 0;">O seu carrinho está vazio.</p>`;
             displayKz.innerText = "0,00 Kz";
-            displayEur.innerText = "0,00 €";
+            displayEur.innerText = "0,00 € / $";
             discountContainer.style.display = "none";
             btnPlaceOrder.disabled = true;
             btnPlaceOrder.style.opacity = "0.3";
@@ -894,13 +814,13 @@
                 btnApply.className = "btn-apply-discount";
                 btnApply.style.opacity = "1";
                 btnApply.style.cursor = "pointer";
-                btnApply.innerHTML = `<i class="fa-solid fa-percent"></i> Aplicar Desconto de 12%`;
+                btnApply.innerHTML = `<i class="fa-solid fa-percent"></i> Aplicar Desconto de 10%`;
             } else {
                 btnApply.disabled = true;
                 btnApply.className = "btn-apply-discount applied";
                 btnApply.style.opacity = "1";
                 btnApply.style.cursor = "not-allowed";
-                btnApply.innerHTML = `<i class="fa-solid fa-circle-check"></i> Desconto de 12% Aplicado!`;
+                btnApply.innerHTML = `<i class="fa-solid fa-circle-check"></i> Desconto de 10% Aplicado!`;
             }
             textMsg.style.color = "var(--warning)";
             textMsg.innerHTML = `🎉 A sua compra qualifica-se para um desconto exclusivo!`;
@@ -909,11 +829,11 @@
             discountApplied = false;
         }
 
-        let totalCalculadoKz = discountApplied ? (originalTotalKz * 0.88) : originalTotalKz;
+        let totalCalculadoKz = discountApplied ? (originalTotalKz * 0.90) : originalTotalKz;
         let totalCalculadoEur = totalCalculadoKz / EXCHANGE_RATE;
 
         displayKz.innerText = `${totalCalculadoKz.toLocaleString('pt-AO', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Kz`;
-        displayEur.innerText = `${totalCalculadoEur.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} €`;
+        displayEur.innerText = `${totalCalculadoEur.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} € / $`;
     }
 
     function initPaymentSelector() {
@@ -972,34 +892,17 @@
         
         const btn = document.getElementById("btnApplyDiscount25");
         btn.className = "btn-apply-discount applied";
-        btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> Desconto de 12% Aplicado!`;
+        btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> Desconto de 10% Aplicado!`;
         btn.disabled = true;
         btn.style.opacity = "1";
         btn.style.cursor = "not-allowed";
 
-        showToast("Desconto de 12% validado e aplicado com sucesso!", "success");
+        showToast("Desconto de 10% validado e aplicado com sucesso!", "success");
         loadCartData();
     }
 
-    function initBankSelectorAO() {
-        const select = document.getElementById("bankSelectAO");
-        const displayBox = document.getElementById("ibanDisplayBoxAO");
-        const txtIban = document.getElementById("txtIbanAO");
-
-        select.addEventListener("change", () => {
-            const bancoSelecionado = select.value;
-            if(BANCOS_AO[bancoSelecionado]) {
-                txtIban.innerText = BANCOS_AO[bancoSelecionado];
-                displayBox.style.display = "block";
-                showToast(`Dados do banco ${bancoSelecionado} carregados com sucesso!`, "success");
-            } else {
-                displayBox.style.display = "none";
-            }
-        });
-    }
-
     function initDropzoneHandlers() {
-        ['Kwik', 'AO', 'Unitel', 'Wise'].forEach(type => {
+        ['Bfa', 'Wise'].forEach(type => {
             const dropzone = document.getElementById(`dropzone${type}`);
             const input = document.getElementById(`fileReceipt${type}`);
             const preview = document.getElementById(`preview${type}`);
@@ -1054,7 +957,7 @@
         const cleanIban = rawIban.replace(/\s+/g, '').replace(prefixToRemove, '');
 
         navigator.clipboard.writeText(cleanIban).then(() => {
-            showToast(`IBAN limpo copiado sem o prefixo (${prefixToRemove}): ${cleanIban}`, "success");
+            showToast(`IBAN copiado sem o prefixo (${prefixToRemove}): ${cleanIban}`, "success");
         }).catch(err => console.error(err));
     }
 
@@ -1073,13 +976,12 @@
         const totalEur = document.getElementById("valTotalEur").innerText;
         const itensTexto = cart.map((item, idx) => `  - ${idx + 1}. ${item.titulo} (Qtd: ${item.quantity})`).join("\n");
 
-        const mensagemCorpo = `Olá Loneke no Beat!\n\nEstou no checkout do site e gostaria de esclarecer dúvidas / confirmar o meu pedido.\n\n👤 Nome: ${name}\n📦 Itens no Pedido:\n${itensTexto}\n\n💰 Total: ${totalKz} / ${totalEur}\n\n${discountApplied ? "⚠️ *Nota:* Apliquei o desconto de 12% no checkout." : ""}\nAguardo o seu retorno para fecharmos negócio!`;
+        const mensagemCorpo = `Olá Loneke no Beat!\n\nEstou no checkout do site e gostaria de esclarecer dúvidas / solicitar outra forma de pagamento para o meu pedido.\n\n👤 Nome: ${name}\n📦 Itens no Pedido:\n${itensTexto}\n\n💰 Total: ${totalKz} / ${totalEur}\n\n${discountApplied ? "⚠️ *Nota:* Apliquei o desconto de 10% no checkout." : ""}\nAguardo o seu retorno para fecharmos negócio!`;
         
         const targetUrl = `https://wa.me/${LONEKE_WHATSAPP_NUM}?text=${encodeURIComponent(mensagemCorpo)}`;
         window.open(targetUrl, '_blank');
     }
 
-    // REGISTO BÁSICO DA COMPRA/PEDIDO NO FIRESTORE
     async function recordFirebaseOrder(email, name, fullWhatsApp) {
         const docId = email.replace(/[^a-zA-Z0-9]/g, "_");
 
@@ -1130,23 +1032,12 @@
         let methodTitle = "";
         let fileInput = null;
 
-        if(selectedMethod === "kwik") {
-            fileInput = document.getElementById("fileReceiptKwik");
-            methodTitle = "Transferência KWIK";
-        } else if(selectedMethod === "transf_ao") {
-            const banco = document.getElementById("bankSelectAO").value;
-            if(!banco) {
-                showToast("Por favor, selecione para qual dos nossos bancos efetuou a transferência.", "info");
-                return;
-            }
-            fileInput = document.getElementById("fileReceiptAO");
-            methodTitle = `Transferência Bancária (${banco})`;
-        } else if(selectedMethod === "unitel_money") {
-            fileInput = document.getElementById("fileReceiptUnitel");
-            methodTitle = "Pagamento Unitel Money";
+        if(selectedMethod === "bfa") {
+            fileInput = document.getElementById("fileReceiptBfa");
+            methodTitle = "Transferência Bancária (BFA)";
         } else if(selectedMethod === "wise") {
             fileInput = document.getElementById("fileReceiptWise");
-            methodTitle = "Transferência Wise (EUR)";
+            methodTitle = "Transferência Wise (EUR/USD)";
         }
 
         if(!fileInput || !fileInput.files.length) {
@@ -1239,7 +1130,6 @@
             console.error("Erro Firebase:", fbError);
         }
 
-        // E-MAIL DE BOAS-VINDAS E PEDIDO PENDENTE VIA FORMSUBMIT
         try {
             const formData = new FormData();
             formData.append("_subject", `🔥 NOVO PEDIDO REALIZADO COM SUCESSO - ${customerName} (${tkz})`);
@@ -1268,12 +1158,10 @@
             console.warn("FormSubmit erro:", err.message);
         }
 
-        // NOTIFICAÇÃO VIA WHATSAPP PARA O ADMINISTRADOR (+244 924 034 159)
         const whatsMsg = `Olá Loneke no Beat! 👋\n\nUma nova compra foi realizada com sucesso!\n\n👤 *Cliente:* ${customerName}\n📧 *E-mail:* ${customerEmail}\n📱 *WhatsApp:* ${customerWhatsApp}\n\n📦 *Produtos:* \n${itensCompacto}\n\n💳 *Método:* ${methodTitle}\n💰 *Valor Pago:* ${tkz} / ${teur}\n🔗 *Comprovativo:* ${comprovativoLink}\n\n👉 *Ação:* Validar o comprovativo para liberar o acesso dos produtos na tela do utilizador.`;
         const urlWhatsAppCompleto = `https://wa.me/${LONEKE_WHATSAPP_NUM}?text=${encodeURIComponent(whatsMsg)}`;
         window.open(urlWhatsAppCompleto, '_blank');
 
-        // MENSAGEM DE SUCESSO SOLICITADA
         modal.innerHTML = `
             <i class="fa-solid fa-circle-check" style="font-size: 3.8rem; color: var(--success);"></i>
             <h2 style="font-family: var(--font-heading); margin-top: 1rem; color: var(--white);">Compra Realizada com Sucesso!</h2>
@@ -1282,7 +1170,7 @@
             </p>
             <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 1rem; border-radius: var(--radius-sm); margin-top: 1.2rem;">
                 <p style="color: var(--success); font-weight: 600; font-size: 0.88rem;">
-                    <i class="fa-solid fa-user-plus"></i> Próximo Passo: Crie a sua conta de seguida para poder aceder aos produtos assim que forem libertados.
+                    <i class="fa-solid fa-user-plus"></i> Próximo Passo: Crie a sua conta de seguida para poder aceder aos produtos assim que foram libertados.
                 </p>
             </div>
             <p style="color: var(--text-secondary); margin-top: 1.2rem; font-size: 0.82rem;">A redirecionar automaticamente para a tela de cadastro...</p>
