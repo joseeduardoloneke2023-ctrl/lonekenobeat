@@ -51,25 +51,106 @@
             background: radial-gradient(circle at 50% 0%, rgba(229, 9, 20, 0.08) 0%, transparent 50%),
                         radial-gradient(circle at 0% 100%, rgba(59, 130, 246, 0.04) 0%, transparent 40%);
             background-attachment: fixed;
+            /* Espaço adicionado para compensar o vídeo fixo no topo */
+            padding-top: 250px; 
         }
 
         a { text-decoration: none; color: inherit; }
 
         .container { width: 100%; max-width: 1240px; margin: 0 auto; padding: 0 1.5rem; }
         
+        /* ESTILOS DO VÍDEO FIXO NO TOPO */
+        .video-fixed-top {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 250px;
+            background: rgba(7, 7, 9, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 20000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 2px solid var(--primary);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            transition: transform 0.4s ease;
+        }
+
+        .video-fixed-top.hidden {
+            transform: translateY(-100%);
+        }
+
+        .video-fixed-top iframe {
+            height: 230px;
+            width: 130px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 5px 15px rgba(229, 9, 20, 0.2);
+        }
+
+        .video-fixed-content {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            max-width: 1240px;
+            width: 100%;
+            padding: 0 1.5rem;
+        }
+
+        .video-instructions-text h3 {
+            font-family: var(--font-heading);
+            color: var(--white);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .video-instructions-text p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .btn-close-video {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--white);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .btn-close-video:hover {
+            background: var(--primary);
+            transform: scale(1.1);
+        }
+
         .loading-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #050507; z-index: 15000; display: flex; flex-direction: column;
+            background: #050507; z-index: 25000; display: flex; flex-direction: column;
             align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s;
             backdrop-filter: blur(10px);
         }
         .loading-screen.hidden { opacity: 0; visibility: hidden; }
 
         header {
-            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            position: fixed; top: 250px; left: 0; width: 100%; z-index: 1000;
             padding: 1.25rem 0; background-color: rgba(7, 7, 9, 0.8);
             backdrop-filter: blur(20px); border-bottom: 1px solid var(--card-border);
+            transition: top 0.4s ease;
         }
+        
+        /* Ajuste do header quando o vídeo é fechado */
+        body.video-closed { padding-top: 0; }
+        body.video-closed header { top: 0; }
+        
         .nav-container { display: flex; align-items: center; justify-content: space-between; }
         .logo { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; text-transform: uppercase; }
         .logo span { color: var(--primary); text-shadow: 0 0 12px var(--primary-glow); }
@@ -82,7 +163,7 @@
         .back-link:hover { color: var(--white); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); }
 
         .checkout-wrapper {
-            padding-top: 130px;
+            padding-top: 100px; /* Reduzido o padding original pois o body já tem padding */
             padding-bottom: 5rem;
             display: grid;
             grid-template-columns: 1.25fr 0.75fr;
@@ -243,8 +324,12 @@
         .order-summary {
             background: var(--card-bg);
             border-radius: var(--radius-lg); padding: 2.25rem; border: 1px solid var(--card-border);
-            position: sticky; top: 110px; box-shadow: 0 30px 60px rgba(0,0,0,0.4); backdrop-filter: blur(20px);
+            position: sticky; top: 360px; /* Ajustado para respeitar o banner do video e o header */
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4); backdrop-filter: blur(20px);
+            transition: top 0.4s ease;
         }
+
+        body.video-closed .order-summary { top: 110px; }
 
         .summary-item {
             display: flex; align-items: center; gap: 1rem;
@@ -349,7 +434,7 @@
         }
         .btn-whatsapp-negotiate:hover { background: #25D366; color: var(--white); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3); }
 
-        .toast-container { position: fixed; top: 30px; right: 30px; z-index: 10005; display: flex; flex-direction: column; gap: 0.8rem; }
+        .toast-container { position: fixed; top: 30px; right: 30px; z-index: 30005; display: flex; flex-direction: column; gap: 0.8rem; }
         .toast-card {
             background: rgba(20, 20, 26, 0.95); color: var(--white); padding: 1.1rem 1.5rem;
             border-radius: var(--radius-md); border-left: 4px solid var(--primary);
@@ -370,7 +455,7 @@
         .payment-screen-overlay {
             background: rgba(5, 5, 7, 0.85); backdrop-filter: blur(15px);
             position: fixed; top:0; left:0; width:100%; height:100%;
-            z-index: 9999; display:none; align-items:center; justify-content:center; padding: 2rem;
+            z-index: 29999; display:none; align-items:center; justify-content:center; padding: 2rem;
         }
         .payment-modal {
             background: var(--card-bg); border: 1px solid var(--card-border);
@@ -384,7 +469,7 @@
         }
 
         @media(max-width: 992px) {
-            .checkout-wrapper { grid-template-columns: 1fr; gap: 2rem; padding-top: 110px; }
+            .checkout-wrapper { grid-template-columns: 1fr; gap: 2rem; }
             .order-summary { position: static; }
         }
 
@@ -393,12 +478,35 @@
             .checkout-box, .order-summary { padding: 1.5rem; }
             .toast-container { right: 50%; transform: translateX(50%); top: 20px; width: calc(100% - 30px); }
             .toast-card { min-width: 100%; }
+            .video-fixed-content { flex-direction: column; gap: 0.5rem; text-align: center; }
+            .video-fixed-top { height: 320px; }
+            body { padding-top: 320px; }
+            header { top: 320px; }
         }
         
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
+
+    <!-- VÍDEO YOUTUBE FIXO NO TOPO -->
+    <div id="videoTopContainer" class="video-fixed-top">
+        <button class="btn-close-video" onclick="closeVideoBanner()" title="Fechar vídeo">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="video-fixed-content">
+            <iframe src="https://www.youtube.com/embed/UE6J-XG6I4M?autoplay=1&mute=1" 
+                    title="Instrução de como finalizar o pagamento" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    allowfullscreen>
+            </iframe>
+            <div class="video-instructions-text">
+                <h3>Instruções de Pagamento</h3>
+                <p>Veja este vídeo rápido para entender como finalizar a sua compra passo a passo de forma simples e segura.</p>
+            </div>
+        </div>
+    </div>
 
     <div class="loading-screen" id="loadingScreen">
         <div class="logo" style="font-size: 2.2rem; margin-bottom: 0.5rem;">LONEKE NO<span> BEAT</span></div>
@@ -408,7 +516,7 @@
 
     <div class="toast-container" id="toastContainer"></div>
 
-    <header>
+    <header id="mainHeader">
         <div class="container nav-container">
             <a href="index.html" class="logo">LONEKE NO <span> BEAT</span></a>
             <a href="catalogo.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Voltar ao catálogo</a>
@@ -625,6 +733,18 @@
 
     let discountApplied = false;
     let originalTotalKz = 0;
+
+    // Função para fechar o banner de vídeo no topo
+    function closeVideoBanner() {
+        const videoContainer = document.getElementById("videoTopContainer");
+        videoContainer.classList.add("hidden");
+        document.body.classList.add("video-closed");
+        
+        // Pausar vídeo alterando o src (removendo autoplay)
+        const iframe = videoContainer.querySelector("iframe");
+        const src = iframe.src;
+        iframe.src = src.replace("&autoplay=1", "");
+    }
 
     async function safeFetch(url, options = {}) {
         try {
