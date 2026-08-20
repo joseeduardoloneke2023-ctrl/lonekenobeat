@@ -51,86 +51,12 @@
             background: radial-gradient(circle at 50% 0%, rgba(229, 9, 20, 0.08) 0%, transparent 50%),
                         radial-gradient(circle at 0% 100%, rgba(59, 130, 246, 0.04) 0%, transparent 40%);
             background-attachment: fixed;
-            /* Espaço adicionado para compensar o vídeo fixo no topo */
-            padding-top: 250px; 
+            padding-top: 0; 
         }
 
         a { text-decoration: none; color: inherit; }
 
         .container { width: 100%; max-width: 1240px; margin: 0 auto; padding: 0 1.5rem; }
-        
-        /* ESTILOS DO VÍDEO FIXO NO TOPO */
-        .video-fixed-top {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 250px;
-            background: rgba(7, 7, 9, 0.95);
-            backdrop-filter: blur(15px);
-            z-index: 20000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 2px solid var(--primary);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            transition: transform 0.4s ease;
-        }
-
-        .video-fixed-top.hidden {
-            transform: translateY(-100%);
-        }
-
-        .video-fixed-top iframe {
-            height: 230px;
-            width: 130px;
-            border-radius: 12px;
-            border: 1px solid var(--card-border);
-            box-shadow: 0 5px 15px rgba(229, 9, 20, 0.2);
-        }
-
-        .video-fixed-content {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-            max-width: 1240px;
-            width: 100%;
-            padding: 0 1.5rem;
-        }
-
-        .video-instructions-text h3 {
-            font-family: var(--font-heading);
-            color: var(--white);
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .video-instructions-text p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .btn-close-video {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: var(--white);
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-        }
-
-        .btn-close-video:hover {
-            background: var(--primary);
-            transform: scale(1.1);
-        }
 
         .loading-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -141,15 +67,11 @@
         .loading-screen.hidden { opacity: 0; visibility: hidden; }
 
         header {
-            position: fixed; top: 250px; left: 0; width: 100%; z-index: 1000;
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
             padding: 1.25rem 0; background-color: rgba(7, 7, 9, 0.8);
             backdrop-filter: blur(20px); border-bottom: 1px solid var(--card-border);
             transition: top 0.4s ease;
         }
-        
-        /* Ajuste do header quando o vídeo é fechado */
-        body.video-closed { padding-top: 0; }
-        body.video-closed header { top: 0; }
         
         .nav-container { display: flex; align-items: center; justify-content: space-between; }
         .logo { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; text-transform: uppercase; }
@@ -163,7 +85,7 @@
         .back-link:hover { color: var(--white); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); }
 
         .checkout-wrapper {
-            padding-top: 100px; /* Reduzido o padding original pois o body já tem padding */
+            padding-top: 100px;
             padding-bottom: 5rem;
             display: grid;
             grid-template-columns: 1.25fr 0.75fr;
@@ -324,12 +246,10 @@
         .order-summary {
             background: var(--card-bg);
             border-radius: var(--radius-lg); padding: 2.25rem; border: 1px solid var(--card-border);
-            position: sticky; top: 360px; /* Ajustado para respeitar o banner do video e o header */
+            position: sticky; top: 110px;
             box-shadow: 0 30px 60px rgba(0,0,0,0.4); backdrop-filter: blur(20px);
             transition: top 0.4s ease;
         }
-
-        body.video-closed .order-summary { top: 110px; }
 
         .summary-item {
             display: flex; align-items: center; gap: 1rem;
@@ -478,35 +398,12 @@
             .checkout-box, .order-summary { padding: 1.5rem; }
             .toast-container { right: 50%; transform: translateX(50%); top: 20px; width: calc(100% - 30px); }
             .toast-card { min-width: 100%; }
-            .video-fixed-content { flex-direction: column; gap: 0.5rem; text-align: center; }
-            .video-fixed-top { height: 320px; }
-            body { padding-top: 320px; }
-            header { top: 320px; }
         }
         
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-
-    <!-- VÍDEO YOUTUBE FIXO NO TOPO -->
-    <div id="videoTopContainer" class="video-fixed-top">
-        <button class="btn-close-video" onclick="closeVideoBanner()" title="Fechar vídeo">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-        <div class="video-fixed-content">
-            <iframe src="https://www.youtube.com/embed/x-4BdBjgVeM?autoplay=1&mute=1" 
-                    title="Instrução de como finalizar o pagamento" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                    allowfullscreen>
-            </iframe>
-            <div class="video-instructions-text">
-                <h3>Instruções de Pagamento</h3>
-                <p>Veja este vídeo rápido para entender como finalizar a sua compra passo a passo de forma simples e segura.</p>
-            </div>
-        </div>
-    </div>
 
     <div class="loading-screen" id="loadingScreen">
         <div class="logo" style="font-size: 2.2rem; margin-bottom: 0.5rem;">LONEKE NO<span> BEAT</span></div>
@@ -733,18 +630,6 @@
 
     let discountApplied = false;
     let originalTotalKz = 0;
-
-    // Função para fechar o banner de vídeo no topo
-    function closeVideoBanner() {
-        const videoContainer = document.getElementById("videoTopContainer");
-        videoContainer.classList.add("hidden");
-        document.body.classList.add("video-closed");
-        
-        // Pausar vídeo alterando o src (removendo autoplay)
-        const iframe = videoContainer.querySelector("iframe");
-        const src = iframe.src;
-        iframe.src = src.replace("&autoplay=1", "");
-    }
 
     async function safeFetch(url, options = {}) {
         try {
