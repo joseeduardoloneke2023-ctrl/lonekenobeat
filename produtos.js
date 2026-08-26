@@ -264,7 +264,7 @@ const produtos = [
         "descricao": "Aprenda a produzir, arranjar, mixar e masterizar o autêntico ritmo de Semba no FL Studio.",
         "imagem": "img/CURSOS/CURSO DE PRODUÇÃO DE BEATS DE SEMBA DE ANGOLA MIX E MASTER NO FL STUDIO.jpg",
         "precoAntigo": 15000,
-        "precoAtual": 1000,
+        "precoAtual": 5000,
         "vendas": 130,
         "linkCheckout": "https://paygooo.goootrafego.com/checkout/69cce89e-c69a-46c8-a3a8-58bcfcc63a3f",
         "videoLink": "https://youtu.be/u1-_DwlJALg",
@@ -384,7 +384,7 @@ const produtos = [
         "descricao": "Treinamento completo focado no arranjo, timbragem, programação e mixagem de Guetho Zouk.",
         "imagem": "img/CURSOS/CURSO COMPLETO DE GUETHO ZOUK.jpg",
         "precoAntigo": 15000,
-        "precoAtual": 1000,
+        "precoAtual": 5000,
         "vendas": 83,
         "linkCheckout": "https://paygooo.goootrafego.com/checkout/60ccaf18-017c-4d91-8f7b-36b4f95d08de",
         "videoLink": "https://youtu.be/u1-_DwlJALg",
@@ -570,21 +570,7 @@ const produtos = [
         "videoLink": "https://youtu.be/u1-_DwlJALg",
         "destaque": false
     },
-    {
-        "id": 39,
-        "product_id": "0267463d-46ad-4b0b-ace2-0b47c8bfdd0d",
-        "slug": "curso-completo-de-como-baixar-e-instalar-qualquer-plugin-vst-e-vsti",
-        "titulo": "CURSO COMPLETO DE COMO BAIXAR E INSTALAR QUALQUER PLUGIN VST E VSTI",
-        "categoria": "cursos",
-        "descricao": "Passo a passo definitivo para baixar, instalar e ativar plugins VST e VSTi sem erros.",
-        "imagem": "img/CURSOS/CURSO COMPLETO DE COMO BAIXAR E INSTALAR QUALQUER PLUGIN VST E VSTI.jpg",
-        "precoAntigo": 10000,
-        "precoAtual": 1000,
-        "vendas": 199,
-        "linkCheckout": "https://paygooo.goootrafego.com/checkout/0267463d-46ad-4b0b-ace2-0b47c8bfdd0d",
-        "videoLink": "https://youtu.be/u1-_DwlJALg",
-        "destaque": true
-    },
+
     {
         "id": 40,
         "product_id": "d66924fd-396f-4809-a8d0-20de2fd195d6",
@@ -699,7 +685,7 @@ const produtos = [
         "descricao": "Domine as técnicas de criação, balanço percussivo e masterização de Afro House e Kuduro.",
         "imagem": "img/CURSOS/CURSO COMPLETO DE PRODUÇÃO + MIX E MASTER DE AFRO HOUSE KUDURO ANGOLA.jpg",
         "precoAntigo": 18000,
-        "precoAtual": 1000,
+        "precoAtual": 5000,
         "vendas": 189,
         "linkCheckout": "https://paygooo.goootrafego.com/checkout/9cb41e81-7204-40e8-b7ae-f3d35a561b4c",
         "videoLink": "https://youtu.be/u1-_DwlJALg",
@@ -975,21 +961,7 @@ const produtos = [
         "videoLink": "https://youtu.be/u1-_DwlJALg",
         "destaque": false
     },
-    {
-        "id": 66,
-        "product_id": "0873fe87-b9ca-4f3f-9887-acf1871dfdbc",
-        "slug": "curso-completo-de-como-baixar-e-instalar-qualquer-programa-de-producao-musical",
-        "titulo": "CURSO COMPLETO DE COMO BAIXAR E INSTALAR QUALQUER PROGRAMA DE PRODUÇÃO MUSICAL",
-        "categoria": "cursos",
-        "descricao": "Aprenda a baixar e instalar as principais DAWs do mercado como FL Studio, Cubase, Logic e Ableton.",
-        "imagem": "img/CURSOS/CURSO COMPLETO DE COMO BAIXAR E INSTALAR QUALQUER PROGRAMA DE PRODUÇÃO MUSICAL.jpg",
-        "precoAntigo": 10000,
-        "precoAtual": 1000,
-        "vendas": 168,
-        "linkCheckout": "https://paygooo.goootrafego.com/checkout/0873fe87-b9ca-4f3f-9887-acf1871dfdbc",
-        "videoLink": "https://youtu.be/u1-_DwlJALg",
-        "destaque": true
-    },
+
     {
         "id": 67,
         "product_id": "b575ba12-2013-4275-826c-6c2d439d1760",
@@ -1029,41 +1001,11 @@ const produtos = [
         "descricao": "Treinamento passo a passo para criação, mixagem e masterização profissional de Afrobeat.",
         "imagem": "img/CURSOS/CURSO COMPLETO DE PRODUÇÃO + MIX E MASTER DE AFROBEAT.jpg",
         "precoAntigo": 18000,
-        "precoAtual": 1000,
+        "precoAtual": 5000,
         "vendas": 203,
         "linkCheckout": "https://paygooo.goootrafego.com/checkout/ef3b7027-c97e-42f9-b793-889f53c5eefe",
         "videoLink": "https://youtu.be/u1-_DwlJALg",
         "destaque": false
-    },
-    {
-        "id": 70,
-        "product_id": "4348db44-e7c8-4624-976f-45ddccbc0971",
-        "slug": "curso-de-criacao-de-drumkits",
-        "titulo": "CURSO DE CRIAÇÃO DE DRUMKITS",
-        "categoria": "cursos",
-        "descricao": "Aprenda a tratar, equalizar e organizar seus próprios pacotes de Drumkits profissionais para uso ou venda.",
-        "imagem": "img/CURSOS/CURSO DE CRIAÇÃO DE DRUMKITS.jpg",
-        "precoAntigo": 50000,
-        "precoAtual": 35000,
-        "vendas": 174,
-        "linkCheckout": "https://paygooo.goootrafego.com/checkout/4348db44-e7c8-4624-976f-45ddccbc0971",
-        "videoLink": "https://youtu.be/u1-_DwlJALg",
-        "destaque": false
-    },
-    {
-        "id": 71,
-        "product_id": "63aa9518-9b17-464c-a3c5-5577d77ea77a",
-        "slug": "curso-de-links-patrocinados-no-facebook",
-        "titulo": "CURSO DE LINKS PATROCINADOS NO FACEBOOK",
-        "categoria": "cursos",
-        "descricao": "Estratégias de tráfego pago no Facebook e Instagram para promover e vender suas produções musicais.",
-        "imagem": "img/CURSOS/CURSO DE LINKS PATROCINADOS NO FACEBOOK.jpg",
-        "precoAntigo": 10000,
-        "precoAtual": 1000,
-        "vendas": 88,
-        "linkCheckout": "https://paygooo.goootrafego.com/checkout/63aa9518-9b17-464c-a3c5-5577d77ea77a",
-        "videoLink": "https://youtu.be/u1-_DwlJALg",
-        "destaque": true
     },
     {
         "id": 72,
@@ -1119,7 +1061,7 @@ const produtos = [
         "descricao": "Domine escalas, acordes, progressões harmônicas e segredos para criar melodias marcantes.",
         "imagem": "img/CURSOS/CURSO DE TEORIA MUSICAL E CRIAÇÃO DE MELODIAS.jpg",
         "precoAntigo": 12000,
-        "precoAtual": 3000,
+        "precoAtual": 5000,
         "vendas": 95,
         "linkCheckout": "https://paygooo.goootrafego.com/checkout/3c104b7a-ef3b-4af4-832c-521caa5bcdd1",
         "videoLink": "https://youtu.be/u1-_DwlJALg",
@@ -1140,21 +1082,7 @@ const produtos = [
         "videoLink": "https://youtu.be/u1-_DwlJALg",
         "destaque": false
     },
-    {
-        "id": 77,
-        "product_id": "f43e50e1-1d79-4278-975c-f55221e97579",
-        "slug": "curso-de-como-baixar-distribuir-musicas-nas-plataformas-de-stream",
-        "titulo": "CURSO DE COMO BAIXAR DISTRIBUIR MUSICAS NAS PLATAFORMAS DE STREAM",
-        "categoria": "cursos",
-        "descricao": "Aprenda a subir e monetizar as suas faixas no Spotify, Apple Music, Deezer e plataformas mundiais.",
-        "imagem": "img/CURSOS/CURSO DE COMO BAIXAR DISTRIBUIR MUSICAS NAS PLATAFORMAS DE STREAM.jpg",
-        "precoAntigo": 10000,
-        "precoAtual": 1000,
-        "vendas": 199,
-        "linkCheckout": "https://paygooo.goootrafego.com/checkout/f43e50e1-1d79-4278-975c-f55221e97579",
-        "videoLink": "https://youtu.be/u1-_DwlJALg",
-        "destaque": false
-    },
+
     {
         "id": 78,
         "product_id": "d6854385-ae30-48bf-b64f-a640a4723470",
