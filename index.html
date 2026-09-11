@@ -1283,7 +1283,7 @@
                 <a href="#about" class="nav-link">Sobre</a>
                 <a href="#contact" class="nav-link">Contato</a>
        
-                <a href="https://app.lonekenobeat.com/plataforma/login.html" class="nav-link btn-vip" onclick="showNotification('Acessando Área VIP...', 'fa-crown')">Login</a>
+                <a href="plataforma/login.html" class="nav-link btn-vip" onclick="showNotification('Acessando Área VIP...', 'fa-crown')">Login</a>
             </nav>
             <div class="menu-toggle" id="menuToggle">
                 <i class="fa-solid fa-bars"></i>
@@ -1914,28 +1914,67 @@
     <div class="cart-count-badge" id="cartGlobalCount">0</div>
 </div>
 
-<script src="produtos.js"></script>
+<!-- SDKs do Firebase (Devem vir ANTES do seu script) -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
 <script>
+    // ==========================================
+    // 1. CONFIGURAÇÃO DO FIREBASE
+    // ==========================================
+    // PREENCHA COM OS DADOS DO SEU CONSOLE DO FIREBASE
+    const firebaseConfig = {
+    apiKey: "AIzaSyAccxyuNdi_E9Dpz0YPnWZwRC6mBU0AcVo",
+    authDomain: "loneke-site-oficial.firebaseapp.com",
+    projectId: "loneke-site-oficial",
+    storageBucket: "loneke-site-oficial.firebasestorage.app",
+    messagingSenderId: "716824234386",
+    appId: "1:716824234386:web:9bd3a8359ba388eb0dd94b",
+     measurementId: "G-MGJJPNDTM0"
+    };
+
+    // Inicializa o Firebase
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+
+    // Array global onde os produtos do Firestore serão armazenados
+    let produtos = [];
     let currentSliderIndex = 0;
 
-    function getYouTubeEmbedUrl(url) {
-    if (!url) return '';
+    // ==========================================
+    // 2. BUSCAR DADOS DO FIRESTORE
+    // ==========================================
+    async function carregarProdutosDoFirebase() {
+        try {
+            const snapshot = await db.collection("produtos").get();
+            produtos = snapshot.docs.map(doc => {
+                const data = doc.data();
+                return {
+                    id: doc.id,
+                    titulo: data.titulo || '',
+                    descricao: data.descricao || '',
+                    categoria: data.categoria || '',
+                    imagem: data.imagem || '',
+                    precoAntigo: Number(data.precoAntigo) || 0,
+                    precoAtual: Number(data.precoAtual) || 0,
+                    vendas: Number(data.vendas) || 0,
+                    video: data.video || ''
+                };
+            });
 
-    // Expressão regular para capturar o ID de 11 caracteres do YouTube
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = url.match(regExp);
-
-    if (match && match[2].length === 11) {
-        const videoId = match[2];
-        return `https://www.youtube.com/embed/${videoId}`;
+            // Após carregar os produtos, inicializa a visualização
+            iniciarPagina();
+        } catch (error) {
+            console.error("Erro ao carregar produtos do Firebase:", error);
+            showToast("Erro ao carregar catálogo de produtos", "fa-triangle-exclamation");
+        }
     }
 
-    return url;
-    }
-
-
-
-
+    // ==========================================
+    // 3. INICIALIZAÇÃO DA PÁGINA
+    // ==========================================
     document.addEventListener("DOMContentLoaded", () => {
         initHeaderScroll();
         initMobileMenu();
@@ -1946,15 +1985,35 @@
         initScrollTop();
         updateCartBadge();
 
+        // Inicia a busca dos produtos no Firestore
+        carregarProdutosDoFirebase();
+    });
+
+    function iniciarPagina() {
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('id');
 
         if (productId) {
-            renderProductDetailPage(parseInt(productId));
+            renderProductDetailPage(productId);
         } else {
             renderHomepageSlices();
         }
-    });
+    }
+
+    // ==========================================
+    // 4. FUNÇÕES DE UTILIDADE E RENDERIZAÇÃO
+    // ==========================================
+    function getYouTubeEmbedUrl(url) {
+        if (!url) return '';
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+
+        if (match && match[2].length === 11) {
+            const videoId = match[2];
+            return `https://www.youtube.com/embed/${videoId}`;
+        }
+        return url;
+    }
 
     function showToast(message, icon = "fa-circle-check") {
         let container = document.getElementById('toastContainer');
@@ -1977,10 +2036,9 @@
         }, 3500);
     }
 
-
-function createProductCardHTML(prod) {
+    function createProductCardHTML(prod) {
         return `
-            <article class="product-card-premium reveal active" onclick="goToProductDetail(${prod.id})">
+            <article class="product-card-premium reveal active" onclick="goToProductDetail('${prod.id}')">
                 <div class="card-img-wrapper">
                     <img src="${prod.imagem}" alt="${prod.titulo}" loading="lazy">
                     <span class="card-badge-vip">${prod.categoria}</span>
@@ -1994,10 +2052,10 @@ function createProductCardHTML(prod) {
                         <span class="card-price-new">${prod.precoAtual.toLocaleString('pt-AO')} Kz</span>
                     </div>
                     <div class="card-actions-wrapper">
-                        <button class="btn-card-action" onclick="goToProductDetail(${prod.id}); event.stopPropagation();">
+                        <button class="btn-card-action" onclick="goToProductDetail('${prod.id}'); event.stopPropagation();">
                             <i class="fa-solid fa-eye"></i> Ver / Demo
                         </button>
-                        <button class="btn-card-cart" title="Adicionar ao Carrinho" onclick="addItemToCart(event, ${prod.id})">
+                        <button class="btn-card-cart" title="Adicionar ao Carrinho" onclick="addItemToCart(event, '${prod.id}')">
                             <i class="fa-solid fa-cart-plus"></i>
                         </button>
                     </div>
@@ -2005,8 +2063,6 @@ function createProductCardHTML(prod) {
             </article>
         `;
     }
-
-
 
     function goToProductDetail(id) {
         window.location.search = `?id=${id}`;
@@ -2058,7 +2114,6 @@ function createProductCardHTML(prod) {
 
         const trackFeatured = document.getElementById("featuredSliderTrack");
         if (trackFeatured) {
-            // Ordena todos os produtos do array pelo maior número de vendas e extrai os 10 primeiros
             const poolFeatured = [...produtos]
                 .sort((a, b) => (b.vendas || 0) - (a.vendas || 0))
                 .slice(0, 10);
@@ -2105,14 +2160,14 @@ function createProductCardHTML(prod) {
 
     function renderProductDetailPage(id) {
         const main = document.getElementById("mainContent");
-        const prod = produtos.find(p => p.id === id);
+        const prod = produtos.find(p => String(p.id) === String(id));
 
         if (!prod) {
             main.innerHTML = `<div class="container section-padding text-center"><h2>Produto não encontrado</h2><a href="index.html" class="btn btn-primary mt-2">Voltar à Home</a></div>`;
             return;
         }
 
-        const sugestoes = produtos.filter(p => p.id !== prod.id).slice(0, 7);
+        const sugestoes = produtos.filter(p => String(p.id) !== String(prod.id)).slice(0, 7);
 
         main.innerHTML = `
             <section class="section-padding" style="padding-top: 120px;">
@@ -2135,8 +2190,7 @@ function createProductCardHTML(prod) {
                                     <span style="text-decoration: line-through; color: #666; font-size: 1.1rem;">De ${prod.precoAntigo.toLocaleString('pt-AO')} Kz</span>
                                     <span style="font-family: var(--font-montserrat); font-size: 2.5rem; font-weight: 700; color: var(--white);">Por ${prod.precoAtual.toLocaleString('pt-AO')} Kz</span>
                                 </div>
-                                <!-- BOTÃO ADICIONAR AO CARRINHO LOCAL -->
-                                <button class="btn btn-primary" style="width: 100%; padding: 1.2rem; border-radius: 12px; font-size: 1.1rem;" onclick="addItemToCart(event, ${prod.id})">
+                                <button class="btn btn-primary" style="width: 100%; padding: 1.2rem; border-radius: 12px; font-size: 1.1rem;" onclick="addItemToCart(event, '${prod.id}')">
                                     <i class="fa-solid fa-cart-shopping"></i> Adicionar ao Carrinho
                                 </button>
                             </div>
@@ -2146,16 +2200,14 @@ function createProductCardHTML(prod) {
                     <!-- VÍDEO DE DEMONSTRAÇÃO DO PRODUTO -->
                     <div style="margin-top: 5rem;">
                         <h2 class="section-title" style="font-size: 1.8rem; margin-bottom: 0.5rem;"> Vídeo de Demonstração do Produto</h2>
-    
                         <div class="video-showcase">
                             <iframe src="${getYouTubeEmbedUrl(prod.video)}" title="Demonstração" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
                     </div>
 
-                    <!-- OUTROS PRODUTOS COMO SUGESTÃO (7 PRODUTOS) -->
+                    <!-- SUGESTÕES DE OUTROS PRODUTOS -->
                     <div style="margin-top: 6rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 4rem;">
                         <h2 class="section-title" style="font-size: 1.8rem; margin-bottom: 0.5rem;">Quem comprou este item também se interessou por:</h2>
-                  
                         <div class="suggestion-grid">
                             ${sugestoes.map(item => createProductCardHTML(item)).join('')}
                         </div>
@@ -2166,15 +2218,14 @@ function createProductCardHTML(prod) {
         window.scrollTo({ top: 0 });
     }
 
-
-function addItemToCart(event, id) {
+    function addItemToCart(event, id) {
         if (event) event.stopPropagation();
         let cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
-        const productSelected = produtos.find(p => p.id === id);
+        const productSelected = produtos.find(p => String(p.id) === String(id));
 
         if (!productSelected) return;
 
-        const itemIndex = cart.findIndex(item => item.id === id);
+        const itemIndex = cart.findIndex(item => String(item.id) === String(id));
         if (itemIndex > -1) {
             showToast('Produto já adicionado no carrinho', 'fa-triangle-exclamation');
             return;
@@ -2216,8 +2267,6 @@ function addItemToCart(event, id) {
         }
     }
 
-
-
     function updateCartBadge() {
         let cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
         const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
@@ -2229,6 +2278,7 @@ function addItemToCart(event, id) {
 
     function initHeaderScroll() {
         const header = document.getElementById("header");
+        if (!header) return;
         window.addEventListener("scroll", () => {
             if (window.scrollY > 50) header.classList.add("scrolled");
             else header.classList.remove("scrolled");
@@ -2366,20 +2416,24 @@ function addItemToCart(event, id) {
             window.scrollTo({ top: 0, behavior: "smooth" });
         });
     }
-</script>
 
-<script>
-document.getElementById("contactForm").addEventListener("submit", function(e){
-    e.preventDefault();
+    // ==========================================
+    // 5. EVENTO DE FORMULÁRIO DE CONTACTO
+    // ==========================================
+    document.addEventListener("DOMContentLoaded", () => {
+        const contactForm = document.getElementById("contactForm");
+        if (contactForm) {
+            contactForm.addEventListener("submit", function(e){
+                e.preventDefault();
 
-    showToast('Processando mensagem do formulário...', 'fa-spinner');
+                showToast('Processando mensagem do formulário...', 'fa-spinner');
 
-    const nome = document.getElementById("name").value;
-    const telefone = document.getElementById("phone").value;
-    const email = document.getElementById("email").value;
-    const mensagem = document.getElementById("message").value;
+                const nome = document.getElementById("name").value;
+                const telefone = document.getElementById("phone").value;
+                const email = document.getElementById("email").value;
+                const mensagem = document.getElementById("message").value;
 
-    const texto =
+                const texto =
 `*📩 NOVO CONTACTO PELO SITE*
 
 👤 *Nome:*
@@ -2394,14 +2448,14 @@ ${email}
 💬 *Mensagem:*
 ${mensagem}`;
 
-    const numero = "244924034159";
-    const url = `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
+                const numero = "244924034159";
+                const url = `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
 
-    setTimeout(() => {
-        window.open(url, "_blank");
-    }, 800);
-});
+                setTimeout(() => {
+                    window.open(url, "_blank");
+                }, 800);
+            });
+        }
+    });
 </script>
-
-</body>
 </html>
