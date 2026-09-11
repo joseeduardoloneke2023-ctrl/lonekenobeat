@@ -18,7 +18,6 @@ export default async function handler(req, res) {
 
     if (orderId) {
       try {
-        // Atualiza o documento no Firestore via REST API do Firebase
         const projectId = 'loneke-site-oficial';
         const firestoreUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/orders/${orderId}?updateMask.fieldPaths=status&updateMask.fieldPaths=unlocked`;
 
