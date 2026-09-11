@@ -134,7 +134,7 @@
 
         .payment-methods-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 0.85rem;
             margin-bottom: 2rem;
         }
@@ -406,11 +406,7 @@
                     <h2 class="checkout-title" style="margin-top: 3rem;"><i class="fa-solid fa-credit-card"></i> Escolha o Método de Pagamento</h2>
                     
                     <div class="payment-methods-grid">
-                        <div class="method-card active" data-method="multicaixa" id="methodMcxCard">
-                            <i class="fa-solid fa-mobile-screen-button"></i>
-                            <span>Multicaixa Express</span>
-                        </div>
-                        <div class="method-card" data-method="transfer" id="methodTransferCard">
+                        <div class="method-card active" data-method="transfer" id="methodTransferCard">
                             <i class="fa-solid fa-building-columns"></i>
                             <span>Transferência IBAN</span>
                         </div>
@@ -420,17 +416,8 @@
                         </div>
                     </div>
 
-                    <!-- MULTICAIXA EXPRESS -->
-                    <div class="dynamic-payment-panel" id="panel-multicaixa" style="display: block;">
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label for="expressPhone" style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Número de Telefone (Multicaixa Express):</label>
-                            <input type="tel" id="expressPhone" class="form-control" placeholder="Ex: 923456789">
-                            <span style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-top: 0.5rem;">Será enviada uma notificação para o seu aplicativo para confirmar o pagamento.</span>
-                        </div>
-                    </div>
-
                     <!-- TRANSFERÊNCIA BANCÁRIA (IBAN AO06) -->
-                    <div class="dynamic-payment-panel" id="panel-transfer">
+                    <div class="dynamic-payment-panel" id="panel-transfer" style="display: block;">
                         <div class="form-group">
                             <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Selecione o seu Banco:</label>
                             <select id="userBankSelect" class="form-control" onchange="renderSelectedBankDetails()">
@@ -583,7 +570,7 @@
         atlantico: { name: "Atlântico", rawIban: "005500003967204810162", formattedIban: "0055 0000 3967 2048 1016 2" }
     };
 
-    let selectedMethod = "multicaixa"; 
+    let selectedMethod = "transfer"; 
     let cart = [];
     let apiProductsMap = {}; 
     const EXCHANGE_RATE = 500; 
@@ -714,7 +701,7 @@
 
                 // --- CHECK 3: DATA/HORA ACTUAL OU RECENTE ---
                 const now = new Date();
-                const currentYear = now.getFullYear().toString(); // "2026"
+                const currentYear = now.getFullYear().toString();
                 const currentMonth = String(now.getMonth() + 1).padStart(2, '0');
                 const currentDay = String(now.getDate()).padStart(2, '0');
 
@@ -1090,12 +1077,6 @@
         }
 
         const fullWhatsApp = `${dialCode} ${whatsNum.replace(/\s+/g, '')}`;
-        const expressPhone = document.getElementById("expressPhone").value.trim();
-
-        if (selectedMethod === "multicaixa" && !expressPhone) {
-            showToast("Por favor, insira o número do Multicaixa Express.", "error");
-            return;
-        }
 
         if (selectedMethod === "transfer" || selectedMethod === "wise") {
             if (!selectedFileBase64 || !isFileValidated) {
@@ -1105,101 +1086,13 @@
         }
 
         const overlay = document.getElementById("paymentOverlay");
-        const modal = document.getElementById("paymentModalContent");
-        
         overlay.style.display = "flex";
 
-        if (selectedMethod === "multicaixa") {
-            const apiItems = cart.map(item => ({
-                product_id: getValidProductId(item),
-                quantity: item.quantity || 1
-            }));
-
-            const payload = {
-                items: apiItems,
-                payment_method: 'multicaixa',
-                customer_name: name,
-                customer_email: email,
-                customer_phone: expressPhone
-            };
-
-            modal.innerHTML = `
-                <h3>A processar comunicação com o Banco...</h3>
-                <p style="color: var(--text-secondary); font-size: 0.9rem;">Por favor aguarde um momento.</p>
-                <div class="spinner"></div>
-            `;
-
-            try {
-                const response = await fetch(`${API_URL}/payments`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'Erro na criação do pagamento.');
-
-                const currentPaymentId = data.payment_id || data.id;
-
-                modal.innerHTML = `
-                    <i class="fa-solid fa-mobile-screen-button" style="font-size: 3rem; color: var(--primary);"></i>
-                    <h3 style="margin-top: 1rem;">Confirme no seu Multicaixa Express</h3>
-                    <p style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.95rem;">
-                        Foi enviado um pedido de pagamento para <strong>${payload.customer_phone}</strong>.
-                    </p>
-                    <p style="color: var(--text-main); font-weight: bold; margin-top: 1rem;">Abra o aplicativo e introduza o seu PIN para aprovar.</p>
-                    <div class="spinner"></div>
-                    <button type="button" class="btn-checkout" onclick="grantAccessAfterPayment('${email}', '${fullWhatsApp}', '${name}', 'Multicaixa Express')" style="background: var(--success); color: var(--white); margin-top: 0.5rem; font-size: 0.9rem;">
-                        <i class="fa-solid fa-circle-check"></i> Já fiz o pagamento / Liberar Acesso
-                    </button>
-                `;
-
-                pollPaymentStatus(currentPaymentId, email, fullWhatsApp, name);
-
-            } catch (error) {
-                modal.innerHTML = `
-                    <i class="fa-solid fa-circle-xmark" style="font-size: 3rem; color: #EF4444;"></i>
-                    <h3 style="margin-top: 1rem;">Erro no Pagamento</h3>
-                    <p style="color: var(--text-secondary); margin-top: 0.5rem;">${error.message}</p>
-                    <button class="btn-checkout" onclick="document.getElementById('paymentOverlay').style.display='none'" style="margin-top:1.5rem;">Voltar e Tentar Novamente</button>
-                `;
-            }
-
-        } else if (selectedMethod === "transfer") {
+        if (selectedMethod === "transfer") {
             const selectedBank = document.getElementById("userBankSelect").value.toUpperCase();
             await grantAccessAfterPayment(email, fullWhatsApp, name, `Transferência Bancária (${selectedBank})`);
         } else if (selectedMethod === "wise") {
             await grantAccessAfterPayment(email, fullWhatsApp, name, "Wise Transfer (EUR)");
-        }
-    }
-
-    async function pollPaymentStatus(paymentId, customerEmail, customerWhatsApp, customerName, checkCount = 0) {
-        if (checkCount > 60) return;
-
-        try {
-            const response = await fetch(`${API_URL}/payment-status/${paymentId}`, {
-                headers: { 'x-api-key': API_KEY }
-            });
-            const data = await response.json();
-
-            let isApprovedInFirestore = false;
-            try {
-                if (window.firebaseDb && window.firebaseDoc && window.firebaseGetDoc) {
-                    const orderRef = window.firebaseDoc(window.firebaseDb, "orders", String(paymentId));
-                    const orderSnap = await window.firebaseGetDoc(orderRef);
-                    if (orderSnap.exists() && orderSnap.data().status === "Aprovado") {
-                        isApprovedInFirestore = true;
-                    }
-                }
-            } catch (e) {}
-
-            if (data.status === 'completed' || isApprovedInFirestore) {
-                await grantAccessAfterPayment(customerEmail, customerWhatsApp, customerName, "Multicaixa Express");
-            } else {
-                setTimeout(() => pollPaymentStatus(paymentId, customerEmail, customerWhatsApp, customerName, checkCount + 1), 4000);
-            }
-        } catch (err) {
-            setTimeout(() => pollPaymentStatus(paymentId, customerEmail, customerWhatsApp, customerName, checkCount + 1), 4000);
         }
     }
 
