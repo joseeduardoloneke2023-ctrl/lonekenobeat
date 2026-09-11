@@ -744,7 +744,7 @@
                 <a href="index.html#features" class="nav-link">Serviços</a>
                 <a href="index.html#about" class="nav-link">Sobre</a>
                 <a href="index.html#contact" class="nav-link">Contato</a>
-                <a href="https://app.lonekenobeat.com/plataforma/login.html" class="nav-link btn-vip" onclick="showNotification('Acessando Área VIP...', 'fa-crown')">Login</a>
+                <a href="plataforma/login.html" class="nav-link btn-vip" onclick="showNotification('Acessando Área VIP...', 'fa-crown')">Login</a>
             </nav>
             <div class="menu-toggle" id="menuToggle">
                 <i class="fa-solid fa-bars"></i>
@@ -848,8 +848,29 @@
         <div class="cart-count-badge" id="cartGlobalCount">0</div>
     </div>
 
-<script src="produtos.js"></script>
+<!-- SDKs do Firebase (Versão Compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
+    // --- CONEXÃO FIREBASE & ESTADO GLOBAL ---
+    // Se o Firebase já foi inicializado em outro lugar do seu código, ele reaproveitará a conexão
+    if (!firebase.apps.length) {
+        const firebaseConfig = {
+    apiKey: "AIzaSyAccxyuNdi_E9Dpz0YPnWZwRC6mBU0AcVo",
+    authDomain: "loneke-site-oficial.firebaseapp.com",
+    projectId: "loneke-site-oficial",
+    storageBucket: "loneke-site-oficial.firebasestorage.app",
+    messagingSenderId: "716824234386",
+    appId: "1:716824234386:web:9bd3a8359ba388eb0dd94b",
+     measurementId: "G-MGJJPNDTM0"
+        };
+        firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+
+    // Array global que armazenará os produtos vindos do Firebase
+    let produtos = [];
+
     const ITEMS_PER_PAGE = 20;
     let currentPage = 1;
     let selectedCategory = 'all';
@@ -873,6 +894,31 @@
         { nome: "Djamila Diogo", forma: "Referência Bancária", valor: "18.500 Kz" }
     ];
 
+    // Busca os produtos na coleção 'produtos' do Firebase Firestore
+    async function carregarProdutosDoFirebase() {
+        try {
+            const snapshot = await db.collection("produtos").get();
+            produtos = snapshot.docs.map(doc => {
+                const data = doc.data();
+                return {
+                    id: data.id || doc.id,
+                    titulo: data.titulo || '',
+                    categoria: data.categoria || '',
+                    descricao: data.descricao || '',
+                    imagem: data.imagem || '',
+                    precoAntigo: Number(data.precoAntigo || 0),
+                    precoAtual: Number(data.precoAtual || 0),
+                    vendas: Number(data.vendas || 0),
+                    videoLink: data.videoLink || data.video || '',
+                    linkCheckout: data.linkCheckout || ''
+                };
+            });
+        } catch (error) {
+            console.error("Erro ao buscar produtos do Firebase:", error);
+            produtos = [];
+        }
+    }
+
     function slugify(text) {
         return text
             .toString()
@@ -886,7 +932,6 @@
             .replace(/-+$/, '');
     }
 
-    // Salva estado da busca, filtro e página no navegador
     function saveCatalogState() {
         sessionStorage.setItem('loneke_catalog_state', JSON.stringify({
             selectedCategory,
@@ -895,11 +940,14 @@
         }));
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
         initMobileMenu();
         initScrollTop();
         updateCartBadge();
         initFakePurchaseNotifications();
+
+        // Aguarda carregar do Firestore antes de renderizar a página
+        await carregarProdutosDoFirebase();
 
         const urlParams = new URLSearchParams(window.location.search);
         const productParam = urlParams.get('produto') || urlParams.get('id');
@@ -908,8 +956,8 @@
         if (productParam) {
             let prod = produtos.find(p => slugify(p.titulo) === productParam);
             
-            if (!prod && !isNaN(productParam)) {
-                prod = produtos.find(p => p.id === parseInt(productParam));
+            if (!prod && productParam) {
+                prod = produtos.find(p => String(p.id) === String(productParam));
             }
 
             if (prod) {
@@ -918,7 +966,6 @@
                 renderProductDetailPage(null);
             }
         } else {
-            // Restaura o estado salvo previamente, caso exista
             const savedState = sessionStorage.getItem('loneke_catalog_state');
             if (savedState) {
                 try {
@@ -984,7 +1031,7 @@
     function createProductCardHTML(prod) {
         const vendas = prod.vendas !== undefined ? prod.vendas : 0;
         return `
-            <article class="product-card-premium reveal active" onclick="goToProductDetail(${prod.id})">
+            <article class="product-card-premium reveal active" onclick="goToProductDetail('${prod.id}')">
                 <div class="card-img-wrapper">
                     <img src="${prod.imagem}" alt="${prod.titulo}" loading="lazy">
                     <span class="card-badge-vip">${prod.categoria}</span>
@@ -1001,7 +1048,7 @@
                         <button class="btn-card-view">
                             <i class="fa-solid fa-eye"></i> Ver Produto
                         </button>
-                        <button class="btn-card-add" onclick="addItemToCart(event, ${prod.id})">
+                        <button class="btn-card-add" onclick="addItemToCart(event, '${prod.id}')">
                             <i class="fa-solid fa-cart-shopping"></i> + Carrinho
                         </button>
                     </div>
@@ -1011,7 +1058,7 @@
     }
 
     function goToProductDetail(id) {
-        const prod = produtos.find(p => p.id === id);
+        const prod = produtos.find(p => String(p.id) === String(id));
         if (prod) {
             window.location.search = `?produto=${slugify(prod.titulo)}`;
         }
@@ -1135,7 +1182,7 @@
             return;
         }
 
-        const prod = produtos.find(p => p.id === id);
+        const prod = produtos.find(p => String(p.id) === String(id));
 
         if (!prod) {
             main.innerHTML = `<div class="container section-padding text-center"><h2>Produto não encontrado</h2><a href="catalogo.html" onclick="if(window.history.length > 1){ window.history.back(); return false; }" class="btn btn-primary mt-2">Voltar ao Catálogo</a></div>`;
@@ -1143,7 +1190,7 @@
         }
 
         const vendas = prod.vendas !== undefined ? prod.vendas : 0;
-        const sugestoes = produtos.filter(p => p.id !== prod.id).slice(0, 4);
+        const sugestoes = produtos.filter(p => String(p.id) !== String(prod.id)).slice(0, 4);
 
         let videoEmbedUrl = "https://www.youtube.com/embed/dQw4w9WgXcQ"; 
         const rawVideoUrl = prod.videoLink || prod.video;
@@ -1187,23 +1234,23 @@
                                 <div class="payment-plans-wrapper">
                                     <div class="payment-plans-title"><i class="fa-solid fa-compact-disc"></i> Escolha a Licença do Beat:</div>
                                     <div class="plans-grid-buttons" style="grid-template-columns: 1fr; gap: 0.5rem;">
-                                        <button type="button" id="license-basic" class="btn-plan-select active" onclick="selectBeatLicense(${prod.id}, 'basic', 3000)">
+                                        <button type="button" id="license-basic" class="btn-plan-select active" onclick="selectBeatLicense('${prod.id}', 'basic', 3000)">
                                             <strong>Basic Lease (5.000 Kz)</strong>
                                             <span>Inclui: MP3 </span>
                                         </button>
-                                        <button type="button" id="license-standard" class="btn-plan-select" onclick="selectBeatLicense(${prod.id}, 'standard', 7500)">
+                                        <button type="button" id="license-standard" class="btn-plan-select" onclick="selectBeatLicense('${prod.id}', 'standard', 7500)">
                                             <strong>Standard Lease (7.500 Kz)</strong>
                                             <span>Inclui: MP3 + WAV </span>
                                         </button>
-                                        <button type="button" id="license-premium" class="btn-plan-select" onclick="selectBeatLicense(${prod.id}, 'premium', 15000)">
+                                        <button type="button" id="license-premium" class="btn-plan-select" onclick="selectBeatLicense('${prod.id}', 'premium', 15000)">
                                             <strong>Premium Lease (15.000 Kz)</strong>
                                             <span>Inclui: MP3 + WAV + Stems </span>
                                         </button>
-                                        <button type="button" id="license-unlimited" class="btn-plan-select" onclick="selectBeatLicense(${prod.id}, 'unlimited', 30000)">
+                                        <button type="button" id="license-unlimited" class="btn-plan-select" onclick="selectBeatLicense('${prod.id}', 'unlimited', 30000)">
                                             <strong>Unlimited Lease (30.000 Kz)</strong>
                                             <span>Inclui: Uso comercial alargado </span>
                                         </button>
-                                        <button type="button" id="license-exclusive" class="btn-plan-select" onclick="selectBeatLicense(${prod.id}, 'exclusive', 100000)">
+                                        <button type="button" id="license-exclusive" class="btn-plan-select" onclick="selectBeatLicense('${prod.id}', 'exclusive', 100000)">
                                             <strong>Exclusive License (100.000 Kz)</strong>
                                             <span>Inclui: Exclusividade e remoção da loja </span>
                                         </button>
@@ -1215,11 +1262,11 @@
                                 <div class="payment-plans-wrapper">
                                     <div class="payment-plans-title"><i class="fa-solid fa-credit-card"></i> Opções de Pagamento:</div>
                                     <div class="plans-grid-buttons">
-                                        <button type="button" id="plan-1" class="btn-plan-select active" onclick="selectPaymentPlan(${prod.id}, 1)">
+                                        <button type="button" id="plan-1" class="btn-plan-select active" onclick="selectPaymentPlan('${prod.id}', 1)">
                                             <strong>Uma Prestação</strong>
                                             <span>Integral: ${prod.precoAtual.toLocaleString('pt-AO')} Kz</span>
                                         </button>
-                                        <button type="button" id="plan-2" class="btn-plan-select" onclick="selectPaymentPlan(${prod.id}, 2)">
+                                        <button type="button" id="plan-2" class="btn-plan-select" onclick="selectPaymentPlan('${prod.id}', 2)">
                                             <strong>Duas Prestações</strong>
                                             <span>2x de ${((prod.precoAtual / 2) + 500).toLocaleString('pt-AO')} Kz</span>
                                         </button>
@@ -1232,7 +1279,7 @@
                                     <span id="detailPriceDisplay" style="font-family: var(--font-montserrat); font-size: 2.5rem; font-weight: 700; color: var(--white);">Por ${isBeat ? '3.000' : prod.precoAtual.toLocaleString('pt-AO')} Kz</span>
                                 </div>
                                 <div style="display: flex; flex-direction: column; gap: 1rem;">
-                                    <button id="detailCartBtn" class="btn btn-primary" style="width: 100%; padding: 1.2rem; border-radius: 12px; font-size: 1.1rem;" onclick="addItemToCart(event, ${prod.id}, 1 ${isBeat ? ", 'basic', 3000" : ""})">
+                                    <button id="detailCartBtn" class="btn btn-primary" style="width: 100%; padding: 1.2rem; border-radius: 12px; font-size: 1.1rem;" onclick="addItemToCart(event, '${prod.id}', 1 ${isBeat ? ", 'basic', 3000" : ""})">
                                         <i class="fa-solid fa-cart-shopping"></i> Adicionar ao Carrinho
                                     </button>
                                 </div>
@@ -1260,7 +1307,7 @@
     }
 
     function selectBeatLicense(id, licenseType, price) {
-        const prod = produtos.find(p => p.id === id);
+        const prod = produtos.find(p => String(p.id) === String(id));
         if (!prod) return;
 
         ['basic', 'standard', 'premium', 'unlimited', 'exclusive'].forEach(l => {
@@ -1275,11 +1322,11 @@
         const cartBtn = document.getElementById('detailCartBtn');
 
         if(priceDisplay) priceDisplay.innerHTML = `Por ${price.toLocaleString('pt-AO')} Kz`;
-        if(cartBtn) cartBtn.setAttribute('onclick', `addItemToCart(event, ${prod.id}, 1, '${licenseType}', ${price})`);
+        if(cartBtn) cartBtn.setAttribute('onclick', `addItemToCart(event, '${prod.id}', 1, '${licenseType}', ${price})`);
     }
 
     function selectPaymentPlan(id, plan) {
-        const prod = produtos.find(p => p.id === id);
+        const prod = produtos.find(p => String(p.id) === String(id));
         if (!prod) return;
 
         const btn1 = document.getElementById('plan-1');
@@ -1291,20 +1338,20 @@
             if(btn1) btn1.classList.add('active');
             if(btn2) btn2.classList.remove('active');
             if(priceDisplay) priceDisplay.innerHTML = `Por ${prod.precoAtual.toLocaleString('pt-AO')} Kz`;
-            if(cartBtn) cartBtn.setAttribute('onclick', `addItemToCart(event, ${prod.id}, 1)`);
+            if(cartBtn) cartBtn.setAttribute('onclick', `addItemToCart(event, '${prod.id}', 1)`);
         } else {
             if(btn1) btn1.classList.remove('active');
             if(btn2) btn2.classList.add('active');
             const valorParcela = (prod.precoAtual / 2) + 500;
             if(priceDisplay) priceDisplay.innerHTML = `Por ${valorParcela.toLocaleString('pt-AO')} Kz <small style="font-size:1.1rem; color:var(--primary); font-weight:500;">(1ª Prestação)</small>`;
-            if(cartBtn) cartBtn.setAttribute('onclick', `addItemToCart(event, ${prod.id}, 2)`);
+            if(cartBtn) cartBtn.setAttribute('onclick', `addItemToCart(event, '${prod.id}', 2)`);
         }
     }
 
     function addItemToCart(event, id, prestacoes = 1, licenseType = null, customPrice = null) {
         event.stopPropagation();
         let cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
-        const productSelected = produtos.find(p => p.id === id);
+        const productSelected = produtos.find(p => String(p.id) === String(id));
 
         if (!productSelected) return;
 
