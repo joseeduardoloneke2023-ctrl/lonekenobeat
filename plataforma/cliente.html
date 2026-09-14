@@ -181,11 +181,25 @@
         #sidebar {
             width: var(--sidebar-width); background: var(--bg-sidebar);
             position: fixed; top: 0; left: 0; height: 100vh; z-index: 99999;
-            padding: 24px 16px; transition: var(--transition);
+            padding: 24px 16px 0 16px; transition: var(--transition);
             border-right: 1px solid var(--border-color);
             display: flex; flex-direction: column;
-            overflow-y: auto;
             pointer-events: auto;
+        }
+
+        .sidebar-scroll-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 1rem;
+        }
+
+        .sidebar-fixed-bottom {
+            position: sticky;
+            bottom: 0;
+            background: var(--bg-sidebar);
+            padding: 12px 0 20px 0;
+            border-top: 1px solid var(--border-color);
+            z-index: 10;
         }
 
         .top-navbar {
@@ -351,7 +365,7 @@
 
         .lms-nav-controls {
             display: flex; justify-content: space-between; align-items: center;
-            margin-top: 1rem; margin-bottom: 1rem; gap: 12px;
+            margin-top: 1rem; margin-bottom: 1rem; gap: 12px; flex-wrap: wrap;
         }
 
         .btn-lms-nav {
@@ -475,41 +489,49 @@
 
         <!-- SIDEBAR -->
         <aside id="sidebar">
-            <div class="user-profile-box">
-                <div id="sidebar-avatar-container" class="user-avatar">
-                    <i class="fa-solid fa-user"></i>
+            <div class="sidebar-scroll-content">
+                <div class="user-profile-box">
+                    <div id="sidebar-avatar-container" class="user-avatar">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div style="display:flex; flex-direction:column; overflow:hidden;">
+                        <span style="font-weight:800; font-size:0.95rem; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; color:#FFF;" id="sidebar-user-name">Carregando...</span>
+                        <span style="color:var(--primary); font-size:0.75rem; font-weight:700;" id="sidebar-user-role">Membro VIP</span>
+                    </div>
                 </div>
-                <div style="display:flex; flex-direction:column; overflow:hidden;">
-                    <span style="font-weight:800; font-size:0.95rem; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; color:#FFF;" id="sidebar-user-name">Carregando...</span>
-                    <span style="color:var(--primary); font-size:0.75rem; font-weight:700;" id="sidebar-user-role">Membro VIP</span>
+
+                <div class="menu-label">Menu Principal</div>
+                <div class="menu-item active" onclick="switchView('dashboard', this)">
+                    <i class="fa-solid fa-house"></i> Dashboard
+                </div>
+                <div class="menu-item" onclick="switchView('bonus', this)">
+                    <i class="fa-solid fa-gift" style="color:var(--warning);"></i> Bónus Exclusivos
+                </div>
+                <a href="https://lonekenobeat.com" target="_blank" class="menu-item" onclick="toggleSidebar(false)">
+                    <i class="fa-solid fa-cart-shopping" style="color:var(--success);"></i> Visitar Loja Principal
+                </a>
+                <div class="menu-item" onclick="switchView('edit-profile', this)">
+                    <i class="fa-solid fa-user-pen"></i> Editar Perfil
+                </div>
+                <div class="menu-item" onclick="switchView('change-password', this)">
+                    <i class="fa-solid fa-key"></i> Mudar Senha
+                </div>
+                <div class="menu-item" onclick="switchView('unlocked-products', this)">
+                    <i class="fa-solid fa-circle-check"></i> Produtos Comprados
+                </div>
+                <div class="menu-item" onclick="switchView('chat', this)">
+                    <i class="fa-solid fa-comments"></i> Suporte Chat
+                </div>
+                <div class="menu-item" onclick="switchView('locked-products', this)">
+                    <i class="fa-solid fa-lock"></i> Produtos Bloqueados
                 </div>
             </div>
 
-            <div class="menu-label">Menu Principal</div>
-            <div class="menu-item active" onclick="switchView('dashboard', this)">
-                <i class="fa-solid fa-house"></i> Dashboard
-            </div>
-            <a href="https://lonekenobeat.com" target="_blank" class="menu-item" onclick="toggleSidebar(false)">
-                <i class="fa-solid fa-cart-shopping" style="color:var(--success);"></i> Visitar Loja Principal
-            </a>
-            <div class="menu-item" onclick="switchView('edit-profile', this)">
-                <i class="fa-solid fa-user-pen"></i> Editar Perfil
-            </div>
-            <div class="menu-item" onclick="switchView('change-password', this)">
-                <i class="fa-solid fa-key"></i> Mudar Senha
-            </div>
-            <div class="menu-item" onclick="switchView('unlocked-products', this)">
-                <i class="fa-solid fa-circle-check"></i> Produtos Comprados
-            </div>
-            <div class="menu-item" onclick="switchView('chat', this)">
-                <i class="fa-solid fa-comments"></i> Suporte Chat
-            </div>
-            <div class="menu-item" onclick="switchView('locked-products', this)">
-                <i class="fa-solid fa-lock"></i> Produtos Bloqueados
-            </div>
-
-            <div class="menu-item" onclick="logoutUser()" style="margin-top:auto; color:#FF4D4D; border-top:1px solid var(--border-color); padding-top:1.2rem;">
-                <i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão
+            <!-- BOTÃO FIXO DE SAIR NA BASE DA SIDEBAR -->
+            <div class="sidebar-fixed-bottom">
+                <div class="menu-item" onclick="logoutUser()" style="color:#FF4D4D; margin-bottom:0;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão
+                </div>
             </div>
         </aside>
 
@@ -523,6 +545,16 @@
                     <p style="color:var(--text-muted); font-size:0.92rem;">Aceda aos seus conteúdos exclusivos, projetos de áudio, formações e fale diretamente com o produtor.</p>
                 </div>
 
+                <!-- SEÇÃO VÍDEO DE BOAS-VINDAS AO USUÁRIO -->
+                <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-lg); padding:1.5rem; margin-bottom:2rem; overflow:hidden;">
+                    <h3 style="font-family:'Montserrat',sans-serif; font-size:1.2rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:10px; color:#FFF;">
+                        <i class="fa-solid fa-circle-play" style="color:var(--primary);"></i> Vídeo de Boas-Vindas
+                    </h3>
+                    <div style="position:relative; padding-top:56.25%; width:100%; background:#000; border-radius:var(--radius-md); overflow:hidden; border:1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                        <iframe id="welcome-video-player" src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                </div>
+
                 <!-- KPI CARDS -->
                 <div class="quick-stats">
                     <div class="stat-card" onclick="switchView('unlocked-products')" style="cursor:pointer;">
@@ -532,18 +564,18 @@
                             <p>Produtos Liberados</p>
                         </div>
                     </div>
+                    <div class="stat-card" onclick="switchView('bonus')" style="cursor:pointer;">
+                        <div class="stat-icon" style="color:var(--warning); background:rgba(245,158,11,0.15);"><i class="fa-solid fa-gift"></i></div>
+                        <div class="stat-info">
+                            <h3 id="kpi-bonus-count">1</h3>
+                            <p>Bónus Gratuitos</p>
+                        </div>
+                    </div>
                     <div class="stat-card" onclick="switchView('locked-products')" style="cursor:pointer;">
                         <div class="stat-icon" style="color:var(--primary); background:rgba(229,9,20,0.15);"><i class="fa-solid fa-lock"></i></div>
                         <div class="stat-info">
                             <h3 id="kpi-locked-count">0</h3>
                             <p>Produtos Disponíveis</p>
-                        </div>
-                    </div>
-                    <div class="stat-card" onclick="switchView('chat')" style="cursor:pointer;">
-                        <div class="stat-icon" style="color:var(--info); background:rgba(59,130,246,0.15);"><i class="fa-solid fa-comments"></i></div>
-                        <div class="stat-info">
-                            <h3 id="kpi-chat-messages">OK</h3>
-                            <p>Canal de Suporte</p>
                         </div>
                     </div>
                 </div>
@@ -556,7 +588,17 @@
                 </div>
             </section>
 
-            <!-- 2. EDIT PROFILE VIEW -->
+            <!-- 2. BONUS VIEW -->
+            <section id="view-bonus" class="panel-view">
+                <h2 class="view-title"><i class="fa-solid fa-gift" style="color:var(--warning);"></i> Conteúdos & Bónus Gratuitos</h2>
+                <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 2rem;">Aproveite os bónus e recursos liberados gratuitamente para todos os utilizadores da plataforma.</p>
+
+                <div class="products-grid" id="bonus-products-list">
+                    <!-- Inserido dinamicamente -->
+                </div>
+            </section>
+
+            <!-- 3. EDIT PROFILE VIEW -->
             <section id="view-edit-profile" class="panel-view">
                 <h2 class="view-title"><i class="fa-solid fa-user-pen" style="color:var(--primary);"></i> Editar Dados do Perfil</h2>
                 <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 2rem;">Mantenha as suas informações pessoais e de contacto atualizadas.</p>
@@ -625,7 +667,7 @@
                 </div>
             </section>
 
-            <!-- 3. CHANGE PASSWORD VIEW -->
+            <!-- 4. CHANGE PASSWORD VIEW -->
             <section id="view-change-password" class="panel-view">
                 <h2 class="view-title"><i class="fa-solid fa-key" style="color:var(--primary);"></i> Alterar Palavra-passe</h2>
                 <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 2rem;">Mantenha a sua conta VIP protegida atualizando a sua senha regularmente.</p>
@@ -654,7 +696,7 @@
                 </div>
             </section>
 
-            <!-- 4. UNLOCKED PRODUCTS VIEW -->
+            <!-- 5. UNLOCKED PRODUCTS VIEW -->
             <section id="view-unlocked-products" class="panel-view">
                 <h2 class="view-title"><i class="fa-solid fa-circle-check" style="color:var(--success);"></i> Meus Produtos Comprados</h2>
                 <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 2rem;">Aceda aos ficheiros, cursos, FLP, drumkits e beats desbloqueados para a sua conta.</p>
@@ -664,7 +706,7 @@
                 </div>
             </section>
 
-            <!-- 5. CHAT SUPPORT VIEW -->
+            <!-- 6. CHAT SUPPORT VIEW -->
             <section id="view-chat" class="panel-view">
                 <h2 class="view-title"><i class="fa-solid fa-comments" style="color:var(--primary);"></i> Suporte VIP & Atendimento Directo</h2>
                 <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 1.5rem;">Tire dúvidas sobre projetos, solicite suporte ou acerte detalhes diretamente com a produção.</p>
@@ -680,7 +722,7 @@
                 </div>
             </section>
 
-            <!-- 6. LOCKED PRODUCTS VIEW -->
+            <!-- 7. LOCKED PRODUCTS VIEW -->
             <section id="view-locked-products" class="panel-view">
                 <h2 class="view-title"><i class="fa-solid fa-lock" style="color:var(--primary);"></i> Catálogo VIP & Produtos Disponíveis</h2>
                 <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 2rem;">Explore beats, drum kits, plugins e formações disponíveis para liberação imediata.</p>
@@ -693,7 +735,7 @@
         </main>
     </div>
 
-    <!-- MODAL 1: SALA DE AULA VIP -->
+    <!-- MODAL 1: SALA DE AULA VIP DA PLATAFORMA DE VÍDEOS -->
     <div id="course-modal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.95); display:none; align-items:center; justify-content:center; z-index:2000; padding:1.5rem;">
         <div class="lms-modal-content">
             <div class="lms-header">
@@ -701,7 +743,12 @@
                     <span style="font-size:0.72rem; color:var(--primary); font-weight:800; text-transform:uppercase; letter-spacing:1px;" id="lms-course-category">Formação VIP</span>
                     <h3 style="font-family:'Montserrat',sans-serif; font-size:1.2rem; font-weight:800; color:#FFF;" id="lms-course-title">Nome do Curso</h3>
                 </div>
-                <button onclick="closeCourseModal()" class="icon-btn" style="width:36px; height:36px; background:rgba(255,255,255,0.08); border:none;"><i class="fa-solid fa-xmark"></i></button>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <button id="lms-download-full-course-btn" onclick="downloadFullCourse()" class="btn-action btn-success" style="width:auto; padding:8px 14px; font-size:0.78rem;">
+                        <i class="fa-solid fa-file-zipper"></i> Baixar Curso Completo
+                    </button>
+                    <button onclick="closeCourseModal()" class="icon-btn" style="width:36px; height:36px; background:rgba(255,255,255,0.08); border:none;"><i class="fa-solid fa-xmark"></i></button>
+                </div>
             </div>
 
             <div class="lms-grid-container">
@@ -720,11 +767,14 @@
 
                     <div class="lms-nav-controls">
                         <button class="btn-lms-nav" id="btn-prev-lesson" onclick="navigateLesson(-1)"><i class="fa-solid fa-chevron-left"></i> Aula Anterior</button>
+                        <button class="btn-lms-nav" id="btn-download-video" onclick="downloadCurrentVideo()" style="background:rgba(16,185,129,0.2); border-color:rgba(16,185,129,0.4); color:#10B981;">
+                            <i class="fa-solid fa-circle-down"></i> Baixar Vídeo da Aula
+                        </button>
                         <span style="font-size:0.78rem; color:var(--text-muted); font-weight:700;" id="lms-lesson-counter">Aula 1 de 1</span>
                         <button class="btn-lms-nav" id="btn-next-lesson" onclick="navigateLesson(1)">Próxima Aula <i class="fa-solid fa-chevron-right"></i></button>
                     </div>
 
-                    <!-- ÁREA DE MATERIAL DE DOWNLOAD -->
+                    <!-- ÁREA DE MATERIAL DE DOWNLOAD DA AULA -->
                     <div id="lms-material-download-box" style="margin-top:0.8rem; padding:1.2rem; background:rgba(255,255,255,0.04); border:1px solid var(--border-color); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
                         <div>
                             <div style="font-weight:800; font-size:0.92rem; color:#FFF;"><i class="fa-solid fa-cloud-arrow-down" style="color:var(--success); margin-right:8px;"></i> Material Complementar da Formação</div>
@@ -837,6 +887,8 @@
         let activeCourseLessons = [];
         let currentLessonIndex = 0;
         let activeCourseId = null;
+        let activeCourseProduct = null;
+        let activeModulesList = [];
 
         // ==========================================
         // 2. VERIFICAÇÃO DE AUTENTICAÇÃO
@@ -1004,7 +1056,6 @@
         function listenUserAccesses() {
             if (!currentUser) return;
 
-            // Limpa escutadores antigos se existirem
             if (unsubUserDoc) unsubUserDoc();
             if (unsubUserAccess) unsubUserAccess();
             if (unsubCatalog) unsubCatalog();
@@ -1015,7 +1066,6 @@
                 if (uDoc.exists) {
                     const uData = uDoc.data();
 
-                    // Suporta mapa/objeto de produtos ex: { prodId1: true, prodId2: true }
                     if (uData.produtos && typeof uData.produtos === 'object') {
                         Object.keys(uData.produtos).forEach(pId => {
                             if (uData.produtos[pId] === true || uData.produtos[pId] === 'unlocked' || uData.produtos[pId] === 'liberado') {
@@ -1024,7 +1074,6 @@
                         });
                     }
 
-                    // Suporta arrays de permissões
                     if (Array.isArray(uData.produtosLiberados)) {
                         uData.produtosLiberados.forEach(pId => unlockedFromUserDoc.add(String(pId)));
                     }
@@ -1035,23 +1084,22 @@
                 combinePermissionsAndRender();
             }, err => console.warn("Aviso Firestore (UserDoc):", err));
 
-            // 2. Escuta a coleção global `user_access` onde userId == request.auth.uid (Conforme Firestore Security Rules)
+            // 2. Escuta coleção `user_access`
             unsubUserAccess = db.collection('user_access')
                 .where('userId', '==', currentUser.uid)
                 .onSnapshot(snapshot => {
                     unlockedFromUserAccess.clear();
                     snapshot.forEach(doc => {
                         const data = doc.data();
-                        // Valida status se existir
                         if (!data.status || data.status === 'unlocked' || data.status === 'liberado' || data.status === 'active') {
                             const pId = data.productId || data.produtoId || data.product_id;
                             if (pId) unlockedFromUserAccess.add(String(pId));
                         }
                     });
                     combinePermissionsAndRender();
-                }, err => console.warn("Aviso Firestore (user_access por userId):", err));
+                }, err => console.warn("Aviso Firestore (user_access):", err));
 
-            // 3. Escuta todo o catálogo de produtos de forma reativa
+            // 3. Escuta todo o catálogo de produtos
             unsubCatalog = db.collection('produtos').onSnapshot(snapshot => {
                 allProductsCache = [];
                 snapshot.forEach(doc => {
@@ -1062,7 +1110,6 @@
         }
 
         function combinePermissionsAndRender() {
-            // Une permissões vindas do documento de usuário e da coleção de acessos
             userUnlockedProductIds = new Set([...unlockedFromUserDoc, ...unlockedFromUserAccess]);
             renderAllProductsViews();
         }
@@ -1071,50 +1118,75 @@
             const unlockedGrid = document.getElementById('unlocked-products-list');
             const lockedGrid = document.getElementById('locked-products-list');
             const recentGrid = document.getElementById('dash-recent-products');
+            const bonusGrid = document.getElementById('bonus-products-list');
 
-            unlockedGrid.innerHTML = '';
-            lockedGrid.innerHTML = '';
-            recentGrid.innerHTML = '';
+            if (unlockedGrid) unlockedGrid.innerHTML = '';
+            if (lockedGrid) lockedGrid.innerHTML = '';
+            if (recentGrid) recentGrid.innerHTML = '';
+            if (bonusGrid) bonusGrid.innerHTML = '';
 
             let unlockedCount = 0;
             let lockedCount = 0;
+            let bonusCount = 0;
 
             allProductsCache.forEach(prod => {
                 const strId = String(prod.id);
                 const strUuid = prod.uuid ? String(prod.uuid) : null;
                 const strSlug = prod.slug ? String(prod.slug) : null;
+                const titleLower = String(prod.titulo || prod.nome || '').toLowerCase();
+                const catLower = String(prod.categoria || '').toLowerCase();
 
-                // Verifica liberação por id, uuid, slug ou se o produto for marcado como gratuito
+                // FL Studio 2026 liberado para TODOS os utilizadores
+                const isFLStudioBonus = titleLower.includes('fl studio 2026');
+                const isCatBonus = titleLower.includes('bonus') || titleLower.includes('bónus') || catLower.includes('bonus') || catLower.includes('bónus');
+
                 const isUnlocked = userUnlockedProductIds.has(strId) ||
                                    (strUuid && userUnlockedProductIds.has(strUuid)) ||
                                    (strSlug && userUnlockedProductIds.has(strSlug)) ||
                                    prod.gratuito === true ||
-                                   prod.free === true;
+                                   prod.free === true ||
+                                   isFLStudioBonus;
 
+                const cardHtml = createProductCardHTML(prod, isUnlocked);
+
+                // Renderiza na secção Bónus
+                if (isFLStudioBonus || isCatBonus || prod.gratuito === true || prod.free === true) {
+                    bonusCount++;
+                    if (bonusGrid) bonusGrid.innerHTML += cardHtml;
+                }
+
+                // Renderiza em Comprados / Bloqueados
                 if (isUnlocked) {
                     unlockedCount++;
-                    const cardHtml = createProductCardHTML(prod, true);
-                    unlockedGrid.innerHTML += cardHtml;
-                    if (unlockedCount <= 3) recentGrid.innerHTML += cardHtml;
+                    if (unlockedGrid) unlockedGrid.innerHTML += cardHtml;
+                    if (unlockedCount <= 3 && recentGrid) recentGrid.innerHTML += cardHtml;
                 } else {
                     lockedCount++;
-                    lockedGrid.innerHTML += createProductCardHTML(prod, false);
+                    if (lockedGrid) lockedGrid.innerHTML += cardHtml;
                 }
             });
 
             document.getElementById('kpi-unlocked-count').innerText = unlockedCount;
             document.getElementById('kpi-locked-count').innerText = lockedCount;
+            document.getElementById('kpi-bonus-count').innerText = bonusCount;
 
-            if (unlockedCount === 0) {
+            if (bonusGrid && bonusCount === 0) {
+                bonusGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem; color:var(--text-muted); background:var(--bg-card); border-radius:var(--radius-lg); border:1px solid var(--border-color);">
+                    <i class="fa-solid fa-gift" style="font-size:2.5rem; color:var(--warning); margin-bottom:1rem;"></i>
+                    <p style="font-size:1rem; font-weight:700; color:#FFF;">Nenhum bónus adicional listado no momento.</p>
+                </div>`;
+            }
+
+            if (unlockedGrid && unlockedCount === 0) {
                 unlockedGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem; color:var(--text-muted); background:var(--bg-card); border-radius:var(--radius-lg); border:1px solid var(--border-color);">
                     <i class="fa-solid fa-lock" style="font-size:2.5rem; color:var(--primary); margin-bottom:1rem;"></i>
                     <p style="font-size:1rem; font-weight:700; color:#FFF;">Nenhum produto liberado ainda.</p>
                     <p style="font-size:0.85rem;">Assim que o administrador aprovar o seu acesso, os seus beats/cursos aparecerão aqui.</p>
                 </div>`;
-                recentGrid.innerHTML = `<p style="color:var(--text-muted); font-size:0.85rem;">Nenhum conteúdo recente disponível.</p>`;
+                if (recentGrid) recentGrid.innerHTML = `<p style="color:var(--text-muted); font-size:0.85rem;">Nenhum conteúdo recente disponível.</p>`;
             }
 
-            if (lockedCount === 0) {
+            if (lockedGrid && lockedCount === 0) {
                 lockedGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem; color:var(--text-muted); background:var(--bg-card); border-radius:var(--radius-lg); border:1px solid var(--border-color);">
                     <i class="fa-solid fa-circle-check" style="font-size:2.5rem; color:var(--success); margin-bottom:1rem;"></i>
                     <p style="font-size:1rem; font-weight:700; color:#FFF;">Você possui acesso a todos os produtos do catálogo!</p>
@@ -1243,11 +1315,13 @@
                 return;
             }
 
+            activeCourseProduct = prod;
             activeCourseId = prod.id;
             document.getElementById('lms-course-title').innerText = prod.titulo || 'Curso VIP';
             document.getElementById('lms-course-category').innerText = prod.categoria || 'Formação VIP';
 
             activeCourseLessons = [];
+            activeModulesList = [];
             currentLessonIndex = 0;
 
             const modulesContainer = document.getElementById('lms-modules-container');
@@ -1258,9 +1332,10 @@
                 rawModules = Object.values(rawModules);
             }
 
-            const courseDownloadLink = prod.linkDownload || prod.downloadUrl || prod.materialUrl || prod.ficheiroUrl;
+            const courseDownloadLink = prod.linkDownload || prod.downloadUrl || prod.materialUrl || prod.ficheiroUrl || prod.arquivoUrl;
 
             if (Array.isArray(rawModules) && rawModules.length > 0) {
+                activeModulesList = rawModules;
                 document.getElementById('lms-total-modules').innerText = `${rawModules.length} Módulos`;
 
                 rawModules.forEach((mod, mIdx) => {
@@ -1293,11 +1368,19 @@
                         });
                     }
 
+                    const modDownloadUrl = mod.linkDownload || mod.downloadUrl || mod.materialUrl || courseDownloadLink;
+                    const modDownloadBtn = modDownloadUrl ? `
+                        <button onclick="downloadModule(${mIdx}, event)" class="btn-action btn-secondary" style="width:auto; padding:3px 8px; font-size:0.7rem; margin-left:auto;">
+                            <i class="fa-solid fa-cloud-arrow-down" style="color:var(--success);"></i> Baixar Módulo
+                        </button>
+                    ` : '';
+
                     modulesContainer.innerHTML += `
                         <div class="lms-module-card">
                             <div class="lms-module-title">
                                 <i class="fa-solid fa-layer-group" style="color:var(--primary);"></i>
-                                <span>${escapeHtml(mod.nome || mod.titulo || 'Módulo ' + (mIdx + 1))}</span>
+                                <span style="text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${escapeHtml(mod.nome || mod.titulo || 'Módulo ' + (mIdx + 1))}</span>
+                                ${modDownloadBtn}
                             </div>
                             <div>${lessonsListHtml || '<div style="padding:10px; font-size:0.78rem; color:var(--text-muted);">Sem aulas cadastradas neste módulo.</div>'}</div>
                         </div>
@@ -1336,7 +1419,10 @@
 
                     modulesContainer.innerHTML = `
                         <div class="lms-module-card">
-                            <div class="lms-module-title"><i class="fa-solid fa-layer-group" style="color:var(--primary);"></i> Conteúdo do Curso</div>
+                            <div class="lms-module-title">
+                                <i class="fa-solid fa-layer-group" style="color:var(--primary);"></i> Conteúdo do Curso
+                                ${courseDownloadLink ? `<button onclick="downloadFullCourse()" class="btn-action btn-secondary" style="width:auto; padding:3px 8px; font-size:0.7rem; margin-left:auto;"><i class="fa-solid fa-cloud-arrow-down" style="color:var(--success);"></i> Baixar Módulo</button>` : ''}
+                            </div>
                             <div>${lessonsListHtml}</div>
                         </div>
                     `;
@@ -1386,7 +1472,6 @@
 
             playerIframe.src = targetEmbed;
 
-            // Fallback de segurança para ocultar carregando se o iframe demorar
             setTimeout(() => { hideLmsProcessing(); }, 2000);
 
             document.getElementById('lms-current-lesson-title').innerText = `${lesson.moduleName} - ${lesson.title}`;
@@ -1420,6 +1505,69 @@
             const nextIdx = currentLessonIndex + direction;
             if (nextIdx >= 0 && nextIdx < activeCourseLessons.length) {
                 loadLessonByIndex(nextIdx);
+            }
+        }
+
+        // ==========================================
+        // LÓGICA DE DOWNLOADS (VÍDEO, MÓDULO, CURSO COMPLETO)
+        // ==========================================
+        function downloadCurrentVideo() {
+            if (activeCourseLessons.length === 0 || currentLessonIndex < 0 || currentLessonIndex >= activeCourseLessons.length) {
+                showToast('Nenhum vídeo disponível para baixar.', 'warning');
+                return;
+            }
+            const lesson = activeCourseLessons[currentLessonIndex];
+            const videoUrl = lesson.videoUrl;
+
+            if (!videoUrl) {
+                showToast('Link do vídeo não disponível para download.', 'warning');
+                return;
+            }
+
+            let targetUrl = videoUrl;
+            if (targetUrl.includes('drive.google.com') && targetUrl.includes('/preview')) {
+                targetUrl = targetUrl.replace('/preview', '/view');
+            }
+            
+            window.open(targetUrl, '_blank');
+            showToast('A abrir o vídeo para download/visualização em alta qualidade...', 'info');
+        }
+
+        function downloadModule(mIdx, event) {
+            if (event) event.stopPropagation();
+
+            if (activeModulesList && activeModulesList[mIdx]) {
+                const mod = activeModulesList[mIdx];
+                const modUrl = mod.linkDownload || mod.downloadUrl || mod.materialUrl || (activeCourseProduct ? (activeCourseProduct.linkDownload || activeCourseProduct.downloadUrl) : null);
+
+                if (modUrl) {
+                    window.open(modUrl, '_blank');
+                    showToast(`A descarregar o Módulo: ${mod.nome || mod.titulo || (mIdx + 1)}...`, 'info');
+                    return;
+                }
+            }
+
+            if (activeCourseProduct && (activeCourseProduct.linkDownload || activeCourseProduct.downloadUrl || activeCourseProduct.materialUrl)) {
+                window.open(activeCourseProduct.linkDownload || activeCourseProduct.downloadUrl || activeCourseProduct.materialUrl, '_blank');
+                showToast('A descarregar ficheiros do módulo...', 'info');
+            } else {
+                showToast('Nenhum ficheiro específico de download associado a este módulo.', 'warning');
+            }
+        }
+
+        function downloadFullCourse() {
+            if (!activeCourseProduct) {
+                showToast('Nenhum curso ativo selecionado.', 'warning');
+                return;
+            }
+
+            const fullUrl = activeCourseProduct.linkDownload || activeCourseProduct.downloadUrl || activeCourseProduct.materialUrl || activeCourseProduct.ficheiroUrl || activeCourseProduct.arquivoUrl;
+
+            if (fullUrl) {
+                window.open(fullUrl, '_blank');
+                showToast('A iniciar o download do curso completo...', 'success');
+            } else {
+                showToast('O link para download do curso completo não está configurado. Solicite no Suporte Chat.', 'warning');
             }
         }
 
