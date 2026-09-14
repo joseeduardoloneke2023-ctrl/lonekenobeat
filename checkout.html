@@ -96,6 +96,12 @@
             align-items: start;
         }
 
+        .checkout-main-col {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
         .checkout-box {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -296,7 +302,7 @@
         .total-row { display: flex; justify-content: space-between; align-items: center; font-family: var(--font-heading); margin-bottom: 0.75rem; }
         .total-row span { font-size: 0.95rem; color: var(--text-secondary); font-weight: 500; }
         .total-row div { display: flex; align-items: center; gap: 0.5rem; }
-        .total-row strong { font-size: 1.45rem; color: var(--white); font-weight: 700; }
+        .total-row strong { font-size: 1.35rem; color: var(--white); font-weight: 700; }
 
         .btn-checkout {
             width: 100%; background: var(--primary); color: var(--white); padding: 1.15rem; border-radius: var(--radius-md);
@@ -339,9 +345,19 @@
         }
         .spinner { width: 48px; height: 48px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; margin: 1.75rem auto; animation: spin 0.9s linear infinite; }
 
+        /* AJUSTE PARA ORDENAÇÃO NO TELEFONE: Dados -> Carrinho -> Forma de Pagamento */
         @media(max-width: 992px) {
-            .checkout-wrapper { grid-template-columns: 1fr; gap: 2rem; }
-            .order-summary { position: static; }
+            .checkout-wrapper { 
+                display: flex; 
+                flex-direction: column; 
+                gap: 2rem; 
+            }
+            .checkout-main-col, .checkout-sidebar-col { 
+                display: contents; 
+            }
+            .billing-box { order: 1; }
+            .order-summary { order: 2; position: static; }
+            .payment-box { order: 3; }
         }
 
         @media(max-width: 640px) {
@@ -374,36 +390,42 @@
     <main class="container">
         <div class="checkout-wrapper">
             
-            <section class="checkout-box">
-                <h2 class="checkout-title"><i class="fa-solid fa-user-shield"></i> Dados de Faturação</h2>
-                
-                <form id="checkoutForm" onsubmit="return false;">
-                    <div class="form-group">
-                        <label for="customerName">Nome Completo</label>
-                        <input type="text" id="customerName" class="form-control" placeholder="Ex: Anselmo Ralph" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="customerEmail">E-mail para Receber os Produtos</label>
-                        <input type="email" id="customerEmail" class="form-control" placeholder="Ex: produtor@gmail.com" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="customerWhatsApp">WhatsApp / Número Telefone</label>
-                        <div class="phone-container">
-                            <select id="countryCode" class="form-control select-indicativo">
-                                <option value="+244" selected>🇦🇴 +244</option>
-                                <option value="+351">🇵🇹 +351</option>
-                                <option value="+55">🇧🇷 +55</option>
-                                <option value="+258">🇲ℤ +258</option>
-                                <option value="+238">🇨𝑽 +238</option>
-                                <option value="+245">🇬𝑾 +245</option>
-                                <option value="+239">🇸𝑻 +239</option>
-                            </select>
-                            <input type="tel" id="customerWhatsApp" class="form-control" placeholder="Ex: 923456789" required>
+            <div class="checkout-main-col">
+                <!-- 1. DADOS DE FATURAÇÃO -->
+                <section class="checkout-box billing-box">
+                    <h2 class="checkout-title"><i class="fa-solid fa-user-shield"></i> Dados de Faturação</h2>
+                    
+                    <form id="checkoutForm" onsubmit="return false;">
+                        <div class="form-group">
+                            <label for="customerName">Nome Completo</label>
+                            <input type="text" id="customerName" class="form-control" placeholder="Ex: Anselmo Ralph" required>
                         </div>
-                    </div>
+                        <div class="form-group">
+                            <label for="customerEmail">E-mail para Receber os Produtos</label>
+                            <input type="email" id="customerEmail" class="form-control" placeholder="Ex: produtor@gmail.com" required>
+                        </div>
 
-                    <h2 class="checkout-title" style="margin-top: 3rem;"><i class="fa-solid fa-credit-card"></i> Escolha o Método de Pagamento</h2>
+                        <div class="form-group">
+                            <label for="customerWhatsApp">WhatsApp / Número Telefone</label>
+                            <div class="phone-container">
+                                <select id="countryCode" class="form-control select-indicativo">
+                                    <option value="+244" selected>🇦🇴 +244</option>
+                                    <option value="+351">🇵🇹 +351</option>
+                                    <option value="+55">🇧🇷 +55</option>
+                                    <option value="+258">🇲ℤ +258</option>
+                                    <option value="+238">🇨𝑽 +238</option>
+                                    <option value="+245">🇬𝑾 +245</option>
+                                    <option value="+239">🇸𝑻 +239</option>
+                                </select>
+                                <input type="tel" id="customerWhatsApp" class="form-control" placeholder="Ex: 923456789" required>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- 3. FORMA DE PAGAMENTO -->
+                <section class="checkout-box payment-box">
+                    <h2 class="checkout-title"><i class="fa-solid fa-credit-card"></i> Escolha o Método de Pagamento</h2>
                     
                     <div class="payment-methods-grid">
                         <div class="method-card active" data-method="transfer" id="methodTransferCard">
@@ -493,6 +515,10 @@
                         </div>
                     </div>
 
+                    <button type="button" class="btn-checkout" id="btnPlaceOrder">
+                        <i class="fa-solid fa-paper-plane"></i> Finalizar Pagamento
+                    </button>
+
                     <!-- ATENDIMENTO VIA WHATSAPP -->
                     <div class="whatsapp-support-box">
                         <p><i class="fa-brands fa-whatsapp" style="color: #25D366; font-size: 1.1rem; margin-right: 0.4rem;"></i> Dúvidas no pagamento ou envio?</p>
@@ -500,49 +526,53 @@
                             <i class="fa-brands fa-whatsapp"></i> Falar com o Suporte
                         </button>
                     </div>
+                </section>
+            </div>
 
-                </form>
-            </section>
+            <!-- 2. PRODUTOS DO CARRINHO & RESUMO DO PEDIDO -->
+            <div class="checkout-sidebar-col">
+                <section class="order-summary">
+                    <h2 class="checkout-title" style="border:none; margin-bottom: 1.5rem;"><i class="fa-solid fa-basket-shopping"></i> Resumo do Pedido</h2>
+                    
+                    <div id="summaryItemsContainer"></div>
 
-            <section class="order-summary">
-                <h2 class="checkout-title" style="border:none; margin-bottom: 1.5rem;"><i class="fa-solid fa-basket-shopping"></i> Resumo do Pedido</h2>
-                
-                <div id="summaryItemsContainer"></div>
+                    <div id="orderBumpContainer" class="order-bump-container" style="display: none;">
+                        <h3 class="bump-title"><i class="fa-solid fa-bolt" style="color: var(--warning);"></i> Oferta <span>Especial</span></h3>
+                        <div id="bumpItemsList"></div>
+                    </div>
+                    
+                    <div id="discountActionContainer" class="discount-container-panel" style="display: none;">
+                        <p style="font-size: 0.82rem; margin-bottom: 0.75rem; color: var(--warning); font-weight: 600;">
+                            🎉 Tem 5 ou mais produtos no carrinho! Qualifica-se para 10% de desconto!
+                        </p>
+                        <button type="button" id="btnApplyDiscount25" class="btn-apply-discount">
+                            <i class="fa-solid fa-percent"></i> Aplicar Desconto de 10%
+                        </button>
+                    </div>
 
-                <div id="orderBumpContainer" class="order-bump-container" style="display: none;">
-                    <h3 class="bump-title"><i class="fa-solid fa-bolt" style="color: var(--warning);"></i> Oferta <span>Especial</span></h3>
-                    <div id="bumpItemsList"></div>
-                </div>
-                
-                <div id="discountActionContainer" class="discount-container-panel" style="display: none;">
-                    <p style="font-size: 0.82rem; margin-bottom: 0.75rem; color: var(--warning); font-weight: 600;">
-                        🎉 Tem 5 ou mais produtos no carrinho! Qualifica-se para 10% de desconto!
-                    </p>
-                    <button type="button" id="btnApplyDiscount25" class="btn-apply-discount">
-                        <i class="fa-solid fa-percent"></i> Aplicar Desconto de 10%
-                    </button>
-                </div>
-
-                <div class="total-container-box">
-                    <div class="total-row">
-                        <span>Total (AKZ):</span>
-                        <div>
-                            <strong id="valTotalKz">0,00 Kz</strong>
+                    <div class="total-container-box">
+                        <div class="total-row">
+                            <span>Total (AKZ):</span>
+                            <div>
+                                <strong id="valTotalKz">0,00 Kz</strong>
+                                <button type="button" class="btn-copy-iban" onclick="copyTotalKz()" title="Copiar valor exato em Kz" style="padding: 0.35rem 0.65rem; font-size: 0.75rem;">
+                                    <i class="fa-regular fa-copy"></i> Copiar
+                                </button>
+                            </div>
+                        </div>
+                        <div class="total-row">
+                            <span>Total (EUR/USD):</span>
+                            <div>
+                                <strong id="valTotalEur" style="color: var(--success);">0,00 €</strong>
+                                <button type="button" class="btn-copy-iban" onclick="copyTotalEur()" title="Copiar valor exato em Euros" style="padding: 0.35rem 0.65rem; font-size: 0.75rem;">
+                                    <i class="fa-regular fa-copy"></i> Copiar
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="total-row">
-                        <span>Total (EUR/USD):</span>
-                        <div>
-                            <strong id="valTotalEur" style="color: var(--success);">0,00 €</strong>
-                        </div>
-                    </div>
-                </div>
 
-                <button type="button" class="btn-checkout" id="btnPlaceOrder">
-                    <i class="fa-solid fa-paper-plane"></i> Finalizar Pagamento
-                </button>
-
-            </section>
+                </section>
+            </div>
 
         </div>
     </main>
@@ -628,6 +658,25 @@
             showToast("IBAN da Wise copiado com sucesso!", "success");
         }).catch(() => {
             showToast("Erro ao copiar IBAN.", "error");
+        });
+    }
+
+    // FUNÇÕES DE CÓPIA DO TOTAL INCLUINDO CÊNTIMOS
+    function copyTotalKz() {
+        const totalText = document.getElementById("valTotalKz").innerText;
+        navigator.clipboard.writeText(totalText).then(() => {
+            showToast(`Valor total de ${totalText} copiado com sucesso!`, "success");
+        }).catch(() => {
+            showToast("Erro ao copiar valor em Kz.", "error");
+        });
+    }
+
+    function copyTotalEur() {
+        const totalText = document.getElementById("valTotalEur").innerText;
+        navigator.clipboard.writeText(totalText).then(() => {
+            showToast(`Valor total de ${totalText} copiado com sucesso!`, "success");
+        }).catch(() => {
+            showToast("Erro ao copiar valor em EUR.", "error");
         });
     }
 
@@ -766,24 +815,6 @@
         }
     }
 
-    function getValidProductId(item) {
-        if (item.product_id && apiProductsMap[String(item.product_id)]) {
-            return apiProductsMap[String(item.product_id)];
-        }
-        if (item.id && apiProductsMap[String(item.id)]) {
-            return apiProductsMap[String(item.id)];
-        }
-        const titleKey = (item.titulo || item.name || '').trim().toLowerCase();
-        if (titleKey && apiProductsMap[titleKey]) {
-            return apiProductsMap[titleKey];
-        }
-        const availableIds = Object.values(apiProductsMap);
-        if (availableIds.length > 0) {
-            return availableIds[0];
-        }
-        return item.product_id || item.id;
-    }
-
     function showToast(message, type = "info") {
         const container = document.getElementById("toastContainer");
         if(!container) return;
@@ -909,7 +940,7 @@
         if(cart.length === 0) {
             container.innerHTML = `<p style="color: var(--text-secondary); text-align:center; padding: 2rem 0;">O seu carrinho está vazio.</p>`;
             displayKz.innerText = "0,00 Kz";
-            displayEur.innerText = "0,00 € / $";
+            displayEur.innerText = "0,00 €";
             if(discountContainer) discountContainer.style.display = "none";
             if(btnPlaceOrder) {
                 btnPlaceOrder.disabled = true;
@@ -1126,7 +1157,7 @@
                     }, { merge: true });
 
                     const accessDocId = `${docId}_${prodId}`;
-                    const accessRef = window.firebaseDoc(window.firebaseDb, "user_access", accessDocId);
+                    const accessRef = window.firebaseDoc(window.firebaseDoc(window.firebaseDb, "user_access", accessDocId));
                     await window.firebaseSetDoc(accessRef, {
                         accessId: accessDocId, userId: docId, userEmail: customerEmail,
                         productId: prodId, titulo: item.titulo, categoria: itemCategory,
