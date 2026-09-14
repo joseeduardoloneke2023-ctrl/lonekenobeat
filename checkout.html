@@ -516,7 +516,7 @@
                 
                 <div id="discountActionContainer" class="discount-container-panel" style="display: none;">
                     <p style="font-size: 0.82rem; margin-bottom: 0.75rem; color: var(--warning); font-weight: 600;">
-                        🎉 A sua compra qualifica-se para um desconto exclusivo!
+                        🎉 Tem 5 ou mais produtos no carrinho! Qualifica-se para 10% de desconto!
                     </p>
                     <button type="button" id="btnApplyDiscount25" class="btn-apply-discount">
                         <i class="fa-solid fa-percent"></i> Aplicar Desconto de 10%
@@ -940,7 +940,10 @@
             `;
         }).join('');
 
-        if (originalTotalKz >= 10000) {
+        // CALCULAR TOTAL DE PRODUTOS NO CARRINHO PARA LIBERAR O DESCONTO DE 10%
+        const totalItemsCount = cart.reduce((acc, current) => acc + current.quantity, 0);
+
+        if (totalItemsCount >= 5) {
             if(discountContainer) discountContainer.style.display = "block";
             const btnApply = document.getElementById("btnApplyDiscount25");
             if (btnApply) {
@@ -1000,7 +1003,9 @@
     }
 
     function triggerDiscountCalculation() {
-        if (originalTotalKz < 10000) return;
+        const totalItemsCount = cart.reduce((acc, current) => acc + current.quantity, 0);
+        if (totalItemsCount < 5) return;
+        
         discountApplied = true;
         const btn = document.getElementById("btnApplyDiscount25");
         if(btn) {
