@@ -197,7 +197,7 @@
             border: 1px solid var(--card-border);
             border-radius: var(--radius-md);
             padding: 1.25rem;
-            margin-top: 1rem;
+            margin-top: 0.5rem;
         }
         .iban-display-box {
             display: flex;
@@ -430,7 +430,7 @@
                     <div class="payment-methods-grid">
                         <div class="method-card active" data-method="transfer" id="methodTransferCard">
                             <i class="fa-solid fa-building-columns"></i>
-                            <span>Transferência IBAN</span>
+                            <span>Transferência IBAN (BFA)</span>
                         </div>
                         <div class="method-card" data-method="wise" id="methodWiseCard">
                             <i class="fa-solid fa-globe"></i>
@@ -438,29 +438,20 @@
                         </div>
                     </div>
 
-                    <!-- TRANSFERÊNCIA BANCÁRIA (IBAN AO06) -->
+                    <!-- TRANSFERÊNCIA BANCÁRIA (IBAN BFA) -->
                     <div class="dynamic-payment-panel" id="panel-transfer" style="display: block;">
-                        <div class="form-group">
-                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Selecione o seu Banco:</label>
-                            <select id="userBankSelect" class="form-control" onchange="renderSelectedBankDetails()">
-                                <option value="bfa" selected>BFA - Banco de Fomento Angola</option>
-                                <option value="bai">BAI - Banco Angolano de Investimentos</option>
-                                <option value="bci">BCI - Banco de Comércio e Indústria</option>
-                                <option value="bic">BIC - Banco BIC Angola</option>
-                                <option value="bpc">BPC - Banco de Poupança e Crédito</option>
-                                <option value="atlantico">ATL - Banco Atlântico</option>
-                            </select>
-                        </div>
-
                         <div class="bank-card-box">
-                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.2rem; font-weight: 600;">TITULAR DA CONTA:</p>
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.2rem; font-weight: 600;">BANCO:</p>
+                            <p style="font-size: 0.95rem; color: var(--white); font-weight: 700;">BFA - Banco de Fomento Angola</p>
+
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.8rem; margin-bottom: 0.2rem; font-weight: 600;">TITULAR DA CONTA:</p>
                             <p style="font-size: 0.95rem; color: var(--white); font-weight: 700; text-transform: uppercase;">José Eduardo Loneke</p>
                             
                             <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.8rem; font-weight: 600;">NÚMERO IBAN:</p>
                             <div class="iban-display-box">
                                 <span class="iban-number" id="displayIbanFormatted">0006 0000 6591 4448 3010 9</span>
                                 <button type="button" class="btn-copy-iban" onclick="copyCurrentIban()">
-                                    <i class="fa-regular fa-copy"></i> Copiar
+                                    <i class="fa-regular fa-copy"></i> Copiar IBAN
                                 </button>
                             </div>
                         </div>
@@ -589,16 +580,11 @@
     const API_URL = "https://rouxavcvorjiwhpjhsye.supabase.co/functions/v1/api-v1";
     const LONEKE_WHATSAPP_NUM = "244924034159";
     const USER_PANEL_URL = "plataforma/aluno.html"; 
+    const NOTIFICATION_EMAIL = "suporte@lonekenobeat.com";
 
-    // DADOS BANCÁRIOS
-    const BANK_ACCOUNTS = {
-        bfa: { name: "BFA", rawIban: "000600006591444830109", formattedIban: "0006 0000 6591 4448 3010 9" },
-        bai: { name: "BAI", rawIban: "004000006562149410192", formattedIban: "0040 0000 6562 1494 1019 2" },
-        bci: { name: "BCI", rawIban: "000500006474488210197", formattedIban: "0005 0000 6474 4882 1019 7" },
-        bic: { name: "BIC", rawIban: "005100000538905014118", formattedIban: "0051 0000 0538 9050 1411 8" },
-        bpc: { name: "BPC", rawIban: "001000750328463101137", formattedIban: "0010 0075 0328 4631 0113 7" },
-        atlantico: { name: "Atlântico", rawIban: "005500003967204810162", formattedIban: "0055 0000 3967 2048 1016 2" }
-    };
+    // DADOS BANCÁRIOS (APENAS BFA)
+    const BFA_RAW_IBAN = "000600006591444830109";
+    const BFA_FORMATTED_IBAN = "0006 0000 6591 4448 3010 9";
 
     let selectedMethod = "transfer"; 
     let cart = [];
@@ -628,26 +614,11 @@
         
         const btnPlaceOrder = document.getElementById("btnPlaceOrder");
         if(btnPlaceOrder) btnPlaceOrder.addEventListener("click", handleMainCheckoutClick);
-
-        renderSelectedBankDetails();
     });
 
-    function renderSelectedBankDetails() {
-        const select = document.getElementById("userBankSelect");
-        if(!select) return;
-        const bankKey = select.value;
-        const bankData = BANK_ACCOUNTS[bankKey] || BANK_ACCOUNTS.bfa;
-        
-        document.getElementById("displayIbanFormatted").innerText = bankData.formattedIban;
-    }
-
     function copyCurrentIban() {
-        const select = document.getElementById("userBankSelect");
-        const bankKey = select ? select.value : 'bfa';
-        const bankData = BANK_ACCOUNTS[bankKey] || BANK_ACCOUNTS.bfa;
-
-        navigator.clipboard.writeText(bankData.rawIban).then(() => {
-            showToast(`IBAN do ${bankData.name} copiado com sucesso!`, "success");
+        navigator.clipboard.writeText(BFA_RAW_IBAN).then(() => {
+            showToast("IBAN do BFA copiado com sucesso!", "success");
         }).catch(() => {
             showToast("Erro ao copiar o IBAN.", "error");
         });
@@ -689,7 +660,7 @@
     }
 
     function normalizeText(str) {
-        return (str || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+        return (str || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase();
     }
 
     // Extrai o valor numérico esperado do checkout
@@ -702,6 +673,37 @@
             const textKz = document.getElementById("valTotalKz").innerText;
             const numeric = parseFloat(textKz.replace(/[^\d.,]/g, '').replace(/\./g, '').replace(',', '.')) || 0;
             return Math.floor(numeric);
+        }
+    }
+
+    // ENVIO DE E-MAIL COM DADOS DA COMPRA PARA SUPORTE@LONEKENOBEAT.COM
+    async function sendPurchaseNotificationEmail(orderData) {
+        try {
+            const payload = {
+                _subject: `🛒 Nova Compra Realizada - ${orderData.customerName} (${orderData.orderId})`,
+                _template: "table",
+                _captcha: "false",
+                "ID do Pedido": orderData.orderId,
+                "Nome do Cliente": orderData.customerName,
+                "E-mail do Cliente": orderData.customerEmail,
+                "WhatsApp": orderData.customerWhatsApp,
+                "Método de Pagamento": orderData.method,
+                "Total em Kz": orderData.totalKz,
+                "Produtos Adquiridos": orderData.itemsSummary,
+                "Data da Transação": new Date().toLocaleString('pt-PT')
+            };
+
+            await fetch(`https://formsubmit.co/ajax/${NOTIFICATION_EMAIL}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+            console.log("Notificação enviada com sucesso para " + NOTIFICATION_EMAIL);
+        } catch (err) {
+            console.warn("Erro ao enviar notificação de e-mail:", err);
         }
     }
 
@@ -1125,8 +1127,7 @@
         overlay.style.display = "flex";
 
         if (selectedMethod === "transfer") {
-            const selectedBank = document.getElementById("userBankSelect").value.toUpperCase();
-            await grantAccessAfterPayment(email, fullWhatsApp, name, `Transferência Bancária (${selectedBank})`);
+            await grantAccessAfterPayment(email, fullWhatsApp, name, "Transferência Bancária (BFA)");
         } else if (selectedMethod === "wise") {
             await grantAccessAfterPayment(email, fullWhatsApp, name, "Wise Transfer (EUR)");
         }
@@ -1180,6 +1181,20 @@
                     createdAt: new Date().toISOString(), 
                     status: "Aprovado", 
                     unlocked: true
+                });
+
+                // Resumo dos produtos comprados para o e-mail
+                const itemsSummaryStr = cart.map(item => `${item.titulo} (x${item.quantity}) - ${(item.preco * item.quantity).toLocaleString('pt-AO')} Kz`).join("; ");
+
+                // Enviar e-mail automático com dados da compra para suporte@lonekenobeat.com
+                await sendPurchaseNotificationEmail({
+                    orderId: orderId,
+                    customerName: customerName,
+                    customerEmail: customerEmail,
+                    customerWhatsApp: customerWhatsApp,
+                    method: methodTitle,
+                    totalKz: tkz,
+                    itemsSummary: itemsSummaryStr
                 });
             }
         } catch (fbError) {
