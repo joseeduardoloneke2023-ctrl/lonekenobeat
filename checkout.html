@@ -429,7 +429,7 @@
                     <div class="payment-methods-grid">
                         <div class="method-card active" data-method="transfer" id="methodTransferCard">
                             <i class="fa-solid fa-building-columns"></i>
-                            <span>Transferência IBAN (BFA)</span>
+                            <span>Transferência IBAN (BAI)</span>
                         </div>
                         <div class="method-card" data-method="wise" id="methodWiseCard">
                             <i class="fa-solid fa-globe"></i>
@@ -616,8 +616,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     if(btnPlaceOrder) btnPlaceOrder.addEventListener("click", handleMainCheckoutClick);
 });
     function copyCurrentIban() {
-        navigator.clipboard.writeText(BFA_RAW_IBAN).then(() => {
-            showToast("IBAN do BFA copiado com sucesso!", "success");
+        navigator.clipboard.writeText(BAI_RAW_IBAN).then(() => {
+            showToast("IBAN do BAI copiado com sucesso!", "success");
         }).catch(() => {
             showToast("Erro ao copiar o IBAN.", "error");
         });
@@ -1439,7 +1439,7 @@ function renderOrderBumps() {
         overlay.style.display = "flex";
 
         if (selectedMethod === "transfer") {
-            await grantAccessAfterPayment(email, fullWhatsApp, name, "Transferência Bancária (BFA)");
+            await grantAccessAfterPayment(email, fullWhatsApp, name, "Transferência Bancária (BAI)");
         } else if (selectedMethod === "wise") {
             await grantAccessAfterPayment(email, fullWhatsApp, name, "Wise Transfer (EUR)");
         }
