@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Depoimentos em Vídeo & Feedbacks | Loneke no Beat</title>
+    <meta name="description" content="Assista a depoimentos em vídeo e veja feedbacks reais de produtores e alunos da plataforma Loneke no Beat.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #E50914;
+            --primary-glow: rgba(229, 9, 20, 0.15);
+            --dark-gray: #202124;
+            --bg: #111111;
+            --card-bg: #1B1B1B;
+            --white: #FFFFFF;
+            --text-secondary: #BDBDBD;
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --font-poppins: 'Poppins', sans-serif;
+            --font-montserrat: 'Montserrat', sans-serif;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--white);
+            font-family: var(--font-poppins);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        header {
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(17,17,17,0.9);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-flex {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-family: var(--font-montserrat);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .logo span { color: var(--primary); }
+
+        .btn-back {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: 0.3s ease;
+        }
+
+        .btn-back:hover { color: var(--primary); }
+
+        .section-padding { padding: 4rem 0; }
+
+        .page-title {
+            font-family: var(--font-montserrat);
+            font-size: 2.8rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            font-weight: 300;
+        }
+
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 2rem;
+        }
+
+        .video-card {
+            background: var(--card-bg);
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .video-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(229, 9, 20, 0.4);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+        }
+
+        .video-box {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .video-box iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .image-box {
+            width: 100%;
+            height: 260px;
+            background: #080808;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .image-box img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 8px;
+            display: block;
+        }
+
+        .video-info {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .video-info h3 {
+            font-family: var(--font-montserrat);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .video-info p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            font-weight: 300;
+        }
+
+        footer {
+            border-top: 1px solid var(--glass-border);
+            padding: 2.5rem 0;
+            text-align: center;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.85rem;
+        }
+
+        @media(max-width: 768px) {
+            .page-title { font-size: 2.2rem; }
+            .videos-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container header-flex">
+            <a href="index.html" class="logo">LONEKE NO <span>BEAT</span></a>
+            <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Voltar à Home</a>
+        </div>
+    </header>
+
+    <main class="section-padding">
+        <div class="container">
+            <h1 class="page-title">Galeria de Depoimentos & Feedbacks</h1>
+            <p class="page-subtitle">Assista às experiências reais de alunos e produtores que utilizam nossos produtos e cursos.</p>
+
+            <div class="videos-grid" id="depoimentosGrid">
+                <!-- Injetado dinamicamente via depoimento.js -->
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Loneke no Beat. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Arquivo com os dados de depoimentos -->
+    <script src="depoimento.js"></script>
+    <script>
+        function getYouTubeEmbedUrl(url) {
+            if (!url) return '';
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+
+            if (match && match[2].length === 11) {
+                return `https://www.youtube.com/embed/${match[2]}`;
+            }
+            return url;
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const grid = document.getElementById("depoimentosGrid");
+            if (!grid) return;
+
+            const data = (window.depoimentosData && Array.isArray(window.depoimentosData)) ? window.depoimentosData : [];
+            
+            if (data.length === 0) {
+                grid.innerHTML = '<p style="text-align:center; grid-column: 1/-1; color: var(--text-secondary);">Nenhum depoimento encontrado.</p>';
+                return;
+            }
+
+            grid.innerHTML = data.map(item => {
+                if (item.tipo === 'imagem') {
+                    return `
+                        <div class="video-card">
+                            <div class="image-box">
+                                <img src="${item.midia}" alt="${item.autor}" loading="lazy">
+                            </div>
+                            <div class="video-info">
+                                <h3>${item.autor}</h3>
+                                <p>${item.descricao}</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="video-card">
+                            <div class="video-box">
+                                <iframe src="${getYouTubeEmbedUrl(item.midia)}" title="${item.autor}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
+                            <div class="video-info">
+                                <h3>${item.autor}</h3>
+                                <p>${item.descricao}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            }).join('');
+        });
+    </script>
+</body>
+</html>
