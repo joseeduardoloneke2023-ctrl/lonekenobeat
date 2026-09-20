@@ -382,7 +382,7 @@
     <header id="mainHeader">
         <div class="container nav-container">
             <a href="index.html" class="logo">LONEKE NO <span> BEAT</span></a>
-            <a href="catalogo.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Voltar ao catálogo</a>
+            <a href="cliente.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Voltar à Área VIP</a>
         </div>
     </header>
 
@@ -580,8 +580,8 @@
     const API_URL = "https://rouxavcvorjiwhpjhsye.supabase.co/functions/v1/api-v1";
     const LONEKE_WHATSAPP_NUM = "244924034159";
     
-    // REDIRECIONA PARA CLIENTE.HTML DENTRO DA PASTA PLATAFORMA
-    const USER_PANEL_URL = "plataforma/cliente.html"; 
+    // REDIRECIONA DIRETA E AUTOMATICAMENTE PARA CLIENTE.HTML
+    const USER_PANEL_URL = "cliente.html"; 
     const NOTIFICATION_EMAIL = "suporte@lonekenobeat.com";
 
     // DADOS BANCÁRIOS (BANCO BAI)
@@ -599,7 +599,7 @@
     let selectedFileBase64 = null;
     let isFileValidated = false;
 
-    // Captura parâmetros da URL e inicializa o checkout
+    // Captura parâmetros da URL e inicializa o checkout de afiliados
     document.addEventListener("DOMContentLoaded", async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const affCode = urlParams.get('ref') || urlParams.get('aff') || urlParams.get('afiliado');
@@ -697,6 +697,7 @@
                 "Método de Pagamento": orderData.method,
                 "Total em Kz": orderData.totalKz,
                 "Produtos Adquiridos": orderData.itemsSummary,
+                "Código do Afiliado": orderData.affiliateRef || "Nenhum (Venda Direta)",
                 "Data da Transação": new Date().toLocaleString('pt-PT')
             };
 
@@ -833,6 +834,7 @@
         }, 4000);
     }
 
+    // INICIALIZA O CARRINHO A PARTIR DO LINK DE AFILIADO
     async function initCartWithPlanContext() {
         cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
 
@@ -847,6 +849,7 @@
         if (productId) {
             let foundProduct = null;
 
+            // 1. Busca produto via Firestore (Modular ou Compat)
             try {
                 if (window.firebaseDb && window.firebaseDoc && window.firebaseGetDoc) {
                     const docRef = window.firebaseDoc(window.firebaseDb, "produtos", productId);
@@ -867,8 +870,9 @@
                 console.warn("Aviso ao buscar produto no Firestore:", e);
             }
 
+            // 2. Busca produto no catálogo local de produtos.js
             if (!foundProduct && typeof produtos !== 'undefined' && Array.isArray(produtos)) {
-                const localP = produtos.find(p => String(p.id) === String(productId) || String(p.uuid) === String(productId));
+                const localP = produtos.find(p => String(p.id) === String(productId) || String(p.uuid) === String(productId) || String(p.slug) === String(productId));
                 if (localP) {
                     foundProduct = {
                         id: localP.id,
@@ -881,8 +885,9 @@
                 }
             }
 
+            // 3. Fallback por parâmetros da URL
             if (!foundProduct) {
-                const titleParam = urlParams.get('title') || urlParams.get('nome') || "Produto Selecionado";
+                const titleParam = urlParams.get('title') || urlParams.get('nome') || "Produto VIP";
                 const priceParam = parseFloat(urlParams.get('price') || urlParams.get('preco') || 0);
                 foundProduct = {
                     id: productId,
@@ -894,9 +899,9 @@
                 };
             }
 
-            const alreadyInCart = cart.some(item => String(item.id) === String(foundProduct.id) || String(item.product_id) === String(foundProduct.id));
-            if (!alreadyInCart) {
-                cart.push({
+            if (foundProduct) {
+                // Preenche o carrinho diretamente com o produto vindo do link de afiliado
+                cart = [{
                     id: foundProduct.id,
                     product_id: foundProduct.id,
                     titulo: foundProduct.titulo,
@@ -904,7 +909,7 @@
                     quantity: 1,
                     categoria: foundProduct.categoria,
                     imagem: foundProduct.imagem
-                });
+                }];
                 localStorage.setItem('loneke_cart', JSON.stringify(cart));
             }
         }
@@ -1065,7 +1070,6 @@
                 const activePanel = document.getElementById(`panel-${selectedMethod}`);
                 if (activePanel) activePanel.style.display = "block";
 
-                // Limpa estado do comprovativo ao alterar metodo
                 selectedFileBase64 = null;
                 isFileValidated = false;
                 const statusTransfer = document.getElementById("uploadStatusText");
@@ -1078,11 +1082,6 @@
 
     function removeProductFromCheckout(index) {
         const itemRemovido = cart[index];
-        if (itemRemovido.isVipPlan) {
-            const url = new URL(window.location.href);
-            url.searchParams.delete('type'); url.searchParams.delete('plan'); url.searchParams.delete('price');
-            window.history.replaceState({}, '', url.toString());
-        }
         cart.splice(index, 1);
         localStorage.setItem('loneke_cart', JSON.stringify(cart));
         showToast(`"${itemRemovido.titulo}" foi removido do seu pedido.`, "info");
@@ -1108,7 +1107,7 @@
     }
 
     function openWhatsAppNegotiation() {
-        const targetUrl = `https://wa.me/${LONEKE_WHATSAPP_NUM}?text=Olá Loneke no Beat, preciso de ajuda com o meu checkout!`;
+        const targetUrl = `https://wa.me/${LONEKE_WHATSAPP_NUM}?text=Olá Loneke no Beat, preciso de ajuda com o meu checkout de compra!`;
         window.open(targetUrl, '_blank');
     }
 
@@ -1165,6 +1164,98 @@
         return uid;
     }
 
+    // FUNÇÃO QUE CREDITA AUTOMATICAMENTE 50% DA COMISSÃO NA CARTEIRA DO AFILIADO
+    async function creditAffiliateCommission(affiliateRef, commissionAmount) {
+        if (!affiliateRef || commissionAmount <= 0) return;
+
+        try {
+            console.log(`💰 A creditar ${commissionAmount} Kz para o afiliado: ${affiliateRef}`);
+            let affiliateDocId = null;
+            let currentData = {};
+
+            // 1. Crédito via Firebase Modular (window.firebaseDb)
+            if (window.firebaseDb) {
+                const { doc, getDoc, setDoc, collection, query, where, getDocs } = window;
+                if (doc && getDoc && setDoc) {
+                    try {
+                        const directRef = doc(window.firebaseDb, "users", affiliateRef);
+                        const directSnap = await getDoc(directRef);
+                        if (directSnap.exists()) {
+                            affiliateDocId = directSnap.id;
+                            currentData = directSnap.data();
+                        }
+                    } catch (e) {}
+
+                    if (!affiliateDocId && collection && query && where && getDocs) {
+                        try {
+                            const q = query(collection(window.firebaseDb, "users"), where("affiliateCode", "==", affiliateRef));
+                            const qSnap = await getDocs(q);
+                            if (!qSnap.empty) {
+                                const foundDoc = qSnap.docs[0];
+                                affiliateDocId = foundDoc.id;
+                                currentData = foundDoc.data();
+                            }
+                        } catch (e) {}
+                    }
+
+                    if (affiliateDocId) {
+                        const currentBalance = Number(currentData.saldoAfiliado || currentData.saldoCarteira || 0);
+                        const currentTotalCommissions = Number(currentData.totalComissoes || 0);
+                        const currentTotalReferrals = Number(currentData.totalIndicacoes || 0);
+
+                        const affRef = doc(window.firebaseDb, "users", affiliateDocId);
+                        await setDoc(affRef, {
+                            saldoAfiliado: currentBalance + commissionAmount,
+                            saldoCarteira: currentBalance + commissionAmount,
+                            totalComissoes: currentTotalCommissions + commissionAmount,
+                            totalIndicacoes: currentTotalReferrals + 1,
+                            updatedAt: new Date().toISOString()
+                        }, { merge: true });
+
+                        console.log(`✅ [Modular] 50% (${commissionAmount} Kz) creditados na carteira do afiliado ${affiliateDocId}`);
+                        return;
+                    }
+                }
+            }
+
+            // 2. Crédito via Firebase Compat SDK (se disponível)
+            if (typeof firebase !== 'undefined' && firebase.firestore) {
+                const dbCompat = firebase.firestore();
+                let affDoc = await dbCompat.collection('users').doc(affiliateRef).get();
+                
+                if (affDoc.exists) {
+                    affiliateDocId = affDoc.id;
+                    currentData = affDoc.data();
+                } else {
+                    const qSnap = await dbCompat.collection('users').where('affiliateCode', '==', affiliateRef).get();
+                    if (!qSnap.empty) {
+                        affDoc = qSnap.docs[0];
+                        affiliateDocId = affDoc.id;
+                        currentData = affDoc.data();
+                    }
+                }
+
+                if (affiliateDocId) {
+                    const currentBalance = Number(currentData.saldoAfiliado || currentData.saldoCarteira || 0);
+                    const currentTotalCommissions = Number(currentData.totalComissoes || 0);
+                    const currentTotalReferrals = Number(currentData.totalIndicacoes || 0);
+
+                    await dbCompat.collection('users').doc(affiliateDocId).set({
+                        saldoAfiliado: currentBalance + commissionAmount,
+                        saldoCarteira: currentBalance + commissionAmount,
+                        totalComissoes: currentTotalCommissions + commissionAmount,
+                        totalIndicacoes: currentTotalReferrals + 1,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+
+                    console.log(`✅ [Compat] 50% (${commissionAmount} Kz) creditados na carteira do afiliado ${affiliateDocId}`);
+                }
+            }
+        } catch (err) {
+            console.error("Erro ao creditar comissão ao afiliado:", err);
+        }
+    }
+
     async function handleMainCheckoutClick() {
         const name = document.getElementById("customerName").value.trim();
         const email = document.getElementById("customerEmail").value.trim();
@@ -1199,7 +1290,7 @@
         const modal = document.getElementById("paymentModalContent");
         modal.innerHTML = `
             <h3>A criar a sua conta e a processar o pedido...</h3>
-            <p style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.9rem;">A validar comprovativo e dados do produto...</p>
+            <p style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.9rem;">A validar comprovativo e a creditar comissões...</p>
             <div class="spinner"></div>
         `;
 
@@ -1261,6 +1352,13 @@
 
                 const orderId = 'ORD-' + Date.now();
                 const numericTotalKz = parseFloat(tkz.replace(/[^\d.,]/g, '').replace(/\./g, '').replace(',', '.')) || 0;
+                const commissionVal = Math.floor(numericTotalKz * 0.5);
+
+                // 💰 CREDITAR 50% DE COMISSÃO NA CARTEIRA DO AFILIADO
+                if (affiliateRef && commissionVal > 0) {
+                    await creditAffiliateCommission(affiliateRef, commissionVal);
+                }
+
                 const itemsSummaryStr = cart.map(item => `${item.titulo} (x${item.quantity})`).join("; ");
                 const primaryItem = cart[0] || {};
 
@@ -1285,14 +1383,14 @@
                     comprovativo: selectedFileBase64 || null,
                     affiliateRef: affiliateRef,
                     affiliateCode: affiliateRef,
-                    affiliateCommission: Math.floor(numericTotalKz * 0.5),
+                    affiliateCommission: commissionVal,
                     origin: "checkout",
                     createdAt: new Date().toISOString(), 
                     status: "pending", 
                     unlocked: true
                 };
 
-                // Regista simultaneamente em 'orders' e 'transactions'
+                // Regista em 'orders' e 'transactions'
                 await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDb, "orders", orderId), orderTransactionData);
                 await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDb, "transactions", orderId), orderTransactionData);
 
@@ -1303,7 +1401,8 @@
                     customerWhatsApp: customerWhatsApp,
                     method: methodTitle,
                     totalKz: tkz,
-                    itemsSummary: itemsSummaryStr
+                    itemsSummary: itemsSummaryStr,
+                    affiliateRef: affiliateRef
                 });
             }
         } catch (fbError) {
@@ -1312,9 +1411,9 @@
 
         modal.innerHTML = `
             <i class="fa-solid fa-circle-check" style="font-size: 3.8rem; color: var(--success);"></i>
-            <h2 style="font-family: var(--font-heading); margin-top: 1rem; color: var(--white);">Acesso Solicitado!</h2>
+            <h2 style="font-family: var(--font-heading); margin-top: 1rem; color: var(--white);">Acesso Liberado!</h2>
             <p style="color: var(--text-secondary); margin-top: 0.8rem; font-size: 0.95rem;">
-                A sua conta foi registada e o seu comprovativo enviado para verificação.
+                A sua conta foi registada e o seu pagamento confirmado.
             </p>
             <p style="color: var(--text-secondary); margin-top: 1.2rem; font-size: 0.82rem;">A abrir a sua Área VIP...</p>
             <div class="spinner" style="margin: 1rem auto 0 auto;"></div>
