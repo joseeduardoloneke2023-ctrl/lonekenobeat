@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra | Loneke no Beat Premium Infoproducts</title>
+    <script type="module" src="firebase-init.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tesseract.js para leitura OCR rigorosa -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #E50914;
+            --primary-glow: rgba(229, 9, 20, 0.35);
+            --primary-hover: #ff1a25;
+            --bg: #070709;
+            --card-bg: rgba(18, 18, 24, 0.75);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --card-border-hover: rgba(229, 9, 20, 0.4);
+            --white: #FFFFFF;
+            --text-main: #F3F4F6;
+            --text-secondary: #9CA3AF;
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+            --font-heading: 'Outfit', sans-serif;
+            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            --success: #10B981;
+            --success-glow: rgba(16, 185, 129, 0.2);
+            --info: #3B82F6;
+            --warning: #F59E0B;
+            --radius-lg: 24px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { 
+            background-color: var(--bg); 
+            color: var(--text-main); 
+            font-family: var(--font-main);
+            scroll-behavior: smooth;
+        }
+
+        body { 
+            min-height: 100vh; 
+            line-height: 1.6; 
+            position: relative;
+            background: radial-gradient(circle at 50% 0%, rgba(229, 9, 20, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 0% 100%, rgba(59, 130, 246, 0.04) 0%, transparent 40%);
+            background-attachment: fixed;
+            padding-top: 0; 
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        .container { width: 100%; max-width: 1240px; margin: 0 auto; padding: 0 1.5rem; }
+
+        .loading-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #050507; z-index: 25000; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s;
+            backdrop-filter: blur(10px);
+        }
+        .loading-screen.hidden { opacity: 0; visibility: hidden; }
+
+        header {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            padding: 1.25rem 0; background-color: rgba(7, 7, 9, 0.8);
+            backdrop-filter: blur(20px); border-bottom: 1px solid var(--card-border);
+            transition: top 0.4s ease;
+        }
+        
+        .nav-container { display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; text-transform: uppercase; }
+        .logo span { color: var(--primary); text-shadow: 0 0 12px var(--primary-glow); }
+        .back-link {
+            font-size: 0.85rem; color: var(--text-secondary); font-weight: 500;
+            display: flex; align-items: center; gap: 0.5rem; transition: var(--transition);
+            padding: 0.5rem 1rem; border-radius: var(--radius-sm); background: rgba(255,255,255,0.03);
+            border: 1px solid var(--card-border);
+        }
+        .back-link:hover { color: var(--white); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); }
+
+        .checkout-wrapper {
+            padding-top: 100px;
+            padding-bottom: 5rem;
+            display: grid;
+            grid-template-columns: 1.25fr 0.75fr;
+            gap: 2.5rem;
+            align-items: start;
+        }
+
+        .checkout-main-col {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        .checkout-box {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            backdrop-filter: blur(20px);
+        }
+
+        .checkout-title {
+            font-family: var(--font-heading);
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--white);
+        }
+        .checkout-title i { color: var(--primary); font-size: 1.2rem; }
+
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-control {
+            width: 100%; background: rgba(10, 10, 12, 0.8); border: 1px solid var(--card-border);
+            padding: 1rem 1.25rem; border-radius: var(--radius-md); color: var(--white); font-size: 0.95rem;
+            font-family: var(--font-main); transition: var(--transition);
+        }
+        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); background: rgba(15, 15, 20, 0.95); }
+        .form-control::placeholder { color: rgba(255, 255, 255, 0.25); }
+
+        .phone-container { display: flex; gap: 0.75rem; }
+        .select-indicativo { max-width: 140px; cursor: pointer; }
+
+        .payment-methods-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.85rem;
+            margin-bottom: 2rem;
+        }
+
+        .method-card {
+            background: rgba(10, 10, 12, 0.6);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 1.2rem 0.4rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.65rem;
+            height: 110px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .method-card i { font-size: 1.6rem; color: var(--text-secondary); transition: var(--transition); }
+        .method-card span { font-size: 0.78rem; font-weight: 600; line-height: 1.2; color: var(--text-secondary); transition: var(--transition); }
+
+        .method-card:hover {
+            border-color: var(--card-border-hover);
+            transform: translateY(-3px);
+            background: rgba(229, 9, 20, 0.05);
+        }
+        
+        .method-card.active {
+            border-color: var(--primary);
+            background: radial-gradient(circle at center, rgba(229, 9, 20, 0.15) 0%, rgba(229, 9, 20, 0.02) 100%);
+            box-shadow: 0 8px 25px rgba(229, 9, 20, 0.15);
+        }
+        .method-card.active::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+        }
+        .method-card.active i { color: var(--white); transform: scale(1.1); }
+        .method-card.active span { color: var(--white); font-weight: 700; }
+
+        .dynamic-payment-panel {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            padding: 1.75rem; border-radius: var(--radius-md); margin-top: 1.5rem; display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .bank-card-box {
+            background: rgba(15, 15, 22, 0.9);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin-top: 0.5rem;
+        }
+        .iban-display-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.85rem 1rem;
+            border-radius: var(--radius-sm);
+            margin-top: 0.5rem;
+            gap: 0.5rem;
+        }
+        .iban-number {
+            font-family: monospace;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #38BDF8;
+            letter-spacing: 1px;
+        }
+        .btn-copy-iban {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38BDF8;
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            padding: 0.4rem 0.85rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .btn-copy-iban:hover {
+            background: #38BDF8;
+            color: #000;
+        }
+
+        .upload-file-area {
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            text-align: center;
+            background: rgba(10, 10, 12, 0.5);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+        .upload-file-area:hover { border-color: var(--primary); background: rgba(229, 9, 20, 0.05); }
+
+        .whatsapp-support-box {
+            margin-top: 2rem; padding: 1.25rem;
+            background: rgba(37, 211, 102, 0.08); border: 1px dashed rgba(37, 211, 102, 0.4);
+            border-radius: var(--radius-md); text-align: center;
+        }
+        .whatsapp-support-box p { font-size: 0.88rem; color: var(--text-main); font-weight: 600; margin-bottom: 0.75rem; }
+
+        .order-summary {
+            background: var(--card-bg); border-radius: var(--radius-lg); padding: 2.25rem;
+            border: 1px solid var(--card-border); position: sticky; top: 110px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4); backdrop-filter: blur(20px); transition: top 0.4s ease;
+        }
+
+        .summary-item {
+            display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;
+            padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); position: relative;
+        }
+        .summary-item img { width: 56px; height: 56px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--card-border); }
+        .summary-details h4 { font-size: 0.92rem; font-weight: 600; margin-bottom: 0.2rem; color: var(--white); max-width: 190px; }
+        .summary-details p { color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; }
+
+        .btn-remove-item {
+            background: rgba(239, 68, 68, 0.1); border: none; color: #EF4444; width: 32px; height: 32px;
+            border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center;
+            margin-left: auto; transition: var(--transition);
+        }
+        .btn-remove-item:hover { background: #EF4444; color: var(--white); transform: scale(1.08); }
+
+        .order-bump-container {
+            background: linear-gradient(135deg, rgba(229, 9, 20, 0.08) 0%, rgba(0, 0, 0, 0.3) 100%);
+            border: 1px dashed var(--primary); border-radius: var(--radius-md);
+            padding: 1.25rem; margin-bottom: 1.5rem; margin-top: 1.25rem;
+        }
+        .bump-title { font-family: var(--font-heading); font-size: 0.88rem; font-weight: 700; color: var(--white); margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .bump-title span { color: var(--primary); }
+        .bump-item { display: flex; align-items: center; gap: 0.85rem; background: rgba(10, 10, 12, 0.7); padding: 0.85rem; border-radius: var(--radius-sm); margin-bottom: 0.6rem; border: 1px solid var(--card-border); transition: var(--transition); }
+        .bump-item:last-child { margin-bottom: 0; }
+        .bump-item:hover { border-color: rgba(229, 9, 20, 0.4); background: rgba(15, 15, 20, 0.9); }
+        .bump-item img { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; }
+        .bump-info { flex: 1; }
+        .bump-info h4 { font-size: 0.85rem; font-weight: 600; color: var(--white); margin-bottom: 0.15rem; }
+        .bump-info p { font-size: 0.75rem; color: var(--text-secondary); line-height: 1.3; margin-bottom: 0.25rem; }
+        .bump-price { font-size: 0.82rem; font-weight: 700; color: var(--success); display: block; }
+        .bump-checkbox { width: 20px; height: 20px; accent-color: var(--primary); cursor: pointer; border-radius: 4px; }
+
+        .discount-container-panel { background: rgba(245, 158, 11, 0.08); border: 1px dashed var(--warning); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem; text-align: center; }
+        .btn-apply-discount { width: 100%; background: var(--warning); color: #000; border: none; padding: 0.85rem; border-radius: var(--radius-sm); font-weight: 700; font-size: 0.88rem; font-family: var(--font-main); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: var(--transition); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2); }
+        .btn-apply-discount:hover { background: #d98206; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(245, 158, 11, 0.3); }
+        .btn-apply-discount.applied { background: var(--success); color: var(--white); cursor: not-allowed; transform: none; box-shadow: none; }
+
+        .total-container-box { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--card-border); }
+        .total-row { display: flex; justify-content: space-between; align-items: center; font-family: var(--font-heading); margin-bottom: 0.75rem; }
+        .total-row span { font-size: 0.95rem; color: var(--text-secondary); font-weight: 500; }
+        .total-row div { display: flex; align-items: center; gap: 0.5rem; }
+        .total-row strong { font-size: 1.35rem; color: var(--white); font-weight: 700; }
+
+        .btn-checkout {
+            width: 100%; background: var(--primary); color: var(--white); padding: 1.15rem; border-radius: var(--radius-md);
+            font-weight: 700; font-size: 1rem; font-family: var(--font-main); cursor: pointer; margin-top: 1.5rem;
+            transition: var(--transition); box-shadow: 0 8px 25px var(--primary-glow); display: flex; align-items: center;
+            justify-content: center; gap: 0.6rem; border: none; letter-spacing: 0.3px;
+        }
+        .btn-checkout:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 12px 30px rgba(229, 9, 20, 0.5); }
+
+        .btn-whatsapp-negotiate {
+            width: 100%; background: rgba(37, 211, 102, 0.1); color: #25D366; border: 1px solid rgba(37, 211, 102, 0.3);
+            padding: 0.95rem; border-radius: var(--radius-md); font-weight: 600; font-size: 0.9rem; font-family: var(--font-main);
+            cursor: pointer; margin-top: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 0.6rem; transition: var(--transition);
+        }
+        .btn-whatsapp-negotiate:hover { background: #25D366; color: var(--white); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3); }
+
+        .toast-container { position: fixed; top: 30px; right: 30px; z-index: 30005; display: flex; flex-direction: column; gap: 0.8rem; }
+        .toast-card {
+            background: rgba(20, 20, 26, 0.95); color: var(--white); padding: 1.1rem 1.5rem;
+            border-radius: var(--radius-md); border-left: 4px solid var(--primary); box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            font-size: 0.9rem; backdrop-filter: blur(10px); font-weight: 500; display: flex; align-items: center; gap: 0.85rem;
+            transform: translateX(120%); animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            min-width: 320px; max-width: 420px; border-top: 1px solid var(--card-border); border-right: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border);
+        }
+        .toast-card.success { border-left-color: var(--success); }
+        .toast-card.info { border-left-color: var(--info); }
+        .toast-card i { font-size: 1.2rem; }
+        .toast-card.success i { color: var(--success); }
+        .toast-card.info i { color: var(--info); }
+        @keyframes slideIn { to { transform: translateX(0); } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
+
+        .payment-screen-overlay {
+            background: rgba(5, 5, 7, 0.85); backdrop-filter: blur(15px);
+            position: fixed; top:0; left:0; width:100%; height:100%; z-index: 29999; display:none; align-items:center; justify-content:center; padding: 2rem;
+        }
+        .payment-modal {
+            background: var(--card-bg); border: 1px solid var(--card-border); padding: 2.5rem 2rem; border-radius: var(--radius-lg);
+            max-width: 500px; width: 100%; text-align: center; box-shadow: 0 30px 70px rgba(0,0,0,0.7); max-height: 90vh; overflow-y: auto;
+        }
+        .spinner { width: 48px; height: 48px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; margin: 1.75rem auto; animation: spin 0.9s linear infinite; }
+
+        @media(max-width: 992px) {
+            .checkout-wrapper { 
+                display: flex; 
+                flex-direction: column; 
+                gap: 2rem; 
+            }
+            .checkout-main-col, .checkout-sidebar-col { 
+                display: contents; 
+            }
+            .billing-box { order: 1; }
+            .order-summary { order: 2; position: static; }
+            .payment-box { order: 3; }
+        }
+
+        @media(max-width: 640px) {
+            .payment-methods-grid { grid-template-columns: 1fr; }
+            .checkout-box, .order-summary { padding: 1.5rem; }
+            .toast-container { right: 50%; transform: translateX(50%); top: 20px; width: calc(100% - 30px); }
+            .toast-card { min-width: 100%; }
+        }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="loading-screen" id="loadingScreen">
+        <div class="logo" style="font-size: 2.2rem; margin-bottom: 0.5rem;">LONEKE NO<span> BEAT</span></div>
+        <p style="color: var(--text-secondary); font-size: 0.88rem; letter-spacing: 1px;">A processar os dados do carrinho seguro...</p>
+        <div class="spinner"></div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <header id="mainHeader">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">LONEKE NO <span> BEAT</span></a>
+            <a href="catalogo.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Voltar ao catálogo</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="checkout-wrapper">
+            
+            <div class="checkout-main-col">
+                <!-- 1. DADOS DE FATURAÇÃO -->
+                <section class="checkout-box billing-box">
+                    <h2 class="checkout-title"><i class="fa-solid fa-user-shield"></i> Dados de Faturação</h2>
+                    
+                    <form id="checkoutForm" onsubmit="return false;">
+                        <div class="form-group">
+                            <label for="customerName">Nome Completo</label>
+                            <input type="text" id="customerName" class="form-control" placeholder="Ex: Anselmo Ralph" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="customerEmail">E-mail para Receber os Produtos</label>
+                            <input type="email" id="customerEmail" class="form-control" placeholder="Ex: produtor@gmail.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="customerWhatsApp">WhatsApp / Número Telefone</label>
+                            <div class="phone-container">
+                                <select id="countryCode" class="form-control select-indicativo">
+                                    <option value="+244" selected>🇦🇴 +244</option>
+                                    <option value="+351">🇵🇹 +351</option>
+                                    <option value="+55">🇧🇷 +55</option>
+                                    <option value="+258">🇲ℤ +258</option>
+                                    <option value="+238">🇨𝑽 +238</option>
+                                    <option value="+245">🇬𝑾 +245</option>
+                                    <option value="+239">🇸𝑻 +239</option>
+                                </select>
+                                <input type="tel" id="customerWhatsApp" class="form-control" placeholder="Ex: 923456789" required>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- 3. FORMA DE PAGAMENTO -->
+                <section class="checkout-box payment-box">
+                    <h2 class="checkout-title"><i class="fa-solid fa-credit-card"></i> Escolha o Método de Pagamento</h2>
+                    
+                    <div class="payment-methods-grid">
+                        <div class="method-card active" data-method="transfer" id="methodTransferCard">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>Transferência IBAN (BAI)</span>
+                        </div>
+                        <div class="method-card" data-method="wise" id="methodWiseCard">
+                            <i class="fa-solid fa-globe"></i>
+                            <span>Wise (Euro €)</span>
+                        </div>
+                    </div>
+
+                    <!-- TRANSFERÊNCIA BANCÁRIA (IBAN BAI) -->
+                    <div class="dynamic-payment-panel" id="panel-transfer" style="display: block;">
+                        <div class="bank-card-box">
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.2rem; font-weight: 600;">BANCO:</p>
+                            <p style="font-size: 0.95rem; color: var(--white); font-weight: 700;">BAI - Banco Angolano de Investimentos</p>
+
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.8rem; margin-bottom: 0.2rem; font-weight: 600;">TITULAR DA CONTA:</p>
+                            <p style="font-size: 0.95rem; color: var(--white); font-weight: 700; text-transform: uppercase;">JOSÉ EDUARDO LONEKE</p>
+                            
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.8rem; font-weight: 600;">NÚMERO IBAN:</p>
+                            <div class="iban-display-box">
+                                <span class="iban-number" id="displayIbanFormatted">AO06 0040 0000 6562 1494 1019 2</span>
+                                <button type="button" class="btn-copy-iban" onclick="copyCurrentIban()">
+                                    <i class="fa-regular fa-copy"></i> Copiar IBAN
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- ÁREA DE UPLOAD DO COMPROVATIVO BAI -->
+                        <div class="form-group" style="margin-top: 1.5rem; margin-bottom: 0;">
+                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Carregar Comprovativo BAI (Máx. 1MB):</label>
+                            
+                            <div class="upload-file-area" onclick="document.getElementById('receiptTransferInput').click()">
+                                <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;"></i>
+                                <p style="font-size: 0.88rem; color: var(--white); font-weight: 600;" id="uploadStatusText">Clique para selecionar o comprovativo Bancário (BAI)</p>
+                                <p style="font-size: 0.75rem; color: var(--text-secondary);">Formatos aceites: JPG, PNG (Máx. 1MB)</p>
+                            </div>
+                            <input type="file" id="receiptTransferInput" accept="image/png, image/jpeg, image/jpg" style="display: none;" onchange="handleReceiptFileSelection(this, 'transfer')">
+                        </div>
+                    </div>
+
+                    <!-- WISE (EURO €) -->
+                    <div class="dynamic-payment-panel" id="panel-wise">
+                        <div class="bank-card-box">
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.2rem; font-weight: 600;">TITULAR DA CONTA WISE:</p>
+                            <p style="font-size: 0.95rem; color: var(--white); font-weight: 700; text-transform: uppercase;">José Eduardo Loneke</p>
+
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.8rem; font-weight: 600;">MOEDA ACEITE:</p>
+                            <p style="font-size: 0.9rem; color: var(--success); font-weight: 700;">EURO (€)</p>
+                            
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.8rem; font-weight: 600;">IBAN (WISE - BÉLGICA):</p>
+                            <div class="iban-display-box">
+                                <span class="iban-number">BE83 9675 7696 0915</span>
+                                <button type="button" class="btn-copy-iban" onclick="copyWiseIban()">
+                                    <i class="fa-regular fa-copy"></i> Copiar
+                                </button>
+                            </div>
+
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.8rem; font-weight: 600;">SWIFT / BIC:</p>
+                            <div class="iban-display-box">
+                                <span class="iban-number" style="color: var(--white);">TRWIBEB1XXX</span>
+                                <button type="button" class="btn-copy-iban" onclick="copyTextToClipboard('TRWIBEB1XXX', 'SWIFT/BIC da Wise')">
+                                    <i class="fa-regular fa-copy"></i> Copiar
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 1.5rem; margin-bottom: 0;">
+                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Carregar Comprovativo Wise (Máx. 1MB):</label>
+                            
+                            <div class="upload-file-area" onclick="document.getElementById('receiptWiseInput').click()">
+                                <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;"></i>
+                                <p style="font-size: 0.88rem; color: var(--white); font-weight: 600;" id="uploadWiseStatusText">Clique para selecionar o comprovativo Wise</p>
+                                <p style="font-size: 0.75rem; color: var(--text-secondary);">Formatos aceites: JPG, PNG (Máx. 1MB)</p>
+                            </div>
+                            <input type="file" id="receiptWiseInput" accept="image/png, image/jpeg, image/jpg" style="display: none;" onchange="handleReceiptFileSelection(this, 'wise')">
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-checkout" id="btnPlaceOrder">
+                        <i class="fa-solid fa-paper-plane"></i> Finalizar Pagamento
+                    </button>
+
+                    <!-- ATENDIMENTO VIA WHATSAPP -->
+                    <div class="whatsapp-support-box">
+                        <p><i class="fa-brands fa-whatsapp" style="color: #25D366; font-size: 1.1rem; margin-right: 0.4rem;"></i> Dúvidas no pagamento ou envio?</p>
+                        <button type="button" class="btn-whatsapp-negotiate" onclick="openWhatsAppNegotiation()" style="margin-top: 0;">
+                            <i class="fa-brands fa-whatsapp"></i> Falar com o Suporte
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 2. PRODUTOS DO CARRINHO & RESUMO DO PEDIDO -->
+            <div class="checkout-sidebar-col">
+                <section class="order-summary">
+                    <h2 class="checkout-title" style="border:none; margin-bottom: 1.5rem;"><i class="fa-solid fa-basket-shopping"></i> Resumo do Pedido</h2>
+                    
+                    <div id="summaryItemsContainer"></div>
+
+                    <div id="orderBumpContainer" class="order-bump-container" style="display: none;">
+                        <h3 class="bump-title"><i class="fa-solid fa-bolt" style="color: var(--warning);"></i> Oferta <span>Especial</span></h3>
+                        <div id="bumpItemsList"></div>
+                    </div>
+                    
+                    <div id="discountActionContainer" class="discount-container-panel" style="display: none;">
+                        <p style="font-size: 0.82rem; margin-bottom: 0.75rem; color: var(--warning); font-weight: 600;">
+                            🎉 Tem 5 ou mais produtos no carrinho! Qualifica-se para 10% de desconto!
+                        </p>
+                        <button type="button" id="btnApplyDiscount25" class="btn-apply-discount">
+                            <i class="fa-solid fa-percent"></i> Aplicar Desconto de 10%
+                        </button>
+                    </div>
+
+                    <div class="total-container-box">
+                        <div class="total-row">
+                            <span>Total (AKZ):</span>
+                            <div>
+                                <strong id="valTotalKz">0,00 Kz</strong>
+                                <button type="button" class="btn-copy-iban" onclick="copyTotalKz()" title="Copiar valor exato em Kz" style="padding: 0.35rem 0.65rem; font-size: 0.75rem;">
+                                    <i class="fa-regular fa-copy"></i> Copiar
+                                </button>
+                            </div>
+                        </div>
+                        <div class="total-row">
+                            <span>Total (EUR/USD):</span>
+                            <div>
+                                <strong id="valTotalEur" style="color: var(--success);">0,00 €</strong>
+                                <button type="button" class="btn-copy-iban" onclick="copyTotalEur()" title="Copiar valor exato em Euros" style="padding: 0.35rem 0.65rem; font-size: 0.75rem;">
+                                    <i class="fa-regular fa-copy"></i> Copiar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+            </div>
+
+        </div>
+    </main>
+
+    <div class="payment-screen-overlay" id="paymentOverlay">
+        <div class="payment-modal" id="paymentModalContent">
+        </div>
+    </div>
+
+<script src="produtos.js"></script>
+<script src="order_bump_produtos.js"></script>
+<script>
+    const API_KEY = "pgoo_ireEwBgew0czzifsNGTIQJrokLm4sGUpCHsZafz0";
+    const API_URL = "https://rouxavcvorjiwhpjhsye.supabase.co/functions/v1/api-v1";
+    const LONEKE_WHATSAPP_NUM = "244924034159";
+    
+    // REDIRECIONA PARA CLIENTE.HTML DENTRO DA PASTA PLATAFORMA
+    const USER_PANEL_URL = "plataforma/cliente.html"; 
+    const NOTIFICATION_EMAIL = "suporte@lonekenobeat.com";
+
+    // DADOS BANCÁRIOS (BANCO BAI)
+    const BAI_RAW_IBAN = "004000006562149410192";
+    const BAI_FORMATTED_IBAN = "AO06 0040 0000 6562 1494 1019 2";
+    const BAI_HOLDER_NAME = "JOSÉ EDUARDO LONEKE";
+
+    let selectedMethod = "transfer"; 
+    let cart = [];
+    let apiProductsMap = {}; 
+    const EXCHANGE_RATE = 500; 
+
+    let discountApplied = false;
+    let originalTotalKz = 0;
+    let selectedFileBase64 = null;
+    let isFileValidated = false;
+
+    // Captura parâmetros da URL e inicializa o checkout
+    document.addEventListener("DOMContentLoaded", async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const affCode = urlParams.get('ref') || urlParams.get('aff') || urlParams.get('afiliado');
+        if (affCode) {
+            localStorage.setItem('loneke_affiliate_ref', affCode.trim());
+        }
+
+        await fetchApiProducts();
+
+        setTimeout(() => {
+            const loadingScreen = document.getElementById("loadingScreen");
+            if (loadingScreen) loadingScreen.classList.add("hidden");
+        }, 800);
+
+        initCartWithPlanContext();
+        loadCartData();
+        initPaymentSelector();
+        renderOrderBumps();
+
+        const btnDiscount = document.getElementById("btnApplyDiscount25");
+        if(btnDiscount) btnDiscount.addEventListener("click", triggerDiscountCalculation);
+        
+        const btnPlaceOrder = document.getElementById("btnPlaceOrder");
+        if(btnPlaceOrder) btnPlaceOrder.addEventListener("click", handleMainCheckoutClick);
+    });
+
+    function copyCurrentIban() {
+        navigator.clipboard.writeText(BAI_RAW_IBAN).then(() => {
+            showToast("IBAN do BAI copiado com sucesso!", "success");
+        }).catch(() => {
+            showToast("Erro ao copiar o IBAN.", "error");
+        });
+    }
+
+    function copyWiseIban() {
+        navigator.clipboard.writeText("BE83967576960915").then(() => {
+            showToast("IBAN da Wise copiado com sucesso!", "success");
+        }).catch(() => {
+            showToast("Erro ao copiar IBAN.", "error");
+        });
+    }
+
+    function copyTotalKz() {
+        const totalText = document.getElementById("valTotalKz").innerText;
+        navigator.clipboard.writeText(totalText).then(() => {
+            showToast(`Valor total de ${totalText} copiado com sucesso!`, "success");
+        }).catch(() => {
+            showToast("Erro ao copiar valor em Kz.", "error");
+        });
+    }
+
+    function copyTotalEur() {
+        const totalText = document.getElementById("valTotalEur").innerText;
+        navigator.clipboard.writeText(totalText).then(() => {
+            showToast(`Valor total de ${totalText} copiado com sucesso!`, "success");
+        }).catch(() => {
+            showToast("Erro ao copiar valor em EUR.", "error");
+        });
+    }
+
+    function copyTextToClipboard(text, label) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast(`${label} copiado!`, "success");
+        }).catch(() => {
+            showToast("Erro ao copiar.", "error");
+        });
+    }
+
+    function normalizeText(str) {
+        return (str || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+    }
+
+    function getExpectedNumericTotal(method) {
+        if (method === 'wise') {
+            const textEur = document.getElementById("valTotalEur").innerText;
+            const numeric = parseFloat(textEur.replace(/[^\d.,]/g, '').replace(/\./g, '').replace(',', '.')) || 0;
+            return Math.floor(numeric);
+        } else {
+            const textKz = document.getElementById("valTotalKz").innerText;
+            const numeric = parseFloat(textKz.replace(/[^\d.,]/g, '').replace(/\./g, '').replace(',', '.')) || 0;
+            return Math.floor(numeric);
+        }
+    }
+
+    async function sendPurchaseNotificationEmail(orderData) {
+        try {
+            const payload = {
+                _subject: `🛒 Nova Compra Realizada - ${orderData.customerName} (${orderData.orderId})`,
+                _template: "table",
+                _captcha: "false",
+                "ID do Pedido": orderData.orderId,
+                "Nome do Cliente": orderData.customerName,
+                "E-mail do Cliente": orderData.customerEmail,
+                "WhatsApp": orderData.customerWhatsApp,
+                "Método de Pagamento": orderData.method,
+                "Total em Kz": orderData.totalKz,
+                "Produtos Adquiridos": orderData.itemsSummary,
+                "Data da Transação": new Date().toLocaleString('pt-PT')
+            };
+
+            await fetch(`https://formsubmit.co/ajax/${NOTIFICATION_EMAIL}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+            console.log("Notificação enviada com sucesso para " + NOTIFICATION_EMAIL);
+        } catch (err) {
+            console.warn("Erro ao enviar notificação de e-mail:", err);
+        }
+    }
+
+    // LEITURA OCR E VALIDAÇÃO DO COMPROVATIVO (NOME, IBAN E VALOR)
+    async function handleReceiptFileSelection(input, method) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const statusElementId = method === 'wise' ? 'uploadWiseStatusText' : 'uploadStatusText';
+        const statusEl = document.getElementById(statusElementId);
+
+        if (file.size > 1048576) {
+            showToast("O ficheiro excede o tamanho máximo de 1MB.", "error");
+            input.value = "";
+            if (statusEl) statusEl.innerText = "Clique para selecionar o comprovativo";
+            selectedFileBase64 = null;
+            isFileValidated = false;
+            return;
+        }
+
+        if (statusEl) statusEl.innerText = `A analisar comprovativo "${file.name}"...`;
+        
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            selectedFileBase64 = e.target.result;
+
+            try {
+                const result = await Tesseract.recognize(selectedFileBase64, 'por');
+                const rawOCR = result.data.text || "";
+                const cleanOCR = normalizeText(rawOCR);
+
+                // 1. VERIFICAÇÃO DO NOME DO TITULAR
+                const hasName = cleanOCR.includes("LONEKE") || cleanOCR.includes("JOSE") || cleanOCR.includes("EDUARDO");
+
+                // 2. VERIFICAÇÃO DO IBAN
+                const expectedIbanDigits = method === 'wise' ? "83967576960915" : "004000006562149410192";
+                const cleanDigitsOCR = cleanOCR.replace(/\D/g, '');
+                const hasIban = cleanDigitsOCR.includes(expectedIbanDigits) || 
+                                cleanOCR.includes("0040") || cleanOCR.includes("6562") || 
+                                cleanOCR.includes("1494") || cleanOCR.includes("BE83") || 
+                                cleanOCR.includes("9675");
+
+                // 3. VERIFICAÇÃO DO VALOR TOTAL
+                const expectedTotal = getExpectedNumericTotal(method);
+                const expectedDigits = expectedTotal.toString();
+
+                const hasAmount = cleanOCR.includes(expectedTotal.toString()) || 
+                                  cleanOCR.includes(expectedTotal.toLocaleString('pt-PT')) || 
+                                  cleanDigitsOCR.includes(expectedDigits);
+
+                if (hasName && hasAmount && hasIban) {
+                    isFileValidated = true;
+                    if (statusEl) statusEl.innerText = `✅ ${file.name} (Validado - Nome, IBAN e Valor O.K.)`;
+                    showToast("Comprovativo validado com sucesso!", "success");
+                } else {
+                    isFileValidated = false;
+                    selectedFileBase64 = null;
+                    input.value = "";
+                    if (statusEl) statusEl.innerText = "❌ Comprovativo Rejeitado";
+
+                    let errorMsg = "Comprovativo inválido! ";
+                    if (!hasName) errorMsg += "O nome (José Eduardo Loneke) não foi encontrado no documento. ";
+                    else if (!hasAmount) errorMsg += `O valor impresso não corresponde a ${expectedTotal.toLocaleString('pt-PT')} ${method === 'wise' ? '€' : 'Kz'}. `;
+                    else if (!hasIban) errorMsg += "O IBAN de destino não corresponde à conta oficial. ";
+
+                    showToast(errorMsg + "Se a imagem estiver ilegível, fale com o suporte pelo WhatsApp.", "error");
+                }
+
+            } catch (ocrErr) {
+                isFileValidated = false;
+                selectedFileBase64 = null;
+                input.value = "";
+                if (statusEl) statusEl.innerText = "❌ Erro ao ler comprovativo";
+                showToast("Não foi possível processar o ficheiro. Certifique-se de carregar uma imagem legível.", "error");
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
+    async function fetchApiProducts() {
+        try {
+            const res = await fetch(`${API_URL}/products`, {
+                headers: { 'x-api-key': API_KEY }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                const productsList = Array.isArray(data) ? data : (data.products || data.data || []);
+                
+                productsList.forEach(p => {
+                    if (p.id) {
+                        apiProductsMap[String(p.id)] = p.id;
+                        if (p.name) {
+                            apiProductsMap[p.name.trim().toLowerCase()] = p.id;
+                        }
+                    }
+                });
+            }
+        } catch (err) {
+            console.warn("Erro ao carregar lista de produtos da API:", err);
+        }
+    }
+
+    function showToast(message, type = "info") {
+        const container = document.getElementById("toastContainer");
+        if(!container) return;
+
+        const toast = document.createElement("div");
+        toast.className = `toast-card ${type}`;
+        
+        let icon = '<i class="fa-solid fa-circle-info"></i>';
+        if(type === "success") icon = '<i class="fa-solid fa-circle-check"></i>';
+        if(type === "error") icon = '<i class="fa-solid fa-circle-xmark"></i>';
+        
+        toast.innerHTML = `${icon} <span>${message}</span>`;
+        container.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.animation = "fadeOut 0.3s forwards";
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
+    }
+
+    async function initCartWithPlanContext() {
+        cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('product_id') || urlParams.get('id');
+        const affCode = urlParams.get('ref') || urlParams.get('aff') || urlParams.get('afiliado');
+
+        if (affCode) {
+            localStorage.setItem('loneke_affiliate_ref', affCode.trim());
+        }
+
+        if (productId) {
+            let foundProduct = null;
+
+            try {
+                if (window.firebaseDb && window.firebaseDoc && window.firebaseGetDoc) {
+                    const docRef = window.firebaseDoc(window.firebaseDb, "produtos", productId);
+                    const docSnap = await window.firebaseGetDoc(docRef);
+                    if (docSnap.exists()) {
+                        const pData = docSnap.data();
+                        foundProduct = {
+                            id: docSnap.id,
+                            product_id: docSnap.id,
+                            titulo: pData.titulo || pData.title || pData.nome || "Produto VIP",
+                            preco: Number(pData.precoAtual || pData.preco || pData.price || 0),
+                            categoria: pData.categoria || 'geral',
+                            imagem: pData.imagem || pData.imageUrl || pData.capa || "img/express.png"
+                        };
+                    }
+                }
+            } catch (e) {
+                console.warn("Aviso ao buscar produto no Firestore:", e);
+            }
+
+            if (!foundProduct && typeof produtos !== 'undefined' && Array.isArray(produtos)) {
+                const localP = produtos.find(p => String(p.id) === String(productId) || String(p.uuid) === String(productId));
+                if (localP) {
+                    foundProduct = {
+                        id: localP.id,
+                        product_id: localP.id,
+                        titulo: localP.titulo || localP.nome,
+                        preco: Number(localP.precoAtual || localP.preco || 0),
+                        categoria: localP.categoria || 'geral',
+                        imagem: localP.imagem || "img/express.png"
+                    };
+                }
+            }
+
+            if (!foundProduct) {
+                const titleParam = urlParams.get('title') || urlParams.get('nome') || "Produto Selecionado";
+                const priceParam = parseFloat(urlParams.get('price') || urlParams.get('preco') || 0);
+                foundProduct = {
+                    id: productId,
+                    product_id: productId,
+                    titulo: titleParam,
+                    preco: priceParam,
+                    categoria: 'geral',
+                    imagem: "img/express.png"
+                };
+            }
+
+            const alreadyInCart = cart.some(item => String(item.id) === String(foundProduct.id) || String(item.product_id) === String(foundProduct.id));
+            if (!alreadyInCart) {
+                cart.push({
+                    id: foundProduct.id,
+                    product_id: foundProduct.id,
+                    titulo: foundProduct.titulo,
+                    preco: foundProduct.preco,
+                    quantity: 1,
+                    categoria: foundProduct.categoria,
+                    imagem: foundProduct.imagem
+                });
+                localStorage.setItem('loneke_cart', JSON.stringify(cart));
+            }
+        }
+
+        loadCartData();
+    }
+
+    function renderOrderBumps() {
+        const container = document.getElementById("orderBumpContainer");
+        const listContainer = document.getElementById("bumpItemsList");
+        
+        if (typeof orderBumpProdutos === 'undefined' || !Array.isArray(orderBumpProdutos) || orderBumpProdutos.length === 0) {
+            if(container) container.style.display = "none";
+            return;
+        }
+        
+        container.style.display = "block";
+        
+        listContainer.innerHTML = orderBumpProdutos.map(item => {
+            const isAlreadyInCart = cart.some(cartItem => String(cartItem.id) === String(item.id));
+            
+            return `
+                <div class="bump-item">
+                    <input type="checkbox" class="bump-checkbox" id="chk-${item.id}" ${isAlreadyInCart ? 'checked' : ''} onchange="toggleOrderBump('${item.id}')">
+                    <img src="${item.imagem}" onerror="this.onerror=null; this.src='img/express.png';" alt="${item.titulo}">
+                    <div class="bump-info">
+                        <h4>${item.titulo}</h4>
+                        <p>${item.descricao}</p>
+                        <span class="bump-price">${item.preco.toLocaleString('pt-AO', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Kz</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function toggleOrderBump(id) {
+        const checkbox = document.getElementById(`chk-${id}`);
+        const bumpItem = orderBumpProdutos.find(item => String(item.id) === String(id));
+        
+        if (!bumpItem) return;
+        
+        if (checkbox && checkbox.checked) {
+            if (!cart.some(item => String(item.id) === String(id))) {
+                cart.push({
+                    id: bumpItem.id,
+                    product_id: bumpItem.product_id || bumpItem.id,
+                    titulo: bumpItem.titulo,
+                    preco: bumpItem.preco,
+                    quantity: 1,
+                    categoria: bumpItem.categoria || bumpItem.category || 'drumkits',
+                    imagem: bumpItem.imagem,
+                    isOrderBump: true 
+                });
+                showToast(`"${bumpItem.titulo}" adicionado ao seu pedido!`, "success");
+            }
+        } else {
+            const index = cart.findIndex(item => String(item.id) === String(id));
+            if (index !== -1) {
+                cart.splice(index, 1);
+                showToast(`"${bumpItem.titulo}" removido do seu pedido.`, "info");
+            }
+        }
+        
+        localStorage.setItem('loneke_cart', JSON.stringify(cart));
+        loadCartData();
+    }
+
+    function loadCartData() {
+        const container = document.getElementById("summaryItemsContainer");
+        const displayKz = document.getElementById("valTotalKz");
+        const displayEur = document.getElementById("valTotalEur");
+        const discountContainer = document.getElementById("discountActionContainer");
+        const btnPlaceOrder = document.getElementById("btnPlaceOrder");
+
+        if (typeof orderBumpProdutos !== 'undefined' && Array.isArray(orderBumpProdutos)) {
+            orderBumpProdutos.forEach(bump => {
+                const cb = document.getElementById(`chk-${bump.id}`);
+                if(cb) {
+                    cb.checked = cart.some(item => String(item.id) === String(bump.id));
+                }
+            });
+        }
+
+        if(cart.length === 0) {
+            container.innerHTML = `<p style="color: var(--text-secondary); text-align:center; padding: 2rem 0;">O seu carrinho está vazio.</p>`;
+            displayKz.innerText = "0,00 Kz";
+            displayEur.innerText = "0,00 €";
+            if(discountContainer) discountContainer.style.display = "none";
+            if(btnPlaceOrder) {
+                btnPlaceOrder.disabled = true;
+                btnPlaceOrder.style.opacity = "0.3";
+            }
+            return;
+        }
+
+        if(btnPlaceOrder) {
+            btnPlaceOrder.disabled = false;
+            btnPlaceOrder.style.opacity = "1";
+        }
+
+        originalTotalKz = cart.reduce((acc, current) => acc + (current.preco * current.quantity), 0);
+
+        container.innerHTML = cart.map((item, index) => {
+            return `
+                <div class="summary-item">
+                    <img src="${item.imagem}" onerror="this.onerror=null; this.src='img/express.png';" alt="${item.titulo}">
+                    <div class="summary-details">
+                        <h4>${item.titulo}</h4>
+                        <p>Qtd: ${item.quantity} &bull; ${(item.preco * item.quantity).toLocaleString('pt-AO', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Kz</p>
+                    </div>
+                    <button type="button" class="btn-remove-item" onclick="removeProductFromCheckout(${index})" title="Remover este item">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            `;
+        }).join('');
+
+        const totalItemsCount = cart.reduce((acc, current) => acc + current.quantity, 0);
+
+        if (totalItemsCount >= 5) {
+            if(discountContainer) discountContainer.style.display = "block";
+            const btnApply = document.getElementById("btnApplyDiscount25");
+            if (btnApply) {
+                if (!discountApplied) {
+                    btnApply.disabled = false;
+                    btnApply.className = "btn-apply-discount";
+                    btnApply.style.cursor = "pointer";
+                    btnApply.innerHTML = `<i class="fa-solid fa-percent"></i> Aplicar Desconto de 10%`;
+                } else {
+                    btnApply.disabled = true;
+                    btnApply.className = "btn-apply-discount applied";
+                    btnApply.style.cursor = "not-allowed";
+                    btnApply.innerHTML = `<i class="fa-solid fa-circle-check"></i> Desconto de 10% Aplicado!`;
+                }
+            }
+        } else {
+            if(discountContainer) discountContainer.style.display = "none";
+            discountApplied = false;
+        }
+
+        let totalCalculadoKz = discountApplied ? (originalTotalKz * 0.90) : originalTotalKz;
+        let totalCalculadoEur = totalCalculadoKz / EXCHANGE_RATE;
+
+        displayKz.innerText = `${totalCalculadoKz.toLocaleString('pt-AO', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Kz`;
+        displayEur.innerText = `${totalCalculadoEur.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} € / $`;
+    }
+
+    function initPaymentSelector() {
+        const cards = document.querySelectorAll(".method-card");
+        cards.forEach(card => {
+            card.addEventListener("click", () => {
+                cards.forEach(c => c.classList.remove("active"));
+                card.classList.add("active");
+                
+                selectedMethod = card.getAttribute("data-method");
+                document.querySelectorAll(".dynamic-payment-panel").forEach(p => p.style.display = "none");
+                
+                const activePanel = document.getElementById(`panel-${selectedMethod}`);
+                if (activePanel) activePanel.style.display = "block";
+
+                // Limpa estado do comprovativo ao alterar metodo
+                selectedFileBase64 = null;
+                isFileValidated = false;
+                const statusTransfer = document.getElementById("uploadStatusText");
+                const statusWise = document.getElementById("uploadWiseStatusText");
+                if (statusTransfer) statusTransfer.innerText = "Clique para selecionar o comprovativo BAI";
+                if (statusWise) statusWise.innerText = "Clique para selecionar o comprovativo Wise";
+            });
+        });
+    }
+
+    function removeProductFromCheckout(index) {
+        const itemRemovido = cart[index];
+        if (itemRemovido.isVipPlan) {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('type'); url.searchParams.delete('plan'); url.searchParams.delete('price');
+            window.history.replaceState({}, '', url.toString());
+        }
+        cart.splice(index, 1);
+        localStorage.setItem('loneke_cart', JSON.stringify(cart));
+        showToast(`"${itemRemovido.titulo}" foi removido do seu pedido.`, "info");
+        const checkboxCorrespondente = document.getElementById(`chk-${itemRemovido.id}`);
+        if (checkboxCorrespondente) checkboxCorrespondente.checked = false;
+        loadCartData();
+    }
+
+    function triggerDiscountCalculation() {
+        const totalItemsCount = cart.reduce((acc, current) => acc + current.quantity, 0);
+        if (totalItemsCount < 5) return;
+        
+        discountApplied = true;
+        const btn = document.getElementById("btnApplyDiscount25");
+        if(btn) {
+            btn.className = "btn-apply-discount applied";
+            btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> Desconto de 10% Aplicado!`;
+            btn.disabled = true;
+            btn.style.cursor = "not-allowed";
+        }
+        showToast("Desconto de 10% validado e aplicado com sucesso!", "success");
+        loadCartData();
+    }
+
+    function openWhatsAppNegotiation() {
+        const targetUrl = `https://wa.me/${LONEKE_WHATSAPP_NUM}?text=Olá Loneke no Beat, preciso de ajuda com o meu checkout!`;
+        window.open(targetUrl, '_blank');
+    }
+
+    async function createOrLoginUserAccount(email, name, fullWhatsApp) {
+        const password = email; 
+        let uid = null;
+
+        if (window.firebaseAuth) {
+            const createUserFn = window.firebaseCreateUserWithEmailAndPassword || window.createUserWithEmailAndPassword;
+            const signInFn = window.firebaseSignInWithEmailAndPassword || window.signInWithEmailAndPassword;
+
+            try {
+                if (typeof createUserFn === 'function') {
+                    const userCredential = await createUserFn(window.firebaseAuth, email, password);
+                    if (userCredential && userCredential.user) uid = userCredential.user.uid;
+                }
+            } catch (authErr) {
+                if (authErr.code === 'auth/email-already-in-use') {
+                    try {
+                        if (typeof signInFn === 'function') {
+                            const loginCredential = await signInFn(window.firebaseAuth, email, password);
+                            if (loginCredential && loginCredential.user) uid = loginCredential.user.uid;
+                        }
+                    } catch (loginErr) { console.warn("Erro no login automático:", loginErr); }
+                }
+            }
+        }
+
+        if (!uid) uid = email.replace(/[^a-zA-Z0-9]/g, "_");
+
+        localStorage.setItem('loggedUserUid', uid);
+        localStorage.setItem('loggedUserEmail', email);
+        localStorage.setItem('loggedUserName', name);
+
+        try {
+            const userData = {
+                uid: uid, 
+                name: name, 
+                email: email, 
+                whatsApp: fullWhatsApp, 
+                role: "aluno", 
+                status: "ativo", 
+                updatedAt: new Date().toISOString()
+            };
+
+            if (window.firebaseDb && window.firebaseDoc && window.firebaseSetDoc) {
+                const userRef = window.firebaseDoc(window.firebaseDb, "users", uid);
+                await window.firebaseSetDoc(userRef, userData, { merge: true });
+            }
+        } catch (dbErr) {
+            console.error("Erro ao guardar dados do utilizador:", dbErr);
+        }
+
+        return uid;
+    }
+
+    async function handleMainCheckoutClick() {
+        const name = document.getElementById("customerName").value.trim();
+        const email = document.getElementById("customerEmail").value.trim();
+        const dialCode = document.getElementById("countryCode").value;
+        const whatsNum = document.getElementById("customerWhatsApp").value.trim();
+
+        if(!name || !email || !whatsNum) {
+            showToast("Por favor, preencha todos os campos dos Dados de Faturação.", "error");
+            return;
+        }
+
+        const fullWhatsApp = `${dialCode} ${whatsNum.replace(/\s+/g, '')}`;
+
+        if (selectedMethod === "transfer" || selectedMethod === "wise") {
+            if (!selectedFileBase64 || !isFileValidated) {
+                showToast("Por favor, carregue um comprovativo válido para finalizar.", "error");
+                return;
+            }
+        }
+
+        const overlay = document.getElementById("paymentOverlay");
+        overlay.style.display = "flex";
+
+        if (selectedMethod === "transfer") {
+            await grantAccessAfterPayment(email, fullWhatsApp, name, "Transferência Bancária (BAI)");
+        } else if (selectedMethod === "wise") {
+            await grantAccessAfterPayment(email, fullWhatsApp, name, "Wise Transfer (EUR)");
+        }
+    }
+
+    async function grantAccessAfterPayment(customerEmail, customerWhatsApp, customerName, methodTitle) {
+        const modal = document.getElementById("paymentModalContent");
+        modal.innerHTML = `
+            <h3>A criar a sua conta e a processar o pedido...</h3>
+            <p style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.9rem;">A validar comprovativo e dados do produto...</p>
+            <div class="spinner"></div>
+        `;
+
+        const tkz = document.getElementById("valTotalKz").innerText;
+        const affiliateRef = localStorage.getItem('loneke_affiliate_ref') || null;
+
+        const docId = await createOrLoginUserAccount(customerEmail, customerName, customerWhatsApp);
+
+        try {
+            if (window.firebaseDb && window.firebaseDoc && window.firebaseSetDoc) {
+                let userProdutosMap = {};
+
+                for (const item of cart) {
+                    const prodId = String(item.product_id || item.id);
+                    const itemCategory = item.categoria || item.category || 'cursos';
+                    userProdutosMap[prodId] = true;
+
+                    // Subcoleção de compras do utilizador
+                    const userProdRef = window.firebaseDoc(window.firebaseDb, "users", docId, "purchases", prodId);
+                    await window.firebaseSetDoc(userProdRef, {
+                        id: prodId, 
+                        titulo: item.titulo, 
+                        preco: item.preco, 
+                        quantity: item.quantity,
+                        categoria: itemCategory, 
+                        imagem: item.imagem || "img/express.png",
+                        status: "ativo", 
+                        unlocked: true, 
+                        affiliateRef: affiliateRef,
+                        affiliateCode: affiliateRef,
+                        addedAt: new Date().toISOString()
+                    }, { merge: true });
+
+                    // Acesso global do produto
+                    const accessDocId = `${docId}_${prodId}`;
+                    const accessRef = window.firebaseDoc(window.firebaseDb, "user_access", accessDocId);
+                    await window.firebaseSetDoc(accessRef, {
+                        accessId: accessDocId, 
+                        userId: docId, 
+                        userEmail: customerEmail,
+                        productId: prodId, 
+                        productTitle: item.titulo,
+                        titulo: item.titulo, 
+                        categoria: itemCategory,
+                        unlocked: true, 
+                        status: "unlocked", 
+                        affiliateRef: affiliateRef,
+                        affiliateCode: affiliateRef,
+                        grantedAt: new Date().toISOString()
+                    }, { merge: true });
+                }
+
+                // Atualiza mapa de produtos no perfil principal do utilizador
+                const mainUserRef = window.firebaseDoc(window.firebaseDb, "users", docId);
+                await window.firebaseSetDoc(mainUserRef, {
+                    produtos: userProdutosMap,
+                    affiliateRef: affiliateRef
+                }, { merge: true });
+
+                const orderId = 'ORD-' + Date.now();
+                const numericTotalKz = parseFloat(tkz.replace(/[^\d.,]/g, '').replace(/\./g, '').replace(',', '.')) || 0;
+                const itemsSummaryStr = cart.map(item => `${item.titulo} (x${item.quantity})`).join("; ");
+                const primaryItem = cart[0] || {};
+
+                const orderTransactionData = {
+                    orderId: orderId,
+                    transactionId: orderId,
+                    userId: docId, 
+                    customerName: customerName,
+                    userName: customerName,
+                    customerEmail: customerEmail, 
+                    userEmail: customerEmail,
+                    customerWhatsApp: customerWhatsApp,
+                    productTitle: itemsSummaryStr || primaryItem.titulo || "Produtos VIP",
+                    productId: primaryItem.product_id || primaryItem.id || "carrinho",
+                    method: methodTitle, 
+                    paymentMethod: methodTitle,
+                    totalKz: tkz,
+                    amount: numericTotalKz,
+                    numericTotalKz: numericTotalKz, 
+                    receiptFile: selectedFileBase64 || null,
+                    proofUrl: selectedFileBase64 || null,
+                    comprovativo: selectedFileBase64 || null,
+                    affiliateRef: affiliateRef,
+                    affiliateCode: affiliateRef,
+                    affiliateCommission: Math.floor(numericTotalKz * 0.5),
+                    origin: "checkout",
+                    createdAt: new Date().toISOString(), 
+                    status: "pending", 
+                    unlocked: true
+                };
+
+                // Regista simultaneamente em 'orders' e 'transactions'
+                await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDb, "orders", orderId), orderTransactionData);
+                await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDb, "transactions", orderId), orderTransactionData);
+
+                await sendPurchaseNotificationEmail({
+                    orderId: orderId,
+                    customerName: customerName,
+                    customerEmail: customerEmail,
+                    customerWhatsApp: customerWhatsApp,
+                    method: methodTitle,
+                    totalKz: tkz,
+                    itemsSummary: itemsSummaryStr
+                });
+            }
+        } catch (fbError) {
+            console.error("Erro na gravação do Firestore:", fbError);
+        }
+
+        modal.innerHTML = `
+            <i class="fa-solid fa-circle-check" style="font-size: 3.8rem; color: var(--success);"></i>
+            <h2 style="font-family: var(--font-heading); margin-top: 1rem; color: var(--white);">Acesso Solicitado!</h2>
+            <p style="color: var(--text-secondary); margin-top: 0.8rem; font-size: 0.95rem;">
+                A sua conta foi registada e o seu comprovativo enviado para verificação.
+            </p>
+            <p style="color: var(--text-secondary); margin-top: 1.2rem; font-size: 0.82rem;">A abrir a sua Área VIP...</p>
+            <div class="spinner" style="margin: 1rem auto 0 auto;"></div>
+        `;
+
+        setTimeout(() => {
+            clearCartAndExit();
+        }, 2200);
+    }
+
+    function clearCartAndExit() {
+        localStorage.removeItem('loneke_cart');
+        window.location.href = USER_PANEL_URL;
+    }
+</script>
+
+</body>
+</html>
