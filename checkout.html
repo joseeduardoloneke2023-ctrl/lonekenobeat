@@ -438,23 +438,35 @@
                     </div>
 
                     <!-- TRANSFERÊNCIA BANCÁRIA (IBAN BAI) -->
-<div class="dynamic-payment-panel" id="panel-transfer" style="display: block;">
-    <div class="bank-card-box">
-        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.2rem; font-weight: 600;">BANCO:</p>
-        <p style="font-size: 0.95rem; color: var(--white); font-weight: 700;">BAI - Banco Angolano de Investimentos</p>
+                    <div class="dynamic-payment-panel" id="panel-transfer" style="display: block;">
+                        <div class="bank-card-box">
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.2rem; font-weight: 600;">BANCO:</p>
+                            <p style="font-size: 0.95rem; color: var(--white); font-weight: 700;">BAI - Banco Angolano de Investimentos</p>
 
-        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.8rem; margin-bottom: 0.2rem; font-weight: 600;">TITULAR DA CONTA:</p>
-        <p style="font-size: 0.95rem; color: var(--white); font-weight: 700; text-transform: uppercase;">JOSÉ EDUARDO LONEKE</p>
-        
-        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.8rem; font-weight: 600;">NÚMERO IBAN:</p>
-        <div class="iban-display-box">
-            <span class="iban-number" id="displayIbanFormatted">AO06 0040 0000 6562 1494 1019 2</span>
-            <button type="button" class="btn-copy-iban" onclick="copyCurrentIban()">
-                <i class="fa-regular fa-copy"></i> Copiar IBAN
-            </button>
-        </div>
-    </div>
-</div>
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.8rem; margin-bottom: 0.2rem; font-weight: 600;">TITULAR DA CONTA:</p>
+                            <p style="font-size: 0.95rem; color: var(--white); font-weight: 700; text-transform: uppercase;">JOSÉ EDUARDO LONEKE</p>
+                            
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.8rem; font-weight: 600;">NÚMERO IBAN:</p>
+                            <div class="iban-display-box">
+                                <span class="iban-number" id="displayIbanFormatted">AO06 0040 0000 6562 1494 1019 2</span>
+                                <button type="button" class="btn-copy-iban" onclick="copyCurrentIban()">
+                                    <i class="fa-regular fa-copy"></i> Copiar IBAN
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- ÁREA DE UPLOAD DO COMPROVATIVO BAI -->
+                        <div class="form-group" style="margin-top: 1.5rem; margin-bottom: 0;">
+                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Carregar Comprovativo BAI (Máx. 1MB):</label>
+                            
+                            <div class="upload-file-area" onclick="document.getElementById('receiptTransferInput').click()">
+                                <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;"></i>
+                                <p style="font-size: 0.88rem; color: var(--white); font-weight: 600;" id="uploadStatusText">Clique para selecionar o comprovativo Bancário (BAI)</p>
+                                <p style="font-size: 0.75rem; color: var(--text-secondary);">Formatos aceites: JPG, PNG (Máx. 1MB)</p>
+                            </div>
+                            <input type="file" id="receiptTransferInput" accept="image/png, image/jpeg, image/jpg" style="display: none;" onchange="handleReceiptFileSelection(this, 'transfer')">
+                        </div>
+                    </div>
 
                     <!-- WISE (EURO €) -->
                     <div class="dynamic-payment-panel" id="panel-wise">
@@ -572,11 +584,10 @@
     const USER_PANEL_URL = "plataforma/cliente.html"; 
     const NOTIFICATION_EMAIL = "suporte@lonekenobeat.com";
 
-
-   // DADOS BANCÁRIOS (BANCO BAI)
-const BAI_RAW_IBAN = "004000006562149410192";
-const BAI_FORMATTED_IBAN = "AO06 0040 0000 6562 1494 1019 2";
-const BAI_HOLDER_NAME = "JOSÉ EDUARDO LONEKE";
+    // DADOS BANCÁRIOS (BANCO BAI)
+    const BAI_RAW_IBAN = "004000006562149410192";
+    const BAI_FORMATTED_IBAN = "AO06 0040 0000 6562 1494 1019 2";
+    const BAI_HOLDER_NAME = "JOSÉ EDUARDO LONEKE";
 
     let selectedMethod = "transfer"; 
     let cart = [];
@@ -588,33 +599,33 @@ const BAI_HOLDER_NAME = "JOSÉ EDUARDO LONEKE";
     let selectedFileBase64 = null;
     let isFileValidated = false;
 
-// Captura parâmetros da URL e inicializa o checkout
-document.addEventListener("DOMContentLoaded", async () => {
-    // Captura código de afiliado da URL se existir
-    const urlParams = new URLSearchParams(window.location.search);
-    const affCode = urlParams.get('ref') || urlParams.get('aff') || urlParams.get('afiliado');
-    if (affCode) {
-        localStorage.setItem('loneke_affiliate_ref', affCode.trim());
-    }
+    // Captura parâmetros da URL e inicializa o checkout
+    document.addEventListener("DOMContentLoaded", async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const affCode = urlParams.get('ref') || urlParams.get('aff') || urlParams.get('afiliado');
+        if (affCode) {
+            localStorage.setItem('loneke_affiliate_ref', affCode.trim());
+        }
 
-    await fetchApiProducts();
+        await fetchApiProducts();
 
-    setTimeout(() => {
-        const loadingScreen = document.getElementById("loadingScreen");
-        if (loadingScreen) loadingScreen.classList.add("hidden");
-    }, 800);
+        setTimeout(() => {
+            const loadingScreen = document.getElementById("loadingScreen");
+            if (loadingScreen) loadingScreen.classList.add("hidden");
+        }, 800);
 
-    initCartWithPlanContext();
-    loadCartData();
-    initPaymentSelector();
-    renderOrderBumps();
+        initCartWithPlanContext();
+        loadCartData();
+        initPaymentSelector();
+        renderOrderBumps();
 
-    const btnDiscount = document.getElementById("btnApplyDiscount25");
-    if(btnDiscount) btnDiscount.addEventListener("click", triggerDiscountCalculation);
-    
-    const btnPlaceOrder = document.getElementById("btnPlaceOrder");
-    if(btnPlaceOrder) btnPlaceOrder.addEventListener("click", handleMainCheckoutClick);
-});
+        const btnDiscount = document.getElementById("btnApplyDiscount25");
+        if(btnDiscount) btnDiscount.addEventListener("click", triggerDiscountCalculation);
+        
+        const btnPlaceOrder = document.getElementById("btnPlaceOrder");
+        if(btnPlaceOrder) btnPlaceOrder.addEventListener("click", handleMainCheckoutClick);
+    });
+
     function copyCurrentIban() {
         navigator.clipboard.writeText(BAI_RAW_IBAN).then(() => {
             showToast("IBAN do BAI copiado com sucesso!", "success");
@@ -658,7 +669,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function normalizeText(str) {
-        return (str || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase();
+        return (str || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
     }
 
     function getExpectedNumericTotal(method) {
@@ -703,6 +714,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    // LEITURA OCR E VALIDAÇÃO DO COMPROVATIVO (NOME, IBAN E VALOR)
     async function handleReceiptFileSelection(input, method) {
         const file = input.files[0];
         if (!file) return;
@@ -730,29 +742,28 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const rawOCR = result.data.text || "";
                 const cleanOCR = normalizeText(rawOCR);
 
+                // 1. VERIFICAÇÃO DO NOME DO TITULAR
                 const hasName = cleanOCR.includes("LONEKE") || cleanOCR.includes("JOSE") || cleanOCR.includes("EDUARDO");
+
+                // 2. VERIFICAÇÃO DO IBAN
+                const expectedIbanDigits = method === 'wise' ? "83967576960915" : "004000006562149410192";
+                const cleanDigitsOCR = cleanOCR.replace(/\D/g, '');
+                const hasIban = cleanDigitsOCR.includes(expectedIbanDigits) || 
+                                cleanOCR.includes("0040") || cleanOCR.includes("6562") || 
+                                cleanOCR.includes("1494") || cleanOCR.includes("BE83") || 
+                                cleanOCR.includes("9675");
+
+                // 3. VERIFICAÇÃO DO VALOR TOTAL
                 const expectedTotal = getExpectedNumericTotal(method);
-                const digitsOnlyOCR = cleanOCR.replace(/\D/g, '');
                 const expectedDigits = expectedTotal.toString();
 
                 const hasAmount = cleanOCR.includes(expectedTotal.toString()) || 
                                   cleanOCR.includes(expectedTotal.toLocaleString('pt-PT')) || 
-                                  digitsOnlyOCR.includes(expectedDigits);
+                                  cleanDigitsOCR.includes(expectedDigits);
 
-                const now = new Date();
-                const currentYear = now.getFullYear().toString();
-                const currentMonth = String(now.getMonth() + 1).padStart(2, '0');
-                const currentDay = String(now.getDate()).padStart(2, '0');
-
-                const hasDate = cleanOCR.includes(currentYear) || 
-                                cleanOCR.includes(`${currentDay}/${currentMonth}`) || 
-                                cleanOCR.includes(`${currentDay}-${currentMonth}`) ||
-                                cleanOCR.includes("2026/") || cleanOCR.includes("2026-") ||
-                                cleanOCR.includes("TRANSAC") || cleanOCR.includes("MOVIMENTO");
-
-                if (hasName && hasAmount && hasDate) {
+                if (hasName && hasAmount && hasIban) {
                     isFileValidated = true;
-                    if (statusEl) statusEl.innerText = `✅ ${file.name} (Validado - Nome, Valor e Data O.K.)`;
+                    if (statusEl) statusEl.innerText = `✅ ${file.name} (Validado - Nome, IBAN e Valor O.K.)`;
                     showToast("Comprovativo validado com sucesso!", "success");
                 } else {
                     isFileValidated = false;
@@ -761,11 +772,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                     if (statusEl) statusEl.innerText = "❌ Comprovativo Rejeitado";
 
                     let errorMsg = "Comprovativo inválido! ";
-                    if (!hasName) errorMsg += "O nome (José Eduardo Loneke) não foi encontrado. ";
+                    if (!hasName) errorMsg += "O nome (José Eduardo Loneke) não foi encontrado no documento. ";
                     else if (!hasAmount) errorMsg += `O valor impresso não corresponde a ${expectedTotal.toLocaleString('pt-PT')} ${method === 'wise' ? '€' : 'Kz'}. `;
-                    else if (!hasDate) errorMsg += "A data/hora do comprovativo precisa de ser recente. ";
+                    else if (!hasIban) errorMsg += "O IBAN de destino não corresponde à conta oficial. ";
 
-                    showToast(errorMsg + "Se a foto estiver ilegível, utilize o botão de WhatsApp.", "error");
+                    showToast(errorMsg + "Se a imagem estiver ilegível, fale com o suporte pelo WhatsApp.", "error");
                 }
 
             } catch (ocrErr) {
@@ -822,355 +833,86 @@ document.addEventListener("DOMContentLoaded", async () => {
         }, 4000);
     }
 
+    async function initCartWithPlanContext() {
+        cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
 
-    // CÓDIGO CORRIGIDO PARA BUSCAR O PRODUTO DO FIRESTORE E MANTER O CARRINHO COMPLETO
-async function initCartWithPlanContext() {
-    cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('product_id') || urlParams.get('id');
+        const affCode = urlParams.get('ref') || urlParams.get('aff') || urlParams.get('afiliado');
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('product_id') || urlParams.get('id');
-    const affCode = urlParams.get('ref') || urlParams.get('aff') || urlParams.get('afiliado');
+        if (affCode) {
+            localStorage.setItem('loneke_affiliate_ref', affCode.trim());
+        }
 
-    // Guarda o código de indicação do afiliado no navegador
-    if (affCode) {
-        localStorage.setItem('loneke_affiliate_ref', affCode.trim());
-    }
+        if (productId) {
+            let foundProduct = null;
 
-    if (productId) {
-        let foundProduct = null;
+            try {
+                if (window.firebaseDb && window.firebaseDoc && window.firebaseGetDoc) {
+                    const docRef = window.firebaseDoc(window.firebaseDb, "produtos", productId);
+                    const docSnap = await window.firebaseGetDoc(docRef);
+                    if (docSnap.exists()) {
+                        const pData = docSnap.data();
+                        foundProduct = {
+                            id: docSnap.id,
+                            product_id: docSnap.id,
+                            titulo: pData.titulo || pData.title || pData.nome || "Produto VIP",
+                            preco: Number(pData.precoAtual || pData.preco || pData.price || 0),
+                            categoria: pData.categoria || 'geral',
+                            imagem: pData.imagem || pData.imageUrl || pData.capa || "img/express.png"
+                        };
+                    }
+                }
+            } catch (e) {
+                console.warn("Aviso ao buscar produto no Firestore:", e);
+            }
 
-        // 1. Busca primeiro no Firestore para obter Título, Preço e Imagem reais
-        try {
-            if (window.firebaseDb && window.firebaseDoc && window.firebaseGetDoc) {
-                const docRef = window.firebaseDoc(window.firebaseDb, "produtos", productId);
-                const docSnap = await window.firebaseGetDoc(docRef);
-                if (docSnap.exists()) {
-                    const pData = docSnap.data();
+            if (!foundProduct && typeof produtos !== 'undefined' && Array.isArray(produtos)) {
+                const localP = produtos.find(p => String(p.id) === String(productId) || String(p.uuid) === String(productId));
+                if (localP) {
                     foundProduct = {
-                        id: docSnap.id,
-                        product_id: docSnap.id,
-                        titulo: pData.titulo || pData.title || pData.nome || "Produto VIP",
-                        preco: Number(pData.precoAtual || pData.preco || pData.price || 0),
-                        categoria: pData.categoria || 'geral',
-                        imagem: pData.imagem || pData.imageUrl || pData.capa || "img/express.png"
+                        id: localP.id,
+                        product_id: localP.id,
+                        titulo: localP.titulo || localP.nome,
+                        preco: Number(localP.precoAtual || localP.preco || 0),
+                        categoria: localP.categoria || 'geral',
+                        imagem: localP.imagem || "img/express.png"
                     };
                 }
             }
-        } catch (e) {
-            console.warn("Aviso ao buscar produto no Firestore:", e);
-        }
 
-        // 2. Se não encontrar no Firestore, procura nos arrays estáticos locais
-        if (!foundProduct && typeof produtos !== 'undefined' && Array.isArray(produtos)) {
-            const localP = produtos.find(p => String(p.id) === String(productId) || String(p.uuid) === String(productId));
-            if (localP) {
+            if (!foundProduct) {
+                const titleParam = urlParams.get('title') || urlParams.get('nome') || "Produto Selecionado";
+                const priceParam = parseFloat(urlParams.get('price') || urlParams.get('preco') || 0);
                 foundProduct = {
-                    id: localP.id,
-                    product_id: localP.id,
-                    titulo: localP.titulo || localP.nome,
-                    preco: Number(localP.precoAtual || localP.preco || 0),
-                    categoria: localP.categoria || 'geral',
-                    imagem: localP.imagem || "img/express.png"
+                    id: productId,
+                    product_id: productId,
+                    titulo: titleParam,
+                    preco: priceParam,
+                    categoria: 'geral',
+                    imagem: "img/express.png"
                 };
             }
-        }
 
-        // 3. Fallback por URL se não for encontrado em nenhum lado
-        if (!foundProduct) {
-            const titleParam = urlParams.get('title') || urlParams.get('nome') || "Produto Selecionado";
-            const priceParam = parseFloat(urlParams.get('price') || urlParams.get('preco') || 0);
-            foundProduct = {
-                id: productId,
-                product_id: productId,
-                titulo: titleParam,
-                preco: priceParam,
-                categoria: 'geral',
-                imagem: "img/express.png"
-            };
-        }
-
-        // Adiciona ao carrinho se não estiver presente
-        const alreadyInCart = cart.some(item => String(item.id) === String(foundProduct.id) || String(item.product_id) === String(foundProduct.id));
-        if (!alreadyInCart) {
-            cart.push({
-                id: foundProduct.id,
-                product_id: foundProduct.id,
-                titulo: foundProduct.titulo,
-                preco: foundProduct.preco,
-                quantity: 1,
-                categoria: foundProduct.categoria,
-                imagem: foundProduct.imagem
-            });
-            localStorage.setItem('loneke_cart', JSON.stringify(cart));
-        }
-    }
-
-    loadCartData();
-}
-
-// CÓDIGO UNIFICADO PARA GRAVAR A VENDA E ATRIBUIR A COMISSÃO AO AFILIADO
-async function grantAccessAfterPayment(customerEmail, customerWhatsApp, customerName, methodTitle) {
-    const modal = document.getElementById("paymentModalContent");
-    modal.innerHTML = `
-        <h3>A criar a sua conta e a processar o pedido...</h3>
-        <p style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.9rem;">A validar comprovativo e dados do produto...</p>
-        <div class="spinner"></div>
-    `;
-
-    const tkz = document.getElementById("valTotalKz").innerText;
-    const affiliateRef = localStorage.getItem('loneke_affiliate_ref') || null;
-
-    const docId = await createOrLoginUserAccount(customerEmail, customerName, customerWhatsApp);
-
-    try {
-        if (window.firebaseDb && window.firebaseDoc && window.firebaseSetDoc) {
-            let userProdutosMap = {};
-
-            for (const item of cart) {
-                const prodId = String(item.product_id || item.id);
-                const itemCategory = item.categoria || item.category || 'cursos';
-                userProdutosMap[prodId] = true;
-
-                // Subcoleção de compras do usuário
-                const userProdRef = window.firebaseDoc(window.firebaseDb, "users", docId, "purchases", prodId);
-                await window.firebaseSetDoc(userProdRef, {
-                    id: prodId, 
-                    titulo: item.titulo, 
-                    preco: item.preco, 
-                    quantity: item.quantity,
-                    categoria: itemCategory, 
-                    imagem: item.imagem || "img/express.png",
-                    status: "ativo", 
-                    unlocked: true, 
-                    affiliateRef: affiliateRef,
-                    affiliateCode: affiliateRef,
-                    addedAt: new Date().toISOString()
-                }, { merge: true });
-
-                // Acesso global do produto
-                const accessDocId = `${docId}_${prodId}`;
-                const accessRef = window.firebaseDoc(window.firebaseDb, "user_access", accessDocId);
-                await window.firebaseSetDoc(accessRef, {
-                    accessId: accessDocId, 
-                    userId: docId, 
-                    userEmail: customerEmail,
-                    productId: prodId, 
-                    productTitle: item.titulo,
-                    titulo: item.titulo, 
-                    categoria: itemCategory,
-                    unlocked: true, 
-                    status: "unlocked", 
-                    affiliateRef: affiliateRef,
-                    affiliateCode: affiliateRef,
-                    grantedAt: new Date().toISOString()
-                }, { merge: true });
+            const alreadyInCart = cart.some(item => String(item.id) === String(foundProduct.id) || String(item.product_id) === String(foundProduct.id));
+            if (!alreadyInCart) {
+                cart.push({
+                    id: foundProduct.id,
+                    product_id: foundProduct.id,
+                    titulo: foundProduct.titulo,
+                    preco: foundProduct.preco,
+                    quantity: 1,
+                    categoria: foundProduct.categoria,
+                    imagem: foundProduct.imagem
+                });
+                localStorage.setItem('loneke_cart', JSON.stringify(cart));
             }
-
-            // Atualiza produtos no perfil do cliente
-            const mainUserRef = window.firebaseDoc(window.firebaseDb, "users", docId);
-            await window.firebaseSetDoc(mainUserRef, {
-                produtos: userProdutosMap,
-                affiliateRef: affiliateRef
-            }, { merge: true });
-
-            const orderId = 'ORD-' + Date.now();
-            const numericTotalKz = parseFloat(tkz.replace(/[^\d.,]/g, '').replace(/\./g, '').replace(',', '.')) || 0;
-            const itemsSummaryStr = cart.map(item => `${item.titulo} (x${item.quantity})`).join("; ");
-            const primaryItem = cart[0] || {};
-
-            const orderTransactionData = {
-                orderId: orderId,
-                transactionId: orderId,
-                userId: docId, 
-                customerName: customerName,
-                userName: customerName,
-                customerEmail: customerEmail, 
-                userEmail: customerEmail,
-                customerWhatsApp: customerWhatsApp,
-                productTitle: itemsSummaryStr || primaryItem.titulo || "Produtos VIP",
-                productId: primaryItem.product_id || primaryItem.id || "carrinho",
-                method: methodTitle, 
-                paymentMethod: methodTitle,
-                totalKz: tkz,
-                amount: numericTotalKz,
-                numericTotalKz: numericTotalKz, 
-                receiptFile: selectedFileBase64 || null,
-                proofUrl: selectedFileBase64 || null,
-                comprovativo: selectedFileBase64 || null,
-                affiliateRef: affiliateRef,
-                affiliateCode: affiliateRef, // GRAVA O CÓDIGO DO AFILIADO PARA CONSULTA NO PAINEL
-                affiliateCommission: Math.floor(numericTotalKz * 0.5), // CALCULA OS 50% DE COMISSÃO
-                origin: "checkout",
-                createdAt: new Date().toISOString(), 
-                status: "pending", 
-                unlocked: true
-            };
-
-            // Regista simultaneamente em 'orders' e 'transactions'
-            await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDb, "orders", orderId), orderTransactionData);
-            await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDb, "transactions", orderId), orderTransactionData);
-
-            await sendPurchaseNotificationEmail({
-                orderId: orderId,
-                customerName: customerName,
-                customerEmail: customerEmail,
-                customerWhatsApp: customerWhatsApp,
-                method: methodTitle,
-                totalKz: tkz,
-                itemsSummary: itemsSummaryStr
-            });
         }
-    } catch (fbError) {
-        console.error("Erro na gravação do Firestore:", fbError);
+
+        loadCartData();
     }
 
-    modal.innerHTML = `
-        <i class="fa-solid fa-circle-check" style="font-size: 3.8rem; color: var(--success);"></i>
-        <h2 style="font-family: var(--font-heading); margin-top: 1rem; color: var(--white);">Acesso Solicitado!</h2>
-        <p style="color: var(--text-secondary); margin-top: 0.8rem; font-size: 0.95rem;">
-            A sua conta foi registada e o seu comprovativo enviado para verificação.
-        </p>
-        <p style="color: var(--text-secondary); margin-top: 1.2rem; font-size: 0.82rem;">A abrir a sua Área VIP...</p>
-        <div class="spinner" style="margin: 1rem auto 0 auto;"></div>
-    `;
-
-    setTimeout(() => {
-        clearCartAndExit();
-    }, 2200);
-}
-
-
-
-
-async function grantAccessAfterPayment(customerEmail, customerWhatsApp, customerName, methodTitle) {
-    const modal = document.getElementById("paymentModalContent");
-    modal.innerHTML = `
-        <h3>A criar a sua conta e a libertar o acesso...</h3>
-        <p style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.9rem;">Comprovativo e dados validados! A processar...</p>
-        <div class="spinner"></div>
-    `;
-
-    const tkz = document.getElementById("valTotalKz").innerText;
-    const affiliateRef = localStorage.getItem('loneke_affiliate_ref') || null;
-
-    const docId = await createOrLoginUserAccount(customerEmail, customerName, customerWhatsApp);
-
-    try {
-        if (window.firebaseDb && window.firebaseDoc && window.firebaseSetDoc) {
-            let userProdutosMap = {};
-
-            for (const item of cart) {
-                const prodId = String(item.product_id || item.id);
-                const itemCategory = item.categoria || item.category || 'cursos';
-                userProdutosMap[prodId] = true;
-
-                // Subcoleção de compras no perfil do utilizador
-                const userProdRef = window.firebaseDoc(window.firebaseDb, "users", docId, "purchases", prodId);
-                await window.firebaseSetDoc(userProdRef, {
-                    id: prodId, 
-                    titulo: item.titulo, 
-                    preco: item.preco, 
-                    quantity: item.quantity,
-                    categoria: itemCategory, 
-                    imagem: item.imagem || "img/express.png",
-                    status: "ativo", 
-                    unlocked: true, 
-                    affiliateRef: affiliateRef,
-                    affiliateCode: affiliateRef,
-                    addedAt: new Date().toISOString()
-                }, { merge: true });
-
-                // Coleção global de permissões de acesso
-                const accessDocId = `${docId}_${prodId}`;
-                const accessRef = window.firebaseDoc(window.firebaseDb, "user_access", accessDocId);
-                await window.firebaseSetDoc(accessRef, {
-                    accessId: accessDocId, 
-                    userId: docId, 
-                    userEmail: customerEmail,
-                    productId: prodId, 
-                    titulo: item.titulo, 
-                    categoria: itemCategory,
-                    unlocked: true, 
-                    status: "ativo", 
-                    affiliateRef: affiliateRef,
-                    affiliateCode: affiliateRef,
-                    grantedAt: new Date().toISOString()
-                }, { merge: true });
-            }
-
-            // Atualiza mapa de produtos no perfil do utilizador
-            const mainUserRef = window.firebaseDoc(window.firebaseDb, "users", docId);
-            await window.firebaseSetDoc(mainUserRef, {
-                produtos: userProdutosMap,
-                affiliateRef: affiliateRef
-            }, { merge: true });
-
-            const orderId = 'ORD-' + Date.now();
-            const numericTotalKz = parseFloat(tkz.replace(/[^\d.,]/g, '').replace(/\./g, '').replace(',', '.')) || 0;
-            const itemsSummaryStr = cart.map(item => `${item.titulo} (x${item.quantity}) - ${(item.preco * item.quantity).toLocaleString('pt-AO')} Kz`).join("; ");
-            const primaryItem = cart[0] || {};
-
-            const orderTransactionData = {
-                orderId: orderId,
-                transactionId: orderId,
-                userId: docId, 
-                customerName: customerName,
-                userName: customerName,
-                customerEmail: customerEmail, 
-                userEmail: customerEmail,
-                customerWhatsApp: customerWhatsApp,
-                productTitle: itemsSummaryStr || primaryItem.titulo || "Compra de Produtos",
-                productId: primaryItem.product_id || primaryItem.id || "carrinho",
-                method: methodTitle, 
-                paymentMethod: methodTitle,
-                totalKz: tkz,
-                amount: numericTotalKz,
-                numericTotalKz: numericTotalKz, 
-                receiptFile: selectedFileBase64 || null,
-                proofUrl: selectedFileBase64 || null,
-                comprovativo: selectedFileBase64 || null,
-                affiliateRef: affiliateRef,
-                affiliateCode: affiliateRef, // GRAVA O CÓDIGO DO AFILIADO NAS TRANSAÇÕES
-                origin: "checkout",
-                createdAt: new Date().toISOString(), 
-                status: "pending", 
-                unlocked: false
-            };
-
-            // Registo nas coleções 'orders' e 'transactions'
-            await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDb, "orders", orderId), orderTransactionData);
-            await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDb, "transactions", orderId), orderTransactionData);
-
-            await sendPurchaseNotificationEmail({
-                orderId: orderId,
-                customerName: customerName,
-                customerEmail: customerEmail,
-                customerWhatsApp: customerWhatsApp,
-                method: methodTitle,
-                totalKz: tkz,
-                itemsSummary: itemsSummaryStr
-            });
-        }
-    } catch (fbError) {
-        console.error("Erro na gravação do Firestore:", fbError);
-    }
-
-    modal.innerHTML = `
-        <i class="fa-solid fa-circle-check" style="font-size: 3.8rem; color: var(--success);"></i>
-        <h2 style="font-family: var(--font-heading); margin-top: 1rem; color: var(--white);">Acesso Solicitado!</h2>
-        <p style="color: var(--text-secondary); margin-top: 0.8rem; font-size: 0.95rem;">
-            A sua conta foi registada e o seu comprovativo foi enviado para verificação.
-        </p>
-        <p style="color: var(--text-secondary); margin-top: 1.2rem; font-size: 0.82rem;">A abrir a sua Área VIP em instantes...</p>
-        <div class="spinner" style="margin: 1rem auto 0 auto;"></div>
-    `;
-
-    setTimeout(() => {
-        clearCartAndExit();
-    }, 2200);
-}
-
-function renderOrderBumps() {
+    function renderOrderBumps() {
         const container = document.getElementById("orderBumpContainer");
         const listContainer = document.getElementById("bumpItemsList");
         
@@ -1322,6 +1064,14 @@ function renderOrderBumps() {
                 
                 const activePanel = document.getElementById(`panel-${selectedMethod}`);
                 if (activePanel) activePanel.style.display = "block";
+
+                // Limpa estado do comprovativo ao alterar metodo
+                selectedFileBase64 = null;
+                isFileValidated = false;
+                const statusTransfer = document.getElementById("uploadStatusText");
+                const statusWise = document.getElementById("uploadWiseStatusText");
+                if (statusTransfer) statusTransfer.innerText = "Clique para selecionar o comprovativo BAI";
+                if (statusWise) statusWise.innerText = "Clique para selecionar o comprovativo Wise";
             });
         });
     }
@@ -1445,126 +1195,136 @@ function renderOrderBumps() {
         }
     }
 
-async function grantAccessAfterPayment(customerEmail, customerWhatsApp, customerName, methodTitle) {
-    const modal = document.getElementById("paymentModalContent");
-    modal.innerHTML = `
-        <h3>A criar a sua conta e a libertar o acesso...</h3>
-        <p style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.9rem;">Comprovativo e dados validados! A processar...</p>
-        <div class="spinner"></div>
-    `;
+    async function grantAccessAfterPayment(customerEmail, customerWhatsApp, customerName, methodTitle) {
+        const modal = document.getElementById("paymentModalContent");
+        modal.innerHTML = `
+            <h3>A criar a sua conta e a processar o pedido...</h3>
+            <p style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.9rem;">A validar comprovativo e dados do produto...</p>
+            <div class="spinner"></div>
+        `;
 
-    const tkz = document.getElementById("valTotalKz").innerText;
-    // Recupera o código do afiliado armazenado no localStorage
-    const affiliateRef = localStorage.getItem('loneke_affiliate_ref') || null;
+        const tkz = document.getElementById("valTotalKz").innerText;
+        const affiliateRef = localStorage.getItem('loneke_affiliate_ref') || null;
 
-    // 1. Cria ou efetua login na conta do utilizador no Firebase Auth e Firestore
-    const docId = await createOrLoginUserAccount(customerEmail, customerName, customerWhatsApp);
+        const docId = await createOrLoginUserAccount(customerEmail, customerName, customerWhatsApp);
 
-    try {
-        if (window.firebaseDb && window.firebaseDoc && window.firebaseSetDoc) {
-            let userProdutosMap = {};
+        try {
+            if (window.firebaseDb && window.firebaseDoc && window.firebaseSetDoc) {
+                let userProdutosMap = {};
 
-            for (const item of cart) {
-                const prodId = String(item.product_id || item.id);
-                const itemCategory = item.categoria || item.category || 'cursos';
-                userProdutosMap[prodId] = true;
+                for (const item of cart) {
+                    const prodId = String(item.product_id || item.id);
+                    const itemCategory = item.categoria || item.category || 'cursos';
+                    userProdutosMap[prodId] = true;
 
-                // Subcoleção de compras no perfil do utilizador
-                const userProdRef = window.firebaseDoc(window.firebaseDb, "users", docId, "purchases", prodId);
-                await window.firebaseSetDoc(userProdRef, {
-                    id: prodId, 
-                    titulo: item.titulo, 
-                    preco: item.preco, 
-                    quantity: item.quantity,
-                    categoria: itemCategory, 
-                    imagem: item.imagem || "img/express.png",
-                    status: "ativo", 
-                    unlocked: true, 
-                    affiliateRef: affiliateRef,
-                    addedAt: new Date().toISOString()
+                    // Subcoleção de compras do utilizador
+                    const userProdRef = window.firebaseDoc(window.firebaseDb, "users", docId, "purchases", prodId);
+                    await window.firebaseSetDoc(userProdRef, {
+                        id: prodId, 
+                        titulo: item.titulo, 
+                        preco: item.preco, 
+                        quantity: item.quantity,
+                        categoria: itemCategory, 
+                        imagem: item.imagem || "img/express.png",
+                        status: "ativo", 
+                        unlocked: true, 
+                        affiliateRef: affiliateRef,
+                        affiliateCode: affiliateRef,
+                        addedAt: new Date().toISOString()
+                    }, { merge: true });
+
+                    // Acesso global do produto
+                    const accessDocId = `${docId}_${prodId}`;
+                    const accessRef = window.firebaseDoc(window.firebaseDb, "user_access", accessDocId);
+                    await window.firebaseSetDoc(accessRef, {
+                        accessId: accessDocId, 
+                        userId: docId, 
+                        userEmail: customerEmail,
+                        productId: prodId, 
+                        productTitle: item.titulo,
+                        titulo: item.titulo, 
+                        categoria: itemCategory,
+                        unlocked: true, 
+                        status: "unlocked", 
+                        affiliateRef: affiliateRef,
+                        affiliateCode: affiliateRef,
+                        grantedAt: new Date().toISOString()
+                    }, { merge: true });
+                }
+
+                // Atualiza mapa de produtos no perfil principal do utilizador
+                const mainUserRef = window.firebaseDoc(window.firebaseDb, "users", docId);
+                await window.firebaseSetDoc(mainUserRef, {
+                    produtos: userProdutosMap,
+                    affiliateRef: affiliateRef
                 }, { merge: true });
 
-                // Coleção global de permissões de acesso
-                const accessDocId = `${docId}_${prodId}`;
-                const accessRef = window.firebaseDoc(window.firebaseDb, "user_access", accessDocId);
-                await window.firebaseSetDoc(accessRef, {
-                    accessId: accessDocId, 
+                const orderId = 'ORD-' + Date.now();
+                const numericTotalKz = parseFloat(tkz.replace(/[^\d.,]/g, '').replace(/\./g, '').replace(',', '.')) || 0;
+                const itemsSummaryStr = cart.map(item => `${item.titulo} (x${item.quantity})`).join("; ");
+                const primaryItem = cart[0] || {};
+
+                const orderTransactionData = {
+                    orderId: orderId,
+                    transactionId: orderId,
                     userId: docId, 
+                    customerName: customerName,
+                    userName: customerName,
+                    customerEmail: customerEmail, 
                     userEmail: customerEmail,
-                    productId: prodId, 
-                    titulo: item.titulo, 
-                    categoria: itemCategory,
-                    unlocked: true, 
-                    status: "ativo", 
+                    customerWhatsApp: customerWhatsApp,
+                    productTitle: itemsSummaryStr || primaryItem.titulo || "Produtos VIP",
+                    productId: primaryItem.product_id || primaryItem.id || "carrinho",
+                    method: methodTitle, 
+                    paymentMethod: methodTitle,
+                    totalKz: tkz,
+                    amount: numericTotalKz,
+                    numericTotalKz: numericTotalKz, 
+                    receiptFile: selectedFileBase64 || null,
+                    proofUrl: selectedFileBase64 || null,
+                    comprovativo: selectedFileBase64 || null,
                     affiliateRef: affiliateRef,
-                    grantedAt: new Date().toISOString()
-                }, { merge: true });
+                    affiliateCode: affiliateRef,
+                    affiliateCommission: Math.floor(numericTotalKz * 0.5),
+                    origin: "checkout",
+                    createdAt: new Date().toISOString(), 
+                    status: "pending", 
+                    unlocked: true
+                };
+
+                // Regista simultaneamente em 'orders' e 'transactions'
+                await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDb, "orders", orderId), orderTransactionData);
+                await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDb, "transactions", orderId), orderTransactionData);
+
+                await sendPurchaseNotificationEmail({
+                    orderId: orderId,
+                    customerName: customerName,
+                    customerEmail: customerEmail,
+                    customerWhatsApp: customerWhatsApp,
+                    method: methodTitle,
+                    totalKz: tkz,
+                    itemsSummary: itemsSummaryStr
+                });
             }
-
-            // Atualiza mapa de produtos no perfil principal do utilizador
-            const mainUserRef = window.firebaseDoc(window.firebaseDb, "users", docId);
-            await window.firebaseSetDoc(mainUserRef, {
-                produtos: userProdutosMap,
-                affiliateRef: affiliateRef
-            }, { merge: true });
-
-            // Registro do pedido na coleção orders para o painel de administração/afiliados
-            const orderId = 'ORD-' + Date.now();
-            const numericTotalKz = parseFloat(tkz.replace(/[^\d.,]/g, '').replace(/\./g, '').replace(',', '.')) || 0;
-            
-            await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDb, "orders", orderId), {
-                orderId: orderId, 
-                userId: docId, 
-                customerName: customerName,
-                customerEmail: customerEmail, 
-                customerWhatsApp: customerWhatsApp,
-                method: methodTitle, 
-                totalKz: tkz,
-                numericTotalKz: numericTotalKz, 
-                receiptFile: selectedFileBase64 || null,
-                affiliateRef: affiliateRef,
-                createdAt: new Date().toISOString(), 
-                status: "Aprovado", 
-                unlocked: true
-            });
-
-            const itemsSummaryStr = cart.map(item => `${item.titulo} (x${item.quantity}) - ${(item.preco * item.quantity).toLocaleString('pt-AO')} Kz`).join("; ");
-
-            await sendPurchaseNotificationEmail({
-                orderId: orderId,
-                customerName: customerName,
-                customerEmail: customerEmail,
-                customerWhatsApp: customerWhatsApp,
-                method: methodTitle,
-                totalKz: tkz,
-                itemsSummary: itemsSummaryStr
-            });
+        } catch (fbError) {
+            console.error("Erro na gravação do Firestore:", fbError);
         }
-    } catch (fbError) {
-        console.error("Erro na gravação do Firestore:", fbError);
+
+        modal.innerHTML = `
+            <i class="fa-solid fa-circle-check" style="font-size: 3.8rem; color: var(--success);"></i>
+            <h2 style="font-family: var(--font-heading); margin-top: 1rem; color: var(--white);">Acesso Solicitado!</h2>
+            <p style="color: var(--text-secondary); margin-top: 0.8rem; font-size: 0.95rem;">
+                A sua conta foi registada e o seu comprovativo enviado para verificação.
+            </p>
+            <p style="color: var(--text-secondary); margin-top: 1.2rem; font-size: 0.82rem;">A abrir a sua Área VIP...</p>
+            <div class="spinner" style="margin: 1rem auto 0 auto;"></div>
+        `;
+
+        setTimeout(() => {
+            clearCartAndExit();
+        }, 2200);
     }
 
-    modal.innerHTML = `
-        <i class="fa-solid fa-circle-check" style="font-size: 3.8rem; color: var(--success);"></i>
-        <h2 style="font-family: var(--font-heading); margin-top: 1rem; color: var(--white);">Acesso Libertado!</h2>
-        <p style="color: var(--text-secondary); margin-top: 0.8rem; font-size: 0.95rem;">
-            A sua conta foi criada e os seus produtos estão disponíveis.
-        </p>
-        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 1.2rem; border-radius: var(--radius-sm); margin-top: 1.2rem; text-align: left;">
-            <p style="color: var(--white); font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem;">
-                <i class="fa-solid fa-key" style="color: var(--success);"></i> Seus Dados de Acesso Futuro:
-            </p>
-            <p style="color: var(--text-main); font-size: 0.85rem; margin-bottom: 0.3rem;"><strong>E-mail:</strong> ${customerEmail}</p>
-            <p style="color: var(--text-main); font-size: 0.85rem;"><strong>Senha:</strong> ${customerEmail}</p>
-        </div>
-        <p style="color: var(--text-secondary); margin-top: 1.2rem; font-size: 0.82rem;">A abrir a sua Área VIP em instantes...</p>
-        <div class="spinner" style="margin: 1rem auto 0 auto;"></div>
-    `;
-
-    setTimeout(() => {
-        clearCartAndExit();
-    }, 2200);
-}
     function clearCartAndExit() {
         localStorage.removeItem('loneke_cart');
         window.location.href = USER_PANEL_URL;
