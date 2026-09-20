@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finalizar Compra | Loneke no Beat Premium Infoproducts</title>
+    
+    <!-- SDKs do Firebase Compat (Redundância para garantir o carregamento do Firestore) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script type="module" src="firebase-init.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -599,6 +604,18 @@
     let selectedFileBase64 = null;
     let isFileValidated = false;
 
+    // Aguarda o Firebase estar pronto
+    async function waitForFirebase(maxWaitMs = 3000) {
+        const start = Date.now();
+        while (Date.now() - start < maxWaitMs) {
+            if (window.firebaseDb || (typeof firebase !== 'undefined' && firebase.firestore)) {
+                return true;
+            }
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        return false;
+    }
+
     // Captura parâmetros da URL e inicializa o checkout de afiliados
     document.addEventListener("DOMContentLoaded", async () => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -608,14 +625,13 @@
         }
 
         await fetchApiProducts();
+        await initCartWithPlanContext();
 
         setTimeout(() => {
             const loadingScreen = document.getElementById("loadingScreen");
             if (loadingScreen) loadingScreen.classList.add("hidden");
         }, 800);
 
-        await initCartWithPlanContext();
-        loadCartData();
         initPaymentSelector();
         renderOrderBumps();
 
@@ -834,10 +850,8 @@
         }, 4000);
     }
 
-    // INICIALIZA O CARRINHO A PARTIR DO LINK DE AFILIADO
+    // INICIALIZA O CARRINHO A PARTIR DO LINK DE AFILIADO OU URL
     async function initCartWithPlanContext() {
-        cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
-
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('product_id') || urlParams.get('id');
         const affCode = urlParams.get('ref') || urlParams.get('aff') || urlParams.get('afiliado');
@@ -846,114 +860,135 @@
             localStorage.setItem('loneke_affiliate_ref', affCode.trim());
         }
 
-        if (productId) {
-            let foundProduct = null;
+        // Se NÃO foi passado product_id na URL, carrega o carrinho salvo no localStorage
+        if (!productId) {
+            cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
+            loadCartData();
+            return;
+        }
 
-            // 1. Busca produto via Firestore (Modular ou Compat / coleções "produtos" e "promocoes")
-            try {
-                // Tenta via Modular (window.firebaseDb)
-                if (window.firebaseDb && window.firebaseDoc && window.firebaseGetDoc) {
-                    let docRef = window.firebaseDoc(window.firebaseDb, "produtos", productId);
-                    let docSnap = await window.firebaseGetDoc(docRef);
-                    if (!docSnap.exists()) {
-                        docRef = window.firebaseDoc(window.firebaseDb, "promocoes", productId);
-                        docSnap = await window.firebaseGetDoc(docRef);
-                    }
-                    if (docSnap.exists()) {
-                        const pData = docSnap.data();
-                        foundProduct = {
-                            id: docSnap.id,
-                            product_id: docSnap.id,
-                            titulo: pData.titulo || pData.title || pData.nome || pData.productTitle || "Produto VIP",
-                            preco: Number(pData.precoPromo || pData.precoAtual || pData.preco || pData.price || 0),
-                            categoria: pData.categoria || 'geral',
-                            imagem: pData.imagem || pData.imageUrl || pData.thumb || pData.capa || pData.foto || "img/express.png"
-                        };
-                    }
+        // Aguarda a inicialização do Firebase para consultas
+        await waitForFirebase(3500);
+
+        let foundProduct = null;
+
+        // 1. Busca produto via Firestore (Modular ou Compat / coleções "produtos" e "promocoes")
+        try {
+            // A) Método Modular (window.firebaseDb)
+            if (window.firebaseDb && window.firebaseDoc && window.firebaseGetDoc) {
+                let docRef = window.firebaseDoc(window.firebaseDb, "produtos", productId);
+                let docSnap = await window.firebaseGetDoc(docRef);
+                if (!docSnap.exists()) {
+                    docRef = window.firebaseDoc(window.firebaseDb, "promocoes", productId);
+                    docSnap = await window.firebaseGetDoc(docRef);
                 }
-
-                // Tenta via Compat SDK se não encontrado no Modular
-                if (!foundProduct && typeof firebase !== 'undefined' && firebase.firestore) {
-                    const dbCompat = firebase.firestore();
-                    let docSnap = await dbCompat.collection("produtos").doc(productId).get();
-                    if (!docSnap.exists) {
-                        docSnap = await dbCompat.collection("promocoes").doc(productId).get();
-                    }
-                    if (docSnap.exists) {
-                        const pData = docSnap.data();
-                        foundProduct = {
-                            id: docSnap.id,
-                            product_id: docSnap.id,
-                            titulo: pData.titulo || pData.title || pData.nome || pData.productTitle || "Produto VIP",
-                            preco: Number(pData.precoPromo || pData.precoAtual || pData.preco || pData.price || 0),
-                            categoria: pData.categoria || 'geral',
-                            imagem: pData.imagem || pData.imageUrl || pData.thumb || pData.capa || pData.foto || "img/express.png"
-                        };
-                    }
-                }
-            } catch (e) {
-                console.warn("Aviso ao buscar produto no Firestore:", e);
-            }
-
-            // 2. Busca produto no catálogo local de produtos.js
-            if (!foundProduct && typeof produtos !== 'undefined' && Array.isArray(produtos)) {
-                const localP = produtos.find(p => String(p.id) === String(productId) || String(p.uuid) === String(productId) || String(p.slug) === String(productId));
-                if (localP) {
+                if (docSnap.exists()) {
+                    const pData = docSnap.data();
+                    const rawPrice = pData.precoPromo ?? pData.precoAtual ?? pData.preco ?? pData.precoOriginal ?? pData.price ?? 0;
                     foundProduct = {
-                        id: localP.id,
-                        product_id: localP.id,
-                        titulo: localP.titulo || localP.nome || localP.title,
-                        preco: Number(localP.precoPromo || localP.precoAtual || localP.preco || localP.price || 0),
-                        categoria: localP.categoria || 'geral',
-                        imagem: localP.imagem || localP.imageUrl || localP.capa || "img/express.png"
+                        id: docSnap.id,
+                        product_id: docSnap.id,
+                        titulo: pData.titulo || pData.title || pData.nome || pData.productTitle || "Produto VIP",
+                        preco: typeof rawPrice === 'string' ? parseFloat(rawPrice.replace(/[^\d.,]/g, '').replace(',', '.')) : Number(rawPrice || 0),
+                        categoria: pData.categoria || 'geral',
+                        imagem: pData.imagem || pData.imageUrl || pData.thumb || pData.capa || pData.foto || "img/express.png"
                     };
                 }
             }
 
-            // Busca nas Order Bumps
-            if (!foundProduct && typeof orderBumpProdutos !== 'undefined' && Array.isArray(orderBumpProdutos)) {
-                const bumpP = orderBumpProdutos.find(p => String(p.id) === String(productId));
-                if (bumpP) {
+            // B) Método Compat SDK (Fallback caso Modular não esteja no window)
+            if (!foundProduct && typeof firebase !== 'undefined' && firebase.firestore) {
+                const dbCompat = firebase.firestore();
+                let docSnap = await dbCompat.collection("produtos").doc(productId).get();
+                if (!docSnap.exists) {
+                    docSnap = await dbCompat.collection("promocoes").doc(productId).get();
+                }
+                if (docSnap.exists) {
+                    const pData = docSnap.data();
+                    const rawPrice = pData.precoPromo ?? pData.precoAtual ?? pData.preco ?? pData.precoOriginal ?? pData.price ?? 0;
                     foundProduct = {
-                        id: bumpP.id,
-                        product_id: bumpP.id,
-                        titulo: bumpP.titulo || bumpP.nome,
-                        preco: Number(bumpP.preco || 0),
-                        categoria: bumpP.categoria || 'geral',
-                        imagem: bumpP.imagem || "img/express.png"
+                        id: docSnap.id,
+                        product_id: docSnap.id,
+                        titulo: pData.titulo || pData.title || pData.nome || pData.productTitle || "Produto VIP",
+                        preco: typeof rawPrice === 'string' ? parseFloat(rawPrice.replace(/[^\d.,]/g, '').replace(',', '.')) : Number(rawPrice || 0),
+                        categoria: pData.categoria || 'geral',
+                        imagem: pData.imagem || pData.imageUrl || pData.thumb || pData.capa || pData.foto || "img/express.png"
                     };
                 }
             }
+        } catch (e) {
+            console.warn("Aviso ao buscar produto no Firestore:", e);
+        }
 
-            // 3. Fallback estendido por parâmetros da URL
-            if (!foundProduct) {
-                const titleParam = urlParams.get('title') || urlParams.get('nome') || urlParams.get('titulo') || "Produto VIP";
-                const priceParam = parseFloat(urlParams.get('price') || urlParams.get('preco') || urlParams.get('pricePromo') || 0);
-                const imageParam = urlParams.get('imagem') || urlParams.get('image') || urlParams.get('thumb') || "img/express.png";
+        // 2. Busca produto no catálogo local de produtos.js
+        if (!foundProduct && typeof produtos !== 'undefined' && Array.isArray(produtos)) {
+            const localP = produtos.find(p => 
+                String(p.id) === String(productId) || 
+                String(p.product_id) === String(productId) ||
+                String(p.uuid) === String(productId) || 
+                String(p.slug) === String(productId)
+            );
+            if (localP) {
+                const rawPrice = localP.precoPromo ?? localP.precoAtual ?? localP.preco ?? localP.price ?? 0;
+                foundProduct = {
+                    id: localP.id,
+                    product_id: localP.id,
+                    titulo: localP.titulo || localP.nome || localP.title || "Produto VIP",
+                    preco: typeof rawPrice === 'string' ? parseFloat(rawPrice.replace(/[^\d.,]/g, '').replace(',', '.')) : Number(rawPrice || 0),
+                    categoria: localP.categoria || 'geral',
+                    imagem: localP.imagem || localP.imageUrl || localP.capa || "img/express.png"
+                };
+            }
+        }
 
+        // 3. Busca nas Order Bumps
+        if (!foundProduct && typeof orderBumpProdutos !== 'undefined' && Array.isArray(orderBumpProdutos)) {
+            const bumpP = orderBumpProdutos.find(p => String(p.id) === String(productId));
+            if (bumpP) {
+                foundProduct = {
+                    id: bumpP.id,
+                    product_id: bumpP.id,
+                    titulo: bumpP.titulo || bumpP.nome || "Produto VIP",
+                    preco: Number(bumpP.preco || 0),
+                    categoria: bumpP.categoria || 'geral',
+                    imagem: bumpP.imagem || "img/express.png"
+                };
+            }
+        }
+
+        // 4. Parâmetros explícitos da URL
+        if (!foundProduct) {
+            const titleParam = urlParams.get('title') || urlParams.get('nome') || urlParams.get('titulo');
+            const priceParam = parseFloat(urlParams.get('price') || urlParams.get('preco') || urlParams.get('pricePromo') || 0);
+            const imageParam = urlParams.get('imagem') || urlParams.get('image') || urlParams.get('thumb') || "img/express.png";
+
+            if (titleParam || priceParam > 0) {
                 foundProduct = {
                     id: productId,
                     product_id: productId,
-                    titulo: titleParam,
+                    titulo: titleParam || "Produto VIP",
                     preco: priceParam,
                     categoria: 'geral',
                     imagem: imageParam
                 };
             }
+        }
 
-            if (foundProduct) {
-                // Preenche o carrinho diretamente com o produto encontrado
-                cart = [{
-                    id: foundProduct.id,
-                    product_id: foundProduct.id,
-                    titulo: foundProduct.titulo,
-                    preco: foundProduct.preco,
-                    quantity: 1,
-                    categoria: foundProduct.categoria,
-                    imagem: foundProduct.imagem
-                }];
-                localStorage.setItem('loneke_cart', JSON.stringify(cart));
-            }
+        // Se encontrou o produto, atualiza o carrinho
+        if (foundProduct) {
+            cart = [{
+                id: foundProduct.id,
+                product_id: foundProduct.product_id || foundProduct.id,
+                titulo: foundProduct.titulo,
+                preco: foundProduct.preco,
+                quantity: 1,
+                categoria: foundProduct.categoria,
+                imagem: foundProduct.imagem
+            }];
+            localStorage.setItem('loneke_cart', JSON.stringify(cart));
+        } else {
+            // Se não encontrou, carrega o existente
+            cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
         }
 
         loadCartData();
