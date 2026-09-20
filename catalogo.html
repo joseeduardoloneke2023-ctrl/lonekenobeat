@@ -69,12 +69,13 @@
             display: block;
         }
 
-        input, textarea, button {
+        input, textarea, button, select {
             font-family: inherit;
             background: none;
             border: none;
             outline: none;
         }
+
         .container {
             width: 100%;
             max-width: 1300px;
@@ -103,6 +104,7 @@
             margin: 0 auto 3rem auto;
             font-weight: 300;
         }
+
         .btn {
             display: inline-flex;
             align-items: center;
@@ -145,6 +147,7 @@
             transform: translateY(-2px) scale(1.03);
             box-shadow: 0 6px 22px rgba(255, 215, 0, 0.4);
         }
+
         header {
             position: fixed;
             top: 0;
@@ -247,6 +250,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 0.8rem;
+            align-items: center;
         }
 
         .tab-btn {
@@ -266,6 +270,20 @@
             color: var(--white);
             border-color: var(--primary);
             box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        .plugin-select-filter {
+            display: none;
+            background: #000000;
+            color: #FFFFFF;
+            border: 1px solid var(--primary);
+            padding: 0.65rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.88rem;
+            cursor: pointer;
+            outline: none;
+            margin-left: 5px;
+            box-shadow: 0 4px 15px rgba(229, 9, 20, 0.2);
         }
 
         .pagination-wrapper {
@@ -421,28 +439,6 @@
             color: var(--white);
         }
 
-        .btn-card-action {
-            width: 100%;
-            background: var(--white);
-            color: #000000;
-            padding: 1rem;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            transition: var(--transition-fast);
-        }
-
-        .btn-card-action:hover {
-            background: var(--primary);
-            color: var(--white);
-            box-shadow: 0 8px 20px rgba(229, 9, 20, 0.4);
-        }
-
         .card-actions-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -450,6 +446,7 @@
             width: 100%;
             margin-top: auto;
         }
+
         .btn-card-view {
             background: rgba(255,255,255,0.06);
             border: 1px solid rgba(255,255,255,0.05);
@@ -730,7 +727,7 @@
         }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;" onkeydown="if(event.keyCode==123 || (event.ctrlKey && event.shiftKey && (event.keyCode==73 || event.keyCode==74)) || (event.ctrlKey && (event.keyCode==85 || event.keyCode==83))) return false;">
 
     <div class="toast-container" id="toastContainer"></div>
 
@@ -739,7 +736,6 @@
             <a href="index.html" class="logo">LONEKE NO <span>BEAT</span></a>
             <nav class="nav-menu" id="navMenu">
                 <a href="index.html" class="nav-link">Home</a>
-              
                 <a href="catalogo.html" class="nav-link">Produtos</a>
                 <a href="index.html#features" class="nav-link">Serviços</a>
                 <a href="index.html#about" class="nav-link">Sobre</a>
@@ -769,20 +765,26 @@
                         <button class="tab-btn active" data-category="all">Todos os Produtos</button>
                         <button class="tab-btn" data-category="drumkits">Drum Kits</button>
                         <button class="tab-btn" data-category="plugins">Plugins, Livrarias & Daw</button>
+
+
                         <button class="tab-btn" data-category="flp">FLP</button>
                         <button class="tab-btn" data-category="loops">Loop Kits</button>
                         <button class="tab-btn" data-category="cursos">Cursos</button>
                         <button class="tab-btn" data-category="ebooks">E-books</button>
-
+                    
+                        <!-- Filtro Dinâmico de Sub-categoria para Plugins -->
+                        <select id="pluginSubFilter" class="plugin-select-filter" onchange="onPluginSubFilterChange(this.value)">
+                            <option value="todos">Todos os Plugins</option>
+                            <option value="mix_master">Mix & Master (VST)</option>
+                            <option value="instrumentos">Instrumentos (VSTi)</option>
+                        </select>
 
                     </div>
                 </div>
 
-                <div class="suggestion-grid" id="catalogGrid">
-                </div>
+                <div class="suggestion-grid" id="catalogGrid"></div>
 
-                <div class="pagination-wrapper" id="catalogPagination">
-                </div>
+                <div class="pagination-wrapper" id="catalogPagination"></div>
             </div>
         </section>
     </main>
@@ -845,32 +847,29 @@
         <div class="cart-count-badge" id="cartGlobalCount">0</div>
     </div>
 
-<!-- SDKs do Firebase (Versão Compat) -->
+<!-- SDKs do Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
-    // --- CONEXÃO FIREBASE & ESTADO GLOBAL ---
-    // Se o Firebase já foi inicializado em outro lugar do seu código, ele reaproveitará a conexão
     if (!firebase.apps.length) {
         const firebaseConfig = {
-    apiKey: "AIzaSyAccxyuNdi_E9Dpz0YPnWZwRC6mBU0AcVo",
-    authDomain: "loneke-site-oficial.firebaseapp.com",
-    projectId: "loneke-site-oficial",
-    storageBucket: "loneke-site-oficial.firebasestorage.app",
-    messagingSenderId: "716824234386",
-    appId: "1:716824234386:web:9bd3a8359ba388eb0dd94b",
-     measurementId: "G-MGJJPNDTM0"
+            apiKey: "AIzaSyAccxyuNdi_E9Dpz0YPnWZwRC6mBU0AcVo",
+            authDomain: "loneke-site-oficial.firebaseapp.com",
+            projectId: "loneke-site-oficial",
+            storageBucket: "loneke-site-oficial.firebasestorage.app",
+            messagingSenderId: "716824234386",
+            appId: "1:716824234386:web:9bd3a8359ba388eb0dd94b",
+            measurementId: "G-MGJJPNDTM0"
         };
         firebase.initializeApp(firebaseConfig);
     }
     const db = firebase.firestore();
 
-    // Array global que armazenará os produtos vindos do Firebase
     let produtos = [];
-
     const ITEMS_PER_PAGE = 20;
     let currentPage = 1;
     let selectedCategory = 'all';
+    let pluginSubGroup = 'todos';
     let filterSearchQuery = '';
 
     const notificacoesFakes = [
@@ -891,7 +890,6 @@
         { nome: "Djamila Diogo", forma: "Referência Bancária", valor: "18.500 Kz" }
     ];
 
-    // Busca os produtos na coleção 'produtos' do Firebase Firestore
     async function carregarProdutosDoFirebase() {
         try {
             const snapshot = await db.collection("produtos").get();
@@ -901,6 +899,7 @@
                     id: data.id || doc.id,
                     titulo: data.titulo || '',
                     categoria: data.categoria || '',
+                    tipoPlugin: data.tipoPlugin || data.subcategoria || '',
                     descricao: data.descricao || '',
                     imagem: data.imagem || '',
                     precoAntigo: Number(data.precoAntigo || 0),
@@ -917,24 +916,11 @@
     }
 
     function slugify(text) {
-        return text
-            .toString()
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/\s+/g, '-')
-            .replace(/[^\w\-]+/g, '')
-            .replace(/\-\-+/g, '-')
-            .replace(/^-+/, '')
-            .replace(/-+$/, '');
+        return text.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
     }
 
     function saveCatalogState() {
-        sessionStorage.setItem('loneke_catalog_state', JSON.stringify({
-            selectedCategory,
-            filterSearchQuery,
-            currentPage
-        }));
+        sessionStorage.setItem('loneke_catalog_state', JSON.stringify({ selectedCategory, filterSearchQuery, currentPage, pluginSubGroup }));
     }
 
     document.addEventListener("DOMContentLoaded", async () => {
@@ -943,7 +929,6 @@
         updateCartBadge();
         initFakePurchaseNotifications();
 
-        // Aguarda carregar do Firestore antes de renderizar a página
         await carregarProdutosDoFirebase();
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -951,17 +936,8 @@
         const categoryParam = urlParams.get('cat');
 
         if (productParam) {
-            let prod = produtos.find(p => slugify(p.titulo) === productParam);
-            
-            if (!prod && productParam) {
-                prod = produtos.find(p => String(p.id) === String(productParam));
-            }
-
-            if (prod) {
-                renderProductDetailPage(prod.id);
-            } else {
-                renderProductDetailPage(null);
-            }
+            let prod = produtos.find(p => slugify(p.titulo) === productParam) || produtos.find(p => String(p.id) === String(productParam));
+            renderProductDetailPage(prod ? prod.id : null);
         } else {
             const savedState = sessionStorage.getItem('loneke_catalog_state');
             if (savedState) {
@@ -970,20 +946,17 @@
                     if (state.selectedCategory) selectedCategory = state.selectedCategory;
                     if (state.filterSearchQuery !== undefined) filterSearchQuery = state.filterSearchQuery;
                     if (state.currentPage) currentPage = state.currentPage;
+                    if (state.pluginSubGroup) pluginSubGroup = state.pluginSubGroup;
                 } catch(e) {}
             }
 
-            if (categoryParam) {
-                selectedCategory = categoryParam.toLowerCase();
-            }
+            if (categoryParam) selectedCategory = categoryParam.toLowerCase();
 
             initCatalogEvents();
             updateActiveTabUI(selectedCategory);
 
             const searchInput = document.getElementById("catalogSearch");
-            if (searchInput && filterSearchQuery) {
-                searchInput.value = filterSearchQuery;
-            }
+            if (searchInput && filterSearchQuery) searchInput.value = filterSearchQuery;
 
             renderCatalogEngine();
         }
@@ -996,33 +969,24 @@
         const toast = document.createElement("div");
         toast.className = "toast-notification";
         toast.innerHTML = `<i class="fa-solid ${iconClass}"></i> <span>${message}</span>`;
-        
         container.appendChild(toast);
-
-        setTimeout(() => {
-            toast.remove();
-        }, 4000);
+        setTimeout(() => toast.remove(), 4000);
     }
 
     function initFakePurchaseNotifications() {
         function triggerNextNotification() {
             const item = notificacoesFakes[Math.floor(Math.random() * notificacoesFakes.length)];
             const formattedMessage = `<strong>${item.nome}</strong> comprou um produto!<br><small>Pagamento: ${item.forma} | Valor: ${item.valor}</small>`;
-            
             showNotification(formattedMessage, "fa-bag-shopping");
-
             const randomTime = Math.floor(Math.random() * (20000 - 10000 + 1)) + 10000;
             setTimeout(triggerNextNotification, randomTime);
         }
-        
         setTimeout(triggerNextNotification, 6000);
     }
 
     function triggerCartRedirect() {
         showNotification("Abrindo o seu carrinho de compras...", "fa-spinner fa-spin");
-        setTimeout(() => {
-            window.location.href = 'checkout.html';
-        }, 600);
+        setTimeout(() => { window.location.href = 'checkout.html'; }, 600);
     }
 
     function createProductCardHTML(prod) {
@@ -1030,7 +994,7 @@
         return `
             <article class="product-card-premium reveal active" onclick="goToProductDetail('${prod.id}')">
                 <div class="card-img-wrapper">
-                    <img src="${prod.imagem}" alt="${prod.titulo}" loading="lazy">
+                    <img src="${prod.imagem || 'img/express.png'}" alt="${prod.titulo}" loading="lazy">
                     <span class="card-badge-vip">${prod.categoria}</span>
                     <span class="sales-badge"><i class="fa-solid fa-fire"></i> ${vendas} vendas</span>
                 </div>
@@ -1038,16 +1002,12 @@
                     <h3>${prod.titulo}</h3>
                     <p>${prod.descricao}</p>
                     <div class="card-pricing-row">
-                        <span class="card-price-old">${prod.precoAntigo.toLocaleString('pt-AO')} Kz</span>
-                        <span class="card-price-new">${prod.precoAtual.toLocaleString('pt-AO')} Kz</span>
+                        ${prod.precoAntigo ? `<span class="card-price-old">${prod.precoAntigo.toLocaleString('pt-AO')} Kz</span>` : ''}
+                        <span class="card-price-new">${prod.precoAtual ? prod.precoAtual.toLocaleString('pt-AO') + ' Kz' : 'Gratuito'}</span>
                     </div>
                     <div class="card-actions-row">
-                        <button class="btn-card-view">
-                            <i class="fa-solid fa-eye"></i> Ver Produto
-                        </button>
-                        <button class="btn-card-add" onclick="addItemToCart(event, '${prod.id}')">
-                            <i class="fa-solid fa-cart-shopping"></i> + Carrinho
-                        </button>
+                        <button class="btn-card-view"><i class="fa-solid fa-eye"></i> Ver Produto</button>
+                        <button class="btn-card-add" onclick="addItemToCart(event, '${prod.id}')"><i class="fa-solid fa-cart-shopping"></i> + Carrinho</button>
                     </div>
                 </div>
             </article>
@@ -1056,14 +1016,13 @@
 
     function goToProductDetail(id) {
         const prod = produtos.find(p => String(p.id) === String(id));
-        if (prod) {
-            window.location.search = `?produto=${slugify(prod.titulo)}`;
-        }
+        if (prod) window.location.search = `?produto=${slugify(prod.titulo)}`;
     }
 
     function initCatalogEvents() {
         const searchInput = document.getElementById("catalogSearch");
         const tabs = document.querySelectorAll("#categoryTabs .tab-btn");
+        const pluginSubFilter = document.getElementById("pluginSubFilter");
 
         if(searchInput) {
             searchInput.addEventListener("input", (e) => {
@@ -1081,14 +1040,30 @@
                 
                 selectedCategory = tab.getAttribute("data-category");
                 currentPage = 1;
+
+                if (selectedCategory === 'plugins') {
+                    if (pluginSubFilter) pluginSubFilter.style.display = 'inline-block';
+                } else {
+                    if (pluginSubFilter) pluginSubFilter.style.display = 'none';
+                    pluginSubGroup = 'todos';
+                }
+
                 saveCatalogState();
                 renderCatalogEngine();
             });
         });
     }
 
+    function onPluginSubFilterChange(val) {
+        pluginSubGroup = val;
+        currentPage = 1;
+        saveCatalogState();
+        renderCatalogEngine();
+    }
+
     function updateActiveTabUI(category) {
         const tabs = document.querySelectorAll("#categoryTabs .tab-btn");
+        const pluginSubFilter = document.getElementById("pluginSubFilter");
         tabs.forEach(tab => {
             if(tab.getAttribute("data-category") === category) {
                 tab.classList.add("active");
@@ -1096,6 +1071,10 @@
                 tab.classList.remove("active");
             }
         });
+        if (category === 'plugins' && pluginSubFilter) {
+            pluginSubFilter.style.display = 'inline-block';
+            pluginSubFilter.value = pluginSubGroup;
+        }
     }
 
     function renderCatalogEngine() {
@@ -1103,8 +1082,27 @@
         if (!grid) return;
 
         let filteredProducts = produtos.filter(prod => {
-            const normProdCat = prod.categoria.toLowerCase().replace(/\s+/g, '');
-            const matchCategory = (selectedCategory === 'all') || normProdCat.includes(selectedCategory);
+            const normProdCat = (prod.categoria || '').toLowerCase().replace(/\s+/g, '');
+            const prodTipo = (prod.tipoPlugin || '').toLowerCase();
+            
+            let matchCategory = false;
+
+            if (selectedCategory === 'all') {
+                matchCategory = true;
+            } else if (selectedCategory === 'plugins') {
+                if (normProdCat.includes('plugin') || normProdCat.includes('livraria') || normProdCat.includes('daw')) {
+                    if (pluginSubGroup === 'todos') {
+                        matchCategory = true;
+                    } else if (pluginSubGroup === 'mix_master') {
+                        matchCategory = prodTipo.includes('mix') || normProdCat.includes('mix');
+                    } else if (pluginSubGroup === 'instrumentos') {
+                        matchCategory = prodTipo.includes('instrumento') || normProdCat.includes('vsti') || normProdCat.includes('instrumento');
+                    }
+                }
+            } else {
+                matchCategory = normProdCat.includes(selectedCategory);
+            }
+
             const matchSearch = prod.titulo.toLowerCase().includes(filterSearchQuery) || 
                                 prod.descricao.toLowerCase().includes(filterSearchQuery);
 
@@ -1113,10 +1111,8 @@
 
         const totalItems = filteredProducts.length;
         const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
-
         const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-        const endIndex = startIndex + ITEMS_PER_PAGE;
-        const productsToDisplay = filteredProducts.slice(startIndex, endIndex);
+        const productsToDisplay = filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
         if (productsToDisplay.length === 0) {
             grid.innerHTML = `
@@ -1141,26 +1137,11 @@
             return;
         }
 
-        let html = `
-            <button class="page-item" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">
-                <i class="fa-solid fa-chevron-left"></i>
-            </button>
-        `;
-
+        let html = `<button class="page-item" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})"><i class="fa-solid fa-chevron-left"></i></button>`;
         for(let i = 1; i <= totalPages; i++) {
-            html += `
-                <button class="page-item ${currentPage === i ? 'active' : ''}" onclick="changePage(${i})">
-                    ${i}
-                </button>
-            `;
+            html += `<button class="page-item ${currentPage === i ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
         }
-
-        html += `
-            <button class="page-item" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">
-                <i class="fa-solid fa-chevron-right"></i>
-            </button>
-        `;
-
+        html += `<button class="page-item" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})"><i class="fa-solid fa-chevron-right"></i></button>`;
         container.innerHTML = html;
     }
 
@@ -1173,14 +1154,12 @@
 
     function renderProductDetailPage(id) {
         const main = document.getElementById("mainContent");
-        
         if (!id) {
             main.innerHTML = `<div class="container section-padding text-center"><h2>Produto não encontrado</h2><a href="catalogo.html" onclick="if(window.history.length > 1){ window.history.back(); return false; }" class="btn btn-primary mt-2">Voltar ao Catálogo</a></div>`;
             return;
         }
 
         const prod = produtos.find(p => String(p.id) === String(id));
-
         if (!prod) {
             main.innerHTML = `<div class="container section-padding text-center"><h2>Produto não encontrado</h2><a href="catalogo.html" onclick="if(window.history.length > 1){ window.history.back(); return false; }" class="btn btn-primary mt-2">Voltar ao Catálogo</a></div>`;
             return;
@@ -1191,16 +1170,10 @@
 
         let videoEmbedUrl = "https://www.youtube.com/embed/dQw4w9WgXcQ"; 
         const rawVideoUrl = prod.videoLink || prod.video;
-        
         if (rawVideoUrl) {
-            let url = rawVideoUrl;
-            let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            let match = url.match(regExp);
-            if (match && match[2].length == 11) {
-                videoEmbedUrl = `https://www.youtube.com/embed/${match[2]}`;
-            } else {
-                videoEmbedUrl = url;
-            }
+            let match = rawVideoUrl.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+            if (match && match[2].length == 11) videoEmbedUrl = `https://www.youtube.com/embed/${match[2]}`;
+            else videoEmbedUrl = rawVideoUrl;
         }
 
         const isBeat = prod.categoria.toLowerCase().includes('beat');
@@ -1215,7 +1188,7 @@
                     
                     <div class="detail-grid">
                         <div style="border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); position: relative; height: max-content;">
-                            <img src="${prod.imagem}" alt="${prod.titulo}" style="width:100%; height:auto; object-fit:cover;">
+                            <img src="${prod.imagem || 'img/express.png'}" alt="${prod.titulo}" style="width:100%; height:auto; object-fit:cover;">
                         </div>
                         <div>
                             <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -1226,30 +1199,24 @@
                             <p style="color: var(--text-secondary); font-size: 1.1rem; line-height: 1.7; font-weight: 300; margin-bottom: 2.5rem;">${prod.descricao}</p>
                             
                             <div style="background: rgba(255,255,255,0.02); padding: 2rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.04); margin-bottom: 2rem;">
-                                
                                 ${isBeat ? `
                                 <div class="payment-plans-wrapper">
                                     <div class="payment-plans-title"><i class="fa-solid fa-compact-disc"></i> Escolha a Licença do Beat:</div>
                                     <div class="plans-grid-buttons" style="grid-template-columns: 1fr; gap: 0.5rem;">
-                                        <button type="button" id="license-basic" class="btn-plan-select active" onclick="selectBeatLicense('${prod.id}', 'basic', 3000)">
-                                            <strong>Basic Lease (5.000 Kz)</strong>
-                                            <span>Inclui: MP3 </span>
+                                        <button type="button" id="license-basic" class="btn-plan-select active" onclick="selectBeatLicense('${prod.id}', 'basic', 5000)">
+                                            <strong>Basic Lease (5.000 Kz)</strong><span>Inclui: MP3</span>
                                         </button>
                                         <button type="button" id="license-standard" class="btn-plan-select" onclick="selectBeatLicense('${prod.id}', 'standard', 7500)">
-                                            <strong>Standard Lease (7.500 Kz)</strong>
-                                            <span>Inclui: MP3 + WAV </span>
+                                            <strong>Standard Lease (7.500 Kz)</strong><span>Inclui: MP3 + WAV</span>
                                         </button>
                                         <button type="button" id="license-premium" class="btn-plan-select" onclick="selectBeatLicense('${prod.id}', 'premium', 15000)">
-                                            <strong>Premium Lease (15.000 Kz)</strong>
-                                            <span>Inclui: MP3 + WAV + Stems </span>
+                                            <strong>Premium Lease (15.000 Kz)</strong><span>Inclui: MP3 + WAV + Stems</span>
                                         </button>
                                         <button type="button" id="license-unlimited" class="btn-plan-select" onclick="selectBeatLicense('${prod.id}', 'unlimited', 30000)">
-                                            <strong>Unlimited Lease (30.000 Kz)</strong>
-                                            <span>Inclui: Uso comercial alargado </span>
+                                            <strong>Unlimited Lease (30.000 Kz)</strong><span>Inclui: Uso comercial alargado</span>
                                         </button>
                                         <button type="button" id="license-exclusive" class="btn-plan-select" onclick="selectBeatLicense('${prod.id}', 'exclusive', 100000)">
-                                            <strong>Exclusive License (100.000 Kz)</strong>
-                                            <span>Inclui: Exclusividade e remoção da loja </span>
+                                            <strong>Exclusive License (100.000 Kz)</strong><span>Inclui: Exclusividade total</span>
                                         </button>
                                     </div>
                                 </div>
@@ -1260,23 +1227,21 @@
                                     <div class="payment-plans-title"><i class="fa-solid fa-credit-card"></i> Opções de Pagamento:</div>
                                     <div class="plans-grid-buttons">
                                         <button type="button" id="plan-1" class="btn-plan-select active" onclick="selectPaymentPlan('${prod.id}', 1)">
-                                            <strong>Uma Prestação</strong>
-                                            <span>Integral: ${prod.precoAtual.toLocaleString('pt-AO')} Kz</span>
+                                            <strong>Uma Prestação</strong><span>Integral: ${prod.precoAtual.toLocaleString('pt-AO')} Kz</span>
                                         </button>
                                         <button type="button" id="plan-2" class="btn-plan-select" onclick="selectPaymentPlan('${prod.id}', 2)">
-                                            <strong>Duas Prestações</strong>
-                                            <span>2x de ${((prod.precoAtual / 2) + 500).toLocaleString('pt-AO')} Kz</span>
+                                            <strong>Duas Prestações</strong><span>2x de ${((prod.precoAtual / 2) + 500).toLocaleString('pt-AO')} Kz</span>
                                         </button>
                                     </div>
                                 </div>
                                 ` : ''}
 
                                 <div style="display:flex; flex-direction:column; gap:0.2rem; margin-bottom:1.5rem;">
-                                    <span style="text-decoration: line-through; color: #666; font-size: 1.1rem;">De ${prod.precoAntigo.toLocaleString('pt-AO')} Kz</span>
-                                    <span id="detailPriceDisplay" style="font-family: var(--font-montserrat); font-size: 2.5rem; font-weight: 700; color: var(--white);">Por ${isBeat ? '3.000' : prod.precoAtual.toLocaleString('pt-AO')} Kz</span>
+                                    ${prod.precoAntigo ? `<span style="text-decoration: line-through; color: #666; font-size: 1.1rem;">De ${prod.precoAntigo.toLocaleString('pt-AO')} Kz</span>` : ''}
+                                    <span id="detailPriceDisplay" style="font-family: var(--font-montserrat); font-size: 2.5rem; font-weight: 700; color: var(--white);">Por ${isBeat ? '5.000' : prod.precoAtual.toLocaleString('pt-AO')} Kz</span>
                                 </div>
                                 <div style="display: flex; flex-direction: column; gap: 1rem;">
-                                    <button id="detailCartBtn" class="btn btn-primary" style="width: 100%; padding: 1.2rem; border-radius: 12px; font-size: 1.1rem;" onclick="addItemToCart(event, '${prod.id}', 1 ${isBeat ? ", 'basic', 3000" : ""})">
+                                    <button id="detailCartBtn" class="btn btn-primary" style="width: 100%; padding: 1.2rem; border-radius: 12px; font-size: 1.1rem;" onclick="addItemToCart(event, '${prod.id}', 1 ${isBeat ? ", 'basic', 5000" : ""})">
                                         <i class="fa-solid fa-cart-shopping"></i> Adicionar ao Carrinho
                                     </button>
                                 </div>
@@ -1349,7 +1314,6 @@
         event.stopPropagation();
         let cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
         const productSelected = produtos.find(p => String(p.id) === String(id));
-
         if (!productSelected) return;
 
         let cartItemId = `${id}`;
@@ -1372,26 +1336,23 @@
             tituloFinal += ` [${licenseNames[licenseType] || licenseType}]`;
         }
 
-        const itemIndex = cart.findIndex(item => item.id === cartItemId);
-        
-        if (itemIndex > -1) {
+        if (cart.some(item => item.id === cartItemId)) {
             showNotification("Este item com esta licença já se encontra no carrinho!", "fa-circle-exclamation");
             return;
-        } else {
-            cart.push({
-                id: cartItemId,
-                titulo: tituloFinal,
-                imagem: productSelected.imagem,
-                preco: precoFinal,
-                quantity: 1
-            });
         }
+
+        cart.push({
+            id: cartItemId,
+            titulo: tituloFinal,
+            imagem: productSelected.imagem || 'img/express.png',
+            preco: precoFinal,
+            quantity: 1
+        });
 
         localStorage.setItem('loneke_cart', JSON.stringify(cart));
         updateCartBadge();
-        
         showNotification("Produto adicionado ao carrinho!");
-        
+
         const btn = event.currentTarget;
         if(btn) {
             const originalText = btn.innerHTML;
@@ -1443,9 +1404,7 @@
         const reveals = document.querySelectorAll(".reveal");
         const revealOnScroll = () => {
             reveals.forEach(el => {
-                const windowHeight = window.innerHeight;
-                const elementTop = el.getBoundingClientRect().top;
-                if (elementTop < windowHeight - 100) el.classList.add("active");
+                if (el.getBoundingClientRect().top < window.innerHeight - 100) el.classList.add("active");
             });
         };
         window.addEventListener("scroll", revealOnScroll);
