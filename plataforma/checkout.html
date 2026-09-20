@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finalizar Compra | Loneke no Beat Premium Infoproducts</title>
     
-    <!-- SDKs do Firebase Compat (Redundância para garantir o carregamento do Firestore) -->
+    <!-- SDKs do Firebase Compat (Garante redundância se o Module falhar) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
@@ -16,7 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- Tesseract.js para leitura OCR rigorosa -->
+    <!-- Tesseract.js para leitura OCR de comprovativos -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
     <style>
@@ -625,12 +625,14 @@
         }
 
         await fetchApiProducts();
+        
+        // Carrega o carrinho de forma síncrona/assíncrona sequencial
         await initCartWithPlanContext();
 
         setTimeout(() => {
             const loadingScreen = document.getElementById("loadingScreen");
             if (loadingScreen) loadingScreen.classList.add("hidden");
-        }, 800);
+        }, 600);
 
         initPaymentSelector();
         renderOrderBumps();
@@ -850,7 +852,7 @@
         }, 4000);
     }
 
-    // INICIALIZA O CARRINHO A PARTIR DO LINK DE AFILIADO OU URL
+    // INICIALIZA O CARRINHO
     async function initCartWithPlanContext() {
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('product_id') || urlParams.get('id');
@@ -860,21 +862,25 @@
             localStorage.setItem('loneke_affiliate_ref', affCode.trim());
         }
 
-        // Se NÃO foi passado product_id na URL, carrega o carrinho salvo no localStorage
+        // Se NÃO há parâmetro `product_id` na URL, carrega o que já está guardado no localStorage
         if (!productId) {
-            cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
+            try {
+                const saved = localStorage.getItem('loneke_cart');
+                cart = saved ? JSON.parse(saved) : [];
+            } catch(e) {
+                cart = [];
+            }
             loadCartData();
             return;
         }
 
-        // Aguarda a inicialização do Firebase para consultas
-        await waitForFirebase(3500);
+        // Se há um product_id na URL, tenta resolver
+        await waitForFirebase(2500);
 
         let foundProduct = null;
 
-        // 1. Busca produto via Firestore (Modular ou Compat / coleções "produtos" e "promocoes")
+        // 1. Busca no Firestore (Modular ou Compat SDK)
         try {
-            // A) Método Modular (window.firebaseDb)
             if (window.firebaseDb && window.firebaseDoc && window.firebaseGetDoc) {
                 let docRef = window.firebaseDoc(window.firebaseDb, "produtos", productId);
                 let docSnap = await window.firebaseGetDoc(docRef);
@@ -896,7 +902,6 @@
                 }
             }
 
-            // B) Método Compat SDK (Fallback caso Modular não esteja no window)
             if (!foundProduct && typeof firebase !== 'undefined' && firebase.firestore) {
                 const dbCompat = firebase.firestore();
                 let docSnap = await dbCompat.collection("produtos").doc(productId).get();
@@ -920,7 +925,7 @@
             console.warn("Aviso ao buscar produto no Firestore:", e);
         }
 
-        // 2. Busca produto no catálogo local de produtos.js
+        // 2. Busca no catálogo local em produtos.js
         if (!foundProduct && typeof produtos !== 'undefined' && Array.isArray(produtos)) {
             const localP = produtos.find(p => 
                 String(p.id) === String(productId) || 
@@ -956,7 +961,7 @@
             }
         }
 
-        // 4. Parâmetros explícitos da URL
+        // 4. Parâmetros explícitos transmitidos na URL
         if (!foundProduct) {
             const titleParam = urlParams.get('title') || urlParams.get('nome') || urlParams.get('titulo');
             const priceParam = parseFloat(urlParams.get('price') || urlParams.get('preco') || urlParams.get('pricePromo') || 0);
@@ -974,7 +979,7 @@
             }
         }
 
-        // Se encontrou o produto, atualiza o carrinho
+        // Se encontrou o produto, substitui o carrinho para a compra direta deste item
         if (foundProduct) {
             cart = [{
                 id: foundProduct.id,
@@ -987,8 +992,13 @@
             }];
             localStorage.setItem('loneke_cart', JSON.stringify(cart));
         } else {
-            // Se não encontrou, carrega o existente
-            cart = JSON.parse(localStorage.getItem('loneke_cart')) || [];
+            // Se falhou ao buscar o produto específico, mantém o carrinho anterior do usuário sem zerar
+            try {
+                const saved = localStorage.getItem('loneke_cart');
+                cart = saved ? JSON.parse(saved) : [];
+            } catch(e) {
+                cart = [];
+            }
         }
 
         loadCartData();
@@ -1070,7 +1080,7 @@
             });
         }
 
-        if(cart.length === 0) {
+        if(!cart || cart.length === 0) {
             container.innerHTML = `<p style="color: var(--text-secondary); text-align:center; padding: 2rem 0;">O seu carrinho está vazio.</p>`;
             displayKz.innerText = "0,00 Kz";
             displayEur.innerText = "0,00 €";
@@ -1087,16 +1097,18 @@
             btnPlaceOrder.style.opacity = "1";
         }
 
-        originalTotalKz = cart.reduce((acc, current) => acc + (current.preco * current.quantity), 0);
+        originalTotalKz = cart.reduce((acc, current) => acc + ((Number(current.preco) || 0) * (current.quantity || 1)), 0);
 
         container.innerHTML = cart.map((item, index) => {
             const imgSrc = item.imagem || 'img/express.png';
+            const itemPrice = Number(item.preco) || 0;
+            const itemQty = item.quantity || 1;
             return `
                 <div class="summary-item">
                     <img src="${imgSrc}" onerror="this.onerror=null; this.src='img/express.png';" alt="${item.titulo}">
                     <div class="summary-details">
                         <h4>${item.titulo}</h4>
-                        <p>Qtd: ${item.quantity} &bull; ${(item.preco * item.quantity).toLocaleString('pt-AO', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Kz</p>
+                        <p>Qtd: ${itemQty} &bull; ${(itemPrice * itemQty).toLocaleString('pt-AO', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Kz</p>
                     </div>
                     <button type="button" class="btn-remove-item" onclick="removeProductFromCheckout(${index})" title="Remover este item">
                         <i class="fa-solid fa-trash-can"></i>
@@ -1105,7 +1117,7 @@
             `;
         }).join('');
 
-        const totalItemsCount = cart.reduce((acc, current) => acc + current.quantity, 0);
+        const totalItemsCount = cart.reduce((acc, current) => acc + (current.quantity || 1), 0);
 
         if (totalItemsCount >= 5) {
             if(discountContainer) discountContainer.style.display = "block";
@@ -1242,16 +1254,13 @@
         return uid;
     }
 
-    // FUNÇÃO QUE CREDITA AUTOMATICAMENTE 50% DA COMISSÃO NA CARTEIRA DO AFILIADO
     async function creditAffiliateCommission(affiliateRef, commissionAmount) {
         if (!affiliateRef || commissionAmount <= 0) return;
 
         try {
-            console.log(`💰 A creditar ${commissionAmount} Kz para o afiliado: ${affiliateRef}`);
             let affiliateDocId = null;
             let currentData = {};
 
-            // 1. Crédito via Firebase Modular (window.firebaseDb)
             if (window.firebaseDb) {
                 const { doc, getDoc, setDoc, collection, query, where, getDocs } = window;
                 if (doc && getDoc && setDoc) {
@@ -1290,13 +1299,11 @@
                             updatedAt: new Date().toISOString()
                         }, { merge: true });
 
-                        console.log(`✅ [Modular] 50% (${commissionAmount} Kz) creditados na carteira do afiliado ${affiliateDocId}`);
                         return;
                     }
                 }
             }
 
-            // 2. Crédito via Firebase Compat SDK (se disponível)
             if (typeof firebase !== 'undefined' && firebase.firestore) {
                 const dbCompat = firebase.firestore();
                 let affDoc = await dbCompat.collection('users').doc(affiliateRef).get();
@@ -1325,8 +1332,6 @@
                         totalIndicacoes: currentTotalReferrals + 1,
                         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                     }, { merge: true });
-
-                    console.log(`✅ [Compat] 50% (${commissionAmount} Kz) creditados na carteira do afiliado ${affiliateDocId}`);
                 }
             }
         } catch (err) {
@@ -1386,7 +1391,6 @@
                     const itemCategory = item.categoria || item.category || 'cursos';
                     userProdutosMap[prodId] = true;
 
-                    // Subcoleção de compras do utilizador
                     const userProdRef = window.firebaseDoc(window.firebaseDb, "users", docId, "purchases", prodId);
                     await window.firebaseSetDoc(userProdRef, {
                         id: prodId, 
@@ -1402,7 +1406,6 @@
                         addedAt: new Date().toISOString()
                     }, { merge: true });
 
-                    // Acesso global do produto
                     const accessDocId = `${docId}_${prodId}`;
                     const accessRef = window.firebaseDoc(window.firebaseDb, "user_access", accessDocId);
                     await window.firebaseSetDoc(accessRef, {
@@ -1421,7 +1424,6 @@
                     }, { merge: true });
                 }
 
-                // Atualiza mapa de produtos no perfil principal do utilizador
                 const mainUserRef = window.firebaseDoc(window.firebaseDb, "users", docId);
                 await window.firebaseSetDoc(mainUserRef, {
                     produtos: userProdutosMap,
@@ -1432,7 +1434,6 @@
                 const numericTotalKz = parseFloat(tkz.replace(/[^\d.,]/g, '').replace(/\./g, '').replace(',', '.')) || 0;
                 const commissionVal = Math.floor(numericTotalKz * 0.5);
 
-                // 💰 CREDITAR 50% DE COMISSÃO NA CARTEIRA DO AFILIADO
                 if (affiliateRef && commissionVal > 0) {
                     await creditAffiliateCommission(affiliateRef, commissionVal);
                 }
@@ -1468,7 +1469,6 @@
                     unlocked: true
                 };
 
-                // Regista em 'orders' e 'transactions'
                 await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDb, "orders", orderId), orderTransactionData);
                 await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDb, "transactions", orderId), orderTransactionData);
 
