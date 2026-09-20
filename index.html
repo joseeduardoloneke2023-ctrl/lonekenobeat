@@ -1267,6 +1267,83 @@
             .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
             .testimonial-card { padding: 2rem; }
         }
+
+/* --- CSS DO CARROSSEL DE DEPOIMENTOS (3 CARDS FIXOS E LOOP) --- */
+.testimonial-slider-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.testimonial-media-card {
+    flex: 0 0 calc((100% - 40px) / 3);
+    box-sizing: border-box;
+    background: var(--card-bg);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.testimonial-media-card:hover {
+    border-color: rgba(229, 9, 20, 0.4);
+    transform: translateY(-4px);
+}
+
+.testimonial-img-box {
+    width: 100%;
+    height: 260px;
+    background: #080808;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.testimonial-img-box img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    display: block;
+}
+
+.testimonial-video-box {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000000;
+    position: relative;
+    overflow: hidden;
+}
+
+.testimonial-video-box iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+
+.testimonial-info-box {
+    padding: 1.2rem;
+    text-align: center;
+}
+
+@media (max-width: 992px) {
+    .testimonial-media-card {
+        flex: 0 0 calc((100% - 20px) / 2);
+    }
+}
+
+@media (max-width: 650px) {
+    .testimonial-media-card {
+        flex: 0 0 100%;
+    }
+}
+
 </style>
 </head>
 <body>
@@ -1325,6 +1402,8 @@
                 </div>
             </div>
         </section>
+
+       
         <section class="stats">
             <div class="container stats-grid">
                 <div class="stat-item">
@@ -1345,6 +1424,7 @@
                 </div>
             </div>
         </section>
+
         <section id="destaques" class="section-padding" style="position: relative;">
             <div class="container">
                 <div class="text-center">
@@ -1361,13 +1441,19 @@
                 </div>
             </div>
         </section>
-        <section class="section-padding text-center" style="background: linear-gradient(180deg, #111 0%, #070707 100%);">
-            <div class="container">
-                <h3 style="font-size: 2rem; font-family: var(--font-montserrat); margin-bottom: 1rem;">Deseja explorar nossa biblioteca completa?</h3>
-                <p style="color: var(--text-secondary); max-width: 500px; margin: 0 auto 2rem auto; font-weight: 300;">Descubra centenas de arquivos adicionais como Loops, Beats, Ebooks e licenças comerciais prontas para uso.</p>
-                <a href="catalogo.html" class="btn btn-primary" style="font-size: 1.1rem; padding: 1.2rem 3rem;" onclick="showToast('Redirecionando para a biblioteca...', 'fa-layer-group')">Acessar Catálogo Completo <i class="fa-solid fa-layer-group"></i></a>
-            </div>
-        </section>
+
+               
+<section id="como-comprar" class="section-padding" style="background-color: #0e0e0e; border-top: 1px solid rgba(255,255,255,0.03);">
+    <div class="container">
+        <div class="text-center">
+            <h2 class="section-title">Aprenda a Comprar no Site</h2>
+            <p class="section-subtitle">Assista ao vídeo e veja como é simples escolher os seus produtos, aplicar o desconto e finalizar a sua compra em poucos segundos.</p>
+        </div>
+        <div class="video-showcase reveal" style="max-width: 850px; margin: 0 auto;">
+            <iframe src="https://www.youtube.com/embed/SEU_ID_DO_VIDEO" title="Como Fazer Compras no Site" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</section>
 
         <section class="section-padding" style="background-color: #0c0c0c;">
             <div class="container">
@@ -1410,403 +1496,106 @@
             </div>
         </section>
 
-        <section id="features" class="section-padding">
-            <div class="container">
-                <div class="text-center">
-                    <h2 class="section-title">Padrão International de Entrega</h2>
-                    <p class="section-subtitle">Infraestrutura construída para garantir a melhor experiência de compra do ecossistema digital.</p>
-                </div>
-                <div class="features-grid">
-                    <div class="feature-item reveal">
-                        <div class="feature-icon-box"><i class="fa-solid fa-circle-down"></i></div>
-                        <div>
-                            <h5>Download Imediato</h5>
-                            <p>Assim que o pagamento for processado, os links são liberados automaticamente no seu e-mail.</p>
-                        </div>
-                    </div>
-                    <div class="feature-item reveal">
-                        <div class="feature-icon-box"><i class="fa-solid fa-crown"></i></div>
-                        <div>
-                            <h5>Qualidade Premium</h5>
-                            <p>Processamento através de hardware analógico de ponta para máxima clareza acústica.</p>
-                        </div>
-                    </div>
-                    <div class="feature-item reveal">
-                        <div class="feature-icon-box"><i class="fa-solid fa-arrows-rotate"></i></div>
-                        <div>
-                            <h5>Atualizações Gratuitas</h5>
-                            <p>Versões revisadas ou expansões futuras do pacote baixado são disponibilizadas sem custos adicionais.</p>
-                        </div>
-                    </div>
-                    <div class="feature-item reveal">
-                        <div class="feature-icon-box"><i class="fa-solid fa-headset"></i></div>
-                        <div>
-                            <h5>Suporte Especializado</h5>
-                            <p>Canal dedicado via e-mail e chat técnico para resolver qualquer problema de instalação ou configuração.</p>
-                        </div>
-                    </div>
-                    <div class="feature-item reveal">
-                        <div class="feature-icon-box"><i class="fa-solid fa-shield-halved"></i></div>
-                        <div>
-                            <h5>Pagamento Secure</h5>
-                            <p>Ambiente criptografado operado pelas maiores gateways globais de infoprodutos.</p>
-                        </div>
-                    </div>
-                    <div class="feature-item reveal">
-                        <div class="feature-icon-box"><i class="fa-solid fa-circle-check"></i></div>
-                        <div>
-                            <h5>Produtos 100% Originais</h5>
-                            <p>Todo o material de áudio é livre de royalties (Royalty-Free) e gerado autoralmente.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <section class="section-padding" style="background-color: #0c0c0c;">
-            <div class="container">
-                <div class="text-center">
-                    <h2 class="section-title">Aprovado pela Indústria</h2>
-                    <p class="section-subtitle">Descubra o impacto que os arquivos de Loneke no Beat causam nas produções diárias de engenheiros de áudio.</p>
-                </div>
-                <div class="testimonials-slider-container reveal">
-    <div class="testimonials-track" id="testimonialsTrack">
-
-        <!-- Testemunho 1 -->
-        <div class="testimonial-slide">
-            <div class="testimonial-card">
-                <div class="testimonial-stars">
-                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                </div>
-
-                <p class="testimonial-quote">
-                    "Nunca tinha aberto o FL Studio na minha vida. Comprei o curso de Afro House achando que seria complicado, mas fiquei impressionado com a forma simples que o Loneke explica. Em apenas uma semana já estava criando beats completos e até publiquei o meu primeiro instrumental. As aulas gravadas, o acompanhamento no WhatsApp e as lives fizeram toda a diferença."
-                </p>
-
-                <div class="testimonial-author">
-                    <div class="author-info">
-                        <h6>Mateus Pedro</h6>
-                        <p>Aluno Iniciante</p>
-                    </div>
-                </div>
-            </div>
+<section class="section-padding" style="background-color: #0c0c0c; position: relative; overflow: hidden;">
+    <div class="container">
+        <div class="text-center">
+            <h2 class="section-title">Aprovado pela Indústria</h2>
+            <p class="section-subtitle">Veja prints de conversas reais de clientes e depoimentos em vídeo de quem utiliza as nossas ferramentas.</p>
         </div>
 
-        <!-- Testemunho 2 -->
-        <div class="testimonial-slide">
-            <div class="testimonial-card">
-                <div class="testimonial-stars">
-                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                </div>
-
-                <p class="testimonial-quote">
-                    "Já produzia beats há algum tempo, mas os meus sons nunca tinham qualidade profissional. Depois do curso de Mix & Master e Produção de Semba aprendi técnicas que mudaram completamente o meu resultado. Hoje os artistas elogiam a qualidade das minhas produções e já consegui recuperar o valor investido no curso várias vezes."
-                </p>
-
-                <div class="testimonial-author">
-                    <div class="author-info">
-                        <h6>Edgar Miguel</h6>
-                        <p>Beatmaker</p>
-                    </div>
+        <!-- Carrossel de Depoimentos Misto (Prints e Vídeos) -->
+        <div class="testimonial-slider-wrapper" style="position: relative; max-width: 1200px; margin: 0 auto; padding: 0 50px;">
+            <button class="slider-arrow arrow-left" id="testimonialPrevBtn" style="left: 0; z-index: 10;"><i class="fa-solid fa-chevron-left"></i></button>
+            
+            <div class="testimonial-view-window" style="overflow: hidden; width: 100%; border-radius: 20px; padding: 10px 0;">
+                <div class="testimonial-slider-track" id="testimonialCarouselTrack" style="display: flex; gap: 20px; transition: transform 0.4s ease-in-out; align-items: stretch;">
+                    <!-- Cards injetados via depoimento.js -->
                 </div>
             </div>
+
+            <button class="slider-arrow arrow-right" id="testimonialNextBtn" style="right: 0; z-index: 10;"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
 
-        <!-- Testemunho 3 -->
-        <div class="testimonial-slide">
-            <div class="testimonial-card">
-                <div class="testimonial-stars">
-                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                </div>
-
-                <p class="testimonial-quote">
-                    "O curso de criação e venda de Drumkits mudou completamente a minha visão. Antes nem sabia por onde começar. Segui o passo a passo, criei o meu primeiro Drumkit e comecei a vender. Hoje consigo faturar mais de 100.000 Kz por semana vendendo Drumkits e prestando serviços para outros produtores. Foi um dos melhores investimentos que já fiz."
-                </p>
-
-                <div class="testimonial-author">
-                    <div class="author-info">
-                        <h6>João Armando</h6>
-                        <p>Criador de Drumkits</p>
-                    </div>
-                </div>
-            </div>
+        <!-- Botão Ver Mais -->
+        <div class="text-center" style="margin-top: 2.5rem;">
+            <a href="depoimentos.html" class="btn btn-primary" onclick="showToast('Abrindo galeria de depoimentos...', 'fa-play-circle')">
+                Ver Mais Depoimentos em Vídeo <i class="fa-solid fa-circle-play"></i>
+            </a>
         </div>
-
-        <!-- Testemunho 4 -->
-        <div class="testimonial-slide">
-            <div class="testimonial-card">
-                <div class="testimonial-stars">
-                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                </div>
-
-                <p class="testimonial-quote">
-                    "Comprei o Drumkit Fariento de Afro House porque queria reproduzir aquele som profissional que sempre ouvia. A qualidade dos samples é absurda. Economizei semanas de trabalho e consegui criar beats muito mais rápidos. Vale cada Kwanza investido."
-                </p>
-
-                <div class="testimonial-author">
-                    <div class="author-info">
-                        <h6>Carlos G.</h6>
-                        <p>Produtor Musical</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Testemunho 5 -->
-        <div class="testimonial-slide">
-            <div class="testimonial-card">
-                <div class="testimonial-stars">
-                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                </div>
-
-                <p class="testimonial-quote">
-                    "Achei que seria apenas mais um curso da internet, mas fui surpreendido. A plataforma é muito organizada, as aulas ficam gravadas para assistir quando quiser, recebi acesso imediatamente após o pagamento e sempre que tenho dúvidas basta enviar mensagem no WhatsApp que sou respondido rapidamente."
-                </p>
-
-                <div class="testimonial-author">
-                    <div class="author-info">
-                        <h6>António Domingos</h6>
-                        <p>Aluno</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Testemunho 6 -->
-        <div class="testimonial-slide">
-            <div class="testimonial-card">
-                <div class="testimonial-stars">
-                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                </div>
-
-                <p class="testimonial-quote">
-                    "O curso de instalar Plugins me ajudou a criar uma renda extra. Hoje faço instalações para produtores da minha cidade e consigo ganhar dinheiro praticamente todas as semanas. O conteúdo é muito bem explained, mesmo para quem nunca fez uma instalação antes."
-                </p>
-
-                <div class="testimonial-author">
-                    <div class="author-info">
-                        <h6>Fernando Silva</h6>
-                        <p>Técnico Freelancer</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Testemunho 7 -->
-        <div class="testimonial-slide">
-            <div class="testimonial-card">
-                <div class="testimonial-stars">
-                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                </div>
-
-                <p class="testimonial-quote">
-                    "Comprei o Drumkit Tábua Mista de Afro House e parecia que tinha comprado vários Drumkits ao mesmo tempo. Os kicks, percussões, loops e FX são de excelente qualidade. Os meus beats ficaram muito mais profissionais e os clientes perceberam a diferença."
-                </p>
-
-                <div class="testimonial-author">
-                    <div class="author-info">
-                        <h6>Daniel M.</h6>
-                        <p>Produtor Independente</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Testemunho 8 -->
-        <div class="testimonial-slide">
-            <div class="testimonial-card">
-                <div class="testimonial-stars">
-                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                </div>
-
-                <p class="testimonial-quote">
-                    "O melhor de tudo é que o Loneke não vende apenas um curso. Existe acompanhamento, lives, atualizações e uma comunidade onde podemos tirar dúvidas. Sempre que fico bloqueado em alguma produção recebo ajuda rapidamente. Parece que temos um professor particular."
-                </p>
-
-                <div class="testimonial-author">
-                    <div class="author-info">
-                        <h6>Samuel Costa</h6>
-                        <p>Aluno Premium</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
+</section>
 
-    <div class="slider-controls" id="sliderControls"></div>
-</div>
-            </div>
-        </section>
-
- <section class="section-padding">
+<section class="section-padding">
     <div class="container">
         <div class="text-center">
             <h2 class="section-title">Perguntas Frequentes</h2>
             <p class="section-subtitle">
-                Tire todas as suas dúvidas sobre os nossos Drum Kits, FLPs, Plugins, Cursos e outros produtos.
+                Tire todas as suas dúvidas sobre os nossos Drum Kits, FLPs, Plugins, Cursos e suporte.
             </p>
         </div>
 
         <div class="faq-container">
+            <!-- Pergunta 1 -->
             <div class="faq-item reveal">
                 <button class="faq-trigger">
-                    Como comprar produtos no site?
+                    Por que muitos produtores compram os nossos Drum Kits?
                     <i class="fa-solid fa-chevron-down faq-icon"></i>
                 </button>
                 <div class="faq-content">
                     <p>
-                        Comprar é muito simples. Escolha o produto desejado, clique em <strong>Compra Agora</strong>, preencha os seus dados, selecione a forma de pagamento e conclua a compra. Assim que o pagamento for confirmado, o seu pedido será processado automaticamente e você receberá o produto por e-mail e também pelo WhatsApp cadastrado.
-                        Ou pode adicionar no carrinho e depois finalizar a compra no checkout inserindo os seus dados e receber o produto no email e no seu whatsapp.
+                        Porque os nossos pacotes são desenvolvidos por quem realmente trabalha diariamente com produção musical. Cada lançamento passa por testes, organização e seleção dos melhores sons para garantir qualidade profissional e facilitar o trabalho dos produtores. Cerca de 75% dos produtores do mercado angolano utilizam os nossos Drum Kits.
                     </p>
                 </div>
             </div>
 
+            <!-- Pergunta 2 -->
             <div class="faq-item reveal">
                 <button class="faq-trigger">
-                    Quanto tempo demora para receber o produto?
+                    Os Drum Kits funcionam em qualquer programa de produção musical?
                     <i class="fa-solid fa-chevron-down faq-icon"></i>
                 </button>
                 <div class="faq-content">
                     <p>
-                        Na maioria dos casos, o envio é praticamente imediato após a confirmação do pagamento. Você receberá o link para download no seu e-mail e também poderá receber pelo nosso WhatsApp oficial, +244 924 034 159.
+                        Sim. Os nossos Drum Kits são disponibilizados principalmente no formato WAV de alta fidelidade (48kHz / 24-bit), sendo 100% compatíveis com FL Studio, Ableton Live, Cubase, Studio One, Logic Pro, Pro Tools, Reaper e qualquer outra DAW.
                     </p>
                 </div>
             </div>
 
+            <!-- Pergunta 3 -->
             <div class="faq-item reveal">
                 <button class="faq-trigger">
-                    Porque devo comprar os vossos produtos?
+                    Quanto tempo leva para receber o produto comprado?
                     <i class="fa-solid fa-chevron-down faq-icon"></i>
                 </button>
                 <div class="faq-content">
                     <p>
-                        Porque aqui você não compra apenas sons. Você recebe uma experiência completa. Desde 2019 trabalhamos diariamente com produção musical e desenvolvemos materiais utilizados por milhares de produtores. Cerca de 75% dos produtores do mercado angolano utilizam os nossos Drum Kits.
-                    </p>
-                    <p>
-                        Os nossos pacotes incluem sons exclusivos, MIDIs de melodias, MIDIs de bateria, One Shots, Samples Premium, Plugins, FLPs completos, aulas e muitos outros conteúdos para acelerar a sua evolução como produtor.
+                        O envio é praticamente imediato após a confirmação do pagamento. Você receberá automaticamente o link de acesso e download direto no seu e-mail e também no seu WhatsApp cadastrado.
                     </p>
                 </div>
             </div>
 
+            <!-- Pergunta 4 -->
             <div class="faq-item reveal">
                 <button class="faq-trigger">
-                    Porque os vossos produtos são mais baratos que os da concorrência?
+                    Como falar com vocês?
                     <i class="fa-solid fa-chevron-down faq-icon"></i>
                 </button>
                 <div class="faq-content">
                     <p>
-                        A nossa missão é tornar a produção musical acessível para todos. Sabemos que muitos produtores ainda estão a começar e enfrentam dificuldades financeiras. Por isso praticamos preços justos sem comprometer a qualidade.
-                    </p>
-                    <p>
-                        Mesmo sendo mais baratos, os nossos pacotes entregam muito mais conteúdo. Investimos constantemente na compra de Drum Kits internacionais (americanos, brasileiros, franceses, nigerianos e de outros países), selecionamos os melhores sons e combinamos tudo com materiais criados por nós para oferecer uma excelente relação entre qualidade e preço.
+                        Você pode falar conosco diretamente pelo nosso WhatsApp oficial no número <strong>+244 924 034 159</strong>, pelo e-mail <strong>suporte@lonekenobeat.com</strong> ou preenchendo o formulário de contacto no final desta página.
                     </p>
                 </div>
             </div>
 
+            <!-- Pergunta 5 -->
             <div class="faq-item reveal">
                 <button class="faq-trigger">
-                    O que vem dentro dos projetos FLP?
+                    Como funcionam os cursos online?
                     <i class="fa-solid fa-chevron-down faq-icon"></i>
                 </button>
                 <div class="faq-content">
                     <p>
-                        Os projetos FLP incluem o projeto completo, os plugins utilizados, instruções de instalação, vídeos explicativos, configurações necessárias e todo o material utilizado durante a produção, permitindo que você estude cada detalhe do beat.
-                    </p>
-                </div>
-            </div>
-
-            <div class="faq-item reveal">
-                <button class="faq-trigger">
-                    Os Drum Kits funcionam em qualquer DAW?
-                    <i class="fa-solid fa-chevron-down faq-icon"></i>
-                </button>
-                <div class="faq-content">
-                    <p>
-                        Sim. Os nossos Drum Kits são disponibilizados principalmente em formato WAV, sendo compatíveis com FL Studio, Ableton Live, Cubase, Studio One, Logic Pro, Pro Tools, Reaper e praticamente qualquer programa de produção musical.
-                    </p>
-                </div>
-            </div>
-
-            <div class="faq-item reveal">
-                <button class="faq-trigger">
-                    Vocês oferecem suporte técnico?
-                    <i class="fa-solid fa-chevron-down faq-icon"></i>
-                </button>
-                <div class="faq-content">
-                    <p>
-                        Sim. Sempre que tiver dúvidas sobre instalação, utilização dos produtos ou qualquer dificuldade relacionada com a compra, a nossa equipa estará disponível para ajudar através do WhatsApp e das nossas redes sociais, o nosso whatsapp +244 924 034 159.
-                    </p>
-                </div>
-            </div>
-
-            <div class="faq-item reveal">
-                <button class="faq-trigger">
-                    Os produtos servem para iniciantes?
-                    <i class="fa-solid fa-chevron-down faq-icon"></i>
-                </button>
-                <div class="faq-content">
-                    <p>
-                        Sim. Os nossos materiais foram desenvolvidos para produtores iniciantes, intermédios e profissionais. Muitos produtos incluem vídeos explicativos, organização dos ficheiros e conteúdos educativos para facilitar a aprendizagem.
-                    </p>
-                </div>
-            </div>
-
-            <div class="faq-item reveal">
-                <button class="faq-trigger">
-                    Vocês também ensinam produção musical?
-                    <i class="fa-solid fa-chevron-down faq-icon"></i>
-                </button>
-                <div class="faq-content">
-                    <p>
-                        Sim. Além dos nossos produtos, oferecemos aulas compradas e presenciais sobre Produção Musical, FL Studio, Mixagem e Masterização. Também publicamos conteúdos gratuitos regularly no YouTube e das nossas redes sociais para ajudar produtores a evoluírem.
-                    </p>
-                </div>
-            </div>
-
-            <div class="faq-item reveal">
-                <button class="faq-trigger">
-                    Como consigo descontos nas compras?
-                    <i class="fa-solid fa-chevron-down faq-icon"></i>
-                </button>
-                <div class="faq-content">
-                    <p>
-                        Muito simples basta fazer uma compra mínima de 10.000kz, e depois clicar no botão de aplicar desconto no carrinho, e vais receber um desconto de até 25%, mas tem um pormenor, quando é aplicado o desconto o pagamento só pode ser feito de forma manual, copiando o iban, fazer a transferência e enviar o comprovativo lá mesmo no checkout, e receber os produtos no whatsapp e seu email.
-                    </p>
-                </div>
-            </div>
-
-            <div class="faq-item reveal">
-                <button class="faq-trigger">
-                    Como posso tornar-me Cliente VIP?
-                    <i class="fa-solid fa-chevron-down faq-icon"></i>
-                </button>
-                <div class="faq-content">
-                    <p>
-                       Basta clicar no menu na opção cliente vip e escolher um plano, fazer o pagamento e vais receber as credencias como email e senha para iniciar sessão e começar a desfrutar no privilégio do plano escolhido.
-                    </p>
-                </div>
-            </div>
-            
-            <div class="faq-item reveal">
-                <button class="faq-trigger">
-                    Porque tantos produtores utilizam os vossos Drum Kits?
-                    <i class="fa-solid fa-chevron-down faq-icon"></i>
-                </button>
-                <div class="faq-content">
-                    <p>
-                        Porque os nossos pacotes são desenvolvidos por quem realmente trabalha diariamente com produção musical. Cada lançamento passa por testes, organização e seleção dos melhores sons para garantir qualidade profissional e facilitar o trabalho dos produtores.
-                    </p>
-                </div>
-            </div>
-
-            <div class="faq-item reveal">
-                <button class="faq-trigger">
-                    Vale a pena comprar um Drum Kit mesmo sendo iniciante?
-                    <i class="fa-solid fa-chevron-down faq-icon"></i>
-                </button>
-                <div class="faq-content">
-                    <p>
-                        Sim. Utilizar bons sons desde o início faz uma enorme diferença na qualidade das suas produções. Em vez de perder horas à procura de samples na internet, você terá tudo organizado num único pacote, economizando tempo e produzir músicas com qualidade profissional.
+                        Ao adquirir qualquer um dos nossos cursos online, você terá acesso completo a todo o material para fazer download/baixar, incluindo os vídeos dos cursos, programas, drumkits e outras ferramentas essenciais de apoio.
                     </p>
                 </div>
             </div>
@@ -1917,6 +1706,7 @@
 <!-- SDKs do Firebase (Devem vir ANTES do seu script) -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="depoimento.js"></script>
 
 <script>
     // ==========================================
@@ -2334,37 +2124,116 @@
         counters.forEach(counter => observer.observe(counter));
     }
 
-    function initTestimonialSlider() {
-        const track = document.getElementById("testimonialsTrack");
-        const controlsContainer = document.getElementById("sliderControls");
-        const slides = document.querySelectorAll(".testimonial-slide");
-        if(!track || slides.length === 0 || !controlsContainer) return;
 
-        let currentIndex = 0;
-        controlsContainer.innerHTML = "";
+// ==========================================
+// DEPOIMENTOS SLIDER (3 CARDS E LOOP INFINITO)
+// ==========================================
+let currentTestimonialIndex = 0;
 
-        slides.forEach((_, i) => {
-            const dot = document.createElement("div");
-            dot.classList.add("slider-dot");
-            if(i === 0) dot.classList.add("active");
-            dot.addEventListener("click", () => goToSlide(i));
-            controlsContainer.appendChild(dot);
-        });
+function renderDepoimentosCards() {
+    const track = document.getElementById("testimonialCarouselTrack");
+    if (!track) return;
 
-        const dots = document.querySelectorAll(".slider-dot");
+    // Obtém dados de depoimento.js ou fallback seguro
+    const data = (window.depoimentosData && Array.isArray(window.depoimentosData)) ? window.depoimentosData : [];
+    if (data.length === 0) return;
 
-        function goToSlide(index) {
-            currentIndex = index;
-            track.style.transform = `translateX(-${currentIndex * 100}%)`;
-            dots.forEach(d => d.classList.remove("active"));
-            dots[currentIndex].classList.add("active");
+    track.innerHTML = data.map(item => {
+        if (item.tipo === 'imagem') {
+            return `
+                <div class="testimonial-media-card">
+                    <div class="testimonial-img-box">
+                        <img src="${item.midia}" alt="${item.autor}" loading="lazy">
+                    </div>
+                    <div class="testimonial-info-box">
+                        <h6 style="font-family: var(--font-montserrat); color: var(--white); font-size: 0.95rem; margin-bottom: 0.2rem;">${item.autor}</h6>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary);">${item.descricao}</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            return `
+                <div class="testimonial-media-card">
+                    <div class="testimonial-video-box">
+                        <iframe src="${getYouTubeEmbedUrl(item.midia)}" title="${item.autor}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="testimonial-info-box">
+                        <h6 style="font-family: var(--font-montserrat); color: var(--white); font-size: 0.95rem; margin-bottom: 0.2rem;">${item.autor}</h6>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary);">${item.descricao}</p>
+                    </div>
+                </div>
+            `;
         }
+    }).join('');
 
-        setInterval(() => {
-            let next = (currentIndex + 1) % slides.length;
-            goToSlide(next);
-        }, 7000);
+    updateTestimonialSliderPosition();
+}
+
+function updateTestimonialSliderPosition() {
+    const track = document.getElementById("testimonialCarouselTrack");
+    if (!track || track.children.length === 0) return;
+
+    const firstCard = track.children[0];
+    const cardWidth = firstCard.getBoundingClientRect().width;
+    const gap = 20; // gap no CSS
+
+    const moveDistance = (cardWidth + gap) * currentTestimonialIndex;
+    track.style.transform = `translateX(-${moveDistance}px)`;
+}
+
+function initTestimonialSlider() {
+    renderDepoimentosCards();
+
+    const track = document.getElementById("testimonialCarouselTrack");
+    const prevBtn = document.getElementById("testimonialPrevBtn");
+    const nextBtn = document.getElementById("testimonialNextBtn");
+
+    if (!track) return;
+
+    const getTotalCards = () => track.children.length;
+
+    const getVisibleCards = () => {
+        if (window.innerWidth <= 650) return 1;
+        if (window.innerWidth <= 992) return 2;
+        return 3;
+    };
+
+    if (nextBtn) {
+        nextBtn.onclick = (e) => {
+            e.preventDefault();
+            const total = getTotalCards();
+            const visible = getVisibleCards();
+            const maxIndex = total - visible;
+
+            if (currentTestimonialIndex >= maxIndex) {
+                currentTestimonialIndex = 0; // Loop infinito voltando ao início
+            } else {
+                currentTestimonialIndex++;
+            }
+            updateTestimonialSliderPosition();
+        };
     }
+
+    if (prevBtn) {
+        prevBtn.onclick = (e) => {
+            e.preventDefault();
+            const total = getTotalCards();
+            const visible = getVisibleCards();
+            const maxIndex = total - visible;
+
+            if (currentTestimonialIndex <= 0) {
+                currentTestimonialIndex = maxIndex > 0 ? maxIndex : 0; // Loop infinito indo para o fim
+            } else {
+                currentTestimonialIndex--;
+            }
+            updateTestimonialSliderPosition();
+        };
+    }
+
+    window.addEventListener("resize", () => {
+        updateTestimonialSliderPosition();
+    });
+}
 
     function initFaqAccordion() {
         const triggers = document.querySelectorAll(".faq-trigger");
