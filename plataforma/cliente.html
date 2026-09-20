@@ -97,7 +97,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
         }
 
         #preloader.fade-out { 
@@ -135,7 +135,7 @@
             position: absolute; top: 0; left: 0; height: 100%;
             width: 0%; background: linear-gradient(90deg, var(--primary), #FF5555);
             border-radius: 10px; box-shadow: 0 0 12px var(--primary-glow);
-            transition: width 0.2s ease;
+            transition: width 0.3s ease;
         }
 
         /* TOAST NOTIFICATIONS */
@@ -1166,7 +1166,7 @@
                 preloader.classList.add('fade-out');
                 preloader.style.opacity = '0';
                 preloader.style.pointerEvents = 'none';
-                setTimeout(() => { preloader.style.display = 'none'; }, 200);
+                setTimeout(() => { preloader.style.display = 'none'; }, 300);
             }
         }
 
@@ -1174,14 +1174,14 @@
             const loaderProgress = document.getElementById('loaderProgress');
             let progress = 0;
             const interval = setInterval(() => {
-                progress += 50;
+                progress += 35;
                 if (loaderProgress) loaderProgress.style.width = `${progress}%`;
                 if (progress >= 100) {
                     clearInterval(interval);
                     forceDismissPreloader();
                 }
-            }, 20);
-            setTimeout(forceDismissPreloader, 400);
+            }, 30);
+            setTimeout(forceDismissPreloader, 800);
         })();
 
         const firebaseConfig = {
@@ -1197,18 +1197,7 @@
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
-        
         const db = firebase.firestore();
-
-        // ATIVAÇÃO DE CACHE OFFLINE (IndexedDB) PARA CARREGAMENTO INSTANTÂNEO EM DISPOSITIVOS MÓVEIS
-        db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
-            if (err.code === 'failed-precondition') {
-                console.warn("Múltiplas abas abertas, persistência em uma só aba.");
-            } else if (err.code === 'unimplemented') {
-                console.warn("Navegador móvel não suporta IndexedDB offline.");
-            }
-        });
-
         const auth = firebase.auth();
         const storage = firebase.storage();
 
@@ -1268,7 +1257,7 @@
             return String(str)
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
-                .replace/>/g, "&gt;")
+                .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
         }
@@ -1328,22 +1317,15 @@
             }
         });
 
-        // INICIALIZAÇÃO OTIMIZADA COM REQUISIÇÕES EM PARALELO
         async function initClientPortal() {
             try {
-                // Renderização imediata dos scripts locais
+                await loadUserProfile();
+                await loadAffiliateWalletData();
                 initClienteVideos();
                 renderDepoimentos();
-                setRating(5);
-
-                // Execução paralela sem bloqueio para a UI responder no telemóvel
-                await Promise.allSettled([
-                    loadUserProfile(),
-                    loadAffiliateWalletData(),
-                    checkActivePromotionsNotification()
-                ]);
-
                 listenUserAccesses();
+                checkActivePromotionsNotification();
+                setRating(5);
             } catch (err) {
                 console.warn("Aviso ao carregar dados iniciais:", err);
             } finally {
@@ -2075,10 +2057,8 @@
                 const uData = userDoc.exists ? userDoc.data() : {};
                 const affCode = uData.affiliateCode || currentUser.uid.substring(0, 8).toUpperCase();
 
-                const [snapshot1, snapshot2] = await Promise.all([
-                    db.collection('transactions').where('affiliateCode', '==', affCode).get(),
-                    db.collection('transactions').where('affiliateRef', '==', affCode).get()
-                ]);
+                const snapshot1 = await db.collection('transactions').where('affiliateCode', '==', affCode).get();
+                const snapshot2 = await db.collection('transactions').where('affiliateRef', '==', affCode).get();
 
                 const listMap = new Map();
                 snapshot1.forEach(doc => listMap.set(doc.id, { id: doc.id, ...doc.data() }));
@@ -2692,6 +2672,7 @@
             const userName = userNameEl ? userNameEl.innerText : (currentUser.displayName || 'Cliente VIP');
 
             try {
+                // 1. Grava no Firestore primeiro
                 await db.collection('avaliacoes').add({
                     userId: currentUser.uid,
                     userName: userName,
@@ -2701,6 +2682,7 @@
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
+                // 2. Dispara e-mail em segundo plano de forma não bloqueante
                 fetch("https://formsubmit.co/ajax/suporte@lonekenobeat.com", {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "Accept": "application/json" },
@@ -2857,6 +2839,7 @@
             }
         }
 
+        // RENDERIZAR LISTA DE PROMOÇÕES (VERIFICA SE A OFERTA JÁ FOI ADQUIRIDA)
         async function loadPromotionsList() {
             const container = document.getElementById('promotions-products-list');
             if (!container) return;
@@ -3078,6 +3061,7 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A processar...';
 
             try {
+                // 1. Grava no Firestore
                 await db.collection('solicitacoes_saque').add({
                     userId: currentUser.uid,
                     userEmail: currentUser.email || '',
@@ -3091,6 +3075,7 @@
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
+                // 2. Dispara e-mail em segundo plano sem bloquear a UI
                 fetch("https://formsubmit.co/ajax/suporte@lonekenobeat.com", {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "Accept": "application/json" },
@@ -3510,6 +3495,7 @@
             }).catch(err => console.warn("Falha no disparo de e-mail por FormSubmit:", err));
         }
 
+        // EXECUTAR CHECKOUT (PAGAMENTO COM CARTEIRA OU COMPROVATIVO)
         async function executeProfileCheckout() {
             if (!selectedCheckoutProduct || !currentUser) return;
 
@@ -3530,6 +3516,7 @@
                     const promoDocId = String(selectedCheckoutProduct.id);
                     const cleanEmail = (currentUser.email || 'user').toLowerCase().trim().replace(/[^a-z0-9]/gi, '_');
 
+                    // 1. Atualizar saldo e liberar permissão no perfil do usuário
                     await db.collection('users').doc(currentUser.uid).set({
                         saldoAfiliado: newBalance,
                         saldoCarteira: newBalance,
@@ -3539,6 +3526,7 @@
                         }
                     }, { merge: true });
 
+                    // 2. Registar em purchases para o target e para a promoção
                     await db.collection('users').doc(currentUser.uid).collection('purchases').doc(targetProdId).set({
                         id: targetProdId,
                         titulo: selectedCheckoutProduct.title,
@@ -3559,6 +3547,7 @@
                         }, { merge: true });
                     }
 
+                    // 3. Registar documento em user_access
                     const accessDocId = `${cleanEmail}_${targetProdId}`;
                     await db.collection('user_access').doc(accessDocId).set({
                         userId: currentUser.uid,
@@ -3583,6 +3572,7 @@
                         }, { merge: true });
                     }
 
+                    // 4. Registar transação aprovada
                     const transactionData = {
                         userEmail: currentUser.email || 'N/A',
                         userId: currentUser.uid || '',
@@ -3600,6 +3590,7 @@
 
                     await db.collection('transactions').add(transactionData);
 
+                    // 5. Atualizar variáveis de estado locais instantaneamente
                     userWalletBalance = newBalance;
                     userUnlockedProductIds.add(targetProdId);
                     userUnlockedProductIds.add(promoDocId);
@@ -3614,6 +3605,7 @@
                     combinePermissionsAndRender();
                     loadPromotionsList();
 
+                    // 6. Redirecionar imediatamente para a aba Produtos Comprados
                     const unlockedMenuItem = document.querySelector('.menu-item[onclick*="unlocked-products"]');
                     switchView('unlocked-products', unlockedMenuItem);
 
@@ -3626,6 +3618,7 @@
                 return;
             }
 
+            // Processamento normal com comprovativo bancário
             const fileInput = document.getElementById('chk-proof-file');
             const proofUrlInputEl = document.getElementById('chk-proof-url');
             const proofUrlInput = proofUrlInputEl ? proofUrlInputEl.value.trim() : '';
