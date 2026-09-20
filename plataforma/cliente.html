@@ -359,6 +359,8 @@
         .btn-secondary:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
         .btn-success { background: rgba(16, 185, 129, 0.25); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.5); }
         .btn-success:hover { background: var(--success); color: #FFF; }
+        .btn-danger { background: rgba(229, 9, 20, 0.25); color: #FF5555; border: 1px solid rgba(229, 9, 20, 0.5); }
+        .btn-danger:hover { background: var(--primary); color: #FFF; }
 
         /* CHAT E LMS */
         .chat-box-container { height: calc(100vh - 220px); min-height: 400px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); display: flex; flex-direction: column; overflow: hidden; width: 100%; }
@@ -449,7 +451,7 @@
 
     <div class="app-container">
 
-       <!-- TOP NAVBAR COM SALDO DA CARTEIRA -->
+        <!-- TOP NAVBAR COM SALDO DA CARTEIRA -->
         <header class="top-navbar">
             <button class="icon-btn" id="menuToggle" style="display:none;" onclick="toggleSidebar()">
                 <i class="fa-solid fa-bars"></i>
@@ -503,10 +505,9 @@
                 <div class="menu-item" onclick="switchView('locked-products', this)">
                     <i class="fa-solid fa-lock"></i> Produtos disponiveis para compra
                 </div>
-                <!-- Cole logo abaixo de "Área de Afiliado & Carteira" ou onde desejar no menu -->
-<div class="menu-item" onclick="switchView('my-affiliate-links', this)">
-    <i class="fa-solid fa-link" style="color:#38BDF8;"></i> Meus Links de Afiliado
-</div>
+                <div class="menu-item" onclick="switchView('my-affiliate-links', this)">
+                    <i class="fa-solid fa-link" style="color:#38BDF8;"></i> Meus Links de Afiliado
+                </div>
                 <div class="menu-item" onclick="switchView('affiliate-sales', this)">
                     <i class="fa-solid fa-chart-line" style="color:var(--info);"></i> Histórico de Vendas de Afiliado
                 </div>
@@ -665,23 +666,23 @@
             </section>
 
             <!-- VIEW: MEUS LINKS DE AFILIADO GERADOS -->
-<section id="view-my-affiliate-links" class="panel-view">
-    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom: 1.5rem;">
-        <div>
-            <h2 class="view-title"><i class="fa-solid fa-link" style="color:#38BDF8;"></i> Meus Links de Afiliado Gerados</h2>
-            <p style="color:var(--text-muted); font-size:0.95rem;">Consulte e copie rapidamente todos os links de afiliado dos produtos que você comprou e se afiliou.</p>
-        </div>
-        <button class="btn-action btn-secondary" onclick="renderMyAffiliateLinksView()" style="width:auto; padding:10px 18px;">
-            <i class="fa-solid fa-arrows-rotate"></i> Atualizar Lista
-        </button>
-    </div>
+            <section id="view-my-affiliate-links" class="panel-view">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom: 1.5rem;">
+                    <div>
+                        <h2 class="view-title"><i class="fa-solid fa-link" style="color:#38BDF8;"></i> Meus Links de Afiliado Gerados</h2>
+                        <p style="color:var(--text-muted); font-size:0.95rem;">Consulte e copie rapidamente todos os links de afiliado dos produtos que você comprou e se afiliou.</p>
+                    </div>
+                    <button class="btn-action btn-secondary" onclick="renderMyAffiliateLinksView()" style="width:auto; padding:10px 18px;">
+                        <i class="fa-solid fa-arrows-rotate"></i> Atualizar Lista
+                    </button>
+                </div>
 
-    <div class="form-container-card">
-        <div id="my-affiliate-links-list" style="display:flex; flex-direction:column; gap:16px;">
-            <p style="color:var(--text-muted); text-align:center; padding:1.5rem;">A carregar os seus links...</p>
-        </div>
-    </div>
-</section>
+                <div class="form-container-card">
+                    <div id="my-affiliate-links-list" style="display:flex; flex-direction:column; gap:16px;">
+                        <p style="color:var(--text-muted); text-align:center; padding:1.5rem;">A carregar os seus links...</p>
+                    </div>
+                </div>
+            </section>
 
             <!-- 4. CHANGE PASSWORD VIEW -->
             <section id="view-change-password" class="panel-view">
@@ -1227,6 +1228,7 @@
         let selectedCheckoutProduct = null;
         let currentRatingVal = 5;
         let userWalletBalance = 0;
+        let userAffiliatedMap = {};
 
         function parseFirebaseDate(dateVal) {
             if (!dateVal) return new Date(0);
@@ -1342,365 +1344,268 @@
             }
         }
 
-       // 1. ATUALIZAÇÃO DO SWITCH VIEW
-function switchView(tabId, menuElement) {
-    toggleSidebar(false);
-    if (menuElement) {
-        document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-        menuElement.classList.add('active');
-    }
-
-    document.querySelectorAll('.panel-view').forEach(view => view.classList.remove('active'));
-    const targetView = document.getElementById(`view-${tabId}`);
-    if (targetView) targetView.classList.add('active');
-
-    if (tabId === 'chat') listenClientChat();
-    if (tabId === 'promotions') loadPromotionsList();
-    if (tabId === 'watched-lessons') renderPanelLessonsFromVideos();
-    if (tabId === 'depoimentos') renderDepoimentos();
-    if (tabId === 'affiliate') loadAffiliateWalletData();
-    if (tabId === 'affiliate-sales') loadAffiliateSalesHistory();
-    if (tabId === 'my-affiliate-links') renderMyAffiliateLinksView(); // <--- NOVO
-}
-
-// 2. ATUALIZAÇÃO DO CARD DO PRODUTO (SÓ PERMITE AFILIAR SE TIVER COMPRADO)
-function createProductCardHTML(p, isUnlocked) {
-    const thumb = p.imagem || p.thumb || p.capa || 'https://via.placeholder.com/300x180/181824/FFF?text=LONEKE+NO+BEAT';
-    const rawPrice = Number(p.precoAtual || p.price || p.preco || 0);
-    const priceStr = rawPrice > 0 ? `${rawPrice.toLocaleString('pt-AO')} Kz` : 'Gratuito';
-    const safeId = escapeJsArg(p.id);
-
-    const comissaoVal = Math.floor(rawPrice * 0.5);
-    const comissaoStr = comissaoVal > 0 ? `${comissaoVal.toLocaleString('pt-AO')} Kz` : '0 Kz';
-
-    const isAffiliated = !!userAffiliatedMap[p.id];
-
-    // 1. Botão Demonstração
-    const btnDemo = `
-        <button class="btn-action btn-secondary" style="margin-bottom:6px; font-size:0.78rem;" onclick="openDemoPlayer('${safeId}')">
-            <i class="fa-solid fa-circle-play" style="color:var(--primary);"></i> Ver Demonstração
-        </button>
-    `;
-
-    // 2. Botão Material de Divulgação (SÓ APARECE DEPOIS DE SE AFILIAR)
-    let btnMaterial = '';
-    if (isAffiliated) {
-        btnMaterial = `
-            <button class="btn-action btn-secondary" style="margin-bottom:6px; font-size:0.78rem; border-color:rgba(59,130,246,0.4); color:#38BDF8;" onclick="downloadPromoMaterial('${safeId}')">
-                <i class="fa-solid fa-bullhorn"></i> Material de Divulgação
-            </button>
-        `;
-    }
-
-    // 3. Botão de Afiliação (Verifica Compra + Se já é afiliado + Exclusão)
-    let btnAffiliate = '';
-    if (rawPrice > 0) {
-        if (!isUnlocked) {
-            btnAffiliate = `
-                <button class="btn-action btn-secondary" style="margin-bottom:8px; font-size:0.78rem; opacity:0.65; cursor:pointer; border-color:rgba(255,255,255,0.1);" onclick="Swal.fire({ title: 'Afiliação Bloqueada', text: 'Você precisa comprar/desbloquear este produto primeiro antes de se afiliar!', icon: 'warning', confirmButtonColor: '#E50914', customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' } })">
-                    <i class="fa-solid fa-lock" style="color:var(--warning);"></i> Afiliação Bloqueada (Compre Primeiro)
-                </button>
-            `;
-        } else if (isAffiliated) {
-            btnAffiliate = `
-                <div style="display:flex; gap:6px; margin-bottom:8px;">
-                    <button class="btn-action btn-success" style="font-size:0.78rem; flex:1;" onclick="generateProductAffiliateLink('${safeId}', '${escapeJsArg(p.titulo || 'Produto')}')">
-                        <i class="fa-solid fa-link"></i> Ver Link Afiliado
-                    </button>
-                    <button class="btn-action btn-danger btn-icon-only" style="width:36px; height:36px;" onclick="deleteAffiliateLink('${safeId}')" title="Excluir Afiliação">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            `;
-        } else {
-            btnAffiliate = `
-                <button class="btn-action btn-secondary" style="margin-bottom:8px; font-size:0.78rem; border-color:rgba(16,185,129,0.4); color:#10B981;" onclick="generateProductAffiliateLink('${safeId}', '${escapeJsArg(p.titulo || 'Produto')}')">
-                    <i class="fa-solid fa-handshake"></i> Gerar Link de Afiliado (Ganha: ${comissaoStr})
-                </button>
-            `;
-        }
-    }
-
-    const catLower = String(p.categoria || '').toLowerCase();
-    const isCourse = catLower.includes('curso') || (p.modulos && p.modulos.length > 0);
-
-    let actionButton = '';
-    if (isUnlocked) {
-        if (isCourse) {
-            actionButton = `<button class="btn-action btn-success" onclick="openCoursePlayer('${safeId}')"><i class="fa-solid fa-graduation-cap"></i> Assistir Aulas</button>`;
-        } else {
-            actionButton = `<a href="${escapeHtml(p.linkDownload || '#')}" target="_blank" class="btn-action btn-success"><i class="fa-solid fa-cloud-arrow-down"></i> Baixar Kit</a>`;
-        }
-    } else {
-        actionButton = `<button class="btn-action btn-primary" onclick="openProfileCheckoutModal('${safeId}', '${escapeJsArg(p.titulo || 'Produto VIP')}', ${rawPrice})"><i class="fa-solid fa-cart-shopping"></i> Comprar Agora (${priceStr})</button>`;
-    }
-
-    return `
-        <div class="product-card">
-            <div class="product-thumb-container">
-                <img src="${escapeHtml(thumb)}" class="product-thumb" alt="${escapeHtml(p.titulo || 'Produto')}">
-            </div>
-            <div class="product-body">
-                <span style="font-size:0.72rem; color:var(--primary); font-weight:800; text-transform:uppercase;">${escapeHtml(p.categoria || 'VIP')}</span>
-                <h4 class="product-title">${escapeHtml(p.titulo || 'Produto VIP')}</h4>
-                <p class="product-desc">${escapeHtml(p.descricao || '')}</p>
-                <div style="margin-top:auto; padding-top:10px; display:flex; flex-direction:column;">
-                    ${btnDemo}
-                    ${btnAffiliate}
-                    ${btnMaterial}
-                    ${actionButton}
-                </div>
-            </div>
-        </div>
-    `;
-}
-// Variável Global de Mapa de Afiliações
-let userAffiliatedMap = {};
-
-// 1. GERAR AFILIAÇÃO COM VALIDAÇÃO DE COMPRA, LIMITE DE 10 E AVISO SE JÁ AFILIADO
-async function generateProductAffiliateLink(productId, productTitle) {
-    if (!currentUser) return;
-
-    // VALIDAÇÃO 1: Deve ter comprado o produto
-    if (!userUnlockedProductIds.has(String(productId))) {
-        Swal.fire({
-            title: 'Afiliação Bloqueada',
-            text: 'Você precisa comprar/desbloquear este produto primeiro para poder se afiliar!',
-            icon: 'warning',
-            confirmButtonColor: '#E50914',
-            customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
-        });
-        return;
-    }
-
-    // VALIDAÇÃO 2: Verificar se já é afiliado
-    if (userAffiliatedMap[productId]) {
-        const existingLink = userAffiliatedMap[productId].affiliateUrl;
-        Swal.fire({
-            title: '🤝 Você já é Afiliado deste Produto!',
-            html: `
-                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">
-                    Seu link de afiliação já está ativo. Divulgue e receba <strong>50% de comissão</strong> por cada venda!
-                </p>
-                <input type="text" value="${existingLink}" readonly class="swal2-input" style="font-size:0.85rem; text-align:center; color:#38BDF8;">
-            `,
-            showCancelButton: true,
-            showDenyButton: true,
-            confirmButtonText: '<i class="fa-solid fa-copy"></i> Copiar Link',
-            denyButtonText: '<i class="fa-solid fa-trash"></i> Excluir Afiliação',
-            cancelButtonText: 'Fechar',
-            confirmButtonColor: '#10B981',
-            denyButtonColor: '#E50914',
-            cancelButtonColor: '#1F1F2C',
-            customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
-        }).then((res) => {
-            if (res.isConfirmed) {
-                copyTextToClipboard(existingLink, "Link de Afiliado");
-            } else if (res.isDenied) {
-                deleteAffiliateLink(productId);
+        function switchView(tabId, menuElement) {
+            toggleSidebar(false);
+            if (menuElement) {
+                document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+                menuElement.classList.add('active');
             }
-        });
-        return;
-    }
 
-    // VALIDAÇÃO 3: Limite máximo de 10 afiliações
-    const totalAfiliados = Object.keys(userAffiliatedMap).length;
-    if (totalAfiliados >= 10) {
-        Swal.fire({
-            title: 'Limite de Afiliações Atingido',
-            text: 'Você só pode se afiliar a no máximo 10 produtos. Exclua um link de afiliação existente para poder se afiliar a este.',
-            icon: 'warning',
-            confirmButtonColor: '#E50914',
-            customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
-        });
-        return;
-    }
+            document.querySelectorAll('.panel-view').forEach(view => view.classList.remove('active'));
+            const targetView = document.getElementById(`view-${tabId}`);
+            if (targetView) targetView.classList.add('active');
 
-    try {
-        const userDoc = await db.collection('users').doc(currentUser.uid).get();
-        const uData = userDoc.exists ? userDoc.data() : {};
-        const affCode = uData.affiliateCode || currentUser.uid.substring(0, 8).toUpperCase();
-
-        if (!uData.affiliateCode) {
-            await db.collection('users').doc(currentUser.uid).set({ affiliateCode: affCode }, { merge: true });
+            if (tabId === 'chat') listenClientChat();
+            if (tabId === 'promotions') loadPromotionsList();
+            if (tabId === 'watched-lessons') renderPanelLessonsFromVideos();
+            if (tabId === 'depoimentos') renderDepoimentos();
+            if (tabId === 'affiliate') loadAffiliateWalletData();
+            if (tabId === 'affiliate-sales') loadAffiliateSalesHistory();
+            if (tabId === 'my-affiliate-links') renderMyAffiliateLinksView();
         }
 
-        const baseUrl = window.location.origin + window.location.pathname.replace('cliente.html', 'checkout.html');
-        const affiliateUrl = `${baseUrl}?product_id=${encodeURIComponent(productId)}&ref=${affCode}`;
+        async function generateProductAffiliateLink(productId, productTitle) {
+            if (!currentUser) return;
 
-        await db.collection('users').doc(currentUser.uid).set({
-            produtosAfiliados: {
-                [productId]: {
+            const safeTitle = productTitle || 'Produto VIP';
+
+            if (!userUnlockedProductIds.has(String(productId))) {
+                Swal.fire({
+                    title: 'Afiliação Bloqueada',
+                    text: 'Você precisa comprar/desbloquear este produto primeiro para poder se afiliar!',
+                    icon: 'warning',
+                    confirmButtonColor: '#E50914',
+                    customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
+                });
+                return;
+            }
+
+            const userDoc = await db.collection('users').doc(currentUser.uid).get();
+            const uData = userDoc.exists ? userDoc.data() : {};
+            const affCode = uData.affiliateCode || currentUser.uid.substring(0, 8).toUpperCase();
+
+            if (!uData.affiliateCode) {
+                await db.collection('users').doc(currentUser.uid).set({ affiliateCode: affCode }, { merge: true });
+            }
+
+            const baseUrl = window.location.origin + window.location.pathname.replace('cliente.html', 'checkout.html');
+            const defaultAffiliateUrl = `${baseUrl}?product_id=${encodeURIComponent(productId)}&ref=${affCode}`;
+
+            if (userAffiliatedMap[productId]) {
+                const existingLink = userAffiliatedMap[productId].affiliateUrl || defaultAffiliateUrl;
+                Swal.fire({
+                    title: '🤝 Você já é Afiliado deste Produto!',
+                    html: `
+                        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">
+                            Seu link de afiliação já está ativo. Divulgue e receba <strong>50% de comissão</strong> por cada venda!
+                        </p>
+                        <input type="text" value="${existingLink}" readonly class="swal2-input" style="font-size:0.85rem; text-align:center; color:#38BDF8;">
+                    `,
+                    showCancelButton: true,
+                    showDenyButton: true,
+                    confirmButtonText: '<i class="fa-solid fa-copy"></i> Copiar Link',
+                    denyButtonText: '<i class="fa-solid fa-trash"></i> Excluir Afiliação',
+                    cancelButtonText: 'Fechar',
+                    confirmButtonColor: '#10B981',
+                    denyButtonColor: '#E50914',
+                    cancelButtonColor: '#1F1F2C',
+                    customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
+                }).then((res) => {
+                    if (res.isConfirmed) {
+                        copyTextToClipboard(existingLink, "Link de Afiliado");
+                    } else if (res.isDenied) {
+                        deleteAffiliateLink(productId);
+                    }
+                });
+                return;
+            }
+
+            const totalAfiliados = Object.keys(userAffiliatedMap).length;
+            if (totalAfiliados >= 10) {
+                Swal.fire({
+                    title: 'Limite de Afiliações Atingido',
+                    text: 'Você só pode se afiliar a no máximo 10 produtos. Exclua um link de afiliação existente para poder se afiliar a este.',
+                    icon: 'warning',
+                    confirmButtonColor: '#E50914',
+                    customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
+                });
+                return;
+            }
+
+            try {
+                const affiliateUrl = defaultAffiliateUrl;
+
+                await db.collection('users').doc(currentUser.uid).set({
+                    produtosAfiliados: {
+                        [productId]: {
+                            productId: productId,
+                            productTitle: safeTitle,
+                            affiliateUrl: affiliateUrl,
+                            affiliatedAt: new Date().toISOString()
+                        }
+                    }
+                }, { merge: true });
+
+                userAffiliatedMap[productId] = {
                     productId: productId,
-                    productTitle: productTitle,
+                    productTitle: safeTitle,
                     affiliateUrl: affiliateUrl,
                     affiliatedAt: new Date().toISOString()
-                }
-            }
-        }, { merge: true });
+                };
 
-        userAffiliatedMap[productId] = {
-            productId: productId,
-            productTitle: productTitle,
-            affiliateUrl: affiliateUrl,
-            affiliatedAt: new Date().toISOString()
-        };
-
-        Swal.fire({
-            title: '🤝 Afiliação Concluída!',
-            html: `
-                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">
-                    Partilhe este link do produto <strong>"${escapeHtml(productTitle)}"</strong> e receba <strong>50% de comissão</strong> por cada venda!
-                </p>
-                <input type="text" value="${affiliateUrl}" readonly class="swal2-input" style="font-size:0.85rem; text-align:center; color:#38BDF8;">
-            `,
-            showCancelButton: true,
-            confirmButtonText: '<i class="fa-solid fa-copy"></i> Copiar Link',
-            cancelButtonText: 'Fechar',
-            confirmButtonColor: '#10B981',
-            cancelButtonColor: '#1F1F2C',
-            customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
-        }).then((res) => {
-            if (res.isConfirmed) {
-                copyTextToClipboard(affiliateUrl, "Link de Afiliado");
-            }
-        });
-
-        renderAllProductsViews();
-        renderMyAffiliateLinksView();
-
-    } catch (err) {
-        console.error("Erro ao gerar afiliação:", err);
-        showToast("Erro ao gerar link de afiliado: " + err.message, "warning");
-    }
-}
-
-// 2. EXCLUIR LINK DE AFILIADO
-async function deleteAffiliateLink(productId) {
-    if (!currentUser) return;
-
-    Swal.fire({
-        title: 'Excluir Link de Afiliado?',
-        text: 'Tem certeza que deseja remover esta afiliação? Isso liberará uma vaga no seu limite de 10 produtos.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#E50914',
-        cancelButtonColor: '#1F1F2C',
-        confirmButtonText: 'Sim, Excluir',
-        cancelButtonText: 'Cancelar',
-        customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
-    }).then(async (res) => {
-        if (res.isConfirmed) {
-            try {
-                await db.collection('users').doc(currentUser.uid).update({
-                    [`produtosAfiliados.${productId}`]: firebase.firestore.FieldValue.delete()
+                Swal.fire({
+                    title: '🤝 Afiliação Concluída!',
+                    html: `
+                        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">
+                            Partilhe este link do produto <strong>"${escapeHtml(safeTitle)}"</strong> e receba <strong>50% de comissão</strong> por cada venda!
+                        </p>
+                        <input type="text" value="${affiliateUrl}" readonly class="swal2-input" style="font-size:0.85rem; text-align:center; color:#38BDF8;">
+                    `,
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="fa-solid fa-copy"></i> Copiar Link',
+                    cancelButtonText: 'Fechar',
+                    confirmButtonColor: '#10B981',
+                    cancelButtonColor: '#1F1F2C',
+                    customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
+                }).then((res) => {
+                    if (res.isConfirmed) {
+                        copyTextToClipboard(affiliateUrl, "Link de Afiliado");
+                    }
                 });
 
-                delete userAffiliatedMap[productId];
-                showToast('Link de afiliação excluído com sucesso!', 'success');
                 renderAllProductsViews();
                 renderMyAffiliateLinksView();
+
             } catch (err) {
-                console.error("Erro ao excluir afiliação:", err);
-                showToast("Erro ao excluir link: " + err.message, "warning");
+                console.error("Erro ao gerar afiliação:", err);
+                showToast("Erro ao gerar link de afiliado: " + err.message, "warning");
             }
         }
-    });
-}
 
-// 3. RENDERIZAR VISTA DE MEUS LINKS DE AFILIADO
-async function renderMyAffiliateLinksView() {
-    const container = document.getElementById('my-affiliate-links-list');
-    if (!container || !currentUser) return;
+        async function deleteAffiliateLink(productId) {
+            if (!currentUser) return;
 
-    container.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding:1.5rem;"><i class="fa-solid fa-spinner fa-spin"></i> A carregar os seus links de afiliado...</p>`;
+            Swal.fire({
+                title: 'Excluir Link de Afiliado?',
+                text: 'Tem certeza que deseja remover esta afiliação? Isso liberará uma vaga no seu limite de 10 produtos.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#E50914',
+                cancelButtonColor: '#1F1F2C',
+                confirmButtonText: 'Sim, Excluir',
+                cancelButtonText: 'Cancelar',
+                customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
+            }).then(async (res) => {
+                if (res.isConfirmed) {
+                    try {
+                        await db.collection('users').doc(currentUser.uid).update({
+                            [`produtosAfiliados.${productId}`]: firebase.firestore.FieldValue.delete()
+                        });
 
-    try {
-        const userDoc = await db.collection('users').doc(currentUser.uid).get();
-        const uData = userDoc.exists ? userDoc.data() : {};
-        const affCode = uData.affiliateCode || currentUser.uid.substring(0, 8).toUpperCase();
-        userAffiliatedMap = uData.produtosAfiliados || {};
-
-        const keys = Object.keys(userAffiliatedMap);
-
-        if (keys.length === 0) {
-            container.innerHTML = `
-                <div style="text-align:center; padding:2rem; color:var(--text-muted);">
-                    <i class="fa-solid fa-link-slash" style="font-size:2.5rem; color:var(--primary); margin-bottom:1rem;"></i>
-                    <p style="font-size:1rem; font-weight:700; color:#FFF;">Você ainda não gerou nenhum link de afiliado.</p>
-                    <p style="font-size:0.85rem;">Aceda aos seus "Produtos Comprados" e clique em "Gerar Link de Afiliado" nos seus produtos desbloqueados (máximo de 10 afiliações).</p>
-                </div>
-            `;
-            return;
+                        delete userAffiliatedMap[productId];
+                        showToast('Link de afiliação excluído com sucesso!', 'success');
+                        renderAllProductsViews();
+                        renderMyAffiliateLinksView();
+                    } catch (err) {
+                        console.error("Erro ao excluir afiliação:", err);
+                        showToast("Erro ao excluir link: " + err.message, "warning");
+                    }
+                }
+            });
         }
 
-        container.innerHTML = `
-            <div style="background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.3); padding:12px; border-radius:var(--radius-md); font-size:0.85rem; color:#FFF; margin-bottom:1rem;">
-                <i class="fa-solid fa-circle-info" style="color:var(--info);"></i> Afiliações Ativas: <strong>${keys.length} / 10</strong>
-            </div>
-        `;
+        async function renderMyAffiliateLinksView() {
+            const container = document.getElementById('my-affiliate-links-list');
+            if (!container || !currentUser) return;
 
-        const baseUrl = window.location.origin + window.location.pathname.replace('cliente.html', 'checkout.html');
+            container.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding:1.5rem;"><i class="fa-solid fa-spinner fa-spin"></i> A carregar os seus links de afiliado...</p>`;
 
-        keys.forEach(pId => {
-            const item = userAffiliatedMap[pId];
-            const title = item.productTitle || 'Produto VIP';
-            const link = item.affiliateUrl || `${baseUrl}?product_id=${encodeURIComponent(pId)}&ref=${affCode}`;
-            const dateStr = item.affiliatedAt ? new Date(item.affiliatedAt).toLocaleDateString('pt-AO') : 'Ativo';
-            const safePId = escapeJsArg(pId);
+            try {
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                const uData = userDoc.exists ? userDoc.data() : {};
+                const affCode = uData.affiliateCode || currentUser.uid.substring(0, 8).toUpperCase();
+                userAffiliatedMap = uData.produtosAfiliados || {};
 
-            container.innerHTML += `
-                <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:1.2rem; display:flex; flex-direction:column; gap:10px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-                        <strong style="color:#FFF; font-size:1rem;"><i class="fa-solid fa-box" style="color:var(--primary); margin-right:8px;"></i> ${escapeHtml(title)}</strong>
-                        <span style="font-size:0.75rem; color:var(--text-muted);"><i class="fa-regular fa-calendar"></i> Gerado em: ${dateStr}</span>
+                const keys = Object.keys(userAffiliatedMap);
+
+                if (keys.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align:center; padding:2rem; color:var(--text-muted);">
+                            <i class="fa-solid fa-link-slash" style="font-size:2.5rem; color:var(--primary); margin-bottom:1rem;"></i>
+                            <p style="font-size:1rem; font-weight:700; color:#FFF;">Você ainda não gerou nenhum link de afiliado.</p>
+                            <p style="font-size:0.85rem;">Aceda aos seus "Produtos Comprados" e clique em "Gerar Link de Afiliado" nos seus produtos desbloqueados (máximo de 10 afiliações).</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div style="background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.3); padding:12px; border-radius:var(--radius-md); font-size:0.85rem; color:#FFF; margin-bottom:1rem;">
+                        <i class="fa-solid fa-circle-info" style="color:var(--info);"></i> Afiliações Ativas: <strong>${keys.length} / 10</strong>
                     </div>
-                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                        <input type="text" value="${escapeHtml(link)}" readonly class="search-input" style="flex:1; color:#38BDF8; font-weight:700; background:#0c0c12;">
-                        <button class="btn-action btn-success" onclick="copyTextToClipboard('${escapeJsArg(link)}', 'Link de Afiliado')" style="width:auto; padding:0 20px;">
-                            <i class="fa-solid fa-copy"></i> Copiar
-                        </button>
-                        <button class="btn-action btn-secondary" onclick="downloadPromoMaterial('${safePId}')" style="width:auto; border-color:rgba(59,130,246,0.4); color:#38BDF8;" title="Material de Divulgação">
-                            <i class="fa-solid fa-bullhorn"></i> Material
-                        </button>
-                        <button class="btn-action btn-danger" onclick="deleteAffiliateLink('${safePId}')" style="width:auto; padding:0 16px;" title="Excluir Link">
-                            <i class="fa-solid fa-trash"></i> Excluir
-                        </button>
-                    </div>
-                </div>
-            `;
-        });
-    } catch (err) {
-        console.error("Erro ao carregar links de afiliado:", err);
-        container.innerHTML = `<p style="color:#FF4D4D; text-align:center; padding:1.5rem;">Erro ao carregar links gerados.</p>`;
-    }
-}
-function renderPanelLessonsFromVideos() {
-    const container = document.getElementById('watched-lessons-list');
-    if (!container) return;
+                `;
 
-    if (window.CLIENTE_VIDEOS && Array.isArray(window.CLIENTE_VIDEOS.panelLessons) && window.CLIENTE_VIDEOS.panelLessons.length > 0) {
-        container.innerHTML = `<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; width: 100%;">`;
-        
-        window.CLIENTE_VIDEOS.panelLessons.forEach((lesson, idx) => {
-            container.innerHTML += `
-                <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-lg); padding:1.2rem; display:flex; flex-direction:column; align-items:center;">
-                    <h4 style="font-family:'Montserrat',sans-serif; font-size:0.95rem; font-weight:700; color:#FFF; margin-bottom:0.5rem; display:flex; align-items:center; gap:8px; text-align:center;">
-                        <i class="fa-solid fa-mobile-screen-button" style="color:var(--primary);"></i> ${escapeHtml(lesson.title || 'Aula ' + (idx + 1))}
-                    </h4>
-                    <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1rem; line-height:1.4; text-align:center;">${escapeHtml(lesson.desc || '')}</p>
-                    
-                    <!-- CONTAINER VERTICAL 9:16 (SHORTS/REELS) -->
-                    <div style="position:relative; width:100%; max-width:280px; aspect-ratio: 9/16; background:#000; border-radius:var(--radius-md); overflow:hidden; border:1px solid var(--border-color); box-shadow:0 10px 25px rgba(0,0,0,0.6);">
-                        <iframe src="${formatEmbedVideoUrl(lesson.videoUrl)}" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
-                    </div>
-                </div>
-            `;
-        });
-        
-        container.innerHTML += `</div>`;
-    }
-}  
+                const baseUrl = window.location.origin + window.location.pathname.replace('cliente.html', 'checkout.html');
+
+                keys.forEach(pId => {
+                    const item = userAffiliatedMap[pId];
+                    const title = item.productTitle || item.titulo || item.title || item.nome || 'Produto VIP';
+                    const link = item.affiliateUrl || `${baseUrl}?product_id=${encodeURIComponent(pId)}&ref=${affCode}`;
+                    const dateStr = item.affiliatedAt ? new Date(item.affiliatedAt).toLocaleDateString('pt-AO') : 'Ativo';
+                    const safePId = escapeJsArg(pId);
+
+                    container.innerHTML += `
+                        <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:1.2rem; display:flex; flex-direction:column; gap:10px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                                <strong style="color:#FFF; font-size:1rem;"><i class="fa-solid fa-box" style="color:var(--primary); margin-right:8px;"></i> ${escapeHtml(title)}</strong>
+                                <span style="font-size:0.75rem; color:var(--text-muted);"><i class="fa-regular fa-calendar"></i> Gerado em: ${dateStr}</span>
+                            </div>
+                            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                                <input type="text" value="${escapeHtml(link)}" readonly class="search-input" style="flex:1; color:#38BDF8; font-weight:700; background:#0c0c12;">
+                                <button class="btn-action btn-success" onclick="copyTextToClipboard('${escapeJsArg(link)}', 'Link de Afiliado')" style="width:auto; padding:0 20px;">
+                                    <i class="fa-solid fa-copy"></i> Copiar
+                                </button>
+                                <button class="btn-action btn-secondary" onclick="downloadPromoMaterial('${safePId}')" style="width:auto; border-color:rgba(59,130,246,0.4); color:#38BDF8;" title="Material de Divulgação">
+                                    <i class="fa-solid fa-bullhorn"></i> Material
+                                </button>
+                                <button class="btn-action btn-danger" onclick="deleteAffiliateLink('${safePId}')" style="width:auto; padding:0 16px;" title="Excluir Link">
+                                    <i class="fa-solid fa-trash"></i> Excluir
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (err) {
+                console.error("Erro ao carregar links de afiliado:", err);
+                container.innerHTML = `<p style="color:#FF4D4D; text-align:center; padding:1.5rem;">Erro ao carregar links gerados.</p>`;
+            }
+        }
+
+        function renderPanelLessonsFromVideos() {
+            const container = document.getElementById('watched-lessons-list');
+            if (!container) return;
+
+            if (window.CLIENTE_VIDEOS && Array.isArray(window.CLIENTE_VIDEOS.panelLessons) && window.CLIENTE_VIDEOS.panelLessons.length > 0) {
+                container.innerHTML = `<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; width: 100%;">`;
+                
+                window.CLIENTE_VIDEOS.panelLessons.forEach((lesson, idx) => {
+                    container.innerHTML += `
+                        <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-lg); padding:1.2rem; display:flex; flex-direction:column; align-items:center;">
+                            <h4 style="font-family:'Montserrat',sans-serif; font-size:0.95rem; font-weight:700; color:#FFF; margin-bottom:0.5rem; display:flex; align-items:center; gap:8px; text-align:center;">
+                                <i class="fa-solid fa-mobile-screen-button" style="color:var(--primary);"></i> ${escapeHtml(lesson.title || 'Aula ' + (idx + 1))}
+                            </h4>
+                            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1rem; line-height:1.4; text-align:center;">${escapeHtml(lesson.desc || '')}</p>
+                            
+                            <div style="position:relative; width:100%; max-width:280px; aspect-ratio: 9/16; background:#000; border-radius:var(--radius-md); overflow:hidden; border:1px solid var(--border-color); box-shadow:0 10px 25px rgba(0,0,0,0.6);">
+                                <iframe src="${formatEmbedVideoUrl(lesson.videoUrl)}" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML += `</div>`;
+            }
+        }  
 
         function logoutUser() {
             Swal.fire({
@@ -1749,6 +1654,8 @@ function renderPanelLessonsFromVideos() {
                 if (document.getElementById('prof-role-music')) document.getElementById('prof-role-music').value = uData.roleMusic || 'Produtor Musical';
                 if (document.getElementById('prof-bio')) document.getElementById('prof-bio').value = uData.bio || '';
                 if (document.getElementById('prof-photo-url')) document.getElementById('prof-photo-url').value = uData.photoUrl || uData.foto || currentUser.photoURL || '';
+
+                userAffiliatedMap = uData.produtosAfiliados || {};
 
                 updateProfileAvatarPreview();
                 loadWatchedLessons();
@@ -1962,175 +1869,163 @@ function renderPanelLessonsFromVideos() {
             renderAllProductsViews();
         }
 
-
         function renderAllProductsViews() {
-    const unlockedGrid = document.getElementById('unlocked-products-list');
-    const lockedGrid = document.getElementById('locked-products-list');
-    const recentGrid = document.getElementById('dash-recent-products');
-    const bonusGrid = document.getElementById('bonus-products-list');
+            const unlockedGrid = document.getElementById('unlocked-products-list');
+            const lockedGrid = document.getElementById('locked-products-list');
+            const recentGrid = document.getElementById('dash-recent-products');
+            const bonusGrid = document.getElementById('bonus-products-list');
 
-    if (unlockedGrid) unlockedGrid.innerHTML = '';
-    if (lockedGrid) lockedGrid.innerHTML = '';
-    if (recentGrid) recentGrid.innerHTML = '';
-    if (bonusGrid) bonusGrid.innerHTML = '';
+            if (unlockedGrid) unlockedGrid.innerHTML = '';
+            if (lockedGrid) lockedGrid.innerHTML = '';
+            if (recentGrid) recentGrid.innerHTML = '';
+            if (bonusGrid) bonusGrid.innerHTML = '';
 
-    let unlockedCount = 0;
-    let lockedCount = 0;
-    let bonusCount = 0;
+            let unlockedCount = 0;
+            let lockedCount = 0;
+            let bonusCount = 0;
 
-    allProductsCache.forEach(prod => {
-        const strId = String(prod.id);
-        const strUuid = prod.uuid ? String(prod.uuid) : null;
-        const strSlug = prod.slug ? String(prod.slug) : null;
-        const titleLower = String(prod.titulo || prod.nome || '').toLowerCase();
-        const catLower = String(prod.categoria || '').toLowerCase();
+            allProductsCache.forEach(prod => {
+                const strId = String(prod.id);
+                const strUuid = prod.uuid ? String(prod.uuid) : null;
+                const strSlug = prod.slug ? String(prod.slug) : null;
+                const titleLower = String(prod.titulo || prod.nome || prod.title || '').toLowerCase();
+                const catLower = String(prod.categoria || '').toLowerCase();
 
-        const isFLStudioBonus = titleLower.includes('fl studio');
-        const isCatBonus = titleLower.includes('bonus') || titleLower.includes('bónus') || catLower.includes('bonus') || catLower.includes('bónus');
+                const isFLStudioBonus = titleLower.includes('fl studio');
+                const isCatBonus = titleLower.includes('bonus') || titleLower.includes('bónus') || catLower.includes('bonus') || catLower.includes('bónus');
 
-        const isUnlocked = userUnlockedProductIds.has(strId) ||
-                           (strUuid && userUnlockedProductIds.has(strUuid)) ||
-                           (strSlug && userUnlockedProductIds.has(strSlug)) ||
-                           prod.gratuito === true ||
-                           prod.free === true ||
-                           isFLStudioBonus;
+                const isUnlocked = userUnlockedProductIds.has(strId) ||
+                                   (strUuid && userUnlockedProductIds.has(strUuid)) ||
+                                   (strSlug && userUnlockedProductIds.has(strSlug)) ||
+                                   prod.gratuito === true ||
+                                   prod.free === true ||
+                                   isFLStudioBonus;
 
-        const cardHtml = createProductCardHTML(prod, isUnlocked);
+                const cardHtml = createProductCardHTML(prod, isUnlocked);
 
-        if (isFLStudioBonus || isCatBonus || prod.gratuito === true || prod.free === true) {
-            bonusCount++;
-            if (bonusGrid) bonusGrid.innerHTML += cardHtml;
+                if (isFLStudioBonus || isCatBonus || prod.gratuito === true || prod.free === true) {
+                    bonusCount++;
+                    if (bonusGrid) bonusGrid.innerHTML += cardHtml;
+                }
+
+                if (isUnlocked) {
+                    unlockedCount++;
+                    if (unlockedGrid) unlockedGrid.innerHTML += cardHtml;
+                    if (unlockedCount <= 3 && recentGrid) recentGrid.innerHTML += cardHtml;
+                } else {
+                    lockedCount++;
+                    if (lockedGrid) lockedGrid.innerHTML += cardHtml;
+                }
+            });
+
+            allPromosCache.forEach(promo => {
+                const promoIdStr = String(promo.id);
+                const targetIdStr = String(promo.productId || promo.product_id || promo.id);
+                const isUnlocked = userUnlockedProductIds.has(promoIdStr) || userUnlockedProductIds.has(targetIdStr);
+                const alreadyInCatalog = allProductsCache.some(p => String(p.id) === targetIdStr || String(p.uuid) === targetIdStr || String(p.slug) === targetIdStr);
+
+                if (isUnlocked && !alreadyInCatalog) {
+                    unlockedCount++;
+                    const cardHtml = createProductCardHTML(promo, true);
+                    if (unlockedGrid) unlockedGrid.innerHTML += cardHtml;
+                    if (unlockedCount <= 3 && recentGrid) recentGrid.innerHTML += cardHtml;
+                }
+            });
+
+            if (document.getElementById('kpi-unlocked-count')) document.getElementById('kpi-unlocked-count').innerText = unlockedCount;
+            if (document.getElementById('kpi-locked-count')) document.getElementById('kpi-locked-count').innerText = lockedCount;
+            if (document.getElementById('kpi-bonus-count')) document.getElementById('kpi-bonus-count').innerText = bonusCount;
         }
-
-        if (isUnlocked) {
-            unlockedCount++;
-            if (unlockedGrid) unlockedGrid.innerHTML += cardHtml;
-            if (unlockedCount <= 3 && recentGrid) recentGrid.innerHTML += cardHtml;
-        } else {
-            lockedCount++;
-            if (lockedGrid) lockedGrid.innerHTML += cardHtml;
-        }
-    });
-
-    // Incluir promoções adquiridas que sejam independentes
-    allPromosCache.forEach(promo => {
-        const promoIdStr = String(promo.id);
-        const targetIdStr = String(promo.productId || promo.product_id || promo.id);
-        const isUnlocked = userUnlockedProductIds.has(promoIdStr) || userUnlockedProductIds.has(targetIdStr);
-        const alreadyInCatalog = allProductsCache.some(p => String(p.id) === targetIdStr || String(p.uuid) === targetIdStr || String(p.slug) === targetIdStr);
-
-        if (isUnlocked && !alreadyInCatalog) {
-            unlockedCount++;
-            const cardHtml = createProductCardHTML(promo, true);
-            if (unlockedGrid) unlockedGrid.innerHTML += cardHtml;
-            if (unlockedCount <= 3 && recentGrid) recentGrid.innerHTML += cardHtml;
-        }
-    });
-
-    if (document.getElementById('kpi-unlocked-count')) document.getElementById('kpi-unlocked-count').innerText = unlockedCount;
-    if (document.getElementById('kpi-locked-count')) document.getElementById('kpi-locked-count').innerText = lockedCount;
-    if (document.getElementById('kpi-bonus-count')) document.getElementById('kpi-bonus-count').innerText = bonusCount;
-}
-
-
-
 
         function createProductCardHTML(p, isUnlocked) {
-    const thumb = p.imagem || p.thumb || p.capa || 'https://via.placeholder.com/300x180/181824/FFF?text=LONEKE+NO+BEAT';
-    const rawPrice = Number(p.precoAtual || p.price || p.preco || p.precoPromo || 0);
-    const priceStr = rawPrice > 0 ? `${rawPrice.toLocaleString('pt-AO')} Kz` : 'Gratuito';
-    const safeId = escapeJsArg(p.id);
+            const thumb = p.imagem || p.thumb || p.capa || 'https://via.placeholder.com/300x180/181824/FFF?text=LONEKE+NO+BEAT';
+            const pTitle = p.titulo || p.title || p.nome || 'Produto VIP';
+            const rawPrice = Number(p.precoAtual || p.price || p.preco || p.precoPromo || 0);
+            const priceStr = rawPrice > 0 ? `${rawPrice.toLocaleString('pt-AO')} Kz` : 'Gratuito';
+            const safeId = escapeJsArg(p.id);
 
-    const comissaoVal = Math.floor(rawPrice * 0.5);
-    const comissaoStr = comissaoVal > 0 ? `${comissaoVal.toLocaleString('pt-AO')} Kz` : '0 Kz';
+            const comissaoVal = Math.floor(rawPrice * 0.5);
+            const comissaoStr = comissaoVal > 0 ? `${comissaoVal.toLocaleString('pt-AO')} Kz` : '0 Kz';
 
-    const isAffiliated = !!userAffiliatedMap[p.id];
+            const isAffiliated = !!userAffiliatedMap[p.id];
 
-    // Botão de Demonstração
-    const btnDemo = `
-        <button type="button" class="btn-action btn-secondary" style="margin-bottom:6px; font-size:0.78rem;" onclick="openDemoPlayer('${safeId}')">
-            <i class="fa-solid fa-circle-play" style="color:var(--primary);"></i> Ver Demonstração
-        </button>
-    `;
-
-    // Botão de Divulgação
-    let btnMaterial = '';
-    if (isAffiliated) {
-        btnMaterial = `
-            <button type="button" class="btn-action btn-secondary" style="margin-bottom:6px; font-size:0.78rem; border-color:rgba(59,130,246,0.4); color:#38BDF8;" onclick="downloadPromoMaterial('${safeId}')">
-                <i class="fa-solid fa-bullhorn"></i> Material de Divulgação
-            </button>
-        `;
-    }
-
-    // Botão de Afiliação
-    let btnAffiliate = '';
-    if (rawPrice > 0) {
-        if (!isUnlocked) {
-            btnAffiliate = `
-                <button type="button" class="btn-action btn-secondary" style="margin-bottom:8px; font-size:0.78rem; opacity:0.65; cursor:pointer; border-color:rgba(255,255,255,0.1);" onclick="Swal.fire({ title: 'Afiliação Bloqueada', text: 'Você precisa comprar/desbloquear este produto primeiro antes de se afiliar!', icon: 'warning', confirmButtonColor: '#E50914', customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' } })">
-                    <i class="fa-solid fa-lock" style="color:var(--warning);"></i> Afiliação Bloqueada (Compre Primeiro)
+            const btnDemo = `
+                <button type="button" class="btn-action btn-secondary" style="margin-bottom:6px; font-size:0.78rem;" onclick="openDemoPlayer('${safeId}')">
+                    <i class="fa-solid fa-circle-play" style="color:var(--primary);"></i> Ver Demonstração
                 </button>
             `;
-        } else if (isAffiliated) {
-            btnAffiliate = `
-                <div style="display:flex; gap:6px; margin-bottom:8px;">
-                    <button type="button" class="btn-action btn-success" style="font-size:0.78rem; flex:1;" onclick="generateProductAffiliateLink('${safeId}', '${escapeJsArg(p.titulo || 'Produto')}')">
-                        <i class="fa-solid fa-link"></i> Ver Link Afiliado
+
+            let btnMaterial = '';
+            if (isAffiliated) {
+                btnMaterial = `
+                    <button type="button" class="btn-action btn-secondary" style="margin-bottom:6px; font-size:0.78rem; border-color:rgba(59,130,246,0.4); color:#38BDF8;" onclick="downloadPromoMaterial('${safeId}')">
+                        <i class="fa-solid fa-bullhorn"></i> Material de Divulgação
                     </button>
-                    <button type="button" class="btn-action btn-danger btn-icon-only" style="width:36px; height:36px;" onclick="deleteAffiliateLink('${safeId}')" title="Excluir Afiliação">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
+                `;
+            }
+
+            let btnAffiliate = '';
+            if (rawPrice > 0) {
+                if (!isUnlocked) {
+                    btnAffiliate = `
+                        <button type="button" class="btn-action btn-secondary" style="margin-bottom:8px; font-size:0.78rem; opacity:0.65; cursor:pointer; border-color:rgba(255,255,255,0.1);" onclick="Swal.fire({ title: 'Afiliação Bloqueada', text: 'Você precisa comprar/desbloquear este produto primeiro antes de se afiliar!', icon: 'warning', confirmButtonColor: '#E50914', customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' } })">
+                            <i class="fa-solid fa-lock" style="color:var(--warning);"></i> Afiliação Bloqueada (Compre Primeiro)
+                        </button>
+                    `;
+                } else if (isAffiliated) {
+                    btnAffiliate = `
+                        <div style="display:flex; gap:6px; margin-bottom:8px;">
+                            <button type="button" class="btn-action btn-success" style="font-size:0.78rem; flex:1;" onclick="generateProductAffiliateLink('${safeId}', '${escapeJsArg(pTitle)}')">
+                                <i class="fa-solid fa-link"></i> Ver Link Afiliado
+                            </button>
+                            <button type="button" class="btn-action btn-danger" style="width:36px; height:36px; padding:0;" onclick="deleteAffiliateLink('${safeId}')" title="Excluir Afiliação">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    btnAffiliate = `
+                        <button type="button" class="btn-action btn-secondary" style="margin-bottom:8px; font-size:0.78rem; border-color:rgba(16,185,129,0.4); color:#10B981;" onclick="generateProductAffiliateLink('${safeId}', '${escapeJsArg(pTitle)}')">
+                            <i class="fa-solid fa-handshake"></i> Gerar Link de Afiliado (Ganha: ${comissaoStr})
+                        </button>
+                    `;
+                }
+            }
+
+            const catLower = String(p.categoria || '').toLowerCase();
+            const isCourse = catLower.includes('curso') || (p.modulos && p.modulos.length > 0);
+
+            let actionButton = '';
+            if (isUnlocked) {
+                if (isCourse) {
+                    actionButton = `<button type="button" class="btn-action btn-success" onclick="openCoursePlayer('${safeId}')"><i class="fa-solid fa-graduation-cap"></i> Assistir Aulas</button>`;
+                } else {
+                    actionButton = `<button type="button" class="btn-action btn-success" onclick="downloadProductFile('${safeId}')"><i class="fa-solid fa-cloud-arrow-down"></i> Baixar Kit</button>`;
+                }
+            } else {
+                const realProdId = escapeJsArg(p.productId || p.product_id || p.id);
+                actionButton = `<button type="button" class="btn-action btn-primary" onclick="openProfileCheckoutModal('${safeId}', '${escapeJsArg(pTitle)}', ${rawPrice}, ${!!p.precoPromo}, '${realProdId}')"><i class="fa-solid fa-cart-shopping"></i> Comprar Agora (${priceStr})</button>`;
+            }
+
+            return `
+                <div class="product-card">
+                    <div class="product-thumb-container">
+                        <img src="${escapeHtml(thumb)}" class="product-thumb" alt="${escapeHtml(pTitle)}">
+                    </div>
+                    <div class="product-body">
+                        <span style="font-size:0.72rem; color:var(--primary); font-weight:800; text-transform:uppercase;">${escapeHtml(p.categoria || 'VIP')}</span>
+                        <h4 class="product-title">${escapeHtml(pTitle)}</h4>
+                        <p class="product-desc">${escapeHtml(p.descricao || '')}</p>
+                        <div style="margin-top:auto; padding-top:10px; display:flex; flex-direction:column;">
+                            ${btnDemo}
+                            ${btnAffiliate}
+                            ${btnMaterial}
+                            ${actionButton}
+                        </div>
+                    </div>
                 </div>
             `;
-        } else {
-            btnAffiliate = `
-                <button type="button" class="btn-action btn-secondary" style="margin-bottom:8px; font-size:0.78rem; border-color:rgba(16,185,129,0.4); color:#10B981;" onclick="generateProductAffiliateLink('${safeId}', '${escapeJsArg(p.titulo || 'Produto')}')">
-                    <i class="fa-solid fa-handshake"></i> Gerar Link de Afiliado (Ganha: ${comissaoStr})
-                </button>
-            `;
         }
-    }
-
-    const catLower = String(p.categoria || '').toLowerCase();
-    const isCourse = catLower.includes('curso') || (p.modulos && p.modulos.length > 0);
-
-    let actionButton = '';
-    if (isUnlocked) {
-        if (isCourse) {
-            actionButton = `<button type="button" class="btn-action btn-success" onclick="openCoursePlayer('${safeId}')"><i class="fa-solid fa-graduation-cap"></i> Assistir Aulas</button>`;
-        } else {
-            actionButton = `<button type="button" class="btn-action btn-success" onclick="downloadProductFile('${safeId}')"><i class="fa-solid fa-cloud-arrow-down"></i> Baixar Kit</button>`;
-        }
-    } else {
-        const realProdId = escapeJsArg(p.productId || p.product_id || p.id);
-        actionButton = `<button type="button" class="btn-action btn-primary" onclick="openProfileCheckoutModal('${safeId}', '${escapeJsArg(p.titulo || 'Produto VIP')}', ${rawPrice}, ${!!p.precoPromo}, '${realProdId}')"><i class="fa-solid fa-cart-shopping"></i> Comprar Agora (${priceStr})</button>`;
-    }
-
-    return `
-        <div class="product-card">
-            <div class="product-thumb-container">
-                <img src="${escapeHtml(thumb)}" class="product-thumb" alt="${escapeHtml(p.titulo || 'Produto')}">
-            </div>
-            <div class="product-body">
-                <span style="font-size:0.72rem; color:var(--primary); font-weight:800; text-transform:uppercase;">${escapeHtml(p.categoria || 'VIP')}</span>
-                <h4 class="product-title">${escapeHtml(p.titulo || 'Produto VIP')}</h4>
-                <p class="product-desc">${escapeHtml(p.descricao || '')}</p>
-                <div style="margin-top:auto; padding-top:10px; display:flex; flex-direction:column;">
-                    ${btnDemo}
-                    ${btnAffiliate}
-                    ${btnMaterial}
-                    ${actionButton}
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-
-
-
-
 
         function downloadPromoMaterial(productId) {
             const prod = allProductsCache.find(p => String(p.id) === String(productId) || String(p.uuid) === String(productId));
@@ -2142,7 +2037,7 @@ function renderPanelLessonsFromVideos() {
             } else {
                 Swal.fire({
                     title: '📢 Material de Divulgação',
-                    html: `Use a capa, descrição e o <strong>Vídeo de Demonstração</strong> deste produto para criar anúncios e divulgar o seu link de afiliado.<br><br><span style="color:var(--text-muted); font-size:0.85rem;">Pode copiar o link de afiliado no botão "Se Afiliar".</span>`,
+                    html: `Use a capa, descrição e o <strong>Vídeo de Demonstração</strong> deste produto para criar anúncios e divulgar o seu link de afiliado.<br><br><span style="color:var(--text-muted); font-size:0.85rem;">Pode copiar o link de afiliado no menu "Meus Links de Afiliado".</span>`,
                     icon: 'info',
                     confirmButtonColor: '#E50914',
                     confirmButtonText: 'Entendido',
@@ -2151,187 +2046,65 @@ function renderPanelLessonsFromVideos() {
             }
         }
 
+        async function loadAffiliateSalesHistory() {
+            const tbody = document.getElementById('affiliate-sales-table-body');
+            if (!tbody || !currentUser) return;
 
-        // GERA O LINK DE AFILIADO E REGISTA A AFILIAÇÃO NA CONTA DO USUÁRIO
-async function generateProductAffiliateLink(productId, productTitle) {
-    if (!currentUser) return;
-    
-    try {
-        const userDoc = await db.collection('users').doc(currentUser.uid).get();
-        const uData = userDoc.exists ? userDoc.data() : {};
-        const affCode = uData.affiliateCode || currentUser.uid.substring(0, 8).toUpperCase();
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:2rem;"><i class="fa-solid fa-spinner fa-spin"></i> A carregar histórico de vendas...</td></tr>`;
 
-        if (!uData.affiliateCode) {
-            await db.collection('users').doc(currentUser.uid).set({ affiliateCode: affCode }, { merge: true });
-        }
+            try {
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                const uData = userDoc.exists ? userDoc.data() : {};
+                const affCode = uData.affiliateCode || currentUser.uid.substring(0, 8).toUpperCase();
 
-        // Regista a afiliação no documento do usuário
-        await db.collection('users').doc(currentUser.uid).set({
-            produtosAfiliados: {
-                [productId]: {
-                    productId: productId,
-                    productTitle: productTitle,
-                    affiliatedAt: new Date().toISOString()
+                const snapshot1 = await db.collection('transactions').where('affiliateCode', '==', affCode).get();
+                const snapshot2 = await db.collection('transactions').where('affiliateRef', '==', affCode).get();
+
+                const listMap = new Map();
+                snapshot1.forEach(doc => listMap.set(doc.id, { id: doc.id, ...doc.data() }));
+                snapshot2.forEach(doc => listMap.set(doc.id, { id: doc.id, ...doc.data() }));
+
+                tbody.innerHTML = '';
+
+                if (listMap.size === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhuma venda registada com o seu código de afiliado (${affCode}).</td></tr>`;
+                    return;
                 }
+
+                const list = Array.from(listMap.values());
+                list.sort((a, b) => parseFirebaseDate(b.createdAt) - parseFirebaseDate(a.createdAt));
+
+                list.forEach(item => {
+                    const dateStr = item.createdAt ? parseFirebaseDate(item.createdAt).toLocaleString('pt-AO') : 'Recente';
+                    const clientName = item.userName || item.customerName || 'Cliente VIP';
+                    const clientEmail = item.userEmail || item.customerEmail || 'N/A';
+                    const productTitle = item.productTitle || item.titulo || item.title || 'Produto VIP';
+                    const saleAmount = Number(item.amount || item.numericTotalKz || 0);
+                    const commission = Number(item.affiliateCommission || Math.floor(saleAmount * 0.5));
+                    const status = (item.status || 'pending').toLowerCase();
+                    const isApproved = ['completed', 'approved', 'concluido', 'pago', 'aprovado'].includes(status);
+
+                    const statusBadge = isApproved 
+                        ? `<span style="background:rgba(16,185,129,0.15); color:var(--success); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;"><i class="fa-solid fa-circle-check"></i> Venda Aprovada</span>`
+                        : `<span style="background:rgba(245,158,11,0.15); color:var(--warning); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;"><i class="fa-solid fa-clock"></i> Pendente</span>`;
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td style="font-size:0.8rem; color:var(--text-muted);">${escapeHtml(dateStr)}</td>
+                            <td><strong style="color:#FFF;">${escapeHtml(clientName)}</strong></td>
+                            <td style="color:var(--primary); font-size:0.82rem;">${escapeHtml(clientEmail)}</td>
+                            <td>${escapeHtml(productTitle)}</td>
+                            <td>${saleAmount.toLocaleString('pt-AO')} Kz</td>
+                            <td style="color:var(--success); font-weight:800;">+${commission.toLocaleString('pt-AO')} Kz</td>
+                            <td>${statusBadge}</td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                console.error("Erro ao carregar vendas de afiliado:", err);
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#FF4D4D; padding:2rem;">Erro ao carregar relatório de vendas.</td></tr>`;
             }
-        }, { merge: true });
-
-        const baseUrl = window.location.origin + "/checkout.html";
-        const affiliateUrl = `${baseUrl}?product_id=${encodeURIComponent(productId)}&ref=${affCode}`;
-
-        Swal.fire({
-            title: '🤝 Link de Afiliado Gerado!',
-            html: `
-                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">
-                    Divulgue este link para o produto <strong>"${escapeHtml(productTitle)}"</strong>. O comprador verá o nome, imagem e preço exatos e você receberá <strong>50% de comissão</strong> por cada venda!
-                </p>
-                <input type="text" id="swal-aff-link" value="${affiliateUrl}" readonly class="swal2-input" style="font-size:0.85rem; text-align:center; color:#38BDF8;">
-            `,
-            showCancelButton: true,
-            confirmButtonText: '<i class="fa-solid fa-copy"></i> Copiar Link',
-            cancelButtonText: 'Fechar',
-            confirmButtonColor: '#10B981',
-            cancelButtonColor: '#1F1F2C',
-            customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
-        }).then((res) => {
-            if (res.isConfirmed) {
-                copyTextToClipboard(affiliateUrl, "Link de Afiliado");
-            }
-        });
-
-        loadAffiliateSalesHistory();
-    } catch (err) {
-        console.error("Erro ao gerar afiliação:", err);
-        showToast("Erro ao gerar link de afiliado: " + err.message, "warning");
-    }
-}
-
-// CARREGA TODAS AS VENDAS GERADAS PELO LINK DO AFILIADO
-async function loadAffiliateSalesHistory() {
-    const tbody = document.getElementById('affiliate-sales-table-body');
-    if (!tbody || !currentUser) return;
-
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:2rem;"><i class="fa-solid fa-spinner fa-spin"></i> A carregar histórico de vendas...</td></tr>`;
-
-    try {
-        const userDoc = await db.collection('users').doc(currentUser.uid).get();
-        const uData = userDoc.exists ? userDoc.data() : {};
-        const affCode = uData.affiliateCode || currentUser.uid.substring(0, 8).toUpperCase();
-
-        // Consulta em simultâneo por affiliateCode e affiliateRef
-        const snapshot1 = await db.collection('transactions').where('affiliateCode', '==', affCode).get();
-        const snapshot2 = await db.collection('transactions').where('affiliateRef', '==', affCode).get();
-
-        const listMap = new Map();
-        snapshot1.forEach(doc => listMap.set(doc.id, { id: doc.id, ...doc.data() }));
-        snapshot2.forEach(doc => listMap.set(doc.id, { id: doc.id, ...doc.data() }));
-
-        tbody.innerHTML = '';
-
-        if (listMap.size === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhuma venda registada com o seu código de afiliado (${affCode}).</td></tr>`;
-            return;
         }
-
-        const list = Array.from(listMap.values());
-        list.sort((a, b) => parseFirebaseDate(b.createdAt) - parseFirebaseDate(a.createdAt));
-
-        list.forEach(item => {
-            const dateStr = item.createdAt ? parseFirebaseDate(item.createdAt).toLocaleString('pt-AO') : 'Recente';
-            const clientName = item.userName || item.customerName || 'Cliente VIP';
-            const clientEmail = item.userEmail || item.customerEmail || 'N/A';
-            const productTitle = item.productTitle || 'Produto VIP';
-            const saleAmount = Number(item.amount || item.numericTotalKz || 0);
-            const commission = Number(item.affiliateCommission || Math.floor(saleAmount * 0.5));
-            const status = (item.status || 'pending').toLowerCase();
-            const isApproved = ['completed', 'approved', 'concluido', 'pago', 'aprovado'].includes(status);
-
-            const statusBadge = isApproved 
-                ? `<span style="background:rgba(16,185,129,0.15); color:var(--success); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;"><i class="fa-solid fa-circle-check"></i> Venda Aprovada</span>`
-                : `<span style="background:rgba(245,158,11,0.15); color:var(--warning); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;"><i class="fa-solid fa-clock"></i> Pendente</span>`;
-
-            tbody.innerHTML += `
-                <tr>
-                    <td style="font-size:0.8rem; color:var(--text-muted);">${escapeHtml(dateStr)}</td>
-                    <td><strong style="color:#FFF;">${escapeHtml(clientName)}</strong></td>
-                    <td style="color:var(--primary); font-size:0.82rem;">${escapeHtml(clientEmail)}</td>
-                    <td>${escapeHtml(productTitle)}</td>
-                    <td>${saleAmount.toLocaleString('pt-AO')} Kz</td>
-                    <td style="color:var(--success); font-weight:800;">+${commission.toLocaleString('pt-AO')} Kz</td>
-                    <td>${statusBadge}</td>
-                </tr>
-            `;
-        });
-    } catch (err) {
-        console.error("Erro ao carregar vendas de afiliado:", err);
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#FF4D4D; padding:2rem;">Erro ao carregar relatório de vendas.</td></tr>`;
-    }
-}
-
-
-
-async function loadAffiliateSalesHistory() {
-    const tbody = document.getElementById('affiliate-sales-table-body');
-    if (!tbody || !currentUser) return;
-
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:2rem;"><i class="fa-solid fa-spinner fa-spin"></i> A carregar histórico de vendas...</td></tr>`;
-
-    try {
-        const userDoc = await db.collection('users').doc(currentUser.uid).get();
-        const uData = userDoc.exists ? userDoc.data() : {};
-        const affCode = uData.affiliateCode || currentUser.uid.substring(0, 8).toUpperCase();
-
-        // Procura transações associadas ao código do afiliado
-        const snapshot = await db.collection('transactions')
-            .where('affiliateCode', '==', affCode)
-            .get();
-
-        tbody.innerHTML = '';
-
-        if (snapshot.empty) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhuma venda realizada através do seu link de afiliado até ao momento.</td></tr>`;
-            return;
-        }
-
-        const list = [];
-        snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
-        list.sort((a, b) => parseFirebaseDate(b.createdAt) - parseFirebaseDate(a.createdAt));
-
-        list.forEach(item => {
-            const dateStr = item.createdAt ? parseFirebaseDate(item.createdAt).toLocaleString('pt-AO') : 'Recente';
-            const clientName = item.userName || item.customerName || 'Cliente VIP';
-            const clientEmail = item.userEmail || item.customerEmail || 'N/A';
-            const productTitle = item.productTitle || 'Produto VIP';
-            const saleAmount = Number(item.amount || item.numericTotalKz || 0);
-            const commission = Number(item.affiliateCommission || Math.floor(saleAmount * 0.5));
-            const status = (item.status || 'pending').toLowerCase();
-            const isApproved = status === 'completed' || status === 'approved' || status === 'pago';
-
-            const statusBadge = isApproved 
-                ? `<span style="background:rgba(16,185,129,0.15); color:var(--success); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;"><i class="fa-solid fa-circle-check"></i> Venda Aprovada</span>`
-                : `<span style="background:rgba(245,158,11,0.15); color:var(--warning); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;"><i class="fa-solid fa-clock"></i> Pendente</span>`;
-
-            tbody.innerHTML += `
-                <tr>
-                    <td style="font-size:0.8rem; color:var(--text-muted);">${escapeHtml(dateStr)}</td>
-                    <td><strong style="color:#FFF;">${escapeHtml(clientName)}</strong></td>
-                    <td style="color:var(--primary); font-size:0.82rem;">${escapeHtml(clientEmail)}</td>
-                    <td>${escapeHtml(productTitle)}</td>
-                    <td>${saleAmount.toLocaleString('pt-AO')} Kz</td>
-                    <td style="color:var(--success); font-weight:800;">+${commission.toLocaleString('pt-AO')} Kz</td>
-                    <td>${statusBadge}</td>
-                </tr>
-            `;
-        });
-    } catch (err) {
-        console.error("Erro ao carregar vendas de afiliado:", err);
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#FF4D4D; padding:2rem;">Erro ao carregar relatório de vendas.</td></tr>`;
-    }
-}
-
-
-
-
 
         function openCoursePlayer(productId) {
             const prod = allProductsCache.find(p => String(p.id) === String(productId) || String(p.uuid) === String(productId) || String(p.slug) === String(productId));
@@ -2343,7 +2116,7 @@ async function loadAffiliateSalesHistory() {
             activeCourseProduct = prod;
             activeCourseId = prod.id;
 
-            if (document.getElementById('lms-course-title')) document.getElementById('lms-course-title').innerText = prod.titulo || 'Formação VIP';
+            if (document.getElementById('lms-course-title')) document.getElementById('lms-course-title').innerText = prod.titulo || prod.title || prod.nome || 'Formação VIP';
             if (document.getElementById('lms-course-category')) document.getElementById('lms-course-category').innerText = prod.categoria || 'Formação VIP';
 
             activeCourseLessons = [];
@@ -2377,7 +2150,7 @@ async function loadAffiliateSalesHistory() {
             } else if (prod.videoUrl || prod.videoDemo || prod.url) {
                 activeCourseLessons.push({
                     moduleName: 'Conteúdo Principal',
-                    title: prod.titulo || 'Aula Principal',
+                    title: prod.titulo || prod.title || prod.nome || 'Aula Principal',
                     videoUrl: prod.videoUrl || prod.videoDemo || prod.url,
                     desc: prod.descricao || '',
                     materialUrl: prod.linkDownload || prod.linkCursoCompleto
@@ -2521,7 +2294,7 @@ async function loadAffiliateSalesHistory() {
                 activeElem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
 
-            markLessonAsWatched(activeCourseId, index, lesson.title, activeCourseProduct ? activeCourseProduct.titulo : 'Curso');
+            markLessonAsWatched(activeCourseId, index, lesson.title, activeCourseProduct ? (activeCourseProduct.titulo || activeCourseProduct.title || activeCourseProduct.nome) : 'Curso');
             listenLessonComments();
         }
 
@@ -2572,7 +2345,7 @@ async function loadAffiliateSalesHistory() {
                 window.open(activeCourseProduct.linkCursoCompleto || activeCourseProduct.linkDownload || activeCourseProduct.downloadUrl || activeCourseProduct.materialUrl, '_blank');
                 showToast('A descarregar ficheiros do módulo...', 'info');
             } else {
-                showToast('Nenhum ficheiro de download associado a este módulo.', 'warning');
+                showToast('Nenum ficheiro de download associado a este módulo.', 'warning');
             }
         }
 
@@ -2704,6 +2477,7 @@ async function loadAffiliateSalesHistory() {
                 return;
             }
 
+            const pTitle = prod.titulo || prod.title || prod.nome || 'Produto VIP';
             const demoUrl = prod.videoDemo || prod.videoLink || prod.previewUrl || prod.videoUrl || prod.url || prod.link || prod.video;
             if (!demoUrl) {
                 showToast('Nenhum vídeo de demonstração disponível para este produto.', 'warning');
@@ -2711,7 +2485,7 @@ async function loadAffiliateSalesHistory() {
             }
 
             const modalTitle = document.getElementById('demo-modal-title');
-            if (modalTitle) modalTitle.innerHTML = `<i class="fa-solid fa-circle-play" style="color:var(--primary);"></i> <span>Demonstração: ${escapeHtml(prod.titulo || '')}</span>`;
+            if (modalTitle) modalTitle.innerHTML = `<i class="fa-solid fa-circle-play" style="color:var(--primary);"></i> <span>Demonstração: ${escapeHtml(pTitle)}</span>`;
             
             const iframe = document.getElementById('demo-iframe-player');
             if (iframe) iframe.src = formatEmbedVideoUrl(demoUrl);
@@ -2723,10 +2497,10 @@ async function loadAffiliateSalesHistory() {
             const bodyContainer = document.getElementById('demo-modal-body');
             if (bodyContainer) {
                 bodyContainer.innerHTML = `
-                    <h4 style="font-size:1.05rem; font-weight:800; color:#FFF; margin-bottom:0.4rem;">${escapeHtml(prod.titulo || '')}</h4>
+                    <h4 style="font-size:1.05rem; font-weight:800; color:#FFF; margin-bottom:0.4rem;">${escapeHtml(pTitle)}</h4>
                     <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:1.2rem; line-height:1.4;">${escapeHtml(prod.descricao || 'Vídeo de demonstração oficial do conteúdo.')}</p>
                     ${!isUnlocked ? `
-                        <button class="btn-action btn-primary" style="display:inline-flex; width:auto; padding:10px 24px;" onclick="closeDemoModal(); openProfileCheckoutModal('${escapeJsArg(String(prod.id))}', '${escapeJsArg(prod.titulo || 'Produto VIP')}', ${rawPrice}, ${isPromo});">
+                        <button class="btn-action btn-primary" style="display:inline-flex; width:auto; padding:10px 24px;" onclick="closeDemoModal(); openProfileCheckoutModal('${escapeJsArg(String(prod.id))}', '${escapeJsArg(pTitle)}', ${rawPrice}, ${isPromo});">
                             <i class="fa-solid fa-cart-shopping"></i> Comprar Agora (${rawPrice > 0 ? rawPrice.toLocaleString('pt-AO') + ' Kz' : 'Grátis'})
                         </button>
                     ` : `
@@ -2898,28 +2672,30 @@ async function loadAffiliateSalesHistory() {
             const userName = userNameEl ? userNameEl.innerText : (currentUser.displayName || 'Cliente VIP');
 
             try {
+                // 1. Grava no Firestore primeiro
                 await db.collection('avaliacoes').add({
                     userId: currentUser.uid,
                     userName: userName,
-                    userEmail: currentUser.email,
+                    userEmail: currentUser.email || '',
                     rating: currentRatingVal,
                     message: msg,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-                await fetch("https://formsubmit.co/ajax/suporte@lonekenobeat.com", {
+                // 2. Dispara e-mail em segundo plano de forma não bloqueante
+                fetch("https://formsubmit.co/ajax/suporte@lonekenobeat.com", {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "Accept": "application/json" },
                     body: JSON.stringify({
                         _subject: `[LONEKE VIP] Nova Avaliação de ${currentRatingVal} Estrelas - ${userName}`,
                         _captcha: "false",
                         Cliente: userName,
-                        Email: currentUser.email,
+                        Email: currentUser.email || '',
                         Classificacao: `${currentRatingVal} / 5 Estrelas`,
                         Mensagem: msg,
                         Data_Envio: new Date().toLocaleString('pt-AO')
                     })
-                });
+                }).catch(e => console.warn("Aviso envio email avaliaçao:", e));
 
                 showToast('Avaliação enviada com sucesso! Obrigado pelo seu feedback.', 'success');
                 document.getElementById('form-avaliacao').reset();
@@ -3063,6 +2839,7 @@ async function loadAffiliateSalesHistory() {
             }
         }
 
+        // RENDERIZAR LISTA DE PROMOÇÕES (VERIFICA SE A OFERTA JÁ FOI ADQUIRIDA)
         async function loadPromotionsList() {
             const container = document.getElementById('promotions-products-list');
             if (!container) return;
@@ -3086,7 +2863,10 @@ async function loadAffiliateSalesHistory() {
                         allPromosCache.push(p);
 
                         const promoId = String(p.id);
+                        const targetProdId = String(p.productId || p.product_id || p.id);
+                        const pTitle = p.titulo || p.title || p.nome || 'Oferta Relâmpago';
                         const safeId = escapeJsArg(promoId);
+                        const safeTargetId = escapeJsArg(targetProdId);
                         const diffMs = expiresAt - now;
                         const hours = Math.floor(diffMs / (1000 * 60 * 60));
                         const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
@@ -3109,23 +2889,38 @@ async function loadAffiliateSalesHistory() {
                             `;
                         }
 
+                        const isUnlocked = userUnlockedProductIds.has(promoId) || userUnlockedProductIds.has(targetProdId);
+
+                        let actionBtn = '';
+                        if (isUnlocked) {
+                            actionBtn = `
+                                <button class="btn-action btn-success" disabled style="opacity:0.85; cursor:not-allowed;">
+                                    <i class="fa-solid fa-circle-check"></i> Oferta Já Adquirida
+                                </button>
+                            `;
+                        } else {
+                            actionBtn = `
+                                <button class="btn-action btn-primary" onclick="openProfileCheckoutModal('${safeId}', '${escapeJsArg(pTitle)}', ${precoPromo}, true, '${safeTargetId}')">
+                                    <i class="fa-solid fa-cart-shopping"></i> Comprar Agora (${priceStr})
+                                </button>
+                            `;
+                        }
+
                         container.innerHTML += `
                             <div class="product-card">
                                 <div class="product-thumb-container">
-                                    <img src="${escapeHtml(thumb)}" class="product-thumb" alt="${escapeHtml(p.titulo || 'Oferta')}" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x180/181824/FFF?text=OFERTA+24H';">
+                                    <img src="${escapeHtml(thumb)}" class="product-thumb" alt="${escapeHtml(pTitle)}" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x180/181824/FFF?text=OFERTA+24H';">
                                     <span class="product-badge badge-locked">
                                         <i class="fa-solid fa-clock"></i> Expira em ${hours}h ${mins}m
                                     </span>
                                 </div>
                                 <div class="product-body">
                                     <span style="font-size:0.72rem; color:var(--primary); font-weight:800; text-transform:uppercase; margin-bottom:4px;">${escapeHtml(p.categoria || 'PROMOÇÃO EXCLUSIVA')}</span>
-                                    <h4 class="product-title">${escapeHtml(p.titulo || 'Oferta Relâmpago')}</h4>
+                                    <h4 class="product-title">${escapeHtml(pTitle)}</h4>
                                     <p class="product-desc">${escapeHtml(p.descricao || 'Sem descrição informada.')}</p>
                                     <div style="margin-top:auto; padding-top:10px;">
                                         ${demoBtn}
-                                        <button class="btn-action btn-primary" onclick="openProfileCheckoutModal('${safeId}', '${escapeJsArg(p.titulo || 'Oferta Relâmpago')}', ${precoPromo}, true)">
-                                            <i class="fa-solid fa-cart-shopping"></i> Comprar Agora (${priceStr})
-                                        </button>
+                                        ${actionBtn}
                                     </div>
                                 </div>
                             </div>
@@ -3154,37 +2949,6 @@ async function loadAffiliateSalesHistory() {
                 renderPanelLessonsFromVideos();
             }
         }
-
-
-        function renderPanelLessonsFromVideos() {
-    const container = document.getElementById('watched-lessons-list');
-    if (!container) return;
-
-    if (window.CLIENTE_VIDEOS && Array.isArray(window.CLIENTE_VIDEOS.panelLessons) && window.CLIENTE_VIDEOS.panelLessons.length > 0) {
-        container.innerHTML = `<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; width: 100%;">`;
-        
-        window.CLIENTE_VIDEOS.panelLessons.forEach((lesson, idx) => {
-            container.innerHTML += `
-                <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-lg); padding:1.2rem; display:flex; flex-direction:column; align-items:center;">
-                    <h4 style="font-family:'Montserrat',sans-serif; font-size:0.95rem; font-weight:700; color:#FFF; margin-bottom:0.5rem; display:flex; align-items:center; gap:8px; text-align:center;">
-                        <i class="fa-solid fa-mobile-screen-button" style="color:var(--primary);"></i> ${escapeHtml(lesson.title || 'Aula ' + (idx + 1))}
-                    </h4>
-                    <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1rem; line-height:1.4; text-align:center;">${escapeHtml(lesson.desc || '')}</p>
-                    
-                    <!-- CONTAINER VERTICAL 9:16 (SHORTS/REELS) -->
-                    <div style="position:relative; width:100%; max-width:280px; aspect-ratio: 9/16; background:#000; border-radius:var(--radius-md); overflow:hidden; border:1px solid var(--border-color); box-shadow:0 10px 25px rgba(0,0,0,0.6);">
-                        <iframe src="${formatEmbedVideoUrl(lesson.videoUrl)}" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
-                    </div>
-                </div>
-            `;
-        });
-        
-        container.innerHTML += `</div>`;
-    }
-}
-        
-
-
 
         async function markLessonAsWatched(courseId, lessonIndex, lessonTitle, courseTitle) {
             if (!currentUser || !courseId) return;
@@ -3297,9 +3061,10 @@ async function loadAffiliateSalesHistory() {
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A processar...';
 
             try {
+                // 1. Grava no Firestore
                 await db.collection('solicitacoes_saque').add({
                     userId: currentUser.uid,
-                    userEmail: currentUser.email,
+                    userEmail: currentUser.email || '',
                     userName: holder,
                     grossAmount: amount,
                     fee: fee,
@@ -3310,23 +3075,22 @@ async function loadAffiliateSalesHistory() {
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-                try {
-                    await fetch("https://formsubmit.co/ajax/suporte@lonekenobeat.com", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-                        body: JSON.stringify({
-                            _subject: `[PEDIDO DE SAQUE] ${netAmount.toLocaleString('pt-AO')} Kz - ${holder}`,
-                            _captcha: "false",
-                            Cliente: holder,
-                            Email: currentUser.email,
-                            Valor_Bruto: `${amount.toLocaleString('pt-AO')} Kz`,
-                            Taxa_Plataforma: `${fee.toLocaleString('pt-AO')} Kz (10%)`,
-                            Valor_Liquido: `${netAmount.toLocaleString('pt-AO')} Kz`,
-                            IBAN: iban,
-                            Data: new Date().toLocaleString('pt-AO')
-                        })
-                    });
-                } catch (e) { console.warn("Email aviso erro:", e); }
+                // 2. Dispara e-mail em segundo plano sem bloquear a UI
+                fetch("https://formsubmit.co/ajax/suporte@lonekenobeat.com", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                    body: JSON.stringify({
+                        _subject: `[PEDIDO DE SAQUE] ${netAmount.toLocaleString('pt-AO')} Kz - ${holder}`,
+                        _captcha: "false",
+                        Cliente: holder,
+                        Email: currentUser.email || '',
+                        Valor_Bruto: `${amount.toLocaleString('pt-AO')} Kz`,
+                        Taxa_Plataforma: `${fee.toLocaleString('pt-AO')} Kz (10%)`,
+                        Valor_Liquido: `${netAmount.toLocaleString('pt-AO')} Kz`,
+                        IBAN: iban,
+                        Data: new Date().toLocaleString('pt-AO')
+                    })
+                }).catch(e => console.warn("Aviso envio email saque:", e));
 
                 Swal.fire({
                     title: 'Pedido Registado com Sucesso!',
@@ -3570,24 +3334,19 @@ async function loadAffiliateSalesHistory() {
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-                try {
-                    let emailProofLink = finalProofUrl.startsWith('data:') ? '[Imagem Base64 anexada no Painel]' : finalProofUrl;
-                    await fetch("https://formsubmit.co/ajax/suporte@lonekenobeat.com", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-                        body: JSON.stringify({
-                            _subject: `[PEDIDO DE RECARGA CARTEIRA] ${amount.toLocaleString('pt-AO')} Kz - ${userName}`,
-                            _captcha: "false",
-                            Cliente: userName,
-                            Email: currentUser.email || '',
-                            Valor_Recarga: `${amount.toLocaleString('pt-AO')} Kz`,
-                            Link_Comprovativo: emailProofLink,
-                            Data: new Date().toLocaleString('pt-AO')
-                        })
-                    });
-                } catch (emailErr) {
-                    console.warn("Falha no e-mail de notificação (pedido registado no Firestore com sucesso).", emailErr);
-                }
+                fetch("https://formsubmit.co/ajax/suporte@lonekenobeat.com", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                    body: JSON.stringify({
+                        _subject: `[PEDIDO DE RECARGA CARTEIRA] ${amount.toLocaleString('pt-AO')} Kz - ${userName}`,
+                        _captcha: "false",
+                        Cliente: userName,
+                        Email: currentUser.email || '',
+                        Valor_Recarga: `${amount.toLocaleString('pt-AO')} Kz`,
+                        Link_Comprovativo: finalProofUrl.startsWith('data:') ? '[Imagem Base64 anexada no Painel]' : finalProofUrl,
+                        Data: new Date().toLocaleString('pt-AO')
+                    })
+                }).catch(e => console.warn("Aviso email recarga:", e));
 
                 showToast("Comprovativo enviado com sucesso! O saldo será creditado após validação.", "success");
                 closeDepositModal();
@@ -3605,24 +3364,39 @@ async function loadAffiliateSalesHistory() {
             }
         }
 
-function openProfileCheckoutModal(id, title, price, isPromo = false, realProductId = null) {
-    selectedCheckoutProduct = { 
-        id: id, 
-        productId: realProductId || id,
-        title: title, 
-        price: price, 
-        isPromo: isPromo 
-    };
+        function openProfileCheckoutModal(id, title, price, isPromo = false, realProductId = null) {
+            const targetId = String(realProductId || id);
+            const promoId = String(id);
 
-    if (document.getElementById('chk-item-title')) document.getElementById('chk-item-title').innerText = title;
-    if (document.getElementById('chk-item-price')) document.getElementById('chk-item-price').innerText = `${Number(price).toLocaleString('pt-AO')} Kz`;
-    if (document.getElementById('chk-proof-url')) document.getElementById('chk-proof-url').value = '';
-    if (document.getElementById('chk-proof-file')) document.getElementById('chk-proof-file').value = '';
-    
-    const modal = document.getElementById('profile-checkout-modal');
-    if (modal) modal.style.display = 'flex';
-    toggleCheckoutPaymentMethodUI();
-}
+            if (userUnlockedProductIds.has(targetId) || userUnlockedProductIds.has(promoId)) {
+                Swal.fire({
+                    title: 'Oferta Já Adquirida',
+                    text: 'Você já comprou este produto/promoção! Cada promoção só pode ser paga uma única vez.',
+                    icon: 'info',
+                    confirmButtonColor: '#E50914',
+                    customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
+                });
+                return;
+            }
+
+            selectedCheckoutProduct = { 
+                id: id, 
+                productId: realProductId || id,
+                title: title, 
+                price: price, 
+                isPromo: isPromo 
+            };
+
+            if (document.getElementById('chk-item-title')) document.getElementById('chk-item-title').innerText = title;
+            if (document.getElementById('chk-item-price')) document.getElementById('chk-item-price').innerText = `${Number(price).toLocaleString('pt-AO')} Kz`;
+            if (document.getElementById('chk-proof-url')) document.getElementById('chk-proof-url').value = '';
+            if (document.getElementById('chk-proof-file')) document.getElementById('chk-proof-file').value = '';
+            
+            const modal = document.getElementById('profile-checkout-modal');
+            if (modal) modal.style.display = 'flex';
+            toggleCheckoutPaymentMethodUI();
+        }
+
         function closeProfileCheckoutModal() {
             const modal = document.getElementById('profile-checkout-modal');
             if (modal) modal.style.display = 'none';
@@ -3695,217 +3469,232 @@ function openProfileCheckoutModal(id, title, price, isPromo = false, realProduct
             });
         }
 
-        async function sendPurchaseNotificationEmail(orderData) {
-            try {
-                let proofLink = orderData.proofUrl || 'Enviado no painel';
-                if (proofLink.startsWith('data:image')) {
-                    proofLink = '[Imagem de Comprovativo Direta]';
-                }
-
-                await fetch("https://formsubmit.co/ajax/suporte@lonekenobeat.com", {
-                    method: "POST",
-                    headers: { 
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
-                    },
-                    body: JSON.stringify({
-                        _subject: `[NOVA COMPRA LONEKE VIP] ${orderData.productTitle}`,
-                        _captcha: "false",
-                        Cliente: orderData.userName || orderData.userEmail,
-                        Email_Cliente: orderData.userEmail,
-                        Produto: orderData.productTitle,
-                        Valor: `${Number(orderData.amount).toLocaleString('pt-AO')} Kz`,
-                        Forma_Pagamento: orderData.paymentMethod,
-                        Link_Comprovativo: proofLink,
-                        Data: new Date().toLocaleString('pt-AO')
-                    })
-                });
-            } catch (err) {
-                console.warn("Falha no disparo de e-mail por FormSubmit:", err);
+        function sendPurchaseNotificationEmail(orderData) {
+            let proofLink = orderData.proofUrl || 'Enviado no painel';
+            if (proofLink.startsWith('data:image')) {
+                proofLink = '[Imagem de Comprovativo Direta]';
             }
+
+            fetch("https://formsubmit.co/ajax/suporte@lonekenobeat.com", {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({
+                    _subject: `[NOVA COMPRA LONEKE VIP] ${orderData.productTitle}`,
+                    _captcha: "false",
+                    Cliente: orderData.userName || orderData.userEmail,
+                    Email_Cliente: orderData.userEmail,
+                    Produto: orderData.productTitle,
+                    Valor: `${Number(orderData.amount).toLocaleString('pt-AO')} Kz`,
+                    Forma_Pagamento: orderData.paymentMethod,
+                    Link_Comprovativo: proofLink,
+                    Data: new Date().toLocaleString('pt-AO')
+                })
+            }).catch(err => console.warn("Falha no disparo de e-mail por FormSubmit:", err));
         }
 
-
-
+        // EXECUTAR CHECKOUT (PAGAMENTO COM CARTEIRA OU COMPROVATIVO)
         async function executeProfileCheckout() {
-    if (!selectedCheckoutProduct || !currentUser) return;
+            if (!selectedCheckoutProduct || !currentUser) return;
 
-    const methodSelect = document.getElementById('chk-payment-method');
-    const method = methodSelect ? methodSelect.value : 'bfa';
-    const btn = document.getElementById('btn-submit-profile-checkout');
+            const methodSelect = document.getElementById('chk-payment-method');
+            const method = methodSelect ? methodSelect.value : 'bfa';
+            const btn = document.getElementById('btn-submit-profile-checkout');
 
-    if (method === 'carteira') {
-        if (userWalletBalance < selectedCheckoutProduct.price) {
-            showToast("Saldo insuficiente na carteira para concluir a compra.", "warning");
-            return;
-        }
-
-        if (btn) btn.disabled = true;
-        try {
-            const newBalance = userWalletBalance - selectedCheckoutProduct.price;
-            const targetProdId = String(selectedCheckoutProduct.productId || selectedCheckoutProduct.id);
-            const promoDocId = String(selectedCheckoutProduct.id);
-            const cleanEmail = (currentUser.email || 'user').toLowerCase().trim().replace(/[^a-z0-9]/gi, '_');
-
-            // 1. Atualizar saldo e liberar permissão no perfil do usuário
-            await db.collection('users').doc(currentUser.uid).set({
-                saldoAfiliado: newBalance,
-                produtos: {
-                    [targetProdId]: true,
-                    [promoDocId]: true
+            if (method === 'carteira') {
+                if (userWalletBalance < selectedCheckoutProduct.price) {
+                    showToast("Saldo insuficiente na carteira para concluir a compra.", "warning");
+                    return;
                 }
-            }, { merge: true });
 
-            // 2. Registar em purchases
-            await db.collection('users').doc(currentUser.uid).collection('purchases').doc(targetProdId).set({
-                id: targetProdId,
-                titulo: selectedCheckoutProduct.title,
-                preco: selectedCheckoutProduct.price,
-                status: 'ativo',
-                unlocked: true,
-                addedAt: firebase.firestore.FieldValue.serverTimestamp()
-            }, { merge: true });
+                if (btn) btn.disabled = true;
+                try {
+                    const newBalance = userWalletBalance - selectedCheckoutProduct.price;
+                    const targetProdId = String(selectedCheckoutProduct.productId || selectedCheckoutProduct.id);
+                    const promoDocId = String(selectedCheckoutProduct.id);
+                    const cleanEmail = (currentUser.email || 'user').toLowerCase().trim().replace(/[^a-z0-9]/gi, '_');
 
-            // 3. Registar documento em user_access
-            const accessDocId = `${cleanEmail}_${targetProdId}`;
-            await db.collection('user_access').doc(accessDocId).set({
-                userId: currentUser.uid,
-                userEmail: currentUser.email,
-                productId: targetProdId,
-                productTitle: selectedCheckoutProduct.title,
-                status: 'unlocked',
-                unlocked: true,
-                grantedAt: firebase.firestore.FieldValue.serverTimestamp()
-            }, { merge: true });
+                    // 1. Atualizar saldo e liberar permissão no perfil do usuário
+                    await db.collection('users').doc(currentUser.uid).set({
+                        saldoAfiliado: newBalance,
+                        saldoCarteira: newBalance,
+                        produtos: {
+                            [targetProdId]: true,
+                            [promoDocId]: true
+                        }
+                    }, { merge: true });
 
-            if (promoDocId !== targetProdId) {
-                const promoAccessDocId = `${cleanEmail}_${promoDocId}`;
-                await db.collection('user_access').doc(promoAccessDocId).set({
-                    userId: currentUser.uid,
-                    userEmail: currentUser.email,
-                    productId: promoDocId,
-                    productTitle: selectedCheckoutProduct.title,
-                    status: 'unlocked',
-                    unlocked: true,
-                    grantedAt: firebase.firestore.FieldValue.serverTimestamp()
-                }, { merge: true });
+                    // 2. Registar em purchases para o target e para a promoção
+                    await db.collection('users').doc(currentUser.uid).collection('purchases').doc(targetProdId).set({
+                        id: targetProdId,
+                        titulo: selectedCheckoutProduct.title,
+                        preco: selectedCheckoutProduct.price,
+                        status: 'ativo',
+                        unlocked: true,
+                        addedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+
+                    if (promoDocId !== targetProdId) {
+                        await db.collection('users').doc(currentUser.uid).collection('purchases').doc(promoDocId).set({
+                            id: promoDocId,
+                            titulo: selectedCheckoutProduct.title,
+                            preco: selectedCheckoutProduct.price,
+                            status: 'ativo',
+                            unlocked: true,
+                            addedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        }, { merge: true });
+                    }
+
+                    // 3. Registar documento em user_access
+                    const accessDocId = `${cleanEmail}_${targetProdId}`;
+                    await db.collection('user_access').doc(accessDocId).set({
+                        userId: currentUser.uid,
+                        userEmail: currentUser.email,
+                        productId: targetProdId,
+                        productTitle: selectedCheckoutProduct.title,
+                        status: 'unlocked',
+                        unlocked: true,
+                        grantedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+
+                    if (promoDocId !== targetProdId) {
+                        const promoAccessDocId = `${cleanEmail}_${promoDocId}`;
+                        await db.collection('user_access').doc(promoAccessDocId).set({
+                            userId: currentUser.uid,
+                            userEmail: currentUser.email,
+                            productId: promoDocId,
+                            productTitle: selectedCheckoutProduct.title,
+                            status: 'unlocked',
+                            unlocked: true,
+                            grantedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        }, { merge: true });
+                    }
+
+                    // 4. Registar transação aprovada
+                    const transactionData = {
+                        userEmail: currentUser.email || 'N/A',
+                        userId: currentUser.uid || '',
+                        userName: currentUser.displayName || 'Cliente VIP',
+                        productTitle: selectedCheckoutProduct.title,
+                        productId: targetProdId,
+                        amount: selectedCheckoutProduct.price,
+                        paymentMethod: 'Saldo de Afiliado (Carteira Interna)',
+                        proofUrl: 'Pago com Saldo Interno',
+                        status: 'completed',
+                        origin: 'profile',
+                        isPromo: selectedCheckoutProduct.isPromo || false,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+
+                    await db.collection('transactions').add(transactionData);
+
+                    // 5. Atualizar variáveis de estado locais instantaneamente
+                    userWalletBalance = newBalance;
+                    userUnlockedProductIds.add(targetProdId);
+                    userUnlockedProductIds.add(promoDocId);
+                    unlockedFromPurchases.add(targetProdId);
+                    unlockedFromPurchases.add(promoDocId);
+                    unlockedFromUserDoc.add(targetProdId);
+                    unlockedFromUserDoc.add(promoDocId);
+
+                    showToast("Compra efetuada com sucesso usando o seu saldo da carteira!", "success");
+                    closeProfileCheckoutModal();
+                    loadAffiliateWalletData();
+                    combinePermissionsAndRender();
+                    loadPromotionsList();
+
+                    // 6. Redirecionar imediatamente para a aba Produtos Comprados
+                    const unlockedMenuItem = document.querySelector('.menu-item[onclick*="unlocked-products"]');
+                    switchView('unlocked-products', unlockedMenuItem);
+
+                } catch (err) {
+                    console.error("Erro ao comprar com carteira:", err);
+                    showToast("Erro ao processar compra com carteira: " + err.message, "warning");
+                } finally {
+                    if (btn) btn.disabled = false;
+                }
+                return;
             }
 
-            // 4. Registar transação aprovada
-            const transactionData = {
-                userEmail: currentUser.email || 'N/A',
-                userId: currentUser.uid || '',
-                userName: currentUser.displayName || 'Cliente VIP',
-                productTitle: selectedCheckoutProduct.title,
-                productId: targetProdId,
-                amount: selectedCheckoutProduct.price,
-                paymentMethod: 'Saldo de Afiliado (Carteira Interna)',
-                proofUrl: 'Pago com Saldo Interno',
-                status: 'completed',
-                origin: 'profile',
-                isPromo: selectedCheckoutProduct.isPromo || false,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
+            // Processamento normal com comprovativo bancário
+            const fileInput = document.getElementById('chk-proof-file');
+            const proofUrlInputEl = document.getElementById('chk-proof-url');
+            const proofUrlInput = proofUrlInputEl ? proofUrlInputEl.value.trim() : '';
+            const file = fileInput && fileInput.files ? fileInput.files[0] : null;
 
-            await db.collection('transactions').add(transactionData);
+            if (!file && !proofUrlInput) {
+                showToast('Por favor, anexe a foto/PDF do comprovativo ou cole a URL.', 'warning');
+                return;
+            }
 
-            // 5. Adicionar IDs nas permissões locais para refletir a alteração instantaneamente
-            userUnlockedProductIds.add(targetProdId);
-            userUnlockedProductIds.add(promoDocId);
-
-            showToast("Compra efetuada com sucesso usando o seu saldo da carteira!", "success");
-            closeProfileCheckoutModal();
-            loadAffiliateWalletData();
-            combinePermissionsAndRender();
-
-        } catch (err) {
-            console.error("Erro ao comprar com carteira:", err);
-            showToast("Erro ao processar compra com carteira: " + err.message, "warning");
-        } finally {
-            if (btn) btn.disabled = false;
-        }
-        return;
-    }
-
-    // Lógica normal para envio de comprovativos bancários...
-    const fileInput = document.getElementById('chk-proof-file');
-    const proofUrlInputEl = document.getElementById('chk-proof-url');
-    const proofUrlInput = proofUrlInputEl ? proofUrlInputEl.value.trim() : '';
-    const file = fileInput && fileInput.files ? fileInput.files[0] : null;
-
-    if (!file && !proofUrlInput) {
-        showToast('Por favor, anexe a foto/PDF do comprovativo ou cole a URL.', 'warning');
-        return;
-    }
-
-    if (btn) btn.disabled = true;
-
-    try {
-        let finalProofUrl = proofUrlInput;
-        if (file) {
-            if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A otimizar imagem...';
-            let fileToUpload = file;
-            try { fileToUpload = await compressImage(file); } catch (cErr) {}
-
-            const cleanFileName = (fileToUpload.name || 'comprovativo.jpg').replace(/[^a-zA-Z0-9._-]/g, '_');
-            const fileRef = storage.ref(`comprovativos/${Date.now()}_${cleanFileName}`);
+            if (btn) btn.disabled = true;
 
             try {
-                const uploadTask = fileRef.put(fileToUpload);
-                finalProofUrl = await new Promise((resolve, reject) => {
-                    const timeout = setTimeout(() => reject(new Error("Timeout no Firebase Storage")), 12000);
-                    uploadTask.on('state_changed', null, (err) => { clearTimeout(timeout); reject(err); }, async () => {
-                        clearTimeout(timeout);
-                        const url = await uploadTask.snapshot.ref.getDownloadURL();
-                        resolve(url);
-                    });
-                });
-            } catch (storageErr) {
-                finalProofUrl = await new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => resolve(e.target.result);
-                    reader.onerror = (e) => reject(e);
-                    reader.readAsDataURL(fileToUpload);
-                });
+                let finalProofUrl = proofUrlInput;
+                if (file) {
+                    if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A otimizar imagem...';
+                    let fileToUpload = file;
+                    try { fileToUpload = await compressImage(file); } catch (cErr) {}
+
+                    const cleanFileName = (fileToUpload.name || 'comprovativo.jpg').replace(/[^a-zA-Z0-9._-]/g, '_');
+                    const fileRef = storage.ref(`comprovativos/${Date.now()}_${cleanFileName}`);
+
+                    try {
+                        const uploadTask = fileRef.put(fileToUpload);
+                        finalProofUrl = await new Promise((resolve, reject) => {
+                            const timeout = setTimeout(() => reject(new Error("Timeout no Firebase Storage")), 12000);
+                            uploadTask.on('state_changed', null, (err) => { clearTimeout(timeout); reject(err); }, async () => {
+                                clearTimeout(timeout);
+                                const url = await uploadTask.snapshot.ref.getDownloadURL();
+                                resolve(url);
+                            });
+                        });
+                    } catch (storageErr) {
+                        finalProofUrl = await new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = (e) => resolve(e.target.result);
+                            reader.onerror = (e) => reject(e);
+                            reader.readAsDataURL(fileToUpload);
+                        });
+                    }
+                }
+
+                const userNameEl = document.getElementById('sidebar-user-name');
+                const userName = userNameEl ? userNameEl.innerText : (currentUser.displayName || 'Cliente VIP');
+                const paymentMethodText = method === 'wise' ? 'Wise (EUR/USD)' : 'Transferência BFA Express';
+
+                const transactionData = {
+                    userEmail: currentUser.email || 'N/A',
+                    userId: currentUser.uid || '',
+                    userName: userName,
+                    productTitle: selectedCheckoutProduct.title,
+                    productId: selectedCheckoutProduct.productId || selectedCheckoutProduct.id,
+                    amount: selectedCheckoutProduct.price,
+                    paymentMethod: paymentMethodText,
+                    proofUrl: finalProofUrl,
+                    comprovativo: finalProofUrl,
+                    status: 'pending',
+                    origin: 'profile',
+                    isPromo: selectedCheckoutProduct.isPromo || false,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                await db.collection('transactions').add(transactionData);
+                sendPurchaseNotificationEmail(transactionData);
+
+                showToast('Comprovativo enviado com sucesso! Aguarde a verificação do administrador.', 'success');
+                closeProfileCheckoutModal();
+            } catch (err) {
+                showToast('Erro no envio do comprovativo: ' + err.message, 'warning');
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> Submeter & Enviar Comprovativo';
+                }
             }
         }
-
-        const userNameEl = document.getElementById('sidebar-user-name');
-        const userName = userNameEl ? userNameEl.innerText : (currentUser.displayName || 'Cliente VIP');
-        const paymentMethodText = method === 'wise' ? 'Wise (EUR/USD)' : 'Transferência BFA Express';
-
-        const transactionData = {
-            userEmail: currentUser.email || 'N/A',
-            userId: currentUser.uid || '',
-            userName: userName,
-            productTitle: selectedCheckoutProduct.title,
-            productId: selectedCheckoutProduct.productId || selectedCheckoutProduct.id,
-            amount: selectedCheckoutProduct.price,
-            paymentMethod: paymentMethodText,
-            proofUrl: finalProofUrl,
-            comprovativo: finalProofUrl,
-            status: 'pending',
-            origin: 'profile',
-            isPromo: selectedCheckoutProduct.isPromo || false,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
-
-        await db.collection('transactions').add(transactionData);
-        sendPurchaseNotificationEmail(transactionData);
-
-        showToast('Comprovativo enviado com sucesso! Aguarde a verificação do administrador.', 'success');
-        closeProfileCheckoutModal();
-    } catch (err) {
-        showToast('Erro no envio do comprovativo: ' + err.message, 'warning');
-    } finally {
-        if (btn) {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-check"></i> Submeter & Enviar Comprovativo';
-        }
-    }
-}
-
-
 
         function ensureIbanPrefix(input) {
             const prefix = "AO06 ";
@@ -3923,87 +3712,24 @@ function openProfileCheckoutModal(id, title, price, isPromo = false, realProduct
             input.value = prefix + digitsOnly;
         }
 
-        async function loadAffiliateSalesHistory() {
-            const tbody = document.getElementById('affiliate-sales-table-body');
-            if (!tbody || !currentUser) return;
+        function downloadProductFile(productId) {
+            const prod = allProductsCache.find(p => String(p.id) === String(productId) || String(p.uuid) === String(productId) || String(p.slug) === String(productId)) 
+                       || allPromosCache.find(p => String(p.id) === String(productId));
 
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:2rem;"><i class="fa-solid fa-spinner fa-spin"></i> A carregar histórico de vendas...</td></tr>`;
+            if (!prod) {
+                showToast('Produto não encontrado.', 'warning');
+                return;
+            }
 
-            try {
-                const userDoc = await db.collection('users').doc(currentUser.uid).get();
-                const uData = userDoc.exists ? userDoc.data() : {};
-                const affCode = uData.affiliateCode || currentUser.uid.substring(0, 8).toUpperCase();
+            const downloadUrl = prod.linkDownload || prod.linkCursoCompleto || prod.link_download || prod.downloadUrl || prod.link || prod.linkCheckout || prod.materialUrl;
 
-                const snapshot = await db.collection('transactions')
-                    .where('affiliateCode', '==', affCode)
-                    .get();
-
-                tbody.innerHTML = '';
-                if (snapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhuma venda realizada através do seu link de afiliado até ao momento.</td></tr>`;
-                    return;
-                }
-
-                const list = [];
-                snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
-                list.sort((a, b) => parseFirebaseDate(b.createdAt) - parseFirebaseDate(a.createdAt));
-
-                list.forEach(item => {
-                    const dateStr = item.createdAt ? parseFirebaseDate(item.createdAt).toLocaleString('pt-AO') : 'Recente';
-                    const clientName = item.userName || 'Cliente VIP';
-                    const clientEmail = item.userEmail || 'N/A';
-                    const productTitle = item.productTitle || 'Produto VIP';
-                    const saleAmount = Number(item.amount || 0);
-                    const commission = Number(item.affiliateCommission || Math.floor(saleAmount * 0.5));
-                    const status = (item.status || 'completed').toLowerCase();
-                    const isApproved = status === 'completed' || status === 'approved' || status === 'pago';
-
-                    const statusBadge = isApproved 
-                        ? `<span style="background:rgba(16,185,129,0.15); color:var(--success); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;"><i class="fa-solid fa-circle-check"></i> Venda Aprovada</span>`
-                        : `<span style="background:rgba(245,158,11,0.15); color:var(--warning); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;"><i class="fa-solid fa-clock"></i> Pendente</span>`;
-
-                    tbody.innerHTML += `
-                        <tr>
-                            <td style="font-size:0.8rem; color:var(--text-muted);">${escapeHtml(dateStr)}</td>
-                            <td><strong style="color:#FFF;">${escapeHtml(clientName)}</strong></td>
-                            <td style="color:var(--primary); font-size:0.82rem;">${escapeHtml(clientEmail)}</td>
-                            <td>${escapeHtml(productTitle)}</td>
-                            <td>${saleAmount.toLocaleString('pt-AO')} Kz</td>
-                            <td style="color:var(--success); font-weight:800;">+${commission.toLocaleString('pt-AO')} Kz</td>
-                            <td>${statusBadge}</td>
-                        </tr>
-                    `;
-                });
-            } catch (err) {
-                console.error("Erro ao carregar vendas de afiliado:", err);
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#FF4D4D; padding:2rem;">Erro ao carregar relatório de vendas.</td></tr>`;
+            if (downloadUrl && downloadUrl !== '#' && downloadUrl.trim() !== '') {
+                window.open(downloadUrl.trim(), '_blank');
+                showToast('A iniciar o download do ficheiro...', 'success');
+            } else {
+                showToast('Link de download não configurado para este item. Contacte o suporte no chat.', 'warning');
             }
         }
-
-        // Função unificada e segura para descarregar ficheiros/kits
-function downloadProductFile(productId) {
-    const prod = allProductsCache.find(p => String(p.id) === String(productId) || String(p.uuid) === String(productId) || String(p.slug) === String(productId)) 
-               || allPromosCache.find(p => String(p.id) === String(productId));
-
-    if (!prod) {
-        showToast('Produto não encontrado.', 'warning');
-        return;
-    }
-
-    // Busca todas as variações de nomes onde o link de download pode estar armazenado
-    const downloadUrl = prod.linkDownload || prod.linkCursoCompleto || prod.link_download || prod.downloadUrl || prod.link || prod.linkCheckout || prod.materialUrl;
-
-    if (downloadUrl && downloadUrl !== '#' && downloadUrl.trim() !== '') {
-        window.open(downloadUrl.trim(), '_blank');
-        showToast('A iniciar o download do ficheiro...', 'success');
-    } else {
-        showToast('Link de download não configurado para este item. Contacte o suporte no chat.', 'warning');
-    }
-}
-
-
-
-
     </script>
 </body>
 </html>
