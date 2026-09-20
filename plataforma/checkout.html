@@ -614,7 +614,7 @@
             if (loadingScreen) loadingScreen.classList.add("hidden");
         }, 800);
 
-        initCartWithPlanContext();
+        await initCartWithPlanContext();
         loadCartData();
         initPaymentSelector();
         renderOrderBumps();
@@ -849,20 +849,45 @@
         if (productId) {
             let foundProduct = null;
 
-            // 1. Busca produto via Firestore (Modular ou Compat)
+            // 1. Busca produto via Firestore (Modular ou Compat / coleções "produtos" e "promocoes")
             try {
+                // Tenta via Modular (window.firebaseDb)
                 if (window.firebaseDb && window.firebaseDoc && window.firebaseGetDoc) {
-                    const docRef = window.firebaseDoc(window.firebaseDb, "produtos", productId);
-                    const docSnap = await window.firebaseGetDoc(docRef);
+                    let docRef = window.firebaseDoc(window.firebaseDb, "produtos", productId);
+                    let docSnap = await window.firebaseGetDoc(docRef);
+                    if (!docSnap.exists()) {
+                        docRef = window.firebaseDoc(window.firebaseDb, "promocoes", productId);
+                        docSnap = await window.firebaseGetDoc(docRef);
+                    }
                     if (docSnap.exists()) {
                         const pData = docSnap.data();
                         foundProduct = {
                             id: docSnap.id,
                             product_id: docSnap.id,
-                            titulo: pData.titulo || pData.title || pData.nome || "Produto VIP",
-                            preco: Number(pData.precoAtual || pData.preco || pData.price || 0),
+                            titulo: pData.titulo || pData.title || pData.nome || pData.productTitle || "Produto VIP",
+                            preco: Number(pData.precoPromo || pData.precoAtual || pData.preco || pData.price || 0),
                             categoria: pData.categoria || 'geral',
-                            imagem: pData.imagem || pData.imageUrl || pData.capa || "img/express.png"
+                            imagem: pData.imagem || pData.imageUrl || pData.thumb || pData.capa || pData.foto || "img/express.png"
+                        };
+                    }
+                }
+
+                // Tenta via Compat SDK se não encontrado no Modular
+                if (!foundProduct && typeof firebase !== 'undefined' && firebase.firestore) {
+                    const dbCompat = firebase.firestore();
+                    let docSnap = await dbCompat.collection("produtos").doc(productId).get();
+                    if (!docSnap.exists) {
+                        docSnap = await dbCompat.collection("promocoes").doc(productId).get();
+                    }
+                    if (docSnap.exists) {
+                        const pData = docSnap.data();
+                        foundProduct = {
+                            id: docSnap.id,
+                            product_id: docSnap.id,
+                            titulo: pData.titulo || pData.title || pData.nome || pData.productTitle || "Produto VIP",
+                            preco: Number(pData.precoPromo || pData.precoAtual || pData.preco || pData.price || 0),
+                            categoria: pData.categoria || 'geral',
+                            imagem: pData.imagem || pData.imageUrl || pData.thumb || pData.capa || pData.foto || "img/express.png"
                         };
                     }
                 }
@@ -877,30 +902,47 @@
                     foundProduct = {
                         id: localP.id,
                         product_id: localP.id,
-                        titulo: localP.titulo || localP.nome,
-                        preco: Number(localP.precoAtual || localP.preco || 0),
+                        titulo: localP.titulo || localP.nome || localP.title,
+                        preco: Number(localP.precoPromo || localP.precoAtual || localP.preco || localP.price || 0),
                         categoria: localP.categoria || 'geral',
-                        imagem: localP.imagem || "img/express.png"
+                        imagem: localP.imagem || localP.imageUrl || localP.capa || "img/express.png"
                     };
                 }
             }
 
-            // 3. Fallback por parâmetros da URL
+            // Busca nas Order Bumps
+            if (!foundProduct && typeof orderBumpProdutos !== 'undefined' && Array.isArray(orderBumpProdutos)) {
+                const bumpP = orderBumpProdutos.find(p => String(p.id) === String(productId));
+                if (bumpP) {
+                    foundProduct = {
+                        id: bumpP.id,
+                        product_id: bumpP.id,
+                        titulo: bumpP.titulo || bumpP.nome,
+                        preco: Number(bumpP.preco || 0),
+                        categoria: bumpP.categoria || 'geral',
+                        imagem: bumpP.imagem || "img/express.png"
+                    };
+                }
+            }
+
+            // 3. Fallback estendido por parâmetros da URL
             if (!foundProduct) {
-                const titleParam = urlParams.get('title') || urlParams.get('nome') || "Produto VIP";
-                const priceParam = parseFloat(urlParams.get('price') || urlParams.get('preco') || 0);
+                const titleParam = urlParams.get('title') || urlParams.get('nome') || urlParams.get('titulo') || "Produto VIP";
+                const priceParam = parseFloat(urlParams.get('price') || urlParams.get('preco') || urlParams.get('pricePromo') || 0);
+                const imageParam = urlParams.get('imagem') || urlParams.get('image') || urlParams.get('thumb') || "img/express.png";
+
                 foundProduct = {
                     id: productId,
                     product_id: productId,
                     titulo: titleParam,
                     preco: priceParam,
                     categoria: 'geral',
-                    imagem: "img/express.png"
+                    imagem: imageParam
                 };
             }
 
             if (foundProduct) {
-                // Preenche o carrinho diretamente com o produto vindo do link de afiliado
+                // Preenche o carrinho diretamente com o produto encontrado
                 cart = [{
                     id: foundProduct.id,
                     product_id: foundProduct.id,
@@ -1013,9 +1055,10 @@
         originalTotalKz = cart.reduce((acc, current) => acc + (current.preco * current.quantity), 0);
 
         container.innerHTML = cart.map((item, index) => {
+            const imgSrc = item.imagem || 'img/express.png';
             return `
                 <div class="summary-item">
-                    <img src="${item.imagem}" onerror="this.onerror=null; this.src='img/express.png';" alt="${item.titulo}">
+                    <img src="${imgSrc}" onerror="this.onerror=null; this.src='img/express.png';" alt="${item.titulo}">
                     <div class="summary-details">
                         <h4>${item.titulo}</h4>
                         <p>Qtd: ${item.quantity} &bull; ${(item.preco * item.quantity).toLocaleString('pt-AO', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Kz</p>
