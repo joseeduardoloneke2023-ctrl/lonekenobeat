@@ -45,7 +45,7 @@
             --radius-lg: 20px;
             --radius-md: 14px;
             --radius-sm: 8px;
-            --transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         * {
@@ -78,15 +78,9 @@
             background: radial-gradient(circle, var(--primary-glow) 0%, rgba(0,0,0,0) 70%);
             z-index: 0;
             pointer-events: none;
-            animation: pulseGlow 8s ease-in-out infinite alternate;
         }
 
-        @keyframes pulseGlow {
-            0% { transform: scale(1) translate(0, 0); opacity: 0.5; }
-            100% { transform: scale(1.2) translate(80px, 50px); opacity: 0.8; }
-        }
-
-        /* PRELOADER */
+        /* PRELOADER OTIMIZADO */
         #preloader {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -96,12 +90,14 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
         }
 
         #preloader.fade-out {
-            opacity: 0;
-            visibility: hidden;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+            display: none !important;
         }
 
         .loader-logo {
@@ -113,15 +109,9 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            animation: pulseLogo 1.5s infinite alternate;
         }
 
         .loader-logo i { color: var(--primary); }
-
-        @keyframes pulseLogo {
-            0% { transform: scale(0.98); opacity: 0.8; }
-            100% { transform: scale(1.05); filter: drop-shadow(0 0 15px var(--primary-glow)); }
-        }
 
         .loader-bar {
             width: 200px;
@@ -135,11 +125,10 @@
         .loader-progress {
             position: absolute;
             top: 0; left: 0; height: 100%;
-            width: 0%;
+            width: 100%;
             background: linear-gradient(90deg, var(--primary), #FF5555);
             border-radius: 10px;
             box-shadow: 0 0 12px var(--primary-glow);
-            transition: width 0.3s ease;
         }
 
         /* TOAST NOTIFICATIONS */
@@ -162,12 +151,12 @@
             display: flex; align-items: flex-start; gap: 14px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
             transform: translateX(120%);
-            animation: toastIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             position: relative; overflow: hidden;
         }
 
         @keyframes toastIn { to { transform: translateX(0); } }
-        .toast.toast-out { animation: toastOut 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .toast.toast-out { animation: toastOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes toastOut { to { transform: translateX(120%); opacity: 0; } }
 
         .toast-icon { font-size: 1.3rem; margin-top: 2px; }
@@ -247,8 +236,8 @@
         }
         .menu-item.active i { color: var(--primary); filter: drop-shadow(0 0 8px var(--primary-glow)); }
 
-        .panel-view { display: none; opacity: 0; transform: translateY(20px); }
-        .panel-view.active { display: block; animation: viewEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .panel-view { display: none; opacity: 0; transform: translateY(10px); }
+        .panel-view.active { display: block; animation: viewEntrance 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes viewEntrance { to { opacity: 1; transform: translateY(0); } }
 
         .view-title {
@@ -274,7 +263,7 @@
             background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg);
             padding: 1.5rem; display: flex; align-items: center; gap: 20px; transition: var(--transition); backdrop-filter: blur(12px);
         }
-        .stat-card:hover { transform: translateY(-6px); border-color: rgba(255, 255, 255, 0.2); box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
+        .stat-card:hover { transform: translateY(-4px); border-color: rgba(255, 255, 255, 0.2); box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
         .stat-icon { width: 55px; height: 55px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
         .stat-info h3 { font-size: 1.8rem; font-family: 'Montserrat', sans-serif; font-weight: 800; line-height: 1.2; }
         .stat-info p { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
@@ -356,7 +345,7 @@
             <i class="fa-solid fa-shield-halved fa-spin"></i> LONEKE <span style="color:var(--primary);">ADMIN</span>
         </div>
         <div class="loader-bar">
-            <div class="loader-progress" id="loaderProgress"></div>
+            <div class="loader-progress"></div>
         </div>
     </div>
 
@@ -397,35 +386,17 @@
                 <i class="fa-solid fa-chart-pie"></i> Dashboard & KPIs
             </div>
             <div class="menu-item" onclick="switchView('pending-sales', this)">
-                <i class="fa-solid fa-clock-rotate-left"></i> Vendas Pendentes (Checkout)
+                <i class="fa-solid fa-clock-rotate-left" style="color:var(--warning);"></i> Vendas Pendentes
+                <span id="sidebar-pending-badge" style="background:var(--warning); color:#000; font-weight:800; font-size:0.72rem; padding:2px 8px; border-radius:10px; margin-left:auto; display:none;">0</span>
             </div>
             <div class="menu-item" onclick="switchView('products', this)">
                 <i class="fa-solid fa-box-archive"></i> Produtos & Beats
             </div>
-
-            <div class="menu-item" onclick="switchView('affiliate-links-admin', this)">
-                <i class="fa-solid fa-handshake" style="color:#38BDF8;"></i> Links de Afiliados Gerados
-            </div>
-
-            <div class="menu-item" onclick="switchView('promotions', this)">
-                <i class="fa-solid fa-fire-flame-curved" style="color:#FF5555;"></i> Produtos Promocionais (24h)
-            </div>
-
-            <div class="menu-item" onclick="switchView('wallet-deposits', this)">
-                <i class="fa-solid fa-wallet" style="color:var(--success);"></i> Recargas de Carteira
-            </div>
-            <div class="menu-item" onclick="switchView('wallet-withdrawals', this)">
-                <i class="fa-solid fa-money-bill-transfer" style="color:var(--warning);"></i> Pedidos de Saque
-            </div>
-
             <div class="menu-item" onclick="switchView('access', this)">
-                <i class="fa-solid fa-key"></i> Conceder / Tirar Acesso
-            </div>
-            <div class="menu-item" onclick="switchView('depoimentos', this)">
-                <i class="fa-solid fa-star" style="color:#F59E0B;"></i> Avaliações & Depoimentos
+                <i class="fa-solid fa-key" style="color:var(--success);"></i> Conceder / Revogar Acesso
             </div>
             <div class="menu-item" onclick="switchView('chat', this)">
-                <i class="fa-solid fa-comments"></i> Suporte Chat
+                <i class="fa-solid fa-comments"></i> Central de Suporte Chat
             </div>
             <div class="menu-item" onclick="switchView('users', this)">
                 <i class="fa-solid fa-users"></i> Base de Usuários
@@ -442,7 +413,7 @@
             <!-- 1. DASHBOARD VIEW -->
             <section id="view-dashboard" class="panel-view active">
                 <h2 class="view-title"><i class="fa-solid fa-chart-pie" style="color:var(--primary);"></i> Dashboard & Relatório de Vendas</h2>
-                <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 2rem;">Acompanhe o desempenho das vendas no site principal e no perfil dos clientes em tempo real.</p>
+                <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 2rem;">Acompanhe o desempenho de vendas e acessos liberados na plataforma do cliente em tempo real.</p>
 
                 <div style="display:flex; gap:10px; margin-bottom: 2rem; flex-wrap:wrap;">
                     <button class="btn-action btn-primary" onclick="filterBilling('day', this)">Diário</button>
@@ -457,25 +428,25 @@
                         <div class="stat-icon" style="color:var(--primary); background:rgba(229,9,20,0.1);"><i class="fa-solid fa-wallet"></i></div>
                         <div class="stat-info">
                             <h3 id="kpi-revenue">0 Kz</h3>
-                            <p>Faturamento Total</p>
+                            <p>Faturamento Aprovado</p>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon" style="color:var(--info); background:rgba(59,130,246,0.1);"><i class="fa-solid fa-globe"></i></div>
+                        <div class="stat-icon" style="color:var(--warning); background:rgba(245,158,11,0.1);"><i class="fa-solid fa-clock"></i></div>
                         <div class="stat-info">
-                            <h3 id="kpi-sales-site">0 Kz</h3>
-                            <p>Vendas Site (Checkout)</p>
+                            <h3 id="kpi-sales-pending">0</h3>
+                            <p>Vendas Pendentes</p>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon" style="color:var(--success); background:rgba(16,185,129,0.1);"><i class="fa-solid fa-user-tag"></i></div>
+                        <div class="stat-icon" style="color:var(--info); background:rgba(59,130,246,0.1);"><i class="fa-solid fa-box-archive"></i></div>
                         <div class="stat-info">
-                            <h3 id="kpi-sales-profile">0 Kz</h3>
-                            <p>Vendas Perfil (Cliente VIP)</p>
+                            <h3 id="kpi-products-total">0</h3>
+                            <p>Produtos no Catálogo</p>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon" style="color:#FFAA00; background:rgba(255,170,0,0.1);"><i class="fa-solid fa-users"></i></div>
+                        <div class="stat-icon" style="color:var(--success); background:rgba(16,185,129,0.1);"><i class="fa-solid fa-users"></i></div>
                         <div class="stat-info">
                             <h3 id="kpi-users">0</h3>
                             <p>Total de Usuários</p>
@@ -484,42 +455,12 @@
                 </div>
             </section>
 
-            <!-- VIEW: RELATÓRIO DE LINKS DE AFILIADOS GERADOS -->
-            <section id="view-affiliate-links-admin" class="panel-view">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
-                    <div>
-                        <h2 class="view-title"><i class="fa-solid fa-handshake" style="color:#38BDF8;"></i> Links de Afiliados Gerados pelos Clientes</h2>
-                        <p style="color:var(--text-muted); font-size:0.95rem;">Veja quantos e quais links de afiliado cada utilizador gerou no seu perfil.</p>
-                    </div>
-                    <button class="btn-action btn-secondary" onclick="loadAffiliateLinksAdmin()">
-                        <i class="fa-solid fa-arrows-rotate"></i> Atualizar Relatório
-                    </button>
-                </div>
-
-                <div class="table-container">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Afiliado / Cliente</th>
-                                <th>E-mail</th>
-                                <th>Código de Afiliado</th>
-                                <th>Nº de Links Gerados</th>
-                                <th>Produtos Afiliados & Links</th>
-                            </tr>
-                        </thead>
-                        <tbody id="affiliate-links-admin-table-body">
-                            <!-- Preenchido via JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
             <!-- 2. VIEW DE VENDAS E PRODUTOS PENDENTES DO CHECKOUT -->
             <section id="view-pending-sales" class="panel-view">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
                     <div>
                         <h2 class="view-title"><i class="fa-solid fa-clock-rotate-left" style="color:var(--warning);"></i> Vendas Pendentes (Checkout)</h2>
-                        <p style="color:var(--text-muted); font-size:0.95rem;">Visualize o comprovativo de cada movimento antes de autorizar a compra.</p>
+                        <p style="color:var(--text-muted); font-size:0.95rem;">Visualize os comprovativos anexados pelos clientes e aprove para liberar o produto automaticamente.</p>
                     </div>
                     <button class="btn-action btn-secondary" onclick="loadPendingSales()">
                         <i class="fa-solid fa-arrows-rotate"></i> Atualizar Lista
@@ -531,13 +472,13 @@
                         <thead>
                             <tr>
                                 <th>Data / Hora</th>
-                                <th>E-mail do Cliente</th>
+                                <th>Cliente / E-mail</th>
+                                <th>WhatsApp</th>
                                 <th>Produto Solicitado</th>
-                                <th>Valor (Kz)</th>
-                                <th>Indicação / Afiliado</th>
-                                <th>Comprovativo / Ref.</th>
+                                <th>Método / Valor</th>
+                                <th>Comprovativo</th>
                                 <th>Estado</th>
-                                <th style="text-align:right;">Ações (Comprovativo / Autorização)</th>
+                                <th style="text-align:right;">Ações (Aprovação)</th>
                             </tr>
                         </thead>
                         <tbody id="pending-sales-table-body">
@@ -552,7 +493,7 @@
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
                     <div>
                         <h2 class="view-title"><i class="fa-solid fa-box-archive" style="color:var(--primary);"></i> Catálogo de Produtos e Beats</h2>
-                        <p style="color:var(--text-muted); font-size:0.95rem;">Gerencie o catálogo VIP, preços, detalhes, links de aulas e links de download.</p>
+                        <p style="color:var(--text-muted); font-size:0.95rem;">Gerencie os cursos, FLP, drumkits, plugins e beats que aparecem para os clientes.</p>
                     </div>
                     <button class="btn-action btn-primary" onclick="openProductModal()"><i class="fa-solid fa-plus-circle"></i> Cadastrar Novo Produto</button>
                 </div>
@@ -577,12 +518,12 @@
                 </div>
             </section>
 
-            <!-- 4. ACCESS & ORDERS VIEW -->
+            <!-- 4. ACCESS VIEW -->
             <section id="view-access" class="panel-view">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
                     <div>
-                        <h2 class="view-title"><i class="fa-solid fa-key" style="color:var(--primary);"></i> Gestão de Acesso (Conceder ou Tirar)</h2>
-                        <p style="color:var(--text-muted); font-size:0.95rem;">Conceda ou remova o acesso de qualquer usuário a qualquer produto do catálogo de forma imediata.</p>
+                        <h2 class="view-title"><i class="fa-solid fa-key" style="color:var(--success);"></i> Gestão de Acesso (Conceder ou Revogar)</h2>
+                        <p style="color:var(--text-muted); font-size:0.95rem;">Conceda ou remova a permissão de qualquer cliente a qualquer produto manualmente.</p>
                     </div>
                     <button class="btn-action btn-success" onclick="openGrantAccessModal()">
                         <i class="fa-solid fa-user-check"></i> Gerenciar Permissões por E-mail
@@ -597,7 +538,7 @@
                                 <th>Produto Liberado</th>
                                 <th>WhatsApp</th>
                                 <th>Estado do Acesso</th>
-                                <th style="text-align:right;">Ação (Conceder / Tirar)</th>
+                                <th style="text-align:right;">Ação (Conceder / Revogar)</th>
                             </tr>
                         </thead>
                         <tbody id="access-table-body">
@@ -610,19 +551,19 @@
             <!-- 5. CHAT SUPPORT VIEW -->
             <section id="view-chat" class="panel-view">
                 <h2 class="view-title"><i class="fa-solid fa-comments" style="color:var(--primary);"></i> Central de Suporte Chat</h2>
-                <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 1.5rem;">Atenda os alunos e visualize seus e-mails de cadastro para suporte direto.</p>
+                <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 1.5rem;">Atenda em tempo real os clientes que entram em contacto pela Área do Cliente.</p>
 
                 <div class="chat-layout">
                     <div class="chat-sidebar" id="chat-users-list">
                         <!-- Lista de chats via Firebase -->
                     </div>
                     <div class="chat-main-area">
-                        <div id="chat-header" class="chat-header-bar">Selecione um aluno</div>
+                        <div id="chat-header" class="chat-header-bar">Selecione um cliente para conversar</div>
                         <div id="chat-messages" class="chat-messages-box">
                             <p style="color:var(--text-muted); text-align:center; margin-top:auto; margin-bottom:auto;">Nenhuma conversa selecionada no momento.</p>
                         </div>
                         <div class="chat-input-bar">
-                            <input type="text" id="chat-input" class="search-input" placeholder="Escreva uma resposta para o aluno..." onkeydown="if(event.key==='Enter') sendAdminMessage()">
+                            <input type="text" id="chat-input" class="search-input" placeholder="Escreva uma resposta..." onkeydown="if(event.key==='Enter') sendAdminMessage()">
                             <button class="btn-action btn-primary" onclick="sendAdminMessage()"><i class="fa-solid fa-paper-plane"></i> Enviar</button>
                         </div>
                     </div>
@@ -634,7 +575,7 @@
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
                     <div>
                         <h2 class="view-title"><i class="fa-solid fa-users" style="color:var(--primary);"></i> Base de Usuários Cadastrados</h2>
-                        <p style="color:var(--text-muted); font-size:0.95rem;">Lista completa de contas sincronizadas do Firebase (Tabela <code>users</code>).</p>
+                        <p style="color:var(--text-muted); font-size:0.95rem;">Lista completa de contas sincronizadas no banco de dados.</p>
                     </div>
                     <button class="btn-action btn-secondary" onclick="loadUsers()">
                         <i class="fa-solid fa-arrows-rotate"></i> Atualizar Lista
@@ -651,7 +592,7 @@
                                 <th>País</th>
                                 <th>Produtos Ativos</th>
                                 <th>Data de Registro</th>
-                                <th style="text-align:right;">Ações / Gestão</th>
+                                <th style="text-align:right;">Ações / Suporte</th>
                             </tr>
                         </thead>
                         <tbody id="users-table-body">
@@ -661,134 +602,10 @@
                 </div>
             </section>
 
-            <!-- VIEW: RECARGAS DE CARTEIRA -->
-            <section id="view-wallet-deposits" class="panel-view">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
-                    <div>
-                        <h2 class="view-title"><i class="fa-solid fa-wallet" style="color:var(--success);"></i> Solicitações de Recarga de Carteira</h2>
-                        <p style="color:var(--text-muted); font-size:0.95rem;">Valide os comprovativos para creditar saldo na conta do cliente automaticamente.</p>
-                    </div>
-                    <button class="btn-action btn-secondary" onclick="loadWalletDeposits()">
-                        <i class="fa-solid fa-arrows-rotate"></i> Atualizar Lista
-                    </button>
-                </div>
-
-                <div class="table-container">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Data / Hora</th>
-                                <th>Cliente</th>
-                                <th>Valor a Carregar</th>
-                                <th>Comprovativo</th>
-                                <th>Estado</th>
-                                <th style="text-align:right;">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="wallet-deposits-table-body">
-                            <!-- Preenchido via Firebase -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- VIEW: PEDIDOS DE LEVANTAMENTO (SAQUE) -->
-            <section id="view-wallet-withdrawals" class="panel-view">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
-                    <div>
-                        <h2 class="view-title"><i class="fa-solid fa-money-bill-transfer" style="color:var(--warning);"></i> Pedidos de Levantamento (Saque)</h2>
-                        <p style="color:var(--text-muted); font-size:0.95rem;">Gerencie os pedidos de saque dos afiliados e confirme os pagamentos efetuados.</p>
-                    </div>
-                    <button class="btn-action btn-secondary" onclick="loadWalletWithdrawals()">
-                        <i class="fa-solid fa-arrows-rotate"></i> Atualizar Lista
-                    </button>
-                </div>
-
-                <div class="table-container">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Data / Hora</th>
-                                <th>Titular / E-mail</th>
-                                <th>IBAN / Express</th>
-                                <th>Bruto / Taxa (10%)</th>
-                                <th>Líquido a Pagar</th>
-                                <th>Estado</th>
-                                <th style="text-align:right;">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="wallet-withdrawals-table-body">
-                            <!-- Preenchido via Firebase -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- DEPOIMENTOS E AVALIAÇÕES VIEW -->
-            <section id="view-depoimentos" class="panel-view">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
-                    <div>
-                        <h2 class="view-title"><i class="fa-solid fa-star" style="color:#F59E0B;"></i> Avaliações e Depoimentos dos Clientes</h2>
-                        <p style="color:var(--text-muted); font-size:0.95rem;">Gerencie as avaliações de 5 estrelas recebidas do Portal do Cliente (Coleção <code>avaliacoes</code>).</p>
-                    </div>
-                    <button class="btn-action btn-secondary" onclick="loadDepoimentosAdmin()">
-                        <i class="fa-solid fa-arrows-rotate"></i> Atualizar Lista
-                    </button>
-                </div>
-
-                <div class="table-container">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Cliente / E-mail</th>
-                                <th>Classificação</th>
-                                <th>Mensagem / Feedback</th>
-                                <th>Data</th>
-                                <th style="text-align:right;">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="depoimentos-table-body">
-                            <!-- Inserido dinamicamente via Firebase -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- PROMOTIONAL PRODUCTS VIEW (24H EXCLUSIVO PERFIL) -->
-            <section id="view-promotions" class="panel-view">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
-                    <div>
-                        <h2 class="view-title"><i class="fa-solid fa-fire-flame-curved" style="color:#FF5555;"></i> Produtos Promocionais (Oferta 24h)</h2>
-                        <p style="color:var(--text-muted); font-size:0.95rem;">Estes produtos aparecem <strong>apenas no perfil do cliente</strong> e possuem validade de 24 horas.</p>
-                    </div>
-                    <button class="btn-action btn-primary" onclick="openPromoModal()"><i class="fa-solid fa-plus-circle"></i> Criar Oferta Promocional</button>
-                </div>
-
-                <div class="table-container">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Produto</th>
-                                <th>Preço Original</th>
-                                <th>Preço Promoção</th>
-                                <th>Compras Feitas</th>
-                                <th>Estoque Restante</th>
-                                <th>Tempo Restante</th>
-                                <th>Status</th>
-                                <th style="text-align:right;">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="promotions-table-body">
-                            <!-- Inserido dinamicamente via Firebase -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
         </main>
     </div>
     
-    <!-- MODAL: LIBERAR / TIRAR ACESSO A PRODUTOS POR E-MAIL -->
+    <!-- MODAL: LIBERAR / REVOGAR ACESSO A PRODUTOS POR E-MAIL -->
     <div id="grant-access-modal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(12px); display:none; align-items:center; justify-content:center; z-index:2000; padding:1.5rem;">
         <div style="background:#0B0B10; border:1px solid var(--border-color); border-radius:24px; width:100%; max-width:620px; max-height:90vh; overflow-y:auto; padding:2rem; box-shadow:0 30px 60px rgba(0,0,0,0.95);">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1px solid var(--border-color); padding-bottom:1rem;">
@@ -838,7 +655,6 @@
             </div>
             
             <div style="display:flex; flex-direction:column; gap:1.2rem;">
-                <!-- Título e Categoria -->
                 <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:1rem;">
                     <div>
                         <label class="form-label"><i class="fa-solid fa-heading" style="color:var(--primary);"></i> Título do Produto (`titulo`)</label>
@@ -858,7 +674,6 @@
                     </div>
                 </div>
 
-                <!-- Subcategoria de Plugins (Exibida apenas quando Categoria = plugins) -->
                 <div id="plugin-subcat-container" style="display:none; background:rgba(255,255,255,0.02); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
                     <label class="form-label" style="color:var(--primary);"><i class="fa-solid fa-sliders"></i> Subcategoria do Plugin (`tipoPlugin`)</label>
                     <select id="p-tipoPlugin" class="search-input" style="cursor:pointer;">
@@ -868,14 +683,12 @@
                     </select>
                 </div>
 
-                <!-- Link de Download Geral -->
                 <div style="background:rgba(16, 185, 129, 0.05); padding:1rem; border-radius:var(--radius-md); border:1px solid rgba(16, 185, 129, 0.3);">
-                    <label class="form-label" style="color:var(--success);"><i class="fa-solid fa-file-arrow-down"></i> Link para Baixar o Curso Completo / Arquivo Geral (`linkDownload` / `linkCursoCompleto`)</label>
-                    <input type="text" id="p-linkCursoCompleto" class="search-input" placeholder="https://drive.google.com/file/d/curso-completo.zip ou Mega/MediaFire">
-                    <span style="font-size:0.75rem; color:var(--text-muted); margin-top:4px; display:block;">O aluno terá acesso a este link direto no painel para baixar o arquivo completo.</span>
+                    <label class="form-label" style="color:var(--success);"><i class="fa-solid fa-file-arrow-down"></i> Link para Baixar o Produto / Ficheiro Completo (`linkDownload` / `linkCursoCompleto`)</label>
+                    <input type="text" id="p-linkCursoCompleto" class="search-input" placeholder="https://drive.google.com/file/d/... ou Mega/MediaFire">
+                    <span style="font-size:0.75rem; color:var(--text-muted); margin-top:4px; display:block;">O cliente terá acesso a este link direto no seu painel VIP para descarregar o ficheiro.</span>
                 </div>
 
-                <!-- Seção de Cursos (Módulos e Aulas) -->
                 <div id="cursos-section" style="display:none; background:rgba(255,255,255,0.02); padding:1.2rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:8px;">
                         <label class="form-label" style="margin:0; color:var(--primary); font-size:0.85rem;"><i class="fa-solid fa-graduation-cap"></i> Módulos e Aulas do Curso (Vídeos & Downloads por Aula)</label>
@@ -884,11 +697,10 @@
                     <div id="modulos-list" style="display:flex; flex-direction:column; gap:1rem;"></div>
                 </div>
 
-                <!-- ID, Slug e Vendas -->
                 <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:1rem;">
                     <div>
                         <label class="form-label"><i class="fa-solid fa-fingerprint" style="color:var(--primary);"></i> ID do Produto API (`product_id`)</label>
-                        <input type="text" id="p-product_id" class="search-input" placeholder="Ex: uuid-produto-123 (opcional)">
+                        <input type="text" id="p-product_id" class="search-input" placeholder="Ex: prod-123 (opcional)">
                     </div>
                     <div>
                         <label class="form-label"><i class="fa-solid fa-link" style="color:var(--info);"></i> Slug (`slug`)</label>
@@ -900,7 +712,6 @@
                     </div>
                 </div>
 
-                <!-- Preço Antigo e Preço Atual -->
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; background:rgba(255,255,255,0.02); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
                     <div>
                         <label class="form-label" style="color:#FF6B6B;"><i class="fa-solid fa-tag"></i> Preço Antigo (`precoAntigo`)</label>
@@ -912,10 +723,9 @@
                     </div>
                 </div>
 
-                <!-- Links: Checkout, Vídeo e Material -->
                 <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap:1rem;">
                     <div>
-                        <label class="form-label"><i class="fa-solid fa-cart-shopping" style="color:var(--success);"></i> Link Checkout (`linkCheckout`)</label>
+                        <label class="form-label"><i class="fa-solid fa-cart-shopping" style="color:var(--success);"></i> Link Checkout Externo (`linkCheckout`)</label>
                         <input type="text" id="p-linkCheckout" class="search-input" placeholder="https://paygooo.goootrafego.com/checkout/...">
                     </div>
                     <div>
@@ -924,11 +734,10 @@
                     </div>
                     <div>
                         <label class="form-label"><i class="fa-solid fa-folder-open" style="color:var(--info);"></i> Material de Apoio / PDF (`linkMaterial`)</label>
-                        <input type="text" id="p-linkMaterial" class="search-input" placeholder="https://drive.google.com/file/d/material-apoio.pdf">
+                        <input type="text" id="p-linkMaterial" class="search-input" placeholder="https://drive.google.com/file/d/material.pdf">
                     </div>
                 </div>
 
-                <!-- Produto Destaque -->
                 <div style="background:rgba(255,255,255,0.02); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
                     <label class="form-label"><i class="fa-solid fa-star" style="color:#FFD700;"></i> Produto Destaque (`destaque`)</label>
                     <select id="p-destaque" class="search-input" style="cursor:pointer;">
@@ -937,17 +746,15 @@
                     </select>
                 </div>
 
-                <!-- Descrição -->
                 <div>
                     <label class="form-label"><i class="fa-solid fa-align-left" style="color:var(--primary);"></i> Descrição (`descricao`)</label>
-                    <textarea id="p-descricao" class="search-input" placeholder="Aprenda a criar ritmos impressionantes..." style="height:75px; resize:none;"></textarea>
+                    <textarea id="p-descricao" class="search-input" placeholder="Descrição completa do produto..." style="height:75px; resize:none;"></textarea>
                 </div>
                 
-                <!-- Imagem / Capa -->
                 <div style="background: rgba(255,255,255,0.02); border: 1px dashed var(--border-color); border-radius: var(--radius-md); padding: 1rem;">
-                    <label class="form-label"><i class="fa-solid fa-image" style="color:var(--primary);"></i> Caminho ou URL da Imagem (`imagem`)</label>
+                    <label class="form-label"><i class="fa-solid fa-image" style="color:var(--primary);"></i> Imagem / Capa (`imagem`)</label>
                     <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:1rem; margin-bottom:8px;">
-                        <input type="text" id="p-imagem-url" class="search-input" placeholder="img/prontos/CURSO_AFROBEAT.jpg ou URL" oninput="previewImageUrl()">
+                        <input type="text" id="p-imagem-url" class="search-input" placeholder="URL da Imagem ou caminho de pasta" oninput="previewImageUrl()">
                         <input type="file" id="p-imagem-file" class="search-input" accept="image/*" style="padding: 8px 12px; cursor:pointer;" onchange="previewImageFile(event)">
                     </div>
                     <div id="img-preview-container" style="display:none; align-items:center; gap:12px; margin-top:8px; background:rgba(0,0,0,0.4); padding:8px 12px; border-radius:8px;">
@@ -957,7 +764,6 @@
                 </div>
             </div>
 
-            <!-- Botões de Ação -->
             <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:2rem; border-top:1px solid var(--border-color); padding-top:1.2rem;">
                 <button class="btn-action btn-secondary" onclick="closeProductModal()">Cancelar</button>
                 <button class="btn-action btn-primary" id="btn-save-product" onclick="saveProduct()"><i class="fa-solid fa-cloud-arrow-up"></i> Salvar no Banco de Dados</button>
@@ -965,80 +771,15 @@
         </div>
     </div>
 
-    <!-- MODAL: CADASTRAR/EDITAR PROMOÇÃO 24H -->
-    <div id="promo-modal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(12px); display:none; align-items:center; justify-content:center; z-index:2000; padding:1.5rem;">
-        <div style="background:#0B0B10; border:1px solid var(--border-color); border-radius:24px; width:100%; max-width:650px; max-height:92vh; overflow-y:auto; padding:2rem; box-shadow:0 30px 60px rgba(0,0,0,0.95);">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1px solid var(--border-color); padding-bottom:1rem;">
-                <h3 style="font-family:'Montserrat',sans-serif; font-size:1.25rem; font-weight:800; display:flex; align-items:center; gap:10px;">
-                    <i class="fa-solid fa-bolt" style="color:var(--warning);"></i> <span>Configurar Oferta 24H (Perfil do Cliente)</span>
-                </h3>
-                <button onclick="closePromoModal()" class="icon-btn" style="width:32px; height:32px; border:none; background:rgba(255,255,255,0.05);"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-
-            <div style="display:flex; flex-direction:column; gap:1.2rem;">
-                <div>
-                    <label class="form-label"><i class="fa-solid fa-box" style="color:var(--primary);"></i> Selecionar Produto do Catálogo ou Criar Novo</label>
-                    <select id="promo-select-product" class="search-input" onchange="onSelectPromoProductChange()">
-                        <option value="">-- Selecione um produto já existente ou preencha manualmente --</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="form-label"><i class="fa-solid fa-heading"></i> Título da Promoção</label>
-                    <input type="text" id="promo-titulo" class="search-input" placeholder="Ex: PACK AFROBEAT VIP 24H">
-                </div>
-
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
-                    <div>
-                        <label class="form-label" style="color:#FF6B6B;"><i class="fa-solid fa-tag"></i> Preço Normal (Kz)</label>
-                        <input type="number" id="promo-precoOriginal" class="search-input" placeholder="Ex: 20000">
-                    </div>
-                    <div>
-                        <label class="form-label" style="color:var(--success);"><i class="fa-solid fa-bolt"></i> Preço Promocional (Kz)</label>
-                        <input type="number" id="promo-precoPromo" class="search-input" placeholder="Ex: 5000">
-                    </div>
-                </div>
-
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
-                    <div>
-                        <label class="form-label"><i class="fa-solid fa-image" style="color:var(--primary);"></i> URL da Imagem de Capa (`imagem`)</label>
-                        <input type="text" id="promo-imagem" class="search-input" placeholder="img/prontos/capa.jpg ou URL da imagem">
-                    </div>
-                    <div>
-                        <label class="form-label"><i class="fa-brands fa-youtube" style="color:#FF0000;"></i> Vídeo de Demonstração (`videoLink`)</label>
-                        <input type="text" id="promo-video" class="search-input" placeholder="https://youtu.be/...">
-                    </div>
-                </div>
-
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
-                    <div>
-                        <label class="form-label"><i class="fa-solid fa-boxes-stacked"></i> Estoque Disponível (Qtd)</label>
-                        <input type="number" id="promo-estoque" class="search-input" value="10" placeholder="Ex: 10">
-                    </div>
-                    <div>
-                        <label class="form-label"><i class="fa-solid fa-cart-shopping"></i> Compras Realizadas Inicial</label>
-                        <input type="number" id="promo-vendas" class="search-input" value="0" placeholder="0">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="form-label"><i class="fa-solid fa-link"></i> Link para Checkout / Baixar Ficheiro</label>
-                    <input type="text" id="promo-link" class="search-input" placeholder="https://paygooo.goootrafego.com/checkout/...">
-                </div>
-
-                <div style="background:rgba(229,9,20,0.08); padding:1rem; border-radius:var(--radius-md); border:1px solid rgba(229,9,20,0.2);">
-                    <span style="font-size:0.8rem; color:var(--text-muted);"><i class="fa-solid fa-circle-info" style="color:var(--primary);"></i> Esta oferta terá validade de <strong>24 Horas</strong> a partir do momento em que for salva e ficará visível <strong>exclusivamente no perfil do cliente</strong>.</span>
-                </div>
-            </div>
-
-            <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:2rem; border-top:1px solid var(--border-color); padding-top:1.2rem;">
-                <button class="btn-action btn-secondary" onclick="closePromoModal()">Cancelar</button>
-                <button class="btn-action btn-primary" id="btn-save-promo" onclick="savePromotion()"><i class="fa-solid fa-fire"></i> Lançar Oferta 24H</button>
-            </div>
-        </div>
-    </div>
-
     <script>
+        function forceDismissPreloader() {
+            const preloader = document.getElementById('preloader');
+            if (preloader) {
+                preloader.classList.add('fade-out');
+                setTimeout(() => { preloader.style.display = 'none'; }, 200);
+            }
+        }
+
         const firebaseConfig = {
             apiKey: "AIzaSyAccxyuNdi_E9Dpz0YPnWZwRC6mBU0AcVo",
             authDomain: "loneke-site-oficial.firebaseapp.com",
@@ -1067,6 +808,7 @@
         let unsubscribeChatMessages = null;
 
         auth.onAuthStateChanged((user) => {
+            forceDismissPreloader();
             if (!user) {
                 window.location.href = 'login.html';
             } else {
@@ -1074,22 +816,6 @@
                 if (adminEmailDisplay) adminEmailDisplay.innerText = user.email || 'ADMINISTRADOR';
                 switchView('dashboard');
             }
-        });
-
-        window.addEventListener('load', () => {
-            const loaderProgress = document.getElementById('loaderProgress');
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 25;
-                if (loaderProgress) loaderProgress.style.width = `${progress}%`;
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        const preloader = document.getElementById('preloader');
-                        if (preloader) preloader.classList.add('fade-out');
-                    }, 300);
-                }
-            }, 80);
         });
 
         function toggleSidebar(open) {
@@ -1122,8 +848,8 @@
             container.appendChild(toast);
             setTimeout(() => {
                 toast.classList.add('toast-out');
-                setTimeout(() => toast.remove(), 400);
-            }, 4000);
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
         }
 
         function escapeHtml(str) {
@@ -1172,157 +898,9 @@
             if (tabId === 'dashboard') loadDashboardData('day');
             if (tabId === 'pending-sales') loadPendingSales();
             if (tabId === 'products') loadProducts();
-            if (tabId === 'promotions') loadPromotions();
             if (tabId === 'access') loadAccessRequests();
             if (tabId === 'chat') loadChatUsers();
             if (tabId === 'users') loadUsers();
-            if (tabId === 'depoimentos') loadDepoimentosAdmin();
-            if (tabId === 'wallet-deposits') loadWalletDeposits();
-            if (tabId === 'wallet-withdrawals') loadWalletWithdrawals();
-            if (tabId === 'affiliate-links-admin') loadAffiliateLinksAdmin();
-        }
-
-        async function loadAffiliateLinksAdmin() {
-            const tbody = document.getElementById('affiliate-links-admin-table-body');
-            if (!tbody) return;
-
-            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:2rem;"><i class="fa-solid fa-spinner fa-spin"></i> A carregar relatório de afiliados...</td></tr>`;
-
-            try {
-                const snapshot = await db.collection('users').get();
-                tbody.innerHTML = '';
-
-                if (snapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhum utilizador registado.</td></tr>`;
-                    return;
-                }
-
-                let totalAffiliatesFound = 0;
-
-                snapshot.forEach(doc => {
-                    const u = doc.data();
-                    const userName = u.name || u.nome || u.displayName || 'Cliente VIP';
-                    const userEmail = u.email || 'N/A';
-                    const affCode = u.affiliateCode || doc.id.substring(0, 8).toUpperCase();
-                    const produtosAfiliados = u.produtosAfiliados || {};
-
-                    const productKeys = Object.keys(produtosAfiliados);
-                    const totalLinks = productKeys.length;
-
-                    if (totalLinks > 0) {
-                        totalAffiliatesFound++;
-
-                        let productsListHtml = '<div style="display:flex; flex-direction:column; gap:6px;">';
-                        productKeys.forEach(pId => {
-                            const item = produtosAfiliados[pId];
-                            const pTitle = item.productTitle || 'Produto VIP';
-                            const pLink = item.affiliateUrl || `.../checkout.html?product_id=${pId}&ref=${affCode}`;
-
-                            productsListHtml += `
-                                <div style="background:rgba(255,255,255,0.03); padding:6px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.05); font-size:0.8rem;">
-                                    <strong style="color:#FFF;">${escapeHtml(pTitle)}</strong><br>
-                                    <span style="color:#38BDF8; font-family:monospace; font-size:0.75rem; word-break:break-all;">${escapeHtml(pLink)}</span>
-                                </div>
-                            `;
-                        });
-                        productsListHtml += '</div>';
-
-                        tbody.innerHTML += `
-                            <tr>
-                                <td><strong style="color:#FFF;">${escapeHtml(userName)}</strong></td>
-                                <td style="color:var(--primary); font-size:0.82rem;">${escapeHtml(userEmail)}</td>
-                                <td><span style="background:rgba(59,130,246,0.15); color:var(--info); padding:4px 10px; border-radius:6px; font-weight:800; font-size:0.8rem;">${escapeHtml(affCode)}</span></td>
-                                <td><strong style="color:var(--success); font-size:1.1rem;">${totalLinks}</strong> link(s)</td>
-                                <td>${productsListHtml}</td>
-                            </tr>
-                        `;
-                    }
-                });
-
-                if (totalAffiliatesFound === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhum utilizador gerou links de afiliados até ao momento.</td></tr>`;
-                }
-
-            } catch (err) {
-                console.error("Erro ao carregar links no admin:", err);
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#FF4D4D; padding:2rem;">Erro ao carregar dados.</td></tr>`;
-            }
-        }
-
-        async function loadDepoimentosAdmin() {
-            const tbody = document.getElementById('depoimentos-table-body');
-            if (!tbody) return;
-
-            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:2rem;"><i class="fa-solid fa-spinner fa-spin"></i> Carregando avaliações...</td></tr>`;
-
-            try {
-                const snapshot = await db.collection('avaliacoes').get();
-                tbody.innerHTML = '';
-
-                if (snapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhuma avaliação registrada no momento.</td></tr>`;
-                    return;
-                }
-
-                const list = [];
-                snapshot.forEach(doc => {
-                    list.push({ id: doc.id, ...doc.data() });
-                });
-
-                list.sort((a, b) => parseFirebaseDate(b.createdAt) - parseFirebaseDate(a.createdAt));
-
-                list.forEach(item => {
-                    const starsCount = item.rating || 5;
-                    const starsHtml = '<i class="fa-solid fa-star" style="color:#F59E0B;"></i>'.repeat(starsCount);
-                    const dateFormatted = item.createdAt ? parseFirebaseDate(item.createdAt).toLocaleString('pt-AO') : 'Recente';
-                    const safeId = escapeJsArg(item.id);
-
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>
-                                <strong style="color:#FFF;">${escapeHtml(item.userName || 'Cliente VIP')}</strong>
-                                <br><span style="font-size:0.75rem; color:var(--primary);"><i class="fa-regular fa-envelope"></i> ${escapeHtml(item.userEmail || 'N/A')}</span>
-                            </td>
-                            <td>${starsHtml} (${starsCount}/5)</td>
-                            <td style="max-width:300px; word-break:break-word;">${escapeHtml(item.message || item.mensagem || 'Sem mensagem.')}</td>
-                            <td style="font-size:0.8rem; color:var(--text-muted);">${escapeHtml(dateFormatted)}</td>
-                            <td style="text-align:right;">
-                                <button class="btn-action btn-danger btn-icon-only" onclick="deleteDepoimento('${safeId}')" title="Excluir Avaliação">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
-            } catch (err) {
-                console.error("Erro ao carregar avaliações:", err);
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#FF4D4D; padding:2rem;">Erro ao carregar avaliações.</td></tr>`;
-            }
-        }
-
-        async function deleteDepoimento(id) {
-            if (!id) return;
-            Swal.fire({
-                title: 'Eliminar Avaliação?',
-                text: 'Esta avaliação será removida permanentemente do banco de dados.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#E50914',
-                cancelButtonColor: '#1F1F2C',
-                confirmButtonText: 'Sim, Eliminar',
-                cancelButtonText: 'Cancelar',
-                customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
-            }).then(async (res) => {
-                if (res.isConfirmed) {
-                    try {
-                        await db.collection('avaliacoes').doc(id).delete();
-                        showToast('Avaliação removida com sucesso.', 'info');
-                        loadDepoimentosAdmin();
-                    } catch (err) {
-                        showToast('Erro ao remover avaliação: ' + err.message, 'warning');
-                    }
-                }
-            });
         }
 
         function logoutAdmin() {
@@ -1354,14 +932,14 @@
                 .replace(/(^-|-$)+/g, '');
         }
 
-        function viewReceipt(url) {
+        /* VISUALIZAR COMPROVATIVO E BOTÃO DE APROVAÇÃO RÁPIDA */
+        function viewReceipt(url, txId, email, productId, productTitle) {
             if (!url) {
-                showToast('Nenhum comprovativo anexado a este movimento.', 'warning');
+                showToast('Nenhum comprovativo anexado a esta transação.', 'warning');
                 return;
             }
             
             const isImage = typeof url === 'string' && (url.match(/\.(jpeg|jpg|gif|png|webp)($|\?)/i) || url.includes('firebasestorage') || url.startsWith('data:image/'));
-            const isHttpUrl = typeof url === 'string' && (url.startsWith('http://') || url.startsWith('https://'));
 
             if (isImage) {
                 Swal.fire({
@@ -1369,30 +947,37 @@
                     imageUrl: url,
                     imageAlt: 'Comprovativo enviado pelo cliente',
                     showCloseButton: true,
-                    showConfirmButton: true,
-                    confirmButtonText: '<i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir Imagem Original',
-                    confirmButtonColor: '#3B82F6',
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="fa-solid fa-check"></i> Aprovar Venda Agora',
+                    cancelButtonText: 'Fechar',
+                    confirmButtonColor: '#10B981',
+                    cancelButtonColor: '#12121a',
                     customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
                 }).then((res) => {
-                    if (res.isConfirmed) {
-                        window.open(url, '_blank');
+                    if (res.isConfirmed && txId) {
+                        approveCheckoutSale(txId, email, productId, productTitle);
                     }
                 });
-            } else if (isHttpUrl) {
-                window.open(url, '_blank');
             } else {
                 Swal.fire({
                     title: 'Comprovativo / Referência',
                     html: `
                         <div style="text-align:center; padding:15px; background:rgba(255,255,255,0.03); border-radius:12px; border:1px solid var(--border-color); margin-top:10px;">
-                            <span style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:6px;">DADOS DO COMPROVATIVO:</span>
-                            <strong style="font-size:1.1rem; color:var(--info); font-family:monospace; word-break:break-all;">${escapeHtml(url)}</strong>
+                            <span style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:6px;">DOCUMENTO / REFERÊNCIA:</span>
+                            <strong style="font-size:0.95rem; color:var(--info); font-family:monospace; word-break:break-all;">${escapeHtml(url)}</strong>
                         </div>
                     `,
                     icon: 'info',
-                    confirmButtonColor: '#3B82F6',
-                    confirmButtonText: 'Fechar',
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="fa-solid fa-check"></i> Aprovar Venda Agora',
+                    cancelButtonText: 'Fechar',
+                    confirmButtonColor: '#10B981',
+                    cancelButtonColor: '#12121a',
                     customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
+                }).then((res) => {
+                    if (res.isConfirmed && txId) {
+                        approveCheckoutSale(txId, email, productId, productTitle);
+                    }
                 });
             }
         }
@@ -1431,7 +1016,7 @@
 
             card.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
-                    <input type="text" class="search-input modulo-titulo" placeholder="Nome do Módulo (ex: Módulo 1 - Introdução)" value="${escapeHtml(nomeModulo)}" style="font-weight: 700;">
+                    <input type="text" class="search-input modulo-titulo" placeholder="Nome do Módulo (ex: Módulo 1 - Fundamentos)" value="${escapeHtml(nomeModulo)}" style="font-weight: 700;">
                     <button type="button" class="btn-action btn-danger btn-icon-only" onclick="this.closest('.modulo-card').remove()" title="Remover Módulo"><i class="fa-solid fa-trash"></i></button>
                 </div>
 
@@ -1451,7 +1036,7 @@
             list.appendChild(card);
 
             if (aulas && aulas.length > 0) {
-                aulas.forEach(a => addAulaUI(moduloId, a.titulo || a.nome || '', a.youtubeUrl || a.url || '', a.downloadUrl || a.linkAula || ''));
+                aulas.forEach(a => addAulaUI(moduloId, a.titulo || a.nome || '', a.youtubeUrl || a.url || a.videoUrl || '', a.downloadUrl || a.linkAula || a.materialUrl || ''));
             } else {
                 addAulaUI(moduloId);
             }
@@ -1468,7 +1053,7 @@
 
             aulaRow.innerHTML = `
                 <input type="text" class="search-input aula-titulo" placeholder="Nome da Aula" value="${escapeHtml(tituloAula)}" style="font-size:0.82rem; padding: 8px 12px;">
-                <input type="text" class="search-input aula-url" placeholder="Link Vídeo (YouTube / Drive)" value="${escapeHtml(urlAula)}" style="font-size:0.82rem; padding: 8px 12px;">
+                <input type="text" class="search-input aula-url" placeholder="Link do Vídeo (YouTube / Drive)" value="${escapeHtml(urlAula)}" style="font-size:0.82rem; padding: 8px 12px;">
                 <input type="text" class="search-input aula-download" placeholder="Link de Download da Aula (opcional)" value="${escapeHtml(downloadAula)}" style="font-size:0.82rem; padding: 8px 12px; border-color: rgba(59, 130, 246, 0.3);">
                 <button type="button" class="btn-action btn-danger btn-icon-only" onclick="this.closest('.aula-row').remove()" title="Remover Aula" style="width:32px; height:32px;"><i class="fa-solid fa-xmark"></i></button>
             `;
@@ -1501,10 +1086,11 @@
                     if (aulaTitulo || aulaUrl || aulaDownload) {
                         aulas.push({
                             titulo: aulaTitulo,
+                            videoUrl: aulaUrl,
                             youtubeUrl: aulaUrl,
                             url: aulaUrl,
-                            downloadUrl: aulaDownload,
-                            linkAula: aulaDownload
+                            materialUrl: aulaDownload,
+                            downloadUrl: aulaDownload
                         });
                     }
                 });
@@ -1700,12 +1286,12 @@
                         })();
 
                         const timeoutPromise = new Promise((_, reject) => 
-                            setTimeout(() => reject(new Error("Storage Timeout")), 4000)
+                            setTimeout(() => reject(new Error("Storage Timeout")), 3000)
                         );
 
                         finalImageUrl = await Promise.race([uploadPromise, timeoutPromise]);
                     } catch (uploadErr) {
-                        console.warn("Storage falhou ou excedeu o tempo. A comprimir para gravação direta...", uploadErr);
+                        console.warn("A comprimir imagem para gravação direta...", uploadErr);
                         finalImageUrl = await compressImageToBase64(imageFileInput, 800, 0.7);
                     }
                 }
@@ -1758,15 +1344,40 @@
                 closeProductModal();
             } catch (err) {
                 console.error("Erro ao salvar produto:", err);
-                if (err.code === 'permission-denied') {
-                    showToast('Permissão negada. Atualize as Regras de Segurança no Firebase Console.', 'warning', 'Erro de Permissão');
-                } else {
-                    showToast('Erro ao salvar: ' + err.message, 'warning');
-                }
+                showToast('Erro ao salvar: ' + err.message, 'warning');
             } finally {
                 btnSave.disabled = false;
                 btnSave.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Salvar no Banco de Dados';
             }
+        }
+
+        function compressImageToBase64(file, maxWidth = 800, quality = 0.7) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.onerror = (err) => reject(err);
+                };
+                reader.onerror = (err) => reject(err);
+            });
         }
 
         function filterBilling(period, btn) {
@@ -1789,34 +1400,39 @@
             unsubscribeDashboard = db.collection('transactions')
                 .onSnapshot(snapshot => {
                     let totalRevenue = 0;
-                    let siteRevenue = 0;
-                    let profileRevenue = 0;
+                    let pendingCount = 0;
 
                     snapshot.forEach(doc => {
                         const data = doc.data();
                         const status = (data.status || '').toLowerCase();
                         const isApproved = ['completed', 'approved', 'concluido', 'pago', 'aprovado'].includes(status);
-                        
+                        const isPending = ['pending', 'pendente', 'aguardando'].includes(status);
+
+                        if (isPending) pendingCount++;
+
                         if (isApproved) {
                             const txDate = parseFirebaseDate(data.createdAt);
                             if (txDate >= startDate) {
-                                const amount = Number(data.amount || data.price || data.preco || 0);
+                                const amount = Number(data.amount || data.numericTotalKz || data.price || data.preco || 0);
                                 totalRevenue += amount;
-                                
-                                const origin = (data.origin || data.origem || '').toLowerCase();
-                                if (origin === 'profile' || origin === 'perfil' || data.isPromo === true) {
-                                    profileRevenue += amount;
-                                } else {
-                                    siteRevenue += amount;
-                                }
                             }
                         }
                     });
 
                     document.getElementById('kpi-revenue').innerText = totalRevenue.toLocaleString('pt-AO') + ' Kz';
-                    document.getElementById('kpi-sales-site').innerText = siteRevenue.toLocaleString('pt-AO') + ' Kz';
-                    document.getElementById('kpi-sales-profile').innerText = profileRevenue.toLocaleString('pt-AO') + ' Kz';
+                    document.getElementById('kpi-sales-pending').innerText = pendingCount;
+
+                    // Atualiza o indicador numérico da barra lateral
+                    const badge = document.getElementById('sidebar-pending-badge');
+                    if (badge) {
+                        badge.innerText = pendingCount;
+                        badge.style.display = pendingCount > 0 ? 'inline-block' : 'none';
+                    }
                 }, err => console.error("Erro ao carregar relatório:", err));
+
+            db.collection('produtos').get().then(pSnap => {
+                document.getElementById('kpi-products-total').innerText = pSnap.size;
+            }).catch(() => {});
 
             Promise.all([
                 db.collection('users').get(),
@@ -1831,8 +1447,10 @@
             }).catch(() => document.getElementById('kpi-users').innerText = '0');
         }
 
+        /* VENDAS PENDENTES SINCRO COM CHECKOUT DO CLIENTE */
         function loadPendingSales() {
             const tbody = document.getElementById('pending-sales-table-body');
+            if (!tbody) return;
             if (unsubscribePendingSales) unsubscribePendingSales();
 
             tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:2rem;"><i class="fa-solid fa-spinner fa-spin"></i> Buscando pedidos no banco...</td></tr>`;
@@ -1841,81 +1459,99 @@
                 .onSnapshot(snapshot => {
                     tbody.innerHTML = '';
                     if (snapshot.empty) {
-                        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhuma venda cadastrada no sistema.</td></tr>`;
+                        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhum pedido de checkout registrado.</td></tr>`;
                         return;
                     }
 
-                    let pendingCount = 0;
                     const docsList = [];
+                    let pendingCounter = 0;
 
                     snapshot.forEach(doc => {
-                        docsList.push({ id: doc.id, ...doc.data() });
+                        const d = doc.data();
+                        docsList.push({ id: doc.id, ...d });
+                        if ((d.status || 'pending').toLowerCase() === 'pending' || (d.status || '').toLowerCase() === 'pendente') {
+                            pendingCounter++;
+                        }
                     });
+
+                    const badge = document.getElementById('sidebar-pending-badge');
+                    if (badge) {
+                        badge.innerText = pendingCounter;
+                        badge.style.display = pendingCounter > 0 ? 'inline-block' : 'none';
+                    }
 
                     docsList.sort((a, b) => parseFirebaseDate(b.createdAt) - parseFirebaseDate(a.createdAt));
 
                     docsList.forEach(t => {
                         const txId = t.id;
-                        const email = t.userEmail || t.customerEmail || t.email || 'N/A';
-                        const productTitle = t.productTitle || t.titulo || 'Produto Checkout';
+                        const email = (t.userEmail || t.customerEmail || t.email || 'N/A').toLowerCase().trim();
+                        const phone = t.customerWhatsApp || t.whatsapp || 'N/A';
+                        const productTitle = t.productTitle || t.titulo || 'Produto VIP';
                         const productId = t.productId || t.produtoId || '';
                         const amount = t.amount || t.numericTotalKz || t.preco || 0;
+                        const method = t.method || t.paymentMethod || 'Transferência';
                         const status = (t.status || 'pending').toLowerCase();
-                        const proof = t.proofUrl || t.receiptFile || t.comprovativo || t.paymentMethod || 'Checkout';
-                        const affCode = t.affiliateCode || t.affiliateRef || t.ref || null;
+                        const proof = t.proofUrl || t.receiptFile || t.comprovativo || '';
                         
-                        const dateFormatted = t.createdAt ? parseFirebaseDate(t.createdAt).toLocaleString('pt-AO') : 'Hoje';
+                        const dateFormatted = t.createdAt ? parseFirebaseDate(t.createdAt).toLocaleString('pt-AO') : 'Recente';
                         const isPending = (status === 'pending' || status === 'pendente' || status === 'aguardando');
+                        const isRejected = (status === 'rejected' || status === 'recusado' || status === 'cancelado');
 
-                        if (isPending) pendingCount++;
-
-                        const statusBadge = isPending 
-                            ? `<span style="background:rgba(245,158,11,0.15); color:var(--warning); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;"><i class="fa-solid fa-clock"></i> Pendente</span>`
-                            : `<span style="background:rgba(16,185,129,0.15); color:var(--success); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;"><i class="fa-solid fa-check"></i> Autorizada</span>`;
-
-                        const affiliateBadge = affCode 
-                            ? `<span style="background:rgba(59,130,246,0.15); color:var(--info); padding:4px 8px; border-radius:6px; font-weight:700; font-size:0.75rem;"><i class="fa-solid fa-handshake"></i> ${escapeHtml(affCode)}</span>`
-                            : `<span style="color:var(--text-muted); font-size:0.75rem;">Direta</span>`;
-
-                        let proofDisplay = '';
-                        const isProofUrl = typeof proof === 'string' && (proof.startsWith('http://') || proof.startsWith('https://') || proof.startsWith('data:image/'));
-
-                        if (isProofUrl) {
-                            proofDisplay = `
-                                <button class="btn-action btn-secondary" style="padding: 5px 12px; font-size:0.75rem;" onclick="viewReceipt('${escapeJsArg(proof)}')">
-                                    <i class="fa-solid fa-image" style="color:var(--info);"></i> Anexo
-                                </button>
-                            `;
+                        let statusBadge = '';
+                        if (isPending) {
+                            statusBadge = `<span style="background:rgba(245,158,11,0.15); color:var(--warning); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;"><i class="fa-solid fa-clock"></i> Pendente</span>`;
+                        } else if (isRejected) {
+                            statusBadge = `<span style="background:rgba(229,9,20,0.15); color:var(--primary); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;">Recusado</span>`;
                         } else {
-                            proofDisplay = `<span style="color:var(--text-muted); font-size:0.8rem; font-family:monospace;">${escapeHtml(proof)}</span>`;
+                            statusBadge = `<span style="background:rgba(16,185,129,0.15); color:var(--success); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;"><i class="fa-solid fa-check"></i> Aprovado</span>`;
                         }
 
                         const safeEmail = escapeJsArg(email);
                         const safeProductId = escapeJsArg(productId);
                         const safeProductTitle = escapeJsArg(productTitle);
+                        const safeTxId = escapeJsArg(txId);
                         const safeProof = escapeJsArg(proof);
+
+                        let proofDisplay = '';
+                        if (proof) {
+                            proofDisplay = `
+                                <button class="btn-action btn-secondary" style="padding: 5px 12px; font-size:0.75rem;" onclick="viewReceipt('${safeProof}', '${safeTxId}', '${safeEmail}', '${safeProductId}', '${safeProductTitle}')">
+                                    <i class="fa-solid fa-image" style="color:var(--info);"></i> Comprovativo
+                                </button>
+                            `;
+                        } else {
+                            proofDisplay = `<span style="color:var(--text-muted); font-size:0.8rem;">Sem anexo</span>`;
+                        }
 
                         tbody.innerHTML += `
                             <tr style="${isPending ? 'background: rgba(245, 158, 11, 0.03);' : ''}">
                                 <td style="font-size:0.8rem; color:var(--text-muted);">${escapeHtml(dateFormatted)}</td>
-                                <td><strong style="color:var(--primary);">${escapeHtml(email)}</strong></td>
+                                <td>
+                                    <strong style="color:#FFF;">${escapeHtml(t.customerName || t.userName || 'Cliente VIP')}</strong><br>
+                                    <span style="font-size:0.75rem; color:var(--primary);"><i class="fa-regular fa-envelope"></i> ${escapeHtml(email)}</span>
+                                </td>
+                                <td>
+                                    <span style="font-size:0.82rem; color:var(--success); font-weight:600;"><i class="fa-brands fa-whatsapp"></i> ${escapeHtml(phone)}</span>
+                                </td>
                                 <td><strong>${escapeHtml(productTitle)}</strong></td>
-                                <td style="color:var(--success); font-weight:700;">${Number(amount).toLocaleString('pt-AO')} Kz</td>
-                                <td>${affiliateBadge}</td>
+                                <td>
+                                    <span style="color:var(--success); font-weight:800; display:block;">${Number(amount).toLocaleString('pt-AO')} Kz</span>
+                                    <span style="font-size:0.72rem; color:var(--text-muted);">${escapeHtml(method)}</span>
+                                </td>
                                 <td>${proofDisplay}</td>
                                 <td>${statusBadge}</td>
                                 <td style="text-align:right;">
                                     <div style="display:inline-flex; gap:6px; justify-content:flex-end;">
-                                        <button class="btn-action btn-secondary" style="padding:6px 12px; font-size:0.78rem;" onclick="viewReceipt('${safeProof}')" title="Visualizar Comprovativo">
-                                            <i class="fa-solid fa-file-invoice" style="color:var(--info);"></i> Comprovativo
-                                        </button>
                                         ${isPending ? `
-                                            <button class="btn-action btn-success" style="padding:6px 14px; font-size:0.78rem;" onclick="approveCheckoutSale('${txId}', '${safeEmail}', '${safeProductId}', '${safeProductTitle}', '${safeProof}')" title="Autorizar e Creditar Comissão ao Afiliado">
-                                                <i class="fa-solid fa-check"></i> Autorizar
+                                            <button class="btn-action btn-success" style="padding:6px 14px; font-size:0.78rem;" onclick="approveCheckoutSale('${safeTxId}', '${safeEmail}', '${safeProductId}', '${safeProductTitle}')" title="Aprovar Venda e Liberar Acesso na Área VIP">
+                                                <i class="fa-solid fa-check"></i> Aprovar
+                                            </button>
+                                            <button class="btn-action btn-danger" style="padding:6px 10px; font-size:0.78rem;" onclick="rejectCheckoutSale('${safeTxId}')" title="Recusar Venda">
+                                                <i class="fa-solid fa-xmark"></i> Recusar
                                             </button>
                                         ` : `
                                             <button class="btn-action btn-secondary" style="padding:6px 14px; font-size:0.78rem; opacity:0.75;" disabled>
-                                                <i class="fa-solid fa-user-check" style="color:var(--success);"></i> Autorizado
+                                                <i class="fa-solid fa-user-check" style="color:var(--success);"></i> Processado
                                             </button>
                                         `}
                                     </div>
@@ -1929,57 +1565,83 @@
                 });
         }
 
-        async function approveCheckoutSale(txId, email, productId, productTitle, proofUrl = '') {
+        async function approveCheckoutSale(txId, email, productId, productTitle) {
             if (!email || email === 'N/A') {
                 showToast('E-mail inválido para liberar acesso.', 'warning');
                 return;
             }
 
-            try {
-                const txDoc = await db.collection('transactions').doc(txId).get();
-                const txData = txDoc.exists ? txDoc.data() : {};
+            const cleanEmail = email.toLowerCase().trim();
 
-                // 1. Atualizar estado da transação
-                await db.collection('transactions').doc(txId).update({
+            try {
+                const updateData = {
                     status: 'completed',
                     approvedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
+                };
 
-                // 2. Conceder acesso ao produto
-                const cleanDocId = `${email.replace(/[^a-z0-9]/gi, '_')}_${productId || 'geral'}`;
-                await db.collection('user_access').doc(cleanDocId).set({
-                    userEmail: email,
-                    productId: productId || '',
-                    productTitle: productTitle,
-                    status: 'unlocked',
-                    requestedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                }, { merge: true });
+                await db.collection('transactions').doc(txId).set(updateData, { merge: true }).catch(() => {});
+                await db.collection('orders').doc(txId).set(updateData, { merge: true }).catch(() => {});
 
-                // 3. Creditar os 50% de comissão ao afiliado se a venda foi indicada
-                const affCode = txData.affiliateCode || txData.affiliateRef || txData.ref;
-                if (affCode) {
-                    const affQuery = await db.collection('users').where('affiliateCode', '==', affCode).limit(1).get();
-                    if (!affQuery.empty) {
-                        const affUserDoc = affQuery.docs[0];
-                        const salePrice = Number(txData.amount || txData.numericTotalKz || txData.price || 0);
-                        const commissionVal = Math.floor(salePrice * 0.5);
+                if (productId) {
+                    const cleanDocId = `${cleanEmail.replace(/[^a-z0-9]/gi, '_')}_${productId}`;
+                    await db.collection('user_access').doc(cleanDocId).set({
+                        userEmail: cleanEmail,
+                        productId: productId,
+                        productTitle: productTitle || 'Produto VIP',
+                        status: 'unlocked',
+                        unlocked: true,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
 
-                        if (commissionVal > 0) {
-                            await db.collection('users').doc(affUserDoc.id).set({
-                                saldoAfiliado: firebase.firestore.FieldValue.increment(commissionVal),
-                                totalComissoes: firebase.firestore.FieldValue.increment(commissionVal),
-                                totalIndicacoes: firebase.firestore.FieldValue.increment(1)
+                    const uQuery = await db.collection('users').where('email', '==', cleanEmail).get();
+                    if (!uQuery.empty) {
+                        uQuery.forEach(uDoc => {
+                            db.collection('users').doc(uDoc.id).set({
+                                produtos: {
+                                    [productId]: true
+                                }
                             }, { merge: true });
-                        }
+                        });
                     }
                 }
 
-                showToast(`Venda aprovada e comissão de afiliado creditada com sucesso!`, 'success');
+                showToast(`Venda aprovada! O produto "${productTitle || 'VIP'}" foi liberado para ${cleanEmail}.`, 'success');
                 loadPendingSales();
             } catch (err) {
                 console.error("Erro ao aprovar venda:", err);
                 showToast('Erro ao aprovar venda: ' + err.message, 'warning');
+            }
+        }
+
+        async function rejectCheckoutSale(txId) {
+            try {
+                const updateData = {
+                    status: 'rejected',
+                    rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                await db.collection('transactions').doc(txId).set(updateData, { merge: true }).catch(() => {});
+                await db.collection('orders').doc(txId).set(updateData, { merge: true }).catch(() => {});
+
+                const txDoc = await db.collection('transactions').doc(txId).get();
+                if (txDoc.exists) {
+                    const data = txDoc.data();
+                    const email = (data.userEmail || data.customerEmail || '').toLowerCase().trim();
+                    const pId = data.productId;
+                    if (email && pId) {
+                        const cleanDocId = `${email.replace(/[^a-z0-9]/gi, '_')}_${pId}`;
+                        await db.collection('user_access').doc(cleanDocId).set({
+                            status: 'locked',
+                            unlocked: false,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        }, { merge: true });
+                    }
+                }
+
+                showToast('Venda recusada com sucesso.', 'info');
+                loadPendingSales();
+            } catch (err) {
+                showToast('Erro ao atualizar venda: ' + err.message, 'warning');
             }
         }
 
@@ -1994,7 +1656,7 @@
                 .onSnapshot(snapshot => {
                     tbody.innerHTML = '';
                     if (snapshot.empty) {
-                        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhum produto cadastrado na tabela de produtos.</td></tr>`;
+                        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhum produto cadastrado.</td></tr>`;
                         return;
                     }
 
@@ -2065,7 +1727,7 @@
             if (!docId) return;
             Swal.fire({
                 title: 'Eliminar Produto?',
-                text: 'Esta ação removerá o item da tabela permanentemente.',
+                text: 'Esta ação removerá o item do catálogo permanentemente.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#E50914',
@@ -2108,11 +1770,11 @@
                         id: doc.id,
                         userId: acc.userId || '',
                         userEmail: acc.userEmail || acc.email || '',
-                        userName: acc.userName || 'Cliente',
+                        userName: acc.userName || 'Cliente VIP',
                         whatsapp: acc.whatsapp || '',
                         productId: acc.productId || '',
                         productTitle: acc.productTitle || 'Produto Sem Título',
-                        status: acc.status || 'locked',
+                        status: acc.status || (acc.unlocked ? 'unlocked' : 'locked'),
                         requestedAt: acc.requestedAt ? parseFirebaseDate(acc.requestedAt) : new Date()
                     });
                 });
@@ -2125,7 +1787,7 @@
                     const cleanWhatsapp = acc.whatsapp ? String(acc.whatsapp).replace(/\D/g, '') : '';
                     
                     const clientIdentifier = acc.userEmail 
-                        ? `${escapeHtml(acc.userName || 'Cliente')} <br><span style="font-size:0.75rem; color:var(--primary);"><i class="fa-regular fa-envelope"></i> ${escapeHtml(acc.userEmail)}</span>` 
+                        ? `${escapeHtml(acc.userName || 'Cliente VIP')} <br><span style="font-size:0.75rem; color:var(--primary);"><i class="fa-regular fa-envelope"></i> ${escapeHtml(acc.userEmail)}</span>` 
                         : escapeHtml(acc.userName || acc.userId || 'Utilizador');
 
                     const safeDocId = escapeJsArg(acc.id || '');
@@ -2151,7 +1813,7 @@
                             </td>
                             <td style="text-align:right;">
                                 <button class="btn-action ${isUnlocked ? 'btn-danger' : 'btn-success'}" onclick="toggleAccess('${safeDocId}', '${currentStatus}', '${safeUserId}', '${safeUserEmail}', '${safeProductId}')">
-                                    ${isUnlocked ? '<i class="fa-solid fa-lock"></i> Tirar Acesso' : '<i class="fa-solid fa-unlock"></i> Conceder Acesso'}
+                                    ${isUnlocked ? '<i class="fa-solid fa-lock"></i> Revogar Acesso' : '<i class="fa-solid fa-unlock"></i> Conceder Acesso'}
                                 </button>
                             </td>
                         </tr>
@@ -2168,20 +1830,21 @@
             const newStatus = currentStatus === 'unlocked' ? 'locked' : 'unlocked';
             
             try {
-                const cleanEmail = (userEmail || 'user').replace(/[^a-z0-9]/gi, '_');
+                const cleanEmail = (userEmail || 'user').toLowerCase().trim().replace(/[^a-z0-9]/gi, '_');
                 const cleanDocId = id && id.includes('_') ? id : `${cleanEmail}_${productId || 'geral'}`;
                 
                 await db.collection('user_access').doc(cleanDocId).set({
                     userEmail: userEmail || '',
                     productId: productId || '',
                     status: newStatus,
+                    unlocked: (newStatus === 'unlocked'),
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 }, { merge: true });
 
                 try {
                     let targetDocId = userId;
                     if (!targetDocId && userEmail) {
-                        const uQuery = await db.collection('users').where('email', '==', userEmail).limit(1).get();
+                        const uQuery = await db.collection('users').where('email', '==', userEmail.toLowerCase().trim()).limit(1).get();
                         if (!uQuery.empty) targetDocId = uQuery.docs[0].id;
                     }
 
@@ -2193,7 +1856,7 @@
                         }, { merge: true });
                     }
                 } catch (uErr) {
-                    console.warn("Aviso ao sincronizar perfil em 'users':", uErr);
+                    console.warn("Sincronização em 'users' omitida:", uErr);
                 }
 
                 showToast(`Acesso ao produto ${newStatus === 'unlocked' ? 'concedido' : 'retirado'} com sucesso!`, newStatus === 'unlocked' ? 'success' : 'info');
@@ -2244,7 +1907,7 @@
             try {
                 const pSnap = await db.collection('produtos').get();
                 if (pSnap.empty) {
-                    productsList.innerHTML = `<p style="color:var(--warning); font-size:0.85rem; text-align:center;">Nenhum produto cadastrado para liberar.</p>`;
+                    productsList.innerHTML = `<p style="color:var(--warning); font-size:0.85rem; text-align:center;">Nenhum produto cadastrado no catálogo.</p>`;
                     return;
                 }
 
@@ -2312,7 +1975,7 @@
                     }
                 }
             } catch (err) {
-                console.log("Erro ao carregar permissões atuais do e-mail:", err);
+                console.log("Erro ao carregar permissões do e-mail:", err);
             }
         }
 
@@ -2381,6 +2044,7 @@
                             productTitle: productTitle,
                             category: productCategory,
                             status: 'unlocked',
+                            unlocked: true,
                             requestedAt: firebase.firestore.FieldValue.serverTimestamp(),
                             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                         }, { merge: true });
@@ -2396,6 +2060,7 @@
                             productTitle: productTitle,
                             category: productCategory,
                             status: 'locked',
+                            unlocked: false,
                             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                         }, { merge: true });
 
@@ -2409,7 +2074,7 @@
                     try {
                         await db.collection('users').doc(userId).set(userProductsUpdate, { merge: true });
                     } catch (uSetErr) {
-                        console.warn("Sincronização em 'users' ignorada pelas regras:", uSetErr);
+                        console.warn("Sincronização em 'users' omitida:", uSetErr);
                     }
                 }
 
@@ -2418,12 +2083,8 @@
                 loadAccessRequests();
 
             } catch (err) {
-                console.error("Erro ao conceder/remover acessos:", err);
-                if (err.code === 'permission-denied') {
-                    showToast("Permissão negada no Firestore. Verifique as Regras de Segurança.", "warning", "Erro de Permissão");
-                } else {
-                    showToast("Erro ao alterar acessos: " + err.message, "warning");
-                }
+                console.error("Erro ao alterar acessos:", err);
+                showToast("Erro ao alterar acessos: " + err.message, "warning");
             } finally {
                 btnSubmit.disabled = false;
                 btnSubmit.innerHTML = '<i class="fa-solid fa-check-double"></i> Confirmar & Salvar Permissões';
@@ -2462,7 +2123,7 @@
                             } catch(e) {}
                         }
 
-                        const userName = c.userName || 'Estudante VIP';
+                        const userName = c.userName || 'Cliente VIP';
                         const safeUserName = escapeJsArg(userName);
                         const safeUserEmail = escapeJsArg(userEmail);
 
@@ -2499,7 +2160,7 @@
             }
 
             const emailDisplay = userEmail 
-                ? `<a href="mailto:${escapeHtml(userEmail)}?subject=Suporte%20Loneke%20no%20Beat" style="font-size:0.82rem; font-weight:normal; color:var(--primary); text-decoration:none;" title="Enviar e-mail para este cliente"><i class="fa-regular fa-envelope"></i> ${escapeHtml(userEmail)}</a>`
+                ? `<a href="mailto:${escapeHtml(userEmail)}?subject=Suporte%20Loneke%20no%20Beat" style="font-size:0.82rem; font-weight:normal; color:var(--primary); text-decoration:none;" title="Enviar e-mail"><i class="fa-regular fa-envelope"></i> ${escapeHtml(userEmail)}</a>`
                 : `<span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted);">E-mail não cadastrado</span>`;
 
             document.getElementById('chat-header').innerHTML = `
@@ -2519,7 +2180,7 @@
                 .onSnapshot(snapshot => {
                     box.innerHTML = '';
                     if (snapshot.empty) {
-                        box.innerHTML = `<p style="color:var(--text-muted); text-align:center; margin-top:auto; margin-bottom:auto;">Sem mensagens com este aluno.</p>`;
+                        box.innerHTML = `<p style="color:var(--text-muted); text-align:center; margin-top:auto; margin-bottom:auto;">Sem mensagens com este cliente.</p>`;
                         return;
                     }
 
@@ -2538,7 +2199,7 @@
 
         function sendAdminMessage() {
             if (!activeChatUserId) {
-                showToast('Selecione um aluno para responder.', 'warning');
+                showToast('Selecione um cliente para responder.', 'warning');
                 return;
             }
 
@@ -2689,528 +2350,6 @@
                     }
                 }
             });
-        }
-
-        let editingPromoId = null;
-
-        async function loadPromotions() {
-            const tbody = document.getElementById('promotions-table-body');
-            if (!tbody) return;
-
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:2rem;"><i class="fa-solid fa-spinner fa-spin"></i> Carregando ofertas promocionais...</td></tr>`;
-
-            try {
-                const snapshot = await db.collection('promocoes').get();
-                if (snapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhuma promoção cadastrada.</td></tr>`;
-                    return;
-                }
-
-                const now = new Date().getTime();
-                const promos = [];
-
-                snapshot.forEach(doc => {
-                    promos.push({ id: doc.id, ...doc.data() });
-                });
-
-                promos.sort((a, b) => parseFirebaseDate(b.createdAt) - parseFirebaseDate(a.createdAt));
-
-                let rowsHtml = '';
-
-                promos.forEach(p => {
-                    const promoId = String(p.id);
-                    const safePromoId = escapeJsArg(promoId);
-                    const expiresAt = p.expiresAt ? parseFirebaseDate(p.expiresAt).getTime() : 0;
-                    const isExpired = now > expiresAt;
-
-                    const totalStock = Number(p.estoque || 0);
-                    const salesCount = Number(p.vendas || 0);
-                    const remainingStock = Math.max(0, totalStock - salesCount);
-
-                    const diffMs = expiresAt - now;
-                    let timeStr = "Expirado";
-                    if (!isExpired && diffMs > 0) {
-                        const hours = Math.floor(diffMs / (1000 * 60 * 60));
-                        const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-                        timeStr = `${hours}h ${mins}m restantes`;
-                    }
-
-                    const statusBadge = isExpired
-                        ? `<span style="background:rgba(229,9,20,0.15); color:var(--primary); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;">Expirado</span>`
-                        : `<span style="background:rgba(16,185,129,0.15); color:var(--success); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;"><i class="fa-solid fa-bolt"></i> Ativa (24h)</span>`;
-
-                    const precoOrigKz = Number(p.precoOriginal || 0);
-                    const precoPromoKz = Number(p.precoPromo || 0);
-                    const usdOrig = (precoOrigKz / 500).toFixed(2);
-                    const usdPromo = (precoPromoKz / 500).toFixed(2);
-
-                    rowsHtml += `
-                        <tr>
-                            <td><strong>${escapeHtml(p.titulo || 'Promoção')}</strong></td>
-                            <td style="color:#FF6B6B; text-decoration:line-through;">${precoOrigKz.toLocaleString('pt-AO')} Kz ($${usdOrig} / €${usdOrig})</td>
-                            <td style="color:var(--success); font-weight:800;">${precoPromoKz.toLocaleString('pt-AO')} Kz ($${usdPromo} / €${usdPromo})</td>
-                            <td><strong>${salesCount}</strong> compras</td>
-                            <td><span style="color:${remainingStock > 0 ? 'var(--success)' : 'var(--primary)'}; font-weight:700;">${remainingStock} unidades</span></td>
-                            <td style="font-size:0.8rem; color:var(--text-muted);">${timeStr}</td>
-                            <td>${statusBadge}</td>
-                            <td style="text-align:right;">
-                                <button class="btn-action btn-danger btn-icon-only" onclick="deletePromotion('${safePromoId}')" title="Excluir Oferta"><i class="fa-solid fa-trash"></i></button>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                tbody.innerHTML = rowsHtml;
-            } catch (err) {
-                console.error("Erro ao carregar promoções:", err);
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#FF4D4D; padding:2rem;">Erro ao carregar promoções: ${escapeHtml(err.message)}</td></tr>`;
-            }
-        }
-
-        async function openPromoModal() {
-            editingPromoId = null;
-            if (document.getElementById('promo-select-product')) document.getElementById('promo-select-product').value = '';
-            if (document.getElementById('promo-titulo')) document.getElementById('promo-titulo').value = '';
-            if (document.getElementById('promo-precoOriginal')) document.getElementById('promo-precoOriginal').value = '';
-            if (document.getElementById('promo-precoPromo')) document.getElementById('promo-precoPromo').value = '';
-            if (document.getElementById('promo-imagem')) document.getElementById('promo-imagem').value = '';
-            if (document.getElementById('promo-video')) document.getElementById('promo-video').value = '';
-            if (document.getElementById('promo-estoque')) document.getElementById('promo-estoque').value = '10';
-            if (document.getElementById('promo-vendas')) document.getElementById('promo-vendas').value = '0';
-            if (document.getElementById('promo-link')) document.getElementById('promo-link').value = '';
-
-            const select = document.getElementById('promo-select-product');
-            if (select) {
-                select.innerHTML = `<option value="">-- Selecione um produto já cadastrado --</option>`;
-                try {
-                    const pSnap = await db.collection('produtos').get();
-                    pSnap.forEach(pDoc => {
-                        const data = pDoc.data();
-                        const opt = document.createElement('option');
-                        opt.value = pDoc.id;
-                        opt.textContent = `${data.titulo || data.nome} (${Number(data.precoAtual || 0).toLocaleString('pt-AO')} Kz)`;
-                        opt.dataset.json = JSON.stringify(data);
-                        select.appendChild(opt);
-                    });
-                } catch(e) {}
-            }
-
-            document.getElementById('promo-modal').style.display = 'flex';
-        }
-
-        function onSelectPromoProductChange() {
-            const select = document.getElementById('promo-select-product');
-            if (!select) return;
-            const selectedOpt = select.options[select.selectedIndex];
-            if (selectedOpt && selectedOpt.dataset.json) {
-                const data = JSON.parse(selectedOpt.dataset.json);
-                if (document.getElementById('promo-titulo')) document.getElementById('promo-titulo').value = data.titulo || data.nome || '';
-                if (document.getElementById('promo-precoOriginal')) document.getElementById('promo-precoOriginal').value = data.precoAtual || data.preco || '';
-                if (document.getElementById('promo-link')) document.getElementById('promo-link').value = data.linkCheckout || data.linkDownload || '';
-                if (document.getElementById('promo-imagem')) document.getElementById('promo-imagem').value = data.imagem || data.imageUrl || data.capa || '';
-                if (document.getElementById('promo-video')) document.getElementById('promo-video').value = data.videoLink || data.videoDemo || data.video || '';
-            }
-        }
-
-        function closePromoModal() {
-            document.getElementById('promo-modal').style.display = 'none';
-        }
-
-        async function savePromotion() {
-            const selectProductEl = document.getElementById('promo-select-product');
-            const selectedProductId = selectProductEl ? selectProductEl.value : '';
-
-            const titulo = document.getElementById('promo-titulo') ? document.getElementById('promo-titulo').value.trim() : '';
-            const precoOriginal = Number(document.getElementById('promo-precoOriginal')?.value || 0);
-            const precoPromo = Number(document.getElementById('promo-precoPromo')?.value || 0);
-            const imagem = document.getElementById('promo-imagem') ? document.getElementById('promo-imagem').value.trim() : '';
-            const videoLink = document.getElementById('promo-video') ? document.getElementById('promo-video').value.trim() : '';
-            const estoque = Number(document.getElementById('promo-estoque')?.value || 0);
-            const vendas = Number(document.getElementById('promo-vendas')?.value || 0);
-            const link = document.getElementById('promo-link') ? document.getElementById('promo-link').value.trim() : '';
-
-            if (!titulo || !precoPromo) {
-                showToast('Preencha o título e o preço promocional.', 'warning');
-                return;
-            }
-
-            const btn = document.getElementById('btn-save-promo');
-            if (btn) {
-                btn.disabled = true;
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando Oferta...';
-            }
-
-            const now = new Date();
-            const expiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-
-            try {
-                await db.collection('promocoes').add({
-                    productId: selectedProductId || '',
-                    product_id: selectedProductId || '',
-                    titulo: titulo,
-                    precoOriginal: precoOriginal,
-                    precoPromo: precoPromo,
-                    imagem: imagem,
-                    linkDownload: link,
-                    linkCursoCompleto: link,
-                    videoLink: videoLink,
-                    videoDemo: videoLink,
-                    estoque: estoque,
-                    vendas: vendas,
-                    link: link,
-                    apenasPerfilCliente: true,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    expiresAt: expiresAt
-                });
-
-                showToast('Oferta promocional de 24h ativada no perfil dos clientes!', 'success');
-                closePromoModal();
-                loadPromotions();
-            } catch (err) {
-                showToast('Erro ao criar promoção: ' + err.message, 'warning');
-            } finally {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fa-solid fa-fire"></i> Lançar Oferta 24H';
-                }
-            }
-        }
-
-        async function deletePromotion(promoId) {
-            if (!promoId) return;
-            Swal.fire({
-                title: 'Excluir Oferta Promocional?',
-                text: 'A promoção deixará de aparecer no perfil dos clientes.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#E50914',
-                cancelButtonColor: '#1F1F2C',
-                confirmButtonText: 'Sim, Remover',
-                cancelButtonText: 'Cancelar',
-                customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
-            }).then(async (res) => {
-                if (res.isConfirmed) {
-                    await db.collection('promocoes').doc(promoId).delete();
-                    showToast('Oferta removida com sucesso.', 'info');
-                    loadPromotions();
-                }
-            });
-        }
-
-        /* GESTÃO DE RECARGAS DE CARTEIRA */
-        function loadWalletDeposits() {
-            const tbody = document.getElementById('wallet-deposits-table-body');
-            if (!tbody) return;
-
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:2rem;"><i class="fa-solid fa-spinner fa-spin"></i> A carregar solicitações de recarga...</td></tr>`;
-
-            db.collection('solicitacoes_recarga').onSnapshot(snapshot => {
-                tbody.innerHTML = '';
-                if (snapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhum pedido de recarga pendente.</td></tr>`;
-                    return;
-                }
-
-                const list = [];
-                snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
-                list.sort((a, b) => parseFirebaseDate(b.createdAt) - parseFirebaseDate(a.createdAt));
-
-                list.forEach(item => {
-                    const status = (item.status || 'pendente').toLowerCase();
-                    const isPending = status === 'pendente';
-                    const amount = Number(item.amount || 0);
-                    const dateFormatted = item.createdAt ? parseFirebaseDate(item.createdAt).toLocaleString('pt-AO') : 'Hoje';
-
-                    const statusBadge = isPending 
-                        ? `<span style="background:rgba(245,158,11,0.15); color:var(--warning); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;"><i class="fa-solid fa-clock"></i> Pendente</span>`
-                        : (status === 'aprovado' 
-                            ? `<span style="background:rgba(16,185,129,0.15); color:var(--success); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;"><i class="fa-solid fa-check"></i> Creditado</span>`
-                            : `<span style="background:rgba(229,9,20,0.15); color:var(--primary); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;">Recusado</span>`);
-
-                    const proofBtn = item.proofUrl 
-                        ? `<button class="btn-action btn-secondary" style="padding:5px 10px; font-size:0.75rem;" onclick="viewReceipt('${escapeJsArg(item.proofUrl)}')"><i class="fa-solid fa-image" style="color:var(--info);"></i> Comprovativo</button>`
-                        : `<span style="color:var(--text-muted); font-size:0.8rem;">Sem anexo</span>`;
-
-                    tbody.innerHTML += `
-                        <tr>
-                            <td style="font-size:0.8rem; color:var(--text-muted);">${escapeHtml(dateFormatted)}</td>
-                            <td>
-                                <strong>${escapeHtml(item.userName || 'Cliente VIP')}</strong><br>
-                                <span style="font-size:0.75rem; color:var(--primary);">${escapeHtml(item.userEmail || '')}</span>
-                            </td>
-                            <td style="color:var(--success); font-weight:800;">${amount.toLocaleString('pt-AO')} Kz</td>
-                            <td>${proofBtn}</td>
-                            <td>${statusBadge}</td>
-                            <td style="text-align:right;">
-                                ${isPending ? `
-                                    <button class="btn-action btn-success" style="padding:6px 12px; font-size:0.78rem;" onclick="approveWalletDeposit('${item.id}', '${escapeJsArg(item.userId)}',${amount})">
-                                        <i class="fa-solid fa-check"></i> Aprovar & Creditar
-                                    </button>
-                                    <button class="btn-action btn-danger" style="padding:6px 10px; font-size:0.78rem;" onclick="rejectWalletDeposit('${item.id}')">
-                                        <i class="fa-solid fa-xmark"></i> Recusar
-                                    </button>
-                                ` : '<span style="color:var(--text-muted); font-size:0.8rem;">Concluído</span>'}
-                            </td>
-                        </tr>
-                    `;
-                });
-            }, err => {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#FF4D4D; padding:2rem;">Erro ao carregar dados.</td></tr>`;
-            });
-        }
-
-        async function approveWalletDeposit(depositId, userId, amount) {
-            Swal.fire({
-                title: 'Aprovar Recarga?',
-                text: `Deseja creditar ${amount.toLocaleString('pt-AO')} Kz no saldo da carteira do cliente?`,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#10B981',
-                cancelButtonColor: '#1F1F2C',
-                confirmButtonText: 'Sim, Creditar Saldo',
-                customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
-            }).then(async (res) => {
-                if (res.isConfirmed) {
-                    try {
-                        await db.collection('solicitacoes_recarga').doc(depositId).update({
-                            status: 'aprovado',
-                            approvedAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-
-                        if (userId) {
-                            await db.collection('users').doc(userId).set({
-                                saldoAfiliado: firebase.firestore.FieldValue.increment(amount)
-                            }, { merge: true });
-                        }
-
-                        showToast('Saldo creditado com sucesso na conta do cliente!', 'success');
-                        loadWalletDeposits();
-                    } catch (err) {
-                        showToast('Erro ao aprovar recarga: ' + err.message, 'warning');
-                    }
-                }
-            });
-        }
-
-        async function rejectWalletDeposit(depositId) {
-            try {
-                await db.collection('solicitacoes_recarga').doc(depositId).update({
-                    status: 'recusado'
-                });
-                showToast('Solicitação de recarga recusada.', 'info');
-                loadWalletDeposits();
-            } catch (err) {
-                showToast('Erro ao atualizar estado: ' + err.message, 'warning');
-            }
-        }
-
-        function loadWalletWithdrawals() {
-            const tbody = document.getElementById('wallet-withdrawals-table-body');
-            if (!tbody) return;
-
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:2rem;"><i class="fa-solid fa-spinner fa-spin"></i> A carregar solicitações de saque...</td></tr>`;
-
-            db.collection('solicitacoes_saque').onSnapshot(snapshot => {
-                tbody.innerHTML = '';
-                if (snapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhum pedido de saque registado.</td></tr>`;
-                    return;
-                }
-
-                const list = [];
-                snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
-                list.sort((a, b) => parseFirebaseDate(b.createdAt) - parseFirebaseDate(a.createdAt));
-
-                list.forEach(item => {
-                    const status = (item.status || 'pendente').toLowerCase();
-                    const isPending = status === 'pendente';
-                    const gross = Number(item.grossAmount || item.amount || 0);
-                    const fee = Number(item.fee || 0);
-                    const net = Number(item.netAmount || gross - fee);
-                    const dateFormatted = item.createdAt ? parseFirebaseDate(item.createdAt).toLocaleString('pt-AO') : 'Hoje';
-                    const proofUrl = item.proofUrl || item.transferProofUrl || item.comprovativo || '';
-
-                    const statusBadge = isPending 
-                        ? `<span style="background:rgba(245,158,11,0.15); color:var(--warning); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;"><i class="fa-solid fa-clock"></i> Em Análise</span>`
-                        : (status === 'pago' 
-                            ? `<span style="background:rgba(16,185,129,0.15); color:var(--success); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;"><i class="fa-solid fa-check"></i> Pago</span>`
-                            : `<span style="background:rgba(229,9,20,0.15); color:var(--primary); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;">Rejeitado</span>`);
-
-                    let proofBtn = '';
-                    if (proofUrl) {
-                        proofBtn = `<button class="btn-action btn-secondary" style="padding:4px 8px; font-size:0.72rem; margin-top:4px;" onclick="viewReceipt('${escapeJsArg(proofUrl)}')"><i class="fa-solid fa-image" style="color:var(--info);"></i> Comprovativo</button>`;
-                    }
-
-                    tbody.innerHTML += `
-                        <tr>
-                            <td style="font-size:0.8rem; color:var(--text-muted);">${escapeHtml(dateFormatted)}</td>
-                            <td>
-                                <strong>${escapeHtml(item.userName || 'Cliente VIP')}</strong><br>
-                                <span style="font-size:0.75rem; color:var(--primary);">${escapeHtml(item.userEmail || '')}</span>
-                            </td>
-                            <td><strong style="color:#38BDF8; font-family:monospace;">${escapeHtml(item.iban || 'N/A')}</strong></td>
-                            <td style="font-size:0.85rem;">${gross.toLocaleString('pt-AO')} Kz <br><span style="font-size:0.72rem; color:#FF6B6B;">- Taxa 10%: ${fee.toLocaleString('pt-AO')} Kz</span></td>
-                            <td style="color:var(--success); font-weight:800; font-size:1rem;">${net.toLocaleString('pt-AO')} Kz ${proofBtn}</td>
-                            <td>${statusBadge}</td>
-                            <td style="text-align:right;">
-                                ${isPending ? `
-                                    <button class="btn-action btn-success" style="padding:6px 12px; font-size:0.78rem;" onclick="approveWalletWithdrawal('${item.id}', '${escapeJsArg(item.userId)}',${gross})">
-                                        <i class="fa-solid fa-check"></i> Confirmar & Anexar Comprovativo
-                                    </button>
-                                    <button class="btn-action btn-danger" style="padding:6px 10px; font-size:0.78rem;" onclick="rejectWalletWithdrawal('${item.id}')">
-                                        <i class="fa-solid fa-xmark"></i> Rejeitar
-                                    </button>
-                                ` : '<span style="color:var(--text-muted); font-size:0.8rem;">Processado</span>'}
-                            </td>
-                        </tr>
-                    `;
-                });
-            }, err => {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#FF4D4D; padding:2rem;">Erro ao carregar dados.</td></tr>`;
-            });
-        }
-
-        async function approveWalletWithdrawal(withdrawId, userId, grossAmount) {
-            if (!withdrawId) {
-                showToast("ID de saque inválido.", "warning");
-                return;
-            }
-
-            const { value: formValues } = await Swal.fire({
-                title: 'Confirmar Pagamento do Saque',
-                html: `
-                    <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Selecione o ficheiro do comprovativo bancário ou insira a URL:</p>
-                    <input type="file" id="swal-proof-file" class="swal2-input" accept="image/*,application/pdf" style="padding:6px; font-size:0.82rem; margin-bottom:8px;">
-                    <input type="text" id="swal-proof-url" class="swal2-input" placeholder="Ou cole o link URL do comprovativo" style="font-size:0.85rem;">
-                `,
-                focusConfirm: false,
-                showCancelButton: true,
-                confirmButtonColor: '#10B981',
-                cancelButtonColor: '#1F1F2C',
-                confirmButtonText: 'Confirmar Pagamento',
-                cancelButtonText: 'Cancelar',
-                customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' },
-                preConfirm: () => {
-                    const fileInput = document.getElementById('swal-proof-file');
-                    const urlInput = document.getElementById('swal-proof-url');
-                    return {
-                        file: fileInput && fileInput.files && fileInput.files[0] ? fileInput.files[0] : null,
-                        url: urlInput ? urlInput.value.trim() : ''
-                    };
-                }
-            });
-
-            if (!formValues) return;
-
-            let finalProofUrl = formValues.url || '';
-
-            Swal.fire({
-                title: 'A processar comprovativo...',
-                text: 'Aguarde enquanto registamos o pagamento.',
-                allowOutsideClick: false,
-                didOpen: () => { Swal.showLoading(); },
-                customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
-            });
-
-            if (formValues.file) {
-                try {
-                    const uploadPromise = (async () => {
-                        const cleanName = (formValues.file.name || 'saque.jpg').replace(/[^a-zA-Z0-9._-]/g, '_');
-                        const fileRef = storage.ref(`comprovativos_saque/${Date.now()}_${cleanName}`);
-                        const uploadTask = await fileRef.put(formValues.file);
-                        return await uploadTask.ref.getDownloadURL();
-                    })();
-
-                    const timeoutPromise = new Promise((_, reject) =>
-                        setTimeout(() => reject(new Error("Storage Timeout")), 4000)
-                    );
-
-                    finalProofUrl = await Promise.race([uploadPromise, timeoutPromise]);
-                } catch (uploadErr) {
-                    console.warn("Storage falhou ou excedeu o tempo. Comprimindo imagem para salvamento direto...", uploadErr);
-                    try {
-                        finalProofUrl = await compressImageToBase64(formValues.file, 800, 0.7);
-                    } catch (compressErr) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Erro no ficheiro',
-                            text: 'Não foi possível processar a imagem selecionada. Tente com outra imagem JPG ou PNG.',
-                            customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
-                        });
-                        return;
-                    }
-                }
-            }
-
-            try {
-                const parsedGross = Number(grossAmount) || 0;
-
-                await db.collection('solicitacoes_saque').doc(withdrawId).update({
-                    status: 'pago',
-                    proofUrl: finalProofUrl,
-                    transferProofUrl: finalProofUrl,
-                    paidAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                if (userId && userId !== 'undefined' && userId !== '') {
-                    await db.collection('users').doc(userId).set({
-                        saldoAfiliado: firebase.firestore.FieldValue.increment(-parsedGross)
-                    }, { merge: true });
-                }
-
-                Swal.close();
-                showToast('Levantamento marcado como pago com sucesso!', 'success');
-                loadWalletWithdrawals();
-            } catch (err) {
-                console.error("Erro ao aprovar saque:", err);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro ao confirmar saque',
-                    text: err.message,
-                    customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
-                });
-            }
-        }
-
-        function compressImageToBase64(file, maxWidth = 800, quality = 0.7) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.src = event.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
-
-                        if (width > maxWidth) {
-                            height = Math.round((height * maxWidth) / width);
-                            width = maxWidth;
-                        }
-
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        resolve(canvas.toDataURL('image/jpeg', quality));
-                    };
-                    img.onerror = (err) => reject(err);
-                };
-                reader.onerror = (err) => reject(err);
-            });
-        }
-
-        async function rejectWalletWithdrawal(withdrawId) {
-            try {
-                await db.collection('solicitacoes_saque').doc(withdrawId).update({
-                    status: 'rejeitado'
-                });
-                showToast('Pedido de levantamento rejeitado.', 'info');
-                loadWalletWithdrawals();
-            } catch (err) {
-                showToast('Erro ao atualizar pedido: ' + err.message, 'warning');
-            }
         }
     </script>
 </body>
