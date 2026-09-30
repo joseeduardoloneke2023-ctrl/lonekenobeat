@@ -94,7 +94,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.25s ease, visibility 0.25s ease;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
         }
 
         #preloader.fade-out { 
@@ -791,13 +791,13 @@
         </div>
     </div>
 
-    <!-- SCRIPT PRINCIPAL E INTEGRAÇÃO FIREBASE -->
+    <!-- SCRIPT PRINCIPAL E INTEGRAÇÃO FIREBASE OTIMIZADA -->
     <script>
         function forceDismissPreloader() {
             const preloader = document.getElementById('preloader');
             if (preloader) {
                 preloader.classList.add('fade-out');
-                setTimeout(() => { preloader.style.display = 'none'; }, 200);
+                setTimeout(() => { preloader.style.display = 'none'; }, 150);
             }
         }
 
@@ -816,6 +816,11 @@
         }
         const db = firebase.firestore();
         const auth = firebase.auth();
+
+        // ATIVA PERSISTÊNCIA OFFLINE/CACHE LOCAL DO FIRESTORE PARA CARREGAMENTO ULTRA-RÁPIDO
+        try {
+            db.enablePersistence({ synchronizeTabs: true }).catch(err => console.warn("Firestore Persistence Notice:", err.code));
+        } catch(e){}
 
         let currentUser = null;
         let userUnlockedProductIds = new Set();
@@ -865,10 +870,60 @@
             }, 3500);
         }
 
+        // CARREGA DA MEMÓRIA LOCAL DE FORMA INSTANTÂNEA ANTES DE QUALQUER PEDIDO À REDE
+        function loadLocalDataImmediate() {
+            try {
+                // 1. Nome do Utilizador
+                const name = localStorage.getItem('loggedUserName') || localStorage.getItem('userName') || localStorage.getItem('user_name') || 'Membro VIP';
+                if (document.getElementById('sidebar-user-name')) document.getElementById('sidebar-user-name').innerText = name;
+                if (document.getElementById('prof-name')) document.getElementById('prof-name').value = name;
+                
+                const email = localStorage.getItem('loggedUserEmail') || localStorage.getItem('userEmail') || localStorage.getItem('user_email') || '';
+                if (document.getElementById('prof-email')) document.getElementById('prof-email').value = email;
+
+                // 2. IDs de Produtos Comprados
+                const localIdsMap = JSON.parse(localStorage.getItem('user_product_ids') || '{}');
+                Object.keys(localIdsMap).forEach(id => userUnlockedProductIds.add(String(id)));
+
+                const storageKeys = ['userPurchasedProducts', 'meus_produtos', 'loneke_purchases', 'purchasedProducts', 'client_products', 'user_products', 'meus_cursos'];
+                let localProductsList = [];
+
+                storageKeys.forEach(key => {
+                    try {
+                        const items = JSON.parse(localStorage.getItem(key) || '[]');
+                        if (Array.isArray(items)) {
+                            items.forEach(p => {
+                                const pId = String(p.id || p.product_id);
+                                if (pId) {
+                                    userUnlockedProductIds.add(pId);
+                                    if (!localProductsList.some(lp => String(lp.id) === pId)) {
+                                        localProductsList.push({ id: pId, ...p });
+                                    }
+                                }
+                            });
+                        }
+                    } catch(e){}
+                });
+
+                if (localProductsList.length > 0) {
+                    allProductsCache = localProductsList;
+                    renderAllProductsViews();
+                }
+            } catch (err) {
+                console.warn("Aviso na leitura local prévia:", err);
+            } finally {
+                // Desativa o preloader quase que imediatamente
+                forceDismissPreloader();
+            }
+        }
+
+        // Executa a leitura local imediata ao abrir o ficheiro
+        loadLocalDataImmediate();
+
         auth.onAuthStateChanged((user) => {
             if (!user) {
-                const savedUid = localStorage.getItem('loggedUserUid');
-                const savedEmail = localStorage.getItem('loggedUserEmail');
+                const savedUid = localStorage.getItem('loggedUserUid') || localStorage.getItem('userUid');
+                const savedEmail = localStorage.getItem('loggedUserEmail') || localStorage.getItem('userEmail');
                 
                 if (savedUid && savedEmail) {
                     currentUser = {
@@ -890,14 +945,10 @@
         });
 
         async function initClientPortal() {
-            try {
-                await loadUserProfile();
-                listenUserAccesses();
-            } catch (err) {
-                console.warn("Aviso ao carregar portal:", err);
-            } finally {
-                forceDismissPreloader();
-            }
+            // Executa requisições do Firebase em paralelo para não bloquear o utilizador
+            loadUserProfile();
+            listenUserAccesses();
+            loadProductsCatalog();
         }
 
         function toggleSidebar(forceState) {
@@ -944,10 +995,7 @@
                 customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    localStorage.removeItem('loggedUserUid');
-                    localStorage.removeItem('loggedUserEmail');
-                    localStorage.removeItem('loggedUserName');
-
+                    localStorage.clear();
                     auth.signOut().then(() => {
                         window.location.href = 'login.html';
                     }).catch(() => {
@@ -1081,8 +1129,8 @@
         function listenUserAccesses() {
             if (!currentUser) return;
 
+            // Escuta rápida do utilizador
             db.collection('users').doc(currentUser.uid).onSnapshot(uDoc => {
-                userUnlockedProductIds.clear();
                 if (uDoc.exists) {
                     const uData = uDoc.data();
                     if (uData.produtos && typeof uData.produtos === 'object') {
@@ -1091,35 +1139,34 @@
                                 userUnlockedProductIds.add(String(pId));
                             }
                         });
+                        renderAllProductsViews();
                     }
                 }
+            }, err => console.warn("Aviso ao ler users:", err));
 
-                // Sincroniza acessos em user_access
-                db.collection('user_access').where('userEmail', '==', currentUser.email.toLowerCase().trim()).onSnapshot(accSnap => {
-                    accSnap.forEach(aDoc => {
-                        const aData = aDoc.data();
-                        if (aData.status === 'unlocked' || aData.unlocked === true) {
-                            userUnlockedProductIds.add(String(aData.productId));
-                        }
-                    });
-                    loadProductsCatalog();
-                }, err => {
-                    console.warn("Consulta user_access:", err);
-                    loadProductsCatalog();
+            // Escuta rápida de permissões
+            db.collection('user_access').where('userEmail', '==', currentUser.email.toLowerCase().trim()).onSnapshot(accSnap => {
+                accSnap.forEach(aDoc => {
+                    const aData = aDoc.data();
+                    if (aData.status === 'unlocked' || aData.unlocked === true) {
+                        userUnlockedProductIds.add(String(aData.productId));
+                    }
                 });
-            }, err => {
-                console.warn("Consulta users:", err);
-                loadProductsCatalog();
-            });
+                renderAllProductsViews();
+            }, err => console.warn("Aviso ao ler user_access:", err));
         }
 
         function loadProductsCatalog() {
             db.collection('produtos').onSnapshot(snapshot => {
-                allProductsCache = [];
+                let freshProducts = [];
                 snapshot.forEach(doc => {
-                    allProductsCache.push({ id: doc.id, ...doc.data() });
+                    freshProducts.push({ id: doc.id, ...doc.data() });
                 });
-                renderAllProductsViews();
+
+                if (freshProducts.length > 0) {
+                    allProductsCache = freshProducts;
+                    renderAllProductsViews();
+                }
             }, err => {
                 console.warn("Erro ao ler produtos:", err);
             });
@@ -1134,15 +1181,17 @@
             if (lockedGrid) lockedGrid.innerHTML = '';
             if (bonusGrid) bonusGrid.innerHTML = '';
 
+            if (allProductsCache.length === 0) return;
+
             allProductsCache.forEach(prod => {
-                const strId = String(prod.id);
+                const strId = String(prod.id || prod.product_id);
                 const titleLower = String(prod.titulo || prod.nome || prod.title || '').toLowerCase();
                 const catLower = String(prod.categoria || '').toLowerCase();
                 const rawPrice = Number(prod.precoAtual ?? prod.price ?? prod.preco ?? 0);
 
                 const isBonus = rawPrice === 0 || prod.gratuito === true || titleLower.includes('bonus') || titleLower.includes('bónus') || catLower.includes('bonus') || catLower.includes('bónus');
                 
-                const isUnlocked = userUnlockedProductIds.has(strId) || isBonus;
+                const isUnlocked = userUnlockedProductIds.has(strId) || isBonus || prod.unlocked === true;
 
                 const cardHtml = createProductCardHTML(prod, isUnlocked);
 
@@ -1157,11 +1206,11 @@
         }
 
         function createProductCardHTML(p, isUnlocked) {
-            const thumb = p.imagem || p.thumb || p.capa || 'https://via.placeholder.com/300x180/181824/FFF?text=LONEKE+NO+BEAT';
+            const thumb = p.imagem || p.imageUrl || p.thumb || p.capa || 'https://via.placeholder.com/300x180/181824/FFF?text=LONEKE+NO+BEAT';
             const pTitle = p.titulo || p.title || p.nome || 'Produto VIP';
             const rawPrice = Number(p.precoAtual ?? p.price ?? p.preco ?? 0);
             const priceStr = rawPrice > 0 ? `${rawPrice.toLocaleString('pt-AO')} Kz` : 'Gratuito';
-            const safeId = escapeJsArg(p.id);
+            const safeId = escapeJsArg(p.id || p.product_id);
 
             const catLower = String(p.categoria || '').toLowerCase();
             const isCourse = catLower.includes('curso') || (p.modulos && p.modulos.length > 0);
@@ -1203,7 +1252,7 @@
 
         /* VÍDEO DE DEMONSTRAÇÃO (DEMO) */
         function openDemoVideoModal(productId) {
-            const prod = allProductsCache.find(p => String(p.id) === String(productId));
+            const prod = allProductsCache.find(p => String(p.id || p.product_id) === String(productId));
             if (!prod) return;
 
             const videoUrl = prod.videoLink || prod.video || prod.videoDemo || prod.linkVideo;
@@ -1231,7 +1280,7 @@
 
         /* CHECKOUT DIRETO NO CLIENTE */
         function openClientCheckoutModal(productId) {
-            const prod = allProductsCache.find(p => String(p.id) === String(productId));
+            const prod = allProductsCache.find(p => String(p.id || p.product_id) === String(productId));
             if (!prod) {
                 showToast('Produto não encontrado.', 'warning');
                 return;
@@ -1343,7 +1392,7 @@
                 customerEmail: email,
                 userEmail: email,
                 customerWhatsApp: whatsapp,
-                productId: selectedCheckoutProduct.id,
+                productId: selectedCheckoutProduct.id || selectedCheckoutProduct.product_id,
                 productTitle: selectedCheckoutProduct.titulo || 'Produto VIP',
                 titulo: selectedCheckoutProduct.titulo || 'Produto VIP',
                 method: methodTitle,
@@ -1360,7 +1409,7 @@
             };
 
             try {
-                // Regista a compra nas coleções 'transactions' e 'orders' de forma segura
+                // Regista a compra nas coleções 'transactions' e 'orders'
                 await db.collection('transactions').doc(orderId).set(transactionData);
                 await db.collection('orders').doc(orderId).set(transactionData);
 
@@ -1368,9 +1417,9 @@
 
                 // Mensagem de confirmação ao cliente
                 Swal.fire({
-                    title: 'Comprovativo sob Análise!',
-                    text: 'O seu comprovativo está sendo analisado pelo administrador e dentro de alguns minutos o produto estará disponível. Aceda à secção "Produtos Comprados" para acompanhar o estado.',
-                    icon: 'info',
+                    title: 'Comprovativo Enviado!',
+                    text: 'O seu comprovativo foi recebido com sucesso. Aceda à secção "Produtos Comprados" para acompanhar os seus ficheiros.',
+                    icon: 'success',
                     confirmButtonColor: '#E50914',
                     confirmButtonText: 'Ver Produtos Comprados',
                     customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
@@ -1414,7 +1463,7 @@
 
         /* CURSOS E LMS PLAYER */
         function openCoursePlayer(productId) {
-            const prod = allProductsCache.find(p => String(p.id) === String(productId));
+            const prod = allProductsCache.find(p => String(p.id || p.product_id) === String(productId));
             if (!prod) {
                 showToast('Curso não encontrado.', 'warning');
                 return;
@@ -1793,37 +1842,35 @@
             }
         }
 
-function downloadProductFile(productId) {
-    const prod = allProductsCache.find(p => String(p.id) === String(productId));
-    if (!prod) {
-        showToast('Produto não encontrado.', 'warning');
-        return;
-    }
+        function downloadProductFile(productId) {
+            const prod = allProductsCache.find(p => String(p.id || p.product_id) === String(productId));
+            if (!prod) {
+                showToast('Produto não encontrado.', 'warning');
+                return;
+            }
 
-    // Busca o link testando todas as variações de nomes de campos possíveis no Firestore
-    const downloadUrl = prod.linkDownload || 
-                        prod.link_download || 
-                        prod.linkCursoCompleto || 
-                        prod.link_curso_completo || 
-                        prod.downloadUrl || 
-                        prod.download_url || 
-                        prod.linkMaterial || 
-                        prod.link_material || 
-                        prod.materialUrl || 
-                        prod.ficheiroUrl || 
-                        prod.arquivoUrl || 
-                        prod.fileUrl || 
-                        prod.url || 
-                        prod.link;
+            const downloadUrl = prod.linkDownload || 
+                                prod.link_download || 
+                                prod.linkCursoCompleto || 
+                                prod.link_curso_completo || 
+                                prod.downloadUrl || 
+                                prod.download_url || 
+                                prod.linkMaterial || 
+                                prod.link_material || 
+                                prod.materialUrl || 
+                                prod.ficheiroUrl || 
+                                prod.arquivoUrl || 
+                                prod.fileUrl || 
+                                prod.url || 
+                                prod.link;
 
-    if (downloadUrl && String(downloadUrl).trim() !== '') {
-        window.open(String(downloadUrl).trim(), '_blank');
-        showToast('A iniciar download...', 'success');
-    } else {
-        showToast('Link de download não configurado para este item. Solicite no Suporte Chat.', 'warning');
-    }
-}
-  
-  </script>
+            if (downloadUrl && String(downloadUrl).trim() !== '') {
+                window.open(String(downloadUrl).trim(), '_blank');
+                showToast('A iniciar download...', 'success');
+            } else {
+                showToast('Link de download não configurado para este item. Solicite no Suporte Chat.', 'warning');
+            }
+        }
+    </script>
 </body>
 </html>
