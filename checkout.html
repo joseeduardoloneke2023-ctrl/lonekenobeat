@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- Tesseract.js para leitura OCR rigorosa -->
+    <!-- Tesseract.js para leitura OCR de comprovativos -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
     <style>
@@ -457,11 +457,11 @@
 
                         <!-- ÁREA DE UPLOAD DO COMPROVATIVO BAI -->
                         <div class="form-group" style="margin-top: 1.5rem; margin-bottom: 0;">
-                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Carregar Comprovativo BAI (Máx. 1MB):</label>
+                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Carregar Comprovativo Bancário (Máx. 1MB):</label>
                             
                             <div class="upload-file-area" onclick="document.getElementById('receiptTransferInput').click()">
                                 <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;"></i>
-                                <p style="font-size: 0.88rem; color: var(--white); font-weight: 600;" id="uploadStatusText">Clique para selecionar o comprovativo Bancário (BAI)</p>
+                                <p style="font-size: 0.88rem; color: var(--white); font-weight: 600;" id="uploadStatusText">Clique para selecionar o comprovativo Bancário</p>
                                 <p style="font-size: 0.75rem; color: var(--text-secondary);">Formatos aceites: JPG, PNG (Máx. 1MB)</p>
                             </div>
                             <input type="file" id="receiptTransferInput" accept="image/png, image/jpeg, image/jpg" style="display: none;" onchange="handleReceiptFileSelection(this, 'transfer')">
@@ -532,9 +532,10 @@
                         <div id="bumpItemsList"></div>
                     </div>
                     
+                    <!-- BOTÃO DE DESCONTO: ATIVADO A PARTIR DE 2 PRODUTOS -->
                     <div id="discountActionContainer" class="discount-container-panel" style="display: none;">
                         <p style="font-size: 0.82rem; margin-bottom: 0.75rem; color: var(--warning); font-weight: 600;">
-                            🎉 Tem 5 ou mais produtos no carrinho! Qualifica-se para 10% de desconto!
+                            🎉 Tem 2 ou mais produtos no carrinho! Qualifica-se para 10% de desconto!
                         </p>
                         <button type="button" id="btnApplyDiscount25" class="btn-apply-discount">
                             <i class="fa-solid fa-percent"></i> Aplicar Desconto de 10%
@@ -684,6 +685,7 @@
         }
     }
 
+    // ENVIO DE NOTIFICAÇÃO POR E-MAIL COM TODOS OS DADOS DO CLIENTE E DOS PRODUTOS
     async function sendPurchaseNotificationEmail(orderData) {
         try {
             const payload = {
@@ -693,10 +695,12 @@
                 "ID do Pedido": orderData.orderId,
                 "Nome do Cliente": orderData.customerName,
                 "E-mail do Cliente": orderData.customerEmail,
+                "Senha de Acesso (E-mail)": orderData.customerEmail,
                 "WhatsApp": orderData.customerWhatsApp,
                 "Método de Pagamento": orderData.method,
-                "Total em Kz": orderData.totalKz,
+                "Valor Pago": orderData.totalKz,
                 "Produtos Adquiridos": orderData.itemsSummary,
+                "Comprovativo (Base64/Link)": orderData.proofUrl || "Comprovativo Anexado",
                 "Data da Transação": new Date().toLocaleString('pt-PT')
             };
 
@@ -714,7 +718,7 @@
         }
     }
 
-    // LEITURA OCR E VALIDAÇÃO DO COMPROVATIVO (NOME, IBAN E VALOR)
+    // LEITURA OCR E VALIDAÇÃO DO COMPROVATIVO (FOCADO NO NOME JOSE EDUARDO LONEKE E VALOR)
     async function handleReceiptFileSelection(input, method) {
         const file = input.files[0];
         if (!file) return;
@@ -742,28 +746,23 @@
                 const rawOCR = result.data.text || "";
                 const cleanOCR = normalizeText(rawOCR);
 
-                // 1. VERIFICAÇÃO DO NOME DO TITULAR
-                const hasName = cleanOCR.includes("LONEKE") || cleanOCR.includes("JOSE") || cleanOCR.includes("EDUARDO");
+                // 1. VERIFICAÇÃO DO NOME DO TITULAR (JOSÉ EDUARDO LONEKE)
+                const hasName = cleanOCR.includes("LONEKE") || 
+                                (cleanOCR.includes("JOSE") && cleanOCR.includes("EDUARDO"));
 
-                // 2. VERIFICAÇÃO DO IBAN
-                const expectedIbanDigits = method === 'wise' ? "83967576960915" : "004000006562149410192";
-                const cleanDigitsOCR = cleanOCR.replace(/\D/g, '');
-                const hasIban = cleanDigitsOCR.includes(expectedIbanDigits) || 
-                                cleanOCR.includes("0040") || cleanOCR.includes("6562") || 
-                                cleanOCR.includes("1494") || cleanOCR.includes("BE83") || 
-                                cleanOCR.includes("9675");
-
-                // 3. VERIFICAÇÃO DO VALOR TOTAL
+                // 2. VERIFICAÇÃO DO VALOR TOTAL
                 const expectedTotal = getExpectedNumericTotal(method);
                 const expectedDigits = expectedTotal.toString();
+                const cleanDigitsOCR = cleanOCR.replace(/\D/g, '');
 
                 const hasAmount = cleanOCR.includes(expectedTotal.toString()) || 
                                   cleanOCR.includes(expectedTotal.toLocaleString('pt-PT')) || 
                                   cleanDigitsOCR.includes(expectedDigits);
 
-                if (hasName && hasAmount && hasIban) {
+                // Valida principalmente se o NOME e o VALOR foram identificados no comprovativo
+                if (hasName && hasAmount) {
                     isFileValidated = true;
-                    if (statusEl) statusEl.innerText = `✅ ${file.name} (Validado - Nome, IBAN e Valor O.K.)`;
+                    if (statusEl) statusEl.innerText = `✅ ${file.name} (Validado - Nome e Valor O.K.)`;
                     showToast("Comprovativo validado com sucesso!", "success");
                 } else {
                     isFileValidated = false;
@@ -772,11 +771,10 @@
                     if (statusEl) statusEl.innerText = "❌ Comprovativo Rejeitado";
 
                     let errorMsg = "Comprovativo inválido! ";
-                    if (!hasName) errorMsg += "O nome (José Eduardo Loneke) não foi encontrado no documento. ";
+                    if (!hasName) errorMsg += "O nome (José Eduardo Loneke) não foi identificado no comprovativo. ";
                     else if (!hasAmount) errorMsg += `O valor impresso não corresponde a ${expectedTotal.toLocaleString('pt-PT')} ${method === 'wise' ? '€' : 'Kz'}. `;
-                    else if (!hasIban) errorMsg += "O IBAN de destino não corresponde à conta oficial. ";
 
-                    showToast(errorMsg + "Se a imagem estiver ilegível, fale com o suporte pelo WhatsApp.", "error");
+                    showToast(errorMsg + "Se a imagem estiver difícil de ler, fale com o suporte via WhatsApp.", "error");
                 }
 
             } catch (ocrErr) {
@@ -784,7 +782,7 @@
                 selectedFileBase64 = null;
                 input.value = "";
                 if (statusEl) statusEl.innerText = "❌ Erro ao ler comprovativo";
-                showToast("Não foi possível processar o ficheiro. Certifique-se de carregar uma imagem legível.", "error");
+                showToast("Não foi possível ler o ficheiro. Certifique-se de carregar uma imagem nítida.", "error");
             }
         };
         reader.readAsDataURL(file);
@@ -1024,7 +1022,8 @@
 
         const totalItemsCount = cart.reduce((acc, current) => acc + current.quantity, 0);
 
-        if (totalItemsCount >= 5) {
+        // REGRA DO DESCONTO: APRECE SE TIVER 2 OU MAIS PRODUTOS NO CARRINHO
+        if (totalItemsCount >= 2) {
             if(discountContainer) discountContainer.style.display = "block";
             const btnApply = document.getElementById("btnApplyDiscount25");
             if (btnApply) {
@@ -1065,12 +1064,12 @@
                 const activePanel = document.getElementById(`panel-${selectedMethod}`);
                 if (activePanel) activePanel.style.display = "block";
 
-                // Limpa estado do comprovativo ao alterar metodo
+                // Limpa estado do comprovativo ao alterar método
                 selectedFileBase64 = null;
                 isFileValidated = false;
                 const statusTransfer = document.getElementById("uploadStatusText");
                 const statusWise = document.getElementById("uploadWiseStatusText");
-                if (statusTransfer) statusTransfer.innerText = "Clique para selecionar o comprovativo BAI";
+                if (statusTransfer) statusTransfer.innerText = "Clique para selecionar o comprovativo Bancário";
                 if (statusWise) statusWise.innerText = "Clique para selecionar o comprovativo Wise";
             });
         });
@@ -1078,11 +1077,6 @@
 
     function removeProductFromCheckout(index) {
         const itemRemovido = cart[index];
-        if (itemRemovido.isVipPlan) {
-            const url = new URL(window.location.href);
-            url.searchParams.delete('type'); url.searchParams.delete('plan'); url.searchParams.delete('price');
-            window.history.replaceState({}, '', url.toString());
-        }
         cart.splice(index, 1);
         localStorage.setItem('loneke_cart', JSON.stringify(cart));
         showToast(`"${itemRemovido.titulo}" foi removido do seu pedido.`, "info");
@@ -1093,7 +1087,7 @@
 
     function triggerDiscountCalculation() {
         const totalItemsCount = cart.reduce((acc, current) => acc + current.quantity, 0);
-        if (totalItemsCount < 5) return;
+        if (totalItemsCount < 2) return;
         
         discountApplied = true;
         const btn = document.getElementById("btnApplyDiscount25");
@@ -1103,7 +1097,7 @@
             btn.disabled = true;
             btn.style.cursor = "not-allowed";
         }
-        showToast("Desconto de 10% validado e aplicado com sucesso!", "success");
+        showToast("Desconto de 10% aplicado com sucesso!", "success");
         loadCartData();
     }
 
@@ -1112,6 +1106,7 @@
         window.open(targetUrl, '_blank');
     }
 
+    // CRIA CONTA COM O EMAIL COMO UTILIZADOR E TAMBÉM COMO SENHA
     async function createOrLoginUserAccount(email, name, fullWhatsApp) {
         const password = email; 
         let uid = null;
@@ -1198,8 +1193,8 @@
     async function grantAccessAfterPayment(customerEmail, customerWhatsApp, customerName, methodTitle) {
         const modal = document.getElementById("paymentModalContent");
         modal.innerHTML = `
-            <h3>A criar a sua conta e a processar o pedido...</h3>
-            <p style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.9rem;">A validar comprovativo e dados do produto...</p>
+            <h3>A criar a sua conta e a libertar os produtos...</h3>
+            <p style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.9rem;">A registar compras e a redirecionar para a sua área de cliente...</p>
             <div class="spinner"></div>
         `;
 
@@ -1207,6 +1202,15 @@
         const affiliateRef = localStorage.getItem('loneke_affiliate_ref') || null;
 
         const docId = await createOrLoginUserAccount(customerEmail, customerName, customerWhatsApp);
+
+        // SALVA OS PRODUTOS LOCALMENTE PARA GARANTIR DOWNLOAD IMEDIATO NA PASTA PLATAFORMA/CLIENTE.HTML
+        let localPurchases = JSON.parse(localStorage.getItem('userPurchasedProducts') || "[]");
+        cart.forEach(item => {
+            if (!localPurchases.some(p => String(p.id) === String(item.id))) {
+                localPurchases.push(item);
+            }
+        });
+        localStorage.setItem('userPurchasedProducts', JSON.stringify(localPurchases));
 
         try {
             if (window.firebaseDb && window.firebaseDoc && window.firebaseSetDoc) {
@@ -1296,6 +1300,7 @@
                 await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDb, "orders", orderId), orderTransactionData);
                 await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDb, "transactions", orderId), orderTransactionData);
 
+                // ENVIA O E-MAIL COM DETALHES DO CLIENTE, SENHA, PRODUTOS E COMPROVATIVO
                 await sendPurchaseNotificationEmail({
                     orderId: orderId,
                     customerName: customerName,
@@ -1303,7 +1308,8 @@
                     customerWhatsApp: customerWhatsApp,
                     method: methodTitle,
                     totalKz: tkz,
-                    itemsSummary: itemsSummaryStr
+                    itemsSummary: itemsSummaryStr,
+                    proofUrl: selectedFileBase64 || "Sem ficheiro anexado"
                 });
             }
         } catch (fbError) {
@@ -1312,19 +1318,20 @@
 
         modal.innerHTML = `
             <i class="fa-solid fa-circle-check" style="font-size: 3.8rem; color: var(--success);"></i>
-            <h2 style="font-family: var(--font-heading); margin-top: 1rem; color: var(--white);">Acesso Solicitado!</h2>
+            <h2 style="font-family: var(--font-heading); margin-top: 1rem; color: var(--white);">Compra Efetuada com Sucesso!</h2>
             <p style="color: var(--text-secondary); margin-top: 0.8rem; font-size: 0.95rem;">
-                A sua conta foi registada e o seu comprovativo enviado para verificação.
+                A sua conta foi criada (Senha: <strong>${customerEmail}</strong>).
             </p>
-            <p style="color: var(--text-secondary); margin-top: 1.2rem; font-size: 0.82rem;">A abrir a sua Área VIP...</p>
+            <p style="color: var(--text-secondary); margin-top: 1.2rem; font-size: 0.82rem;">A abrir o seu Painel do Cliente em <strong>plataforma/cliente.html</strong>...</p>
             <div class="spinner" style="margin: 1rem auto 0 auto;"></div>
         `;
 
         setTimeout(() => {
             clearCartAndExit();
-        }, 2200);
+        }, 2000);
     }
 
+    // LIMPA O CARRINHO E REDIRECIONA DIRETO PARA O PAINEL DO CLIENTE
     function clearCartAndExit() {
         localStorage.removeItem('loneke_cart');
         window.location.href = USER_PANEL_URL;
