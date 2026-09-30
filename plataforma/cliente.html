@@ -817,7 +817,7 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
 
-        // ATIVA PERSISTÊNCIA OFFLINE/CACHE LOCAL DO FIRESTORE PARA CARREGAMENTO ULTRA-RÁPIDO
+        // PERSISTÊNCIA OFFLINE/CACHE LOCAL DO FIRESTORE
         try {
             db.enablePersistence({ synchronizeTabs: true }).catch(err => console.warn("Firestore Persistence Notice:", err.code));
         } catch(e){}
@@ -870,10 +870,18 @@
             }, 3500);
         }
 
-        // CARREGA DA MEMÓRIA LOCAL DE FORMA INSTANTÂNEA ANTES DE QUALQUER PEDIDO À REDE
+        function saveUnlockedToLocal() {
+            if (!currentUser) return;
+            const idsObj = {};
+            userUnlockedProductIds.forEach(id => { idsObj[id] = true; });
+            localStorage.setItem(`user_product_ids_${currentUser.uid}`, JSON.stringify(idsObj));
+            localStorage.setItem('user_product_ids', JSON.stringify(idsObj));
+        }
+
+        // CARREGA DA MEMÓRIA LOCAL DE FORMA INSTANTÂNEA
         function loadLocalDataImmediate() {
             try {
-                // 1. Nome do Utilizador
+                const uid = localStorage.getItem('loggedUserUid') || localStorage.getItem('userUid');
                 const name = localStorage.getItem('loggedUserName') || localStorage.getItem('userName') || localStorage.getItem('user_name') || 'Membro VIP';
                 if (document.getElementById('sidebar-user-name')) document.getElementById('sidebar-user-name').innerText = name;
                 if (document.getElementById('prof-name')) document.getElementById('prof-name').value = name;
@@ -881,8 +889,12 @@
                 const email = localStorage.getItem('loggedUserEmail') || localStorage.getItem('userEmail') || localStorage.getItem('user_email') || '';
                 if (document.getElementById('prof-email')) document.getElementById('prof-email').value = email;
 
-                // 2. IDs de Produtos Comprados
-                const localIdsMap = JSON.parse(localStorage.getItem('user_product_ids') || '{}');
+                let localIdsMap = {};
+                if (uid && localStorage.getItem(`user_product_ids_${uid}`)) {
+                    localIdsMap = JSON.parse(localStorage.getItem(`user_product_ids_${uid}`) || '{}');
+                } else {
+                    localIdsMap = JSON.parse(localStorage.getItem('user_product_ids') || '{}');
+                }
                 Object.keys(localIdsMap).forEach(id => userUnlockedProductIds.add(String(id)));
 
                 const storageKeys = ['userPurchasedProducts', 'meus_produtos', 'loneke_purchases', 'purchasedProducts', 'client_products', 'user_products', 'meus_cursos'];
@@ -896,7 +908,7 @@
                                 const pId = String(p.id || p.product_id);
                                 if (pId) {
                                     userUnlockedProductIds.add(pId);
-                                    if (!localProductsList.some(lp => String(lp.id) === pId)) {
+                                    if (!localProductsList.some(lp => String(lp.id || lp.product_id) === pId)) {
                                         localProductsList.push({ id: pId, ...p });
                                     }
                                 }
@@ -912,12 +924,10 @@
             } catch (err) {
                 console.warn("Aviso na leitura local prévia:", err);
             } finally {
-                // Desativa o preloader quase que imediatamente
                 forceDismissPreloader();
             }
         }
 
-        // Executa a leitura local imediata ao abrir o ficheiro
         loadLocalDataImmediate();
 
         auth.onAuthStateChanged((user) => {
@@ -945,7 +955,6 @@
         });
 
         async function initClientPortal() {
-            // Executa requisições do Firebase em paralelo para não bloquear o utilizador
             loadUserProfile();
             listenUserAccesses();
             loadProductsCatalog();
@@ -995,7 +1004,12 @@
                 customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    localStorage.clear();
+                    localStorage.removeItem('loggedUserUid');
+                    localStorage.removeItem('loggedUserEmail');
+                    localStorage.removeItem('loggedUserName');
+                    localStorage.removeItem('userUid');
+                    localStorage.removeItem('userEmail');
+
                     auth.signOut().then(() => {
                         window.location.href = 'login.html';
                     }).catch(() => {
@@ -1128,32 +1142,62 @@
 
         function listenUserAccesses() {
             if (!currentUser) return;
+            const userEmail = (currentUser.email || '').toLowerCase().trim();
+            const userId = currentUser.uid;
 
-            // Escuta rápida do utilizador
-            db.collection('users').doc(currentUser.uid).onSnapshot(uDoc => {
+            // 1. Coleção 'users' (por UID)
+            db.collection('users').doc(userId).onSnapshot(uDoc => {
                 if (uDoc.exists) {
                     const uData = uDoc.data();
                     if (uData.produtos && typeof uData.produtos === 'object') {
                         Object.keys(uData.produtos).forEach(pId => {
-                            if (uData.produtos[pId] === true || uData.produtos[pId] === 'unlocked' || uData.produtos[pId] === 'liberado') {
+                            if (uData.produtos[pId] === true || uData.produtos[pId] === 'unlocked' || uData.produtos[pId] === 'liberado' || uData.produtos[pId] === 'aprovado') {
                                 userUnlockedProductIds.add(String(pId));
                             }
                         });
-                        renderAllProductsViews();
+                    }
+                    if (Array.isArray(uData.produtosComprados)) {
+                        uData.produtosComprados.forEach(pId => userUnlockedProductIds.add(String(pId)));
                     }
                 }
+                saveUnlockedToLocal();
+                renderAllProductsViews();
             }, err => console.warn("Aviso ao ler users:", err));
 
-            // Escuta rápida de permissões
-            db.collection('user_access').where('userEmail', '==', currentUser.email.toLowerCase().trim()).onSnapshot(accSnap => {
-                accSnap.forEach(aDoc => {
-                    const aData = aDoc.data();
-                    if (aData.status === 'unlocked' || aData.unlocked === true) {
-                        userUnlockedProductIds.add(String(aData.productId));
-                    }
-                });
-                renderAllProductsViews();
-            }, err => console.warn("Aviso ao ler user_access:", err));
+            // 2. Coleção 'user_access' (por Email)
+            if (userEmail) {
+                db.collection('user_access').where('userEmail', '==', userEmail).onSnapshot(accSnap => {
+                    accSnap.forEach(aDoc => {
+                        const aData = aDoc.data();
+                        if (aData.status === 'unlocked' || aData.status === 'approved' || aData.status === 'aprovado' || aData.unlocked === true) {
+                            const targetId = aData.productId || aData.produtoId || aData.id;
+                            if (targetId) userUnlockedProductIds.add(String(targetId));
+                        }
+                    });
+                    saveUnlockedToLocal();
+                    renderAllProductsViews();
+                }, err => console.warn("Aviso ao ler user_access:", err));
+
+                // 3. Coleção 'orders' (por Email ou UID)
+                db.collection('orders').where('userEmail', '==', userEmail).onSnapshot(ordSnap => {
+                    ordSnap.forEach(oDoc => {
+                        const oData = oDoc.data();
+                        if (oData.productId) userUnlockedProductIds.add(String(oData.productId));
+                    });
+                    saveUnlockedToLocal();
+                    renderAllProductsViews();
+                }, err => console.warn("Aviso orders:", err));
+
+                // 4. Coleção 'transactions' (por Email ou UID)
+                db.collection('transactions').where('userEmail', '==', userEmail).onSnapshot(trSnap => {
+                    trSnap.forEach(tDoc => {
+                        const tData = tDoc.data();
+                        if (tData.productId) userUnlockedProductIds.add(String(tData.productId));
+                    });
+                    saveUnlockedToLocal();
+                    renderAllProductsViews();
+                }, err => console.warn("Aviso transactions:", err));
+            }
         }
 
         function loadProductsCatalog() {
@@ -1355,7 +1399,7 @@
             }
         }
 
-        /* SUBMETER COMPRA SEM ERRO DE PERMISSÃO E COM NOTIFICAÇÃO COMPLETA */
+        /* SUBMETER COMPRA */
         async function submitClientCheckout() {
             if (!selectedCheckoutProduct) return;
             if (!currentUser) {
@@ -1383,6 +1427,8 @@
             const orderId = 'ORD-' + Date.now();
             const methodTitle = selectedCheckoutMethod === 'wise' ? 'Wise Transfer (EUR)' : 'Transferência Bancária (BAI)';
 
+            const prodId = selectedCheckoutProduct.id || selectedCheckoutProduct.product_id;
+
             const transactionData = {
                 orderId: orderId,
                 transactionId: orderId,
@@ -1392,7 +1438,7 @@
                 customerEmail: email,
                 userEmail: email,
                 customerWhatsApp: whatsapp,
-                productId: selectedCheckoutProduct.id || selectedCheckoutProduct.product_id,
+                productId: prodId,
                 productTitle: selectedCheckoutProduct.titulo || 'Produto VIP',
                 titulo: selectedCheckoutProduct.titulo || 'Produto VIP',
                 method: methodTitle,
@@ -1409,13 +1455,24 @@
             };
 
             try {
-                // Regista a compra nas coleções 'transactions' e 'orders'
+                // Desbloqueia o ID na memória e salva no Firestore
+                if (prodId) {
+                    userUnlockedProductIds.add(String(prodId));
+                    saveUnlockedToLocal();
+                }
+
                 await db.collection('transactions').doc(orderId).set(transactionData);
                 await db.collection('orders').doc(orderId).set(transactionData);
 
+                // Garante que o documento do utilizador também guarda o ID
+                if (prodId) {
+                    const updateObj = {};
+                    updateObj[`produtos.${prodId}`] = true;
+                    await db.collection('users').doc(currentUser.uid).set(updateObj, { merge: true });
+                }
+
                 closeClientCheckoutModal();
 
-                // Mensagem de confirmação ao cliente
                 Swal.fire({
                     title: 'Comprovativo Enviado!',
                     text: 'O seu comprovativo foi recebido com sucesso. Aceda à secção "Produtos Comprados" para acompanhar os seus ficheiros.',
@@ -1424,6 +1481,7 @@
                     confirmButtonText: 'Ver Produtos Comprados',
                     customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
                 }).then(() => {
+                    renderAllProductsViews();
                     switchView('unlocked-products');
                 });
 
