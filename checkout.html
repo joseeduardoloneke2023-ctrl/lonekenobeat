@@ -1134,9 +1134,16 @@
 
         if (!uid) uid = email.replace(/[^a-zA-Z0-9]/g, "_");
 
+        // REGISTO DE SESSÃO DO UTILIZADOR EM TODAS AS CHAVES DE LOCALSTORAGE RELEVANTES
         localStorage.setItem('loggedUserUid', uid);
         localStorage.setItem('loggedUserEmail', email);
         localStorage.setItem('loggedUserName', name);
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('userName', name);
+        localStorage.setItem('userUid', uid);
+        localStorage.setItem('user_email', email);
+        localStorage.setItem('user_name', name);
+        localStorage.setItem('cliente_logado', JSON.stringify({ uid: uid, name: name, email: email, whatsApp: fullWhatsApp }));
 
         try {
             const userData = {
@@ -1203,15 +1210,57 @@
 
         const docId = await createOrLoginUserAccount(customerEmail, customerName, customerWhatsApp);
 
-        // SALVA OS PRODUTOS LOCALMENTE PARA GARANTIR DOWNLOAD IMEDIATO NA PASTA PLATAFORMA/CLIENTE.HTML
-        let localPurchases = JSON.parse(localStorage.getItem('userPurchasedProducts') || "[]");
-        cart.forEach(item => {
-            if (!localPurchases.some(p => String(p.id) === String(item.id))) {
-                localPurchases.push(item);
-            }
-        });
-        localStorage.setItem('userPurchasedProducts', JSON.stringify(localPurchases));
+        // 1. FORMATAÇÃO UNIFICADA DOS PRODUTOS COMPRADOS
+        const purchasedItemsFormatted = cart.map(item => ({
+            id: String(item.id || item.product_id),
+            product_id: String(item.product_id || item.id),
+            titulo: item.titulo || item.title || item.nome || "Produto Loneke no Beat",
+            title: item.titulo || item.title || item.nome || "Produto Loneke no Beat",
+            nome: item.titulo || item.title || item.nome || "Produto Loneke no Beat",
+            preco: Number(item.preco || 0),
+            price: Number(item.preco || 0),
+            categoria: item.categoria || item.category || 'drumkits',
+            imagem: item.imagem || "img/express.png",
+            imageUrl: item.imagem || "img/express.png",
+            unlocked: true,
+            status: "ativo",
+            purchasedAt: new Date().toISOString()
+        }));
 
+        // 2. GUARDA EM TODAS AS CHAVES POSSÍVEIS DO LOCALSTORAGE PARA GARANTIR LEITURA IMEDIATA EM PLATAFORMA/CLIENTE.HTML
+        const storageKeys = [
+            'userPurchasedProducts', 
+            'meus_produtos', 
+            'loneke_purchases', 
+            'purchasedProducts', 
+            'client_products', 
+            'user_products',
+            'meus_cursos'
+        ];
+
+        storageKeys.forEach(key => {
+            let existing = [];
+            try { existing = JSON.parse(localStorage.getItem(key) || "[]"); } catch(e){}
+            if (!Array.isArray(existing)) existing = [];
+            
+            purchasedItemsFormatted.forEach(newItem => {
+                if (!existing.some(p => String(p.id || p.product_id) === String(newItem.id))) {
+                    existing.push(newItem);
+                }
+            });
+            localStorage.setItem(key, JSON.stringify(existing));
+        });
+
+        // Map de IDs para verificação rápida de acesso desbloqueado
+        let prodIdsMap = {};
+        try { prodIdsMap = JSON.parse(localStorage.getItem('user_product_ids') || "{}"); } catch(e){}
+        purchasedItemsFormatted.forEach(p => { 
+            prodIdsMap[p.id] = true; 
+            prodIdsMap[p.product_id] = true; 
+        });
+        localStorage.setItem('user_product_ids', JSON.stringify(prodIdsMap));
+
+        // 3. REGISTO NO FIREBASE FIRESTORE
         try {
             if (window.firebaseDb && window.firebaseDoc && window.firebaseSetDoc) {
                 let userProdutosMap = {};
