@@ -1793,22 +1793,37 @@
             }
         }
 
-        function downloadProductFile(productId) {
-            const prod = allProductsCache.find(p => String(p.id) === String(productId));
-            if (!prod) {
-                showToast('Produto não encontrado.', 'warning');
-                return;
-            }
+function downloadProductFile(productId) {
+    const prod = allProductsCache.find(p => String(p.id) === String(productId));
+    if (!prod) {
+        showToast('Produto não encontrado.', 'warning');
+        return;
+    }
 
-            const downloadUrl = prod.linkDownload || prod.linkCursoCompleto || prod.downloadUrl || prod.materialUrl;
+    // Busca o link testando todas as variações de nomes de campos possíveis no Firestore
+    const downloadUrl = prod.linkDownload || 
+                        prod.link_download || 
+                        prod.linkCursoCompleto || 
+                        prod.link_curso_completo || 
+                        prod.downloadUrl || 
+                        prod.download_url || 
+                        prod.linkMaterial || 
+                        prod.link_material || 
+                        prod.materialUrl || 
+                        prod.ficheiroUrl || 
+                        prod.arquivoUrl || 
+                        prod.fileUrl || 
+                        prod.url || 
+                        prod.link;
 
-            if (downloadUrl && downloadUrl.trim() !== '') {
-                window.open(downloadUrl.trim(), '_blank');
-                showToast('A iniciar download...', 'success');
-            } else {
-                showToast('Link de download não configurado para este item. Solicite no Suporte Chat.', 'warning');
-            }
-        }
-    </script>
+    if (downloadUrl && String(downloadUrl).trim() !== '') {
+        window.open(String(downloadUrl).trim(), '_blank');
+        showToast('A iniciar download...', 'success');
+    } else {
+        showToast('Link de download não configurado para este item. Solicite no Suporte Chat.', 'warning');
+    }
+}
+  
+  </script>
 </body>
 </html>
