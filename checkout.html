@@ -138,6 +138,81 @@
         .phone-container { display: flex; gap: 0.75rem; }
         .select-indicativo { max-width: 140px; cursor: pointer; }
 
+        /* WIDGET DO VÍDEO TUTORIAL FLUTUANTE NA VERTICAL */
+        .floating-video-container {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 9999;
+            width: 220px;
+            background: rgba(18, 18, 24, 0.95);
+            border: 1px solid var(--card-border-hover);
+            border-radius: var(--radius-md);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 15px var(--primary-glow);
+            backdrop-filter: blur(15px);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .floating-video-header {
+            background: rgba(10, 10, 12, 0.9);
+            padding: 0.6rem 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--card-border);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .floating-video-header span {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .floating-video-header i.icon-play {
+            color: var(--primary);
+        }
+
+        .btn-video-toggle {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            padding: 2px 5px;
+        }
+
+        .btn-video-toggle:hover {
+            color: var(--white);
+        }
+
+        .floating-video-body {
+            transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+            max-height: 420px;
+            opacity: 1;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .floating-video-container.minimized .floating-video-body {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .floating-video-body video {
+            width: 100%;
+            height: auto;
+            max-height: 390px;
+            display: block;
+            object-fit: contain;
+        }
+
         .payment-methods-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -364,6 +439,14 @@
             .checkout-box, .order-summary { padding: 1.5rem; }
             .toast-container { right: 50%; transform: translateX(50%); top: 20px; width: calc(100% - 30px); }
             .toast-card { min-width: 100%; }
+            .floating-video-container {
+                width: 160px;
+                bottom: 15px;
+                right: 15px;
+            }
+            .floating-video-header span {
+                font-size: 0.68rem;
+            }
         }
         
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -386,7 +469,26 @@
         </div>
     </header>
 
+    <!-- WIDGET FLUTUANTE DE VÍDEO TUTORIAL (FIXO NA TELA) -->
+    <div class="floating-video-container" id="floatingVideoWidget">
+        <div class="floating-video-header" onclick="toggleFloatingVideo()">
+            <span><i class="fa-solid fa-circle-play icon-play"></i> Como Pagar</span>
+            <div class="floating-video-controls">
+                <button type="button" class="btn-video-toggle" id="btnToggleVideoIcon" title="Minimizar/Expandir">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+            </div>
+        </div>
+        <div class="floating-video-body">
+            <video controls playsinline preload="metadata">
+                <source src="https://res.cloudinary.com/lel7b08p/video/upload/v1790828521/Video_Final.mp4" type="video/mp4">
+                O seu navegador não suporta a exibição de vídeos.
+            </video>
+        </div>
+    </div>
+
     <main class="container">
+        
         <div class="checkout-wrapper">
             
             <div class="checkout-main-col">
@@ -425,7 +527,7 @@
                 <!-- 3. FORMA DE PAGAMENTO -->
                 <section class="checkout-box payment-box">
                     <h2 class="checkout-title"><i class="fa-solid fa-credit-card"></i> Escolha o Método de Pagamento</h2>
-                    
+
                     <div class="payment-methods-grid">
                         <div class="method-card active" data-method="transfer" id="methodTransferCard">
                             <i class="fa-solid fa-building-columns"></i>
@@ -599,6 +701,20 @@
     let originalTotalKz = 0;
     let selectedFileBase64 = null;
     let isFileValidated = false;
+
+    // Função para minimizar ou expandir o vídeo flutuante
+    function toggleFloatingVideo() {
+        const widget = document.getElementById("floatingVideoWidget");
+        const icon = document.querySelector("#btnToggleVideoIcon i");
+        if (!widget) return;
+
+        widget.classList.toggle("minimized");
+        if (widget.classList.contains("minimized")) {
+            if (icon) icon.className = "fa-solid fa-chevron-up";
+        } else {
+            if (icon) icon.className = "fa-solid fa-chevron-down";
+        }
+    }
 
     // Captura parâmetros da URL e inicializa o checkout
     document.addEventListener("DOMContentLoaded", async () => {
