@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Depoimentos em Vídeo & Feedbacks | Loneke no Beat</title>
-    <meta name="description" content="Assista a depoimentos em vídeo e veja feedbacks reais de produtores e alunos da plataforma Loneke no Beat.">
+    <title>Depoimentos em Vídeo | Loneke no Beat</title>
+    <meta name="description" content="Assista a depoimentos em vídeo de produtores e alunos da plataforma Loneke no Beat.">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -104,7 +104,7 @@
 
         .videos-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 2rem;
         }
 
@@ -114,9 +114,6 @@
             overflow: hidden;
             border: 1px solid rgba(255,255,255,0.05);
             transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
         }
 
         .video-card:hover {
@@ -127,9 +124,8 @@
 
         .video-box {
             position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
+            width: 100%;
+            aspect-ratio: 9 / 16;
             background: #000;
         }
 
@@ -142,44 +138,6 @@
             border: none;
         }
 
-        .image-box {
-            width: 100%;
-            height: 260px;
-            background: #080808;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px;
-        }
-
-        .image-box img {
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-            border-radius: 8px;
-            display: block;
-        }
-
-        .video-info {
-            padding: 1.5rem;
-            text-align: center;
-        }
-
-        .video-info h3 {
-            font-family: var(--font-montserrat);
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.4rem;
-        }
-
-        .video-info p {
-            color: var(--text-secondary);
-            font-size: 0.88rem;
-            font-weight: 300;
-        }
-
         footer {
             border-top: 1px solid var(--glass-border);
             padding: 2.5rem 0;
@@ -190,7 +148,7 @@
 
         @media(max-width: 768px) {
             .page-title { font-size: 2.2rem; }
-            .videos-grid { grid-template-columns: 1fr; }
+            .videos-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
         }
     </style>
 </head>
@@ -205,7 +163,7 @@
 
     <main class="section-padding">
         <div class="container">
-            <h1 class="page-title">Galeria de Depoimentos & Feedbacks</h1>
+            <h1 class="page-title">Galeria de Depoimentos em Vídeo</h1>
             <p class="page-subtitle">Assista às experiências reais de alunos e produtores que utilizam nossos produtos e cursos.</p>
 
             <div class="videos-grid" id="depoimentosGrid">
@@ -225,7 +183,7 @@
     <script>
         function getYouTubeEmbedUrl(url) {
             if (!url) return '';
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
             const match = url.match(regExp);
 
             if (match && match[2].length === 11) {
@@ -245,32 +203,14 @@
                 return;
             }
 
-            grid.innerHTML = data.map(item => {
-                if (item.tipo === 'imagem') {
-                    return `
-                        <div class="video-card">
-                            <div class="image-box">
-                                <img src="${item.midia}" alt="${item.autor}" loading="lazy">
-                            </div>
-                            <div class="video-info">
-                                <h3>${item.autor}</h3>
-                                <p>${item.descricao}</p>
-                            </div>
+            grid.innerHTML = data.map((item, index) => {
+                return `
+                    <div class="video-card">
+                        <div class="video-box">
+                            <iframe src="${getYouTubeEmbedUrl(item.midia)}" title="Depoimento ${index + 1}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
-                    `;
-                } else {
-                    return `
-                        <div class="video-card">
-                            <div class="video-box">
-                                <iframe src="${getYouTubeEmbedUrl(item.midia)}" title="${item.autor}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                            </div>
-                            <div class="video-info">
-                                <h3>${item.autor}</h3>
-                                <p>${item.descricao}</p>
-                            </div>
-                        </div>
-                    `;
-                }
+                    </div>
+                `;
             }).join('');
         });
     </script>
