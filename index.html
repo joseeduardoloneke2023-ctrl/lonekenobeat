@@ -185,18 +185,6 @@
             box-shadow: 0 6px 22px rgba(255, 215, 0, 0.4);
         }
 
-        /* --- SKELETON LOADING ANIMATION --- */
-        .skeleton {
-            background: linear-gradient(90deg, #1b1b1b 25%, #252525 50%, #1b1b1b 75%);
-            background-size: 200% 100%;
-            animation: loadingSkeleton 1.5s infinite;
-        }
-
-        @keyframes loadingSkeleton {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
         /* --- HEADER / NAVIGATION --- */
         header {
             position: fixed;
@@ -413,39 +401,7 @@
             font-weight: 500;
         }
 
-        /* --- CAROUSEL TRACK LAYOUTS --- */
-        .carousel-wrapper {
-            position: relative;
-            width: 100%;
-        }
-
-        .carousel-track {
-            display: flex;
-            gap: 2rem;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            padding: 2rem 1.5rem; 
-            margin: -1rem -1rem;
-            scrollbar-width: none;
-        }
-
-        .carousel-track::-webkit-scrollbar {
-            display: none;
-        }
-
-        .carousel-track::after {
-            content: '';
-            min-width: 1.5rem;
-            display: block;
-        }
-
-        .carousel-track .product-card-premium {
-            min-width: 320px;
-            max-width: 320px;
-            scroll-snap-align: start;
-        }
-
-        /* --- SLIDE DE DESTAQUES SLICK-LIKE --- */
+        /* --- SLIDE DE DESTAQUES --- */
         .featured-slider-container {
             position: relative;
             width: 100%;
@@ -553,120 +509,6 @@
             font-weight: 300;
         }
 
-        /* --- WHY BUY WITH US --- */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2.5rem;
-        }
-
-        .feature-item {
-            display: flex;
-            gap: 1.5rem;
-        }
-
-        .feature-icon-box {
-            font-size: 1.5rem;
-            color: var(--primary);
-            margin-top: 0.2rem;
-        }
-
-        .feature-item h5 {
-            font-family: var(--font-montserrat);
-            font-size: 1.15rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .feature-item p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            font-weight: 300;
-        }
-
-        /* --- TESTIMONIALS SLIDER --- */
-        .testimonials-slider-container {
-            position: relative;
-            max-width: 800px;
-            margin: 0 auto;
-            overflow: hidden;
-        }
-
-        .testimonials-track {
-            display: flex;
-            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .testimonial-slide {
-            min-width: 100%;
-            padding: 1rem;
-            box-sizing: border-box;
-            text-align: center;
-        }
-
-        .testimonial-card {
-            background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            padding: 3.5rem;
-            border-radius: 20px;
-            position: relative;
-        }
-
-        .testimonial-stars {
-            color: #FFD700;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-        }
-
-        .testimonial-quote {
-            font-size: 1.25rem;
-            font-weight: 300;
-            font-style: italic;
-            margin-bottom: 2rem;
-            color: var(--white);
-            line-height: 1.6;
-        }
-
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-        }
-
-        .author-info h6 {
-            font-family: var(--font-montserrat);
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .author-info p {
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-        }
-
-        .slider-controls {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .slider-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: rgba(255,255,255,0.2);
-            cursor: pointer;
-            transition: var(--transition-fast);
-        }
-
-        .slider-dot.active {
-            background-color: var(--primary);
-            width: 24px;
-            border-radius: 4px;
-        }
-
         /* --- FAQ ACCORDION --- */
         .faq-container {
             max-width: 750px;
@@ -720,38 +562,6 @@
             padding-bottom: 1.5rem;
         }
 
-        /* --- NEWSLETTER --- */
-        .newsletter-box {
-            background: linear-gradient(135deg, #1b1b1b 0%, #0d0d0d 100%);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: 24px;
-            padding: 4rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .newsletter-form {
-            display: flex;
-            max-width: 550px;
-            margin: 0 auto;
-            background-color: var(--bg);
-            padding: 0.4rem;
-            border-radius: 50px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .newsletter-form input {
-            flex-grow: 1;
-            padding: 0 1.5rem;
-            color: var(--white);
-            font-size: 0.95rem;
-        }
-
-        .newsletter-form input::placeholder {
-            color: rgba(255,255,255,0.4);
-        }
-
         /* --- CONTACT FORM --- */
         .contact-container {
             max-width: 700px;
@@ -773,18 +583,6 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
-        }
-
-        .form-group.full-width {
-            grid-column: span 2;
-        }
-
-        .form-group label {
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .form-control {
@@ -913,7 +711,6 @@
             visibility: visible;
         }
 
-        /* --- SCROLL REVEAL SCENE --- */
         .reveal {
             opacity: 0;
             transform: translateY(30px);
@@ -925,7 +722,7 @@
             transform: translateY(0);
         }
 
-        /* --- NOVO MODELO DE CARDS: PREMIUM GLOW DESIGN --- */
+        /* --- CARDS PREMIUM --- */
         .product-card-premium {
             background: linear-gradient(145deg, #1e1e1e 0%, #121212 100%);
             border-radius: 20px;
@@ -1045,29 +842,6 @@
             color: var(--white);
         }
 
-        .btn-card-action {
-            width: 100%;
-            background: var(--white);
-            color: #000000;
-            padding: 1rem;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            transition: var(--transition-fast);
-        }
-
-        .btn-card-action:hover {
-            background: var(--primary);
-            color: var(--white);
-            box-shadow: 0 8px 20px rgba(229, 9, 20, 0.4);
-        }
-
-        /* --- BOTÃO FLUTUANTE DO CARRINHO --- */
         .floating-cart {
             position: fixed;
             bottom: 2rem;
@@ -1109,13 +883,13 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
-        /* --- ESTILOS COMPLEMENTARES: VIEW DE DETALHES DO PRODUTO --- */
         .detail-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 4rem;
             padding-top: 4rem;
         }
+
         .video-showcase {
             margin-top: 3rem;
             position: relative;
@@ -1126,6 +900,7 @@
             background: #000;
             border: 1px solid var(--glass-border);
         }
+
         .video-showcase iframe {
             position: absolute;
             top: 0;
@@ -1133,6 +908,7 @@
             width: 100%;
             height: 100%;
         }
+
         .suggestion-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -1140,7 +916,7 @@
             margin-top: 3rem;
         }
 
-        /* --- SISTEMA DE TOAST NOTIFICATIONS (PREMIUM) --- */
+        /* TOAST NOTIFICATIONS */
         .toast-container {
             position: fixed;
             top: 24px;
@@ -1151,6 +927,7 @@
             gap: 12px;
             pointer-events: none;
         }
+
         .toast-notification {
             pointer-events: auto;
             background: rgba(27, 27, 27, 0.95);
@@ -1170,12 +947,12 @@
             opacity: 0;
             backdrop-filter: blur(10px);
         }
+
         .toast-notification.show {
             transform: translateX(0);
             opacity: 1;
         }
 
-        /* --- AJUSTE DOS BOTÕES LADO A LADO NOS CARDS --- */
         .card-actions-wrapper {
             display: grid;
             grid-template-columns: 1fr auto;
@@ -1226,14 +1003,55 @@
             box-shadow: 0 8px 20px rgba(46, 196, 182, 0.3);
         }
 
-        /* --- RESPONSIVENESS --- */
-        @media(max-width: 1024px) {
+        /* --- CSS DO CARROSSEL DE DEPOIMENTOS EM VÍDEO --- */
+        .testimonial-slider-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .testimonial-media-card {
+            flex: 0 0 calc((100% - 40px) / 3);
+            box-sizing: border-box;
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .testimonial-media-card:hover {
+            border-color: rgba(229, 9, 20, 0.4);
+            transform: translateY(-4px);
+        }
+
+        .testimonial-video-box {
+            width: 100%;
+            aspect-ratio: 9 / 16;
+            background: #000000;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .testimonial-video-box iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        @media (max-width: 992px) {
             .hero-headline { font-size: 3.2rem; }
             .hero-grid { gap: 2rem; }
             .categories-grid { grid-template-columns: repeat(2, 1fr); }
-            .features-grid { grid-template-columns: repeat(2, 1fr); }
             .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 3rem; }
             .detail-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+            .testimonial-media-card { flex: 0 0 calc((100% - 20px) / 2); }
+        }
+
+        @media (max-width: 650px) {
+            .testimonial-media-card { flex: 0 0 100%; }
         }
 
         @media(max-width: 768px) {
@@ -1263,87 +1081,8 @@
             .hero-visual { order: -1; margin-bottom: 2rem; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 2.5rem; }
             .form-grid { grid-template-columns: 1fr; }
-            .form-group.full-width { grid-column: span 1; }
             .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
-            .testimonial-card { padding: 2rem; }
         }
-
-/* --- CSS DO CARROSSEL DE DEPOIMENTOS (3 CARDS FIXOS E LOOP) --- */
-.testimonial-slider-wrapper {
-    position: relative;
-    width: 100%;
-}
-
-.testimonial-media-card {
-    flex: 0 0 calc((100% - 40px) / 3);
-    box-sizing: border-box;
-    background: var(--card-bg);
-    border-radius: 16px;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: transform 0.3s ease, border-color 0.3s ease;
-}
-
-.testimonial-media-card:hover {
-    border-color: rgba(229, 9, 20, 0.4);
-    transform: translateY(-4px);
-}
-
-.testimonial-img-box {
-    width: 100%;
-    height: 260px;
-    background: #080808;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-}
-
-.testimonial-img-box img {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    border-radius: 8px;
-    display: block;
-}
-
-.testimonial-video-box {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    background: #000000;
-    position: relative;
-    overflow: hidden;
-}
-
-.testimonial-video-box iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-}
-
-.testimonial-info-box {
-    padding: 1.2rem;
-    text-align: center;
-}
-
-@media (max-width: 992px) {
-    .testimonial-media-card {
-        flex: 0 0 calc((100% - 20px) / 2);
-    }
-}
-
-@media (max-width: 650px) {
-    .testimonial-media-card {
-        flex: 0 0 100%;
-    }
-}
-
 </style>
 </head>
 <body>
@@ -1352,14 +1091,10 @@
             <a href="index.html" class="logo">LONEKE NO <span>BEAT</span></a>
             <nav class="nav-menu" id="navMenu">
                 <a href="index.html" class="nav-link">Home</a>
-            
-      
                 <a href="catalogo.html" class="nav-link">Produtos</a>
                 <a href="#features" class="nav-link">Serviços</a>
-             
                 <a href="#about" class="nav-link">Sobre</a>
                 <a href="#contact" class="nav-link">Contato</a>
-       
                 <a href="plataforma/login.html" class="nav-link btn-vip" onclick="showNotification('Acessando Área VIP...', 'fa-crown')">Login</a>
             </nav>
             <div class="menu-toggle" id="menuToggle">
@@ -1382,7 +1117,7 @@
                 <div class="hero-visual reveal">
                     <div class="main-mockup" style="aspect-ratio: 1/1; border-radius: 20px;">
                         <div style="width:100%; height:100%; background: linear-gradient(135deg, #252525 0%, #151515 100%); border-radius:20px; display:flex; align-items:center; justify-content:center;">
-                             <img src="img/loneke.jpg" alt="">       
+                             <img src="img/loneke.jpg" alt="Loneke no Beat">       
                         </div>
                     </div>
                     <div class="floating-element fe-1">
@@ -1403,7 +1138,6 @@
             </div>
         </section>
 
-       
         <section class="stats">
             <div class="container stats-grid">
                 <div class="stat-item">
@@ -1429,7 +1163,6 @@
             <div class="container">
                 <div class="text-center">
                     <h2 class="section-title">Top Produtos Mais Vendidos</h2>
-
                 </div>
                 
                 <div class="featured-slider-container">
@@ -1442,18 +1175,17 @@
             </div>
         </section>
 
-               
-<section id="como-comprar" class="section-padding" style="background-color: #0e0e0e; border-top: 1px solid rgba(255,255,255,0.03);">
-    <div class="container">
-        <div class="text-center">
-            <h2 class="section-title">Aprenda a Comprar no Site</h2>
-            <p class="section-subtitle">Assista ao vídeo e veja como é simples escolher os seus produtos, aplicar o desconto e finalizar a sua compra em poucos segundos.</p>
-        </div>
-        <div class="video-showcase reveal" style="max-width: 850px; margin: 0 auto;">
-            <iframe src="https://www.youtube.com/embed/SEU_ID_DO_VIDEO" title="Como Fazer Compras no Site" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
-    </div>
-</section>
+        <section id="como-comprar" class="section-padding" style="background-color: #0e0e0e; border-top: 1px solid rgba(255,255,255,0.03);">
+            <div class="container">
+                <div class="text-center">
+                    <h2 class="section-title">Aprenda a Comprar no Site</h2>
+                    <p class="section-subtitle">Assista ao vídeo e veja como é simples escolher os seus produtos, aplicar o desconto e finalizar a sua compra em poucos segundos.</p>
+                </div>
+                <div class="video-showcase reveal" style="max-width: 850px; margin: 0 auto;">
+                    <iframe src="https://youtu.be/Qp3CxBQITig" title="Como Fazer Compras no Site" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
+        </section>
 
         <section class="section-padding" style="background-color: #0c0c0c;">
             <div class="container">
@@ -1496,152 +1228,147 @@
             </div>
         </section>
 
-<section class="section-padding" style="background-color: #0c0c0c; position: relative; overflow: hidden;">
-    <div class="container">
-        <div class="text-center">
-            <h2 class="section-title">Aprovado pela Indústria</h2>
-            <p class="section-subtitle">Veja prints de conversas reais de clientes e depoimentos em vídeo de quem utiliza as nossas ferramentas.</p>
-        </div>
+        <!-- SEÇÃO DE DEPOIMENTOS EM VÍDEO -->
+        <section class="section-padding" style="background-color: #0c0c0c; position: relative; overflow: hidden;">
+            <div class="container">
+                <div class="text-center">
+                    <h2 class="section-title">Depoimentos em Vídeo</h2>
+                    <p class="section-subtitle">Veja a experiência de quem utiliza as nossas ferramentas na prática.</p>
+                </div>
 
-        <!-- Carrossel de Depoimentos Misto (Prints e Vídeos) -->
-        <div class="testimonial-slider-wrapper" style="position: relative; max-width: 1200px; margin: 0 auto; padding: 0 50px;">
-            <button class="slider-arrow arrow-left" id="testimonialPrevBtn" style="left: 0; z-index: 10;"><i class="fa-solid fa-chevron-left"></i></button>
-            
-            <div class="testimonial-view-window" style="overflow: hidden; width: 100%; border-radius: 20px; padding: 10px 0;">
-                <div class="testimonial-slider-track" id="testimonialCarouselTrack" style="display: flex; gap: 20px; transition: transform 0.4s ease-in-out; align-items: stretch;">
-                    <!-- Cards injetados via depoimento.js -->
+                <div class="testimonial-slider-wrapper" style="position: relative; max-width: 1200px; margin: 0 auto; padding: 0 50px;">
+                    <button class="slider-arrow arrow-left" id="testimonialPrevBtn" style="left: 0; z-index: 10;"><i class="fa-solid fa-chevron-left"></i></button>
+                    
+                    <div class="testimonial-view-window" style="overflow: hidden; width: 100%; border-radius: 20px; padding: 10px 0;">
+                        <div class="testimonial-slider-track" id="testimonialCarouselTrack" style="display: flex; gap: 20px; transition: transform 0.4s ease-in-out; align-items: stretch;">
+                            <!-- Vídeos injetados via depoimento.js -->
+                        </div>
+                    </div>
+
+                    <button class="slider-arrow arrow-right" id="testimonialNextBtn" style="right: 0; z-index: 10;"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+
+                <div class="text-center" style="margin-top: 2.5rem;">
+                    <a href="depoimentos.html" class="btn btn-primary" onclick="showToast('Abrindo galeria de depoimentos...', 'fa-play-circle')">
+                        Ver Mais Depoimentos em Vídeo <i class="fa-solid fa-circle-play"></i>
+                    </a>
                 </div>
             </div>
+        </section>
 
-            <button class="slider-arrow arrow-right" id="testimonialNextBtn" style="right: 0; z-index: 10;"><i class="fa-solid fa-chevron-right"></i></button>
-        </div>
-
-        <!-- Botão Ver Mais -->
-        <div class="text-center" style="margin-top: 2.5rem;">
-            <a href="depoimentos.html" class="btn btn-primary" onclick="showToast('Abrindo galeria de depoimentos...', 'fa-play-circle')">
-                Ver Mais Depoimentos em Vídeo <i class="fa-solid fa-circle-play"></i>
-            </a>
-        </div>
-    </div>
-</section>
-
-<section class="section-padding">
-    <div class="container">
-        <div class="text-center">
-            <h2 class="section-title">Perguntas Frequentes</h2>
-            <p class="section-subtitle">
-                Tire todas as suas dúvidas sobre os nossos Drum Kits, FLPs, Plugins, Cursos e suporte.
-            </p>
-        </div>
-
-        <div class="faq-container">
-            <!-- Pergunta 1 -->
-            <div class="faq-item reveal">
-                <button class="faq-trigger">
-                    Por que muitos produtores compram os nossos Drum Kits?
-                    <i class="fa-solid fa-chevron-down faq-icon"></i>
-                </button>
-                <div class="faq-content">
-                    <p>
-                        Porque os nossos pacotes são desenvolvidos por quem realmente trabalha diariamente com produção musical. Cada lançamento passa por testes, organização e seleção dos melhores sons para garantir qualidade profissional e facilitar o trabalho dos produtores. Cerca de 75% dos produtores do mercado angolano utilizam os nossos Drum Kits.
+        <section class="section-padding">
+            <div class="container">
+                <div class="text-center">
+                    <h2 class="section-title">Perguntas Frequentes</h2>
+                    <p class="section-subtitle">
+                        Tire todas as suas dúvidas sobre os nossos Drum Kits, FLPs, Plugins, Cursos e suporte.
                     </p>
                 </div>
-            </div>
 
-            <!-- Pergunta 2 -->
-            <div class="faq-item reveal">
-                <button class="faq-trigger">
-                    Os Drum Kits funcionam em qualquer programa de produção musical?
-                    <i class="fa-solid fa-chevron-down faq-icon"></i>
-                </button>
-                <div class="faq-content">
-                    <p>
-                        Sim. Os nossos Drum Kits são disponibilizados principalmente no formato WAV de alta fidelidade (48kHz / 24-bit), sendo 100% compatíveis com FL Studio, Ableton Live, Cubase, Studio One, Logic Pro, Pro Tools, Reaper e qualquer outra DAW.
-                    </p>
+                <div class="faq-container">
+                    <div class="faq-item reveal">
+                        <button class="faq-trigger">
+                            Por que muitos produtores compram os nossos Drum Kits?
+                            <i class="fa-solid fa-chevron-down faq-icon"></i>
+                        </button>
+                        <div class="faq-content">
+                            <p>
+                                Porque os nossos pacotes são desenvolvidos por quem realmente trabalha diariamente com produção musical. Cada lançamento passa por testes, organização e seleção dos melhores sons para garantir qualidade profissional e facilitar o trabalho dos produtores.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item reveal">
+                        <button class="faq-trigger">
+                            Os Drum Kits funcionam em qualquer programa de produção musical?
+                            <i class="fa-solid fa-chevron-down faq-icon"></i>
+                        </button>
+                        <div class="faq-content">
+                            <p>
+                                Sim. Os nossos Drum Kits são disponibilizados principalmente no formato WAV de alta fidelidade (48kHz / 24-bit), sendo 100% compatíveis com FL Studio, Ableton Live, Cubase, Studio One, Logic Pro, Pro Tools, Reaper e qualquer outra DAW.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item reveal">
+                        <button class="faq-trigger">
+                            Quanto tempo leva para receber o produto comprado?
+                            <i class="fa-solid fa-chevron-down faq-icon"></i>
+                        </button>
+                        <div class="faq-content">
+                            <p>
+                                O envio é praticamente imediato após a confirmação do pagamento. Você receberá automaticamente o link de acesso e download direto no seu e-mail e também no seu WhatsApp cadastrado.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item reveal">
+                        <button class="faq-trigger">
+                            Como falar com vocês?
+                            <i class="fa-solid fa-chevron-down faq-icon"></i>
+                        </button>
+                        <div class="faq-content">
+                            <p>
+                                Você pode falar conosco diretamente pelo nosso WhatsApp oficial no número <strong>+244 924 034 159</strong>, pelo e-mail <strong>suporte@lonekenobeat.com</strong> ou preenchendo o formulário de contacto no final desta página.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item reveal">
+                        <button class="faq-trigger">
+                            Como funcionam os cursos online?
+                            <i class="fa-solid fa-chevron-down faq-icon"></i>
+                        </button>
+                        <div class="faq-content">
+                            <p>
+                                Ao adquirir qualquer um dos nossos cursos online, você terá acesso completo a todo o material para fazer download/baixar, incluindo os vídeos dos cursos, programas, drumkits e outras ferramentas essenciais de apoio.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <!-- Pergunta 3 -->
-            <div class="faq-item reveal">
-                <button class="faq-trigger">
-                    Quanto tempo leva para receber o produto comprado?
-                    <i class="fa-solid fa-chevron-down faq-icon"></i>
-                </button>
-                <div class="faq-content">
-                    <p>
-                        O envio é praticamente imediato após a confirmação do pagamento. Você receberá automaticamente o link de acesso e download direto no seu e-mail e também no seu WhatsApp cadastrado.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Pergunta 4 -->
-            <div class="faq-item reveal">
-                <button class="faq-trigger">
-                    Como falar com vocês?
-                    <i class="fa-solid fa-chevron-down faq-icon"></i>
-                </button>
-                <div class="faq-content">
-                    <p>
-                        Você pode falar conosco diretamente pelo nosso WhatsApp oficial no número <strong>+244 924 034 159</strong>, pelo e-mail <strong>suporte@lonekenobeat.com</strong> ou preenchendo o formulário de contacto no final desta página.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Pergunta 5 -->
-            <div class="faq-item reveal">
-                <button class="faq-trigger">
-                    Como funcionam os cursos online?
-                    <i class="fa-solid fa-chevron-down faq-icon"></i>
-                </button>
-                <div class="faq-content">
-                    <p>
-                        Ao adquirir qualquer um dos nossos cursos online, você terá acesso completo a todo o material para fazer download/baixar, incluindo os vídeos dos cursos, programas, drumkits e outras ferramentas essenciais de apoio.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
         <section id="contact" class="section-padding" style="background-color: #0c0c0c;">
-    <div class="container">
-        <div class="text-center">
-            <h2 class="section-title">Fale Conosco</h2>
-            <p class="section-subtitle">
-                Dúvidas comerciais, propostas corporativas ou suporte? Envie-nos uma mensagem pelo WhatsApp.
-            </p>
-        </div>
-
-        <div class="contact-container reveal">
-            <form id="contactForm">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Nome Completo</label>
-                        <input type="text" id="name" class="form-control" placeholder="Ex: José Loneke" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Telefone / WhatsApp</label>
-                        <input type="tel" id="phone" class="form-control" placeholder="+244 9xx xxx xxx" required>
-                    </div>
+            <div class="container">
+                <div class="text-center">
+                    <h2 class="section-title">Fale Conosco</h2>
+                    <p class="section-subtitle">
+                        Dúvidas comerciais, propostas corporativas ou suporte? Envie-nos uma mensagem pelo WhatsApp.
+                    </p>
                 </div>
 
-                <div class="form-grid" style="grid-template-columns:1fr;">
-                    <div class="form-group">
-                        <label>E-mail</label>
-                        <input type="email" id="email" class="form-control" placeholder="email@exemplo.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Mensagem</label>
-                        <textarea id="message" class="form-control" rows="6" placeholder="Escreva a sua mensagem..." required></textarea>
-                    </div>
-                </div>
+                <div class="contact-container reveal">
+                    <form id="contactForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Nome Completo</label>
+                                <input type="text" id="name" class="form-control" placeholder="Ex: José Loneke" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Telefone / WhatsApp</label>
+                                <input type="tel" id="phone" class="form-control" placeholder="+244 9xx xxx xxx" required>
+                            </div>
+                        </div>
 
-                <button type="submit" class="btn btn-primary" style="width:100%; margin-top:20px;">
-                    <i class="fa-brands fa-whatsapp"></i> Enviar pelo WhatsApp
-                </button>
-            </form>
-        </div>
-    </div>
-</section>
+                        <div class="form-grid" style="grid-template-columns:1fr;">
+                            <div class="form-group">
+                                <label>E-mail</label>
+                                <input type="email" id="email" class="form-control" placeholder="email@exemplo.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Mensagem</label>
+                                <textarea id="message" class="form-control" rows="6" placeholder="Escreva a sua mensagem..." required></textarea>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width:100%; margin-top:20px;">
+                            <i class="fa-brands fa-whatsapp"></i> Enviar pelo WhatsApp
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer>
@@ -1655,8 +1382,8 @@
                     <a href="https://www.tiktok.com/@loneke_no_beat_tutoriais" class="social-icon" onclick="showToast('Abrindo nosso TikTok...', 'fa-tiktok')"><i class="fa-brands fa-tiktok"></i></a>
                     <a href="https://www.youtube.com/@LonekenoBeatTutoriais" class="social-icon" onclick="showToast('Abrindo nosso canal no YouTube...', 'fa-youtube')"><i class="fa-brands fa-youtube"></i></a>
                 </div>
-                <p>Email:suporte@lonekenobeat.com</p>
-            <p>Contacto: +244 924 034 159</p>
+                <p>Email: suporte@lonekenobeat.com</p>
+                <p>Contacto: +244 924 034 159</p>
             </div>
             <div class="footer-links">
                 <h7>Navegação</h7>
@@ -1687,11 +1414,8 @@
             </div>
         </div>
         <div class="container footer-bottom">
-            
             <p>&copy; 2026 Loneke no Beat. Todos os direitos reservados. Proibida a redistribuição dos arquivos sem autorização contratual prévia.</p>
-            
         </div>
-        
     </footer>
 
     <div class="scroll-top" id="scrollTopBtn">
@@ -1703,7 +1427,7 @@
     <div class="cart-count-badge" id="cartGlobalCount">0</div>
 </div>
 
-<!-- SDKs do Firebase (Devem vir ANTES do seu script) -->
+<!-- SDKs do Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script src="depoimento.js"></script>
@@ -1712,24 +1436,21 @@
     // ==========================================
     // 1. CONFIGURAÇÃO DO FIREBASE
     // ==========================================
-    // PREENCHA COM OS DADOS DO SEU CONSOLE DO FIREBASE
     const firebaseConfig = {
-    apiKey: "AIzaSyAccxyuNdi_E9Dpz0YPnWZwRC6mBU0AcVo",
-    authDomain: "loneke-site-oficial.firebaseapp.com",
-    projectId: "loneke-site-oficial",
-    storageBucket: "loneke-site-oficial.firebasestorage.app",
-    messagingSenderId: "716824234386",
-    appId: "1:716824234386:web:9bd3a8359ba388eb0dd94b",
-     measurementId: "G-MGJJPNDTM0"
+        apiKey: "AIzaSyAccxyuNdi_E9Dpz0YPnWZwRC6mBU0AcVo",
+        authDomain: "loneke-site-oficial.firebaseapp.com",
+        projectId: "loneke-site-oficial",
+        storageBucket: "loneke-site-oficial.firebasestorage.app",
+        messagingSenderId: "716824234386",
+        appId: "1:716824234386:web:9bd3a8359ba388eb0dd94b",
+        measurementId: "G-MGJJPNDTM0"
     };
 
-    // Inicializa o Firebase
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
     }
     const db = firebase.firestore();
 
-    // Array global onde os produtos do Firestore serão armazenados
     let produtos = [];
     let currentSliderIndex = 0;
 
@@ -1754,7 +1475,6 @@
                 };
             });
 
-            // Após carregar os produtos, inicializa a visualização
             iniciarPagina();
         } catch (error) {
             console.error("Erro ao carregar produtos do Firebase:", error);
@@ -1775,7 +1495,6 @@
         initScrollTop();
         updateCartBadge();
 
-        // Inicia a busca dos produtos no Firestore
         carregarProdutosDoFirebase();
     });
 
@@ -1795,7 +1514,7 @@
     // ==========================================
     function getYouTubeEmbedUrl(url) {
         if (!url) return '';
-        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
         const match = url.match(regExp);
 
         if (match && match[2].length === 11) {
@@ -1987,7 +1706,6 @@
                         </div>
                     </div>
 
-                    <!-- VÍDEO DE DEMONSTRAÇÃO DO PRODUTO -->
                     <div style="margin-top: 5rem;">
                         <h2 class="section-title" style="font-size: 1.8rem; margin-bottom: 0.5rem;"> Vídeo de Demonstração do Produto</h2>
                         <div class="video-showcase">
@@ -1995,7 +1713,6 @@
                         </div>
                     </div>
 
-                    <!-- SUGESTÕES DE OUTROS PRODUTOS -->
                     <div style="margin-top: 6rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 4rem;">
                         <h2 class="section-title" style="font-size: 1.8rem; margin-bottom: 0.5rem;">Quem comprou este item também se interessou por:</h2>
                         <div class="suggestion-grid">
@@ -2124,116 +1841,96 @@
         counters.forEach(counter => observer.observe(counter));
     }
 
+    // ==========================================
+    // DEPOIMENTOS SLIDER (APENAS VÍDEOS)
+    // ==========================================
+    let currentTestimonialIndex = 0;
 
-// ==========================================
-// DEPOIMENTOS SLIDER (3 CARDS E LOOP INFINITO)
-// ==========================================
-let currentTestimonialIndex = 0;
+    function renderDepoimentosCards() {
+        const track = document.getElementById("testimonialCarouselTrack");
+        if (!track) return;
 
-function renderDepoimentosCards() {
-    const track = document.getElementById("testimonialCarouselTrack");
-    if (!track) return;
+        const data = (window.depoimentosData && Array.isArray(window.depoimentosData)) ? window.depoimentosData : [];
+        if (data.length === 0) return;
 
-    // Obtém dados de depoimento.js ou fallback seguro
-    const data = (window.depoimentosData && Array.isArray(window.depoimentosData)) ? window.depoimentosData : [];
-    if (data.length === 0) return;
-
-    track.innerHTML = data.map(item => {
-        if (item.tipo === 'imagem') {
-            return `
-                <div class="testimonial-media-card">
-                    <div class="testimonial-img-box">
-                        <img src="${item.midia}" alt="${item.autor}" loading="lazy">
-                    </div>
-                    <div class="testimonial-info-box">
-                        <h6 style="font-family: var(--font-montserrat); color: var(--white); font-size: 0.95rem; margin-bottom: 0.2rem;">${item.autor}</h6>
-                        <p style="font-size: 0.8rem; color: var(--text-secondary);">${item.descricao}</p>
-                    </div>
-                </div>
-            `;
-        } else {
+        track.innerHTML = data.map((item, index) => {
             return `
                 <div class="testimonial-media-card">
                     <div class="testimonial-video-box">
-                        <iframe src="${getYouTubeEmbedUrl(item.midia)}" title="${item.autor}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <div class="testimonial-info-box">
-                        <h6 style="font-family: var(--font-montserrat); color: var(--white); font-size: 0.95rem; margin-bottom: 0.2rem;">${item.autor}</h6>
-                        <p style="font-size: 0.8rem; color: var(--text-secondary);">${item.descricao}</p>
+                        <iframe src="${getYouTubeEmbedUrl(item.midia)}" title="Depoimento em Vídeo ${index + 1}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     </div>
                 </div>
             `;
-        }
-    }).join('');
+        }).join('');
 
-    updateTestimonialSliderPosition();
-}
-
-function updateTestimonialSliderPosition() {
-    const track = document.getElementById("testimonialCarouselTrack");
-    if (!track || track.children.length === 0) return;
-
-    const firstCard = track.children[0];
-    const cardWidth = firstCard.getBoundingClientRect().width;
-    const gap = 20; // gap no CSS
-
-    const moveDistance = (cardWidth + gap) * currentTestimonialIndex;
-    track.style.transform = `translateX(-${moveDistance}px)`;
-}
-
-function initTestimonialSlider() {
-    renderDepoimentosCards();
-
-    const track = document.getElementById("testimonialCarouselTrack");
-    const prevBtn = document.getElementById("testimonialPrevBtn");
-    const nextBtn = document.getElementById("testimonialNextBtn");
-
-    if (!track) return;
-
-    const getTotalCards = () => track.children.length;
-
-    const getVisibleCards = () => {
-        if (window.innerWidth <= 650) return 1;
-        if (window.innerWidth <= 992) return 2;
-        return 3;
-    };
-
-    if (nextBtn) {
-        nextBtn.onclick = (e) => {
-            e.preventDefault();
-            const total = getTotalCards();
-            const visible = getVisibleCards();
-            const maxIndex = total - visible;
-
-            if (currentTestimonialIndex >= maxIndex) {
-                currentTestimonialIndex = 0; // Loop infinito voltando ao início
-            } else {
-                currentTestimonialIndex++;
-            }
-            updateTestimonialSliderPosition();
-        };
-    }
-
-    if (prevBtn) {
-        prevBtn.onclick = (e) => {
-            e.preventDefault();
-            const total = getTotalCards();
-            const visible = getVisibleCards();
-            const maxIndex = total - visible;
-
-            if (currentTestimonialIndex <= 0) {
-                currentTestimonialIndex = maxIndex > 0 ? maxIndex : 0; // Loop infinito indo para o fim
-            } else {
-                currentTestimonialIndex--;
-            }
-            updateTestimonialSliderPosition();
-        };
-    }
-
-    window.addEventListener("resize", () => {
         updateTestimonialSliderPosition();
-    });
-}
+    }
+
+    function updateTestimonialSliderPosition() {
+        const track = document.getElementById("testimonialCarouselTrack");
+        if (!track || track.children.length === 0) return;
+
+        const firstCard = track.children[0];
+        const cardWidth = firstCard.getBoundingClientRect().width;
+        const gap = 20;
+
+        const moveDistance = (cardWidth + gap) * currentTestimonialIndex;
+        track.style.transform = `translateX(-${moveDistance}px)`;
+    }
+
+    function initTestimonialSlider() {
+        renderDepoimentosCards();
+
+        const track = document.getElementById("testimonialCarouselTrack");
+        const prevBtn = document.getElementById("testimonialPrevBtn");
+        const nextBtn = document.getElementById("testimonialNextBtn");
+
+        if (!track) return;
+
+        const getTotalCards = () => track.children.length;
+
+        const getVisibleCards = () => {
+            if (window.innerWidth <= 650) return 1;
+            if (window.innerWidth <= 992) return 2;
+            return 3;
+        };
+
+        if (nextBtn) {
+            nextBtn.onclick = (e) => {
+                e.preventDefault();
+                const total = getTotalCards();
+                const visible = getVisibleCards();
+                const maxIndex = total - visible;
+
+                if (currentTestimonialIndex >= maxIndex) {
+                    currentTestimonialIndex = 0;
+                } else {
+                    currentTestimonialIndex++;
+                }
+                updateTestimonialSliderPosition();
+            };
+        }
+
+        if (prevBtn) {
+            prevBtn.onclick = (e) => {
+                e.preventDefault();
+                const total = getTotalCards();
+                const visible = getVisibleCards();
+                const maxIndex = total - visible;
+
+                if (currentTestimonialIndex <= 0) {
+                    currentTestimonialIndex = maxIndex > 0 ? maxIndex : 0;
+                } else {
+                    currentTestimonialIndex--;
+                }
+                updateTestimonialSliderPosition();
+            };
+        }
+
+        window.addEventListener("resize", () => {
+            updateTestimonialSliderPosition();
+        });
+    }
 
     function initFaqAccordion() {
         const triggers = document.querySelectorAll(".faq-trigger");
@@ -2286,9 +1983,6 @@ function initTestimonialSlider() {
         });
     }
 
-    // ==========================================
-    // 5. EVENTO DE FORMULÁRIO DE CONTACTO
-    // ==========================================
     document.addEventListener("DOMContentLoaded", () => {
         const contactForm = document.getElementById("contactForm");
         if (contactForm) {
@@ -2327,4 +2021,5 @@ ${mensagem}`;
         }
     });
 </script>
+</body>
 </html>
