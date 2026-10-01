@@ -1,53 +1,18 @@
-// depoimento.js - Fonte de dados dos depoimentos (Prints e Vídeos)
+// depoimento.js - Fonte de dados dos depoimentos em vídeo
 const depoimentosData = [
-    {
-        tipo: 'imagem',
-        midia: 'img/depoimento1.jpg',
-        autor: 'Mateus Pedro',
-        descricao: 'Feedback de cliente via WhatsApp'
-    },
-    {
-        tipo: 'video',
-        midia: 'https://www.youtube.com/embed/SEU_ID_DO_VIDEO_DEPOIMENTO1',
-        autor: 'Edgar Miguel',
-        descricao: 'Depoimento em vídeo do curso de Semba'
-    },
-    {
-        tipo: 'imagem',
-        midia: 'img/depoimento2.jpg',
-        autor: 'João Armando',
-        descricao: 'Comprovativo de resultado após Drumkit'
-    },
-    {
-        tipo: 'video',
-        midia: 'https://www.youtube.com/embed/SEU_ID_DO_VIDEO_DEPOIMENTO2',
-        autor: 'Carlos G.',
-        descricao: 'Review do Drumkit Fariento Afro House'
-    },
-    {
-        tipo: 'imagem',
-        midia: 'img/depoimento3.jpg',
-        autor: 'António Domingos',
-        descricao: 'Feedback sobre o suporte via WhatsApp'
-    },
-    {
-        tipo: 'video',
-        midia: 'https://www.youtube.com/embed/SEU_ID_DO_VIDEO_DEPOIMENTO3',
-        autor: 'Fernando Silva',
-        descricao: 'Instalação de VSTs e experiência'
-    },
-    {
-        tipo: 'imagem',
-        midia: 'img/depoimento4.jpg',
-        autor: 'Daniel M.',
-        descricao: 'Elogio ao Kit Tábua Mista'
-    },
-    {
-        tipo: 'video',
-        midia: 'https://www.youtube.com/embed/SEU_ID_DO_VIDEO_DEPOIMENTO4',
-        autor: 'Samuel Costa',
-        descricao: 'Aluno VIP e mentoria ao vivo'
-    }
+    { midia: 'https://www.youtube.com/embed/0UsuxaPkojc' },
+    { midia: 'https://www.youtube.com/embed/WRSraUKz9JU' },
+    { midia: 'https://www.youtube.com/embed/-GvKYmBzF5o' },
+    { midia: 'https://www.youtube.com/embed/2OxmVlRFXLk' },
+    { midia: 'https://www.youtube.com/embed/_6Tq3FCsbJ0' },
+    { midia: 'https://www.youtube.com/embed/nUDZnap830M' },
+    { midia: 'https://www.youtube.com/embed/j4Om-vAO0sA' },
+    { midia: 'https://www.youtube.com/embed/zKSlxMrExhQ' },
+    { midia: 'https://www.youtube.com/embed/Eptg7BeGsLc' },
+    { midia: 'https://www.youtube.com/embed/k1ZJV-tSgQo' },
+    { midia: 'https://www.youtube.com/embed/t1aFcMC39wM' },
+    { midia: 'https://www.youtube.com/embed/f7rIBZdxbPI' },
+    { midia: 'https://www.youtube.com/embed/DuXxUWylYzA' }
 ];
 
 if (typeof window !== 'undefined') {
