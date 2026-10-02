@@ -87,8 +87,43 @@
         }
         .back-link:hover { color: var(--white); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); }
 
+        /* --- BANNER DE TEMPORIZADOR DE PROMOÇÃO REGRESSIVO --- */
+        .checkout-promo-banner {
+            background: linear-gradient(90deg, #FF0055 0%, #E50914 100%);
+            color: #FFFFFF;
+            text-align: center;
+            padding: 0.75rem 1rem;
+            font-size: 0.88rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            box-shadow: 0 4px 20px rgba(229, 9, 20, 0.4);
+            margin-top: 75px;
+            position: relative;
+            z-index: 999;
+            animation: pulseBannerGlow 2s infinite alternate;
+        }
+
+        @keyframes pulseBannerGlow {
+            from { box-shadow: 0 0 10px rgba(229, 9, 20, 0.3); }
+            to { box-shadow: 0 0 22px rgba(229, 9, 20, 0.7); }
+        }
+
+        .checkout-promo-banner .promo-clock-box {
+            background: #000000;
+            color: #FFD700;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255, 215, 0, 0.4);
+        }
+
         .checkout-wrapper {
-            padding-top: 100px;
+            padding-top: 30px;
             padding-bottom: 5rem;
             display: grid;
             grid-template-columns: 1.25fr 0.75fr;
@@ -465,7 +500,7 @@
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;" onkeydown="if(event.keyCode==123 || (event.ctrlKey && event.shiftKey && (event.keyCode==73 || event.keyCode==74)) || (event.ctrlKey && (event.keyCode==85 || event.keyCode==83))) return false;">
 
     <div class="loading-screen" id="loadingScreen">
         <div class="logo" style="font-size: 2.2rem; margin-bottom: 0.5rem;">LONEKE NO<span> BEAT</span></div>
@@ -481,6 +516,12 @@
             <a href="catalogo.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Voltar ao catálogo</a>
         </div>
     </header>
+
+    <!-- BANNER DE TEMPORIZADOR DE PROMOÇÃO SINCRONIZADO -->
+    <div class="checkout-promo-banner">
+        <span><i class="fa-solid fa-fire-flame-curved"></i> PROMOÇÃO EXCLUSIVA: Garanta seus produtos com desconto antes que expire dia <strong class="promo-date-str">--</strong> às 00h!</span>
+        <span class="promo-clock-str promo-clock-box">00h 00m 00s</span>
+    </div>
 
     <!-- WIDGET FLUTUANTE DE VÍDEO TUTORIAL (FIXO NA TELA) -->
     <div class="floating-video-container" id="floatingVideoWidget">
@@ -707,6 +748,26 @@
 <script src="produtos.js"></script>
 <script src="order_bump_produtos.js"></script>
 <script>
+    // ==========================================
+    // LÓGICA DO TEMPORIZADOR DE PROMOÇÃO PERPÉTUO
+    // ==========================================
+    function updatePromoTimers() {
+        const now = new Date();
+        const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+        const diff = tomorrow - now;
+
+        const hours = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+        const minutes = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
+        const seconds = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
+
+        const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+        const formattedDate = `${tomorrow.getDate()} de ${monthNames[tomorrow.getMonth()]}`;
+
+        document.querySelectorAll('.promo-date-str').forEach(el => el.innerText = formattedDate);
+        document.querySelectorAll('.promo-clock-str').forEach(el => el.innerText = `${hours}h ${minutes}m ${seconds}s`);
+    }
+    setInterval(updatePromoTimers, 1000);
+
     const API_KEY = "pgoo_ireEwBgew0czzifsNGTIQJrokLm4sGUpCHsZafz0";
     const API_URL = "https://rouxavcvorjiwhpjhsye.supabase.co/functions/v1/api-v1";
     const LONEKE_WHATSAPP_NUM = "244924034159";
@@ -754,6 +815,8 @@
     }
 
     document.addEventListener("DOMContentLoaded", async () => {
+        updatePromoTimers();
+
         const urlParams = new URLSearchParams(window.location.search);
         const affCode = urlParams.get('ref') || urlParams.get('aff') || urlParams.get('afiliado');
         if (affCode) {
