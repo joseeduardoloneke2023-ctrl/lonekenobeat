@@ -80,7 +80,7 @@
             pointer-events: none;
         }
 
-        /* PRELOADER OTIMIZADO */
+        /* PRELOADER */
         #preloader {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -435,7 +435,7 @@
                         <div class="stat-icon" style="color:var(--warning); background:rgba(245,158,11,0.1);"><i class="fa-solid fa-clock"></i></div>
                         <div class="stat-info">
                             <h3 id="kpi-sales-pending">0</h3>
-                            <p>Vendas Pendentes</p>
+                            <p>Vendas Pendentes / Análise</p>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -455,12 +455,12 @@
                 </div>
             </section>
 
-            <!-- 2. VIEW DE VENDAS E PRODUTOS PENDENTES DO CHECKOUT -->
+            <!-- 2. VIEW DE VENDAS E PRODUTOS PENDENTES DO CHECKOUT (COM SUPORTE OCR) -->
             <section id="view-pending-sales" class="panel-view">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
                     <div>
-                        <h2 class="view-title"><i class="fa-solid fa-clock-rotate-left" style="color:var(--warning);"></i> Vendas Pendentes (Checkout)</h2>
-                        <p style="color:var(--text-muted); font-size:0.95rem;">Visualize os comprovativos anexados pelos clientes e aprove para liberar o produto automaticamente.</p>
+                        <h2 class="view-title"><i class="fa-solid fa-clock-rotate-left" style="color:var(--warning);"></i> Vendas Pendentes & Análise OCR</h2>
+                        <p style="color:var(--text-muted); font-size:0.95rem;">Visualize os comprovativos e dados extraídos via OCR para aprovação manual e liberação instantânea.</p>
                     </div>
                     <button class="btn-action btn-secondary" onclick="loadPendingSales()">
                         <i class="fa-solid fa-arrows-rotate"></i> Atualizar Lista
@@ -474,9 +474,9 @@
                                 <th>Data / Hora</th>
                                 <th>Cliente / E-mail</th>
                                 <th>WhatsApp</th>
-                                <th>Produto Solicitado</th>
+                                <th>Produto(s) Solicitado(s)</th>
                                 <th>Método / Valor</th>
-                                <th>Comprovativo</th>
+                                <th>Comprovativo / OCR</th>
                                 <th>Estado</th>
                                 <th style="text-align:right;">Ações (Aprovação)</th>
                             </tr>
@@ -551,7 +551,7 @@
             <!-- 5. CHAT SUPPORT VIEW -->
             <section id="view-chat" class="panel-view">
                 <h2 class="view-title"><i class="fa-solid fa-comments" style="color:var(--primary);"></i> Central de Suporte Chat</h2>
-                <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 1.5rem;">Atenda em tempo real os clientes que entram em contacto pela Área do Cliente.</p>
+                <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 1.5rem;">Atenda em tempo real os clientes e visualize alertas do sistema de pagamentos.</p>
 
                 <div class="chat-layout">
                     <div class="chat-sidebar" id="chat-users-list">
@@ -932,8 +932,8 @@
                 .replace(/(^-|-$)+/g, '');
         }
 
-        /* VISUALIZAR COMPROVATIVO E BOTÃO DE APROVAÇÃO RÁPIDA */
-        function viewReceipt(url, txId, email, productId, productTitle) {
+        /* VISUALIZAR COMPROVATIVO COM DADOS OCR EXTRAÍDOS E BOTÃO DE APROVAÇÃO RÁPIDA */
+        function viewReceipt(url, txId, email, productIdsJson, productTitle, receiptDT, receiptRef, flaggedReason) {
             if (!url) {
                 showToast('Nenhum comprovativo anexado a esta transação.', 'warning');
                 return;
@@ -941,11 +941,20 @@
             
             const isImage = typeof url === 'string' && (url.match(/\.(jpeg|jpg|gif|png|webp)($|\?)/i) || url.includes('firebasestorage') || url.startsWith('data:image/'));
 
+            let ocrInfoHtml = `
+                <div style="text-align:left; background:rgba(255,255,255,0.03); padding:12px; border-radius:10px; border:1px solid var(--border-color); margin-top:12px; font-size:0.82rem;">
+                    <div style="color:var(--text-muted); margin-bottom:4px;"><strong>Data/Hora OCR:</strong> ${escapeHtml(receiptDT || 'N/A')}</div>
+                    <div style="color:var(--text-muted); margin-bottom:4px;"><strong>Referência/Código:</strong> ${escapeHtml(receiptRef || 'N/A')}</div>
+                    ${flaggedReason ? `<div style="color:#FF4D4D; margin-top:6px; font-weight:700;"><i class="fa-solid fa-circle-exclamation"></i> Motivo do Alerta: ${escapeHtml(flaggedReason)}</div>` : ''}
+                </div>
+            `;
+
             if (isImage) {
                 Swal.fire({
-                    title: 'Comprovativo de Pagamento',
+                    title: 'Comprovativo & Análise OCR',
                     imageUrl: url,
                     imageAlt: 'Comprovativo enviado pelo cliente',
+                    html: ocrInfoHtml,
                     showCloseButton: true,
                     showCancelButton: true,
                     confirmButtonText: '<i class="fa-solid fa-check"></i> Aprovar Venda Agora',
@@ -955,7 +964,7 @@
                     customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
                 }).then((res) => {
                     if (res.isConfirmed && txId) {
-                        approveCheckoutSale(txId, email, productId, productTitle);
+                        approveCheckoutSale(txId, email, productIdsJson, productTitle);
                     }
                 });
             } else {
@@ -966,6 +975,7 @@
                             <span style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:6px;">DOCUMENTO / REFERÊNCIA:</span>
                             <strong style="font-size:0.95rem; color:var(--info); font-family:monospace; word-break:break-all;">${escapeHtml(url)}</strong>
                         </div>
+                        ${ocrInfoHtml}
                     `,
                     icon: 'info',
                     showCancelButton: true,
@@ -976,7 +986,7 @@
                     customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
                 }).then((res) => {
                     if (res.isConfirmed && txId) {
-                        approveCheckoutSale(txId, email, productId, productTitle);
+                        approveCheckoutSale(txId, email, productIdsJson, productTitle);
                     }
                 });
             }
@@ -1406,14 +1416,14 @@
                         const data = doc.data();
                         const status = (data.status || '').toLowerCase();
                         const isApproved = ['completed', 'approved', 'concluido', 'pago', 'aprovado'].includes(status);
-                        const isPending = ['pending', 'pendente', 'aguardando'].includes(status);
+                        const isPending = ['pending', 'pendente', 'aguardando', 'pending_review'].includes(status);
 
                         if (isPending) pendingCount++;
 
                         if (isApproved) {
                             const txDate = parseFirebaseDate(data.createdAt);
                             if (txDate >= startDate) {
-                                const amount = Number(data.amount || data.numericTotalKz || data.price || data.preco || 0);
+                                const amount = Number(data.amountKz || data.amount || data.numericTotalKz || data.price || data.preco || 0);
                                 totalRevenue += amount;
                             }
                         }
@@ -1447,7 +1457,7 @@
             }).catch(() => document.getElementById('kpi-users').innerText = '0');
         }
 
-        /* VENDAS PENDENTES SINCRO COM CHECKOUT DO CLIENTE */
+        /* VENDAS PENDENTES SINCRO COM CHECKOUT DO CLIENTE E OCR INTELIGENTE */
         function loadPendingSales() {
             const tbody = document.getElementById('pending-sales-table-body');
             if (!tbody) return;
@@ -1469,7 +1479,8 @@
                     snapshot.forEach(doc => {
                         const d = doc.data();
                         docsList.push({ id: doc.id, ...d });
-                        if ((d.status || 'pending').toLowerCase() === 'pending' || (d.status || '').toLowerCase() === 'pendente') {
+                        const st = (d.status || 'pending').toLowerCase();
+                        if (st === 'pending' || st === 'pendente' || st === 'pending_review') {
                             pendingCounter++;
                         }
                     });
@@ -1487,18 +1498,29 @@
                         const email = (t.userEmail || t.customerEmail || t.email || 'N/A').toLowerCase().trim();
                         const phone = t.customerWhatsApp || t.whatsapp || 'N/A';
                         const productTitle = t.productTitle || t.titulo || 'Produto VIP';
-                        const productId = t.productId || t.produtoId || '';
-                        const amount = t.amount || t.numericTotalKz || t.preco || 0;
+                        
+                        // Garante a leitura de múltiplos IDs de produto (Array ou String)
+                        const rawProductIds = t.productIds || t.productId || t.produtoId || '';
+                        const productIdsJson = JSON.stringify(rawProductIds);
+
+                        const amount = t.amountKz || t.amount || t.numericTotalKz || t.preco || 0;
                         const method = t.method || t.paymentMethod || 'Transferência';
                         const status = (t.status || 'pending').toLowerCase();
                         const proof = t.proofUrl || t.receiptFile || t.comprovativo || '';
+
+                        const dtReceipt = t.receiptDateTime || 'N/A';
+                        const refReceipt = t.receiptRef || 'N/A';
+                        const flaggedReason = t.flaggedReason || '';
                         
                         const dateFormatted = t.createdAt ? parseFirebaseDate(t.createdAt).toLocaleString('pt-AO') : 'Recente';
                         const isPending = (status === 'pending' || status === 'pendente' || status === 'aguardando');
+                        const isPendingReview = (status === 'pending_review');
                         const isRejected = (status === 'rejected' || status === 'recusado' || status === 'cancelado');
 
                         let statusBadge = '';
-                        if (isPending) {
+                        if (isPendingReview) {
+                            statusBadge = `<span style="background:rgba(239, 68, 68, 0.2); color:#FF5555; border:1px solid rgba(239, 68, 68, 0.4); padding:4px 10px; border-radius:6px; font-weight:800; font-size:0.75rem;"><i class="fa-solid fa-triangle-exclamation"></i> Análise Manual</span>`;
+                        } else if (isPending) {
                             statusBadge = `<span style="background:rgba(245,158,11,0.15); color:var(--warning); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;"><i class="fa-solid fa-clock"></i> Pendente</span>`;
                         } else if (isRejected) {
                             statusBadge = `<span style="background:rgba(229,9,20,0.15); color:var(--primary); padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.75rem;">Recusado</span>`;
@@ -1507,16 +1529,19 @@
                         }
 
                         const safeEmail = escapeJsArg(email);
-                        const safeProductId = escapeJsArg(productId);
+                        const safeProductIdsJson = escapeJsArg(productIdsJson);
                         const safeProductTitle = escapeJsArg(productTitle);
                         const safeTxId = escapeJsArg(txId);
                         const safeProof = escapeJsArg(proof);
+                        const safeDt = escapeJsArg(dtReceipt);
+                        const safeRef = escapeJsArg(refReceipt);
+                        const safeReason = escapeJsArg(flaggedReason);
 
                         let proofDisplay = '';
                         if (proof) {
                             proofDisplay = `
-                                <button class="btn-action btn-secondary" style="padding: 5px 12px; font-size:0.75rem;" onclick="viewReceipt('${safeProof}', '${safeTxId}', '${safeEmail}', '${safeProductId}', '${safeProductTitle}')">
-                                    <i class="fa-solid fa-image" style="color:var(--info);"></i> Comprovativo
+                                <button class="btn-action btn-secondary" style="padding: 5px 12px; font-size:0.75rem;" onclick="viewReceipt('${safeProof}', '${safeTxId}', '${safeEmail}', '${safeProductIdsJson}', '${safeProductTitle}', '${safeDt}', '${safeRef}', '${safeReason}')">
+                                    <i class="fa-solid fa-image" style="color:var(--info);"></i> Comprovativo & OCR
                                 </button>
                             `;
                         } else {
@@ -1524,7 +1549,7 @@
                         }
 
                         tbody.innerHTML += `
-                            <tr style="${isPending ? 'background: rgba(245, 158, 11, 0.03);' : ''}">
+                            <tr style="${isPendingReview ? 'background: rgba(229, 9, 20, 0.05);' : isPending ? 'background: rgba(245, 158, 11, 0.03);' : ''}">
                                 <td style="font-size:0.8rem; color:var(--text-muted);">${escapeHtml(dateFormatted)}</td>
                                 <td>
                                     <strong style="color:#FFF;">${escapeHtml(t.customerName || t.userName || 'Cliente VIP')}</strong><br>
@@ -1542,8 +1567,8 @@
                                 <td>${statusBadge}</td>
                                 <td style="text-align:right;">
                                     <div style="display:inline-flex; gap:6px; justify-content:flex-end;">
-                                        ${isPending ? `
-                                            <button class="btn-action btn-success" style="padding:6px 14px; font-size:0.78rem;" onclick="approveCheckoutSale('${safeTxId}', '${safeEmail}', '${safeProductId}', '${safeProductTitle}')" title="Aprovar Venda e Liberar Acesso na Área VIP">
+                                        ${(isPending || isPendingReview) ? `
+                                            <button class="btn-action btn-success" style="padding:6px 14px; font-size:0.78rem;" onclick="approveCheckoutSale('${safeTxId}', '${safeEmail}', '${safeProductIdsJson}', '${safeProductTitle}')" title="Aprovar Venda e Liberar Todos os Produtos na Área VIP">
                                                 <i class="fa-solid fa-check"></i> Aprovar
                                             </button>
                                             <button class="btn-action btn-danger" style="padding:6px 10px; font-size:0.78rem;" onclick="rejectCheckoutSale('${safeTxId}')" title="Recusar Venda">
@@ -1565,7 +1590,8 @@
                 });
         }
 
-        async function approveCheckoutSale(txId, email, productId, productTitle) {
+        /* APROVAÇÃO MULTI-PRODUTO COMPATÍVEL COM O CHECKOUT CLIENTE */
+        async function approveCheckoutSale(txId, email, productIdsInput, productTitle) {
             if (!email || email === 'N/A') {
                 showToast('E-mail inválido para liberar acesso.', 'warning');
                 return;
@@ -1582,30 +1608,51 @@
                 await db.collection('transactions').doc(txId).set(updateData, { merge: true }).catch(() => {});
                 await db.collection('orders').doc(txId).set(updateData, { merge: true }).catch(() => {});
 
-                if (productId) {
-                    const cleanDocId = `${cleanEmail.replace(/[^a-z0-9]/gi, '_')}_${productId}`;
-                    await db.collection('user_access').doc(cleanDocId).set({
-                        userEmail: cleanEmail,
-                        productId: productId,
-                        productTitle: productTitle || 'Produto VIP',
-                        status: 'unlocked',
-                        unlocked: true,
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    }, { merge: true });
+                let pIds = [];
+                if (Array.isArray(productIdsInput)) {
+                    pIds = productIdsInput;
+                } else if (typeof productIdsInput === 'string' && productIdsInput.trim() !== '') {
+                    try {
+                        const parsed = JSON.parse(productIdsInput);
+                        if (Array.isArray(parsed)) pIds = parsed;
+                        else pIds = productIdsInput.split(',').map(s => s.trim());
+                    } catch(e) {
+                        pIds = productIdsInput.split(',').map(s => s.trim());
+                    }
+                }
+
+                if (pIds.length > 0) {
+                    const batch = db.batch();
+                    pIds.forEach(pId => {
+                        if (!pId) return;
+                        const cleanDocId = `${cleanEmail.replace(/[^a-z0-9]/gi, '_')}_${pId}`;
+                        const accessRef = db.collection('user_access').doc(cleanDocId);
+                        batch.set(accessRef, {
+                            userEmail: cleanEmail,
+                            productId: pId,
+                            productTitle: productTitle || 'Produto VIP',
+                            status: 'unlocked',
+                            unlocked: true,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        }, { merge: true });
+                    });
 
                     const uQuery = await db.collection('users').where('email', '==', cleanEmail).get();
                     if (!uQuery.empty) {
                         uQuery.forEach(uDoc => {
-                            db.collection('users').doc(uDoc.id).set({
-                                produtos: {
-                                    [productId]: true
-                                }
-                            }, { merge: true });
+                            const userRef = db.collection('users').doc(uDoc.id);
+                            const updateObj = {};
+                            pIds.forEach(pId => {
+                                if (pId) updateObj[`produtos.${pId}`] = true;
+                            });
+                            batch.set(userRef, updateObj, { merge: true });
                         });
                     }
+
+                    await batch.commit();
                 }
 
-                showToast(`Venda aprovada! O produto "${productTitle || 'VIP'}" foi liberado para ${cleanEmail}.`, 'success');
+                showToast(`Venda aprovada! O(s) produto(s) foi(ram) liberado(s) para ${cleanEmail}.`, 'success');
                 loadPendingSales();
             } catch (err) {
                 console.error("Erro ao aprovar venda:", err);
@@ -1627,14 +1674,19 @@
                 if (txDoc.exists) {
                     const data = txDoc.data();
                     const email = (data.userEmail || data.customerEmail || '').toLowerCase().trim();
-                    const pId = data.productId;
-                    if (email && pId) {
-                        const cleanDocId = `${email.replace(/[^a-z0-9]/gi, '_')}_${pId}`;
-                        await db.collection('user_access').doc(cleanDocId).set({
-                            status: 'locked',
-                            unlocked: false,
-                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                        }, { merge: true });
+                    const pIds = data.productIds || (data.productId ? [data.productId] : []);
+
+                    if (email && pIds.length > 0) {
+                        const batch = db.batch();
+                        pIds.forEach(pId => {
+                            const cleanDocId = `${email.replace(/[^a-z0-9]/gi, '_')}_${pId}`;
+                            batch.set(db.collection('user_access').doc(cleanDocId), {
+                                status: 'locked',
+                                unlocked: false,
+                                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                            }, { merge: true });
+                        });
+                        await batch.commit();
                     }
                 }
 
@@ -2187,11 +2239,21 @@
                     snapshot.forEach(doc => {
                         const m = doc.data();
                         const isAdmin = m.sender === 'admin';
-                        box.innerHTML += `
-                            <div style="align-self:${isAdmin ? 'flex-end' : 'flex-start'}; background:${isAdmin ? 'var(--primary)' : 'rgba(255,255,255,0.08)'}; padding:10px 14px; border-radius:12px; max-width:70%; font-size:0.85rem; color:#FFF;">
-                                ${escapeHtml(m.text)}
-                            </div>
-                        `;
+                        const isSystem = m.sender === 'system';
+
+                        if (isSystem) {
+                            box.innerHTML += `
+                                <div style="align-self:center; background:rgba(229, 9, 20, 0.15); border:1px dashed var(--primary); padding:10px 14px; border-radius:12px; max-width:92%; font-size:0.82rem; color:#FFF; margin:6px 0;">
+                                    <div>${escapeHtml(m.text)}</div>
+                                </div>
+                            `;
+                        } else {
+                            box.innerHTML += `
+                                <div style="align-self:${isAdmin ? 'flex-end' : 'flex-start'}; background:${isAdmin ? 'var(--primary)' : 'rgba(255,255,255,0.08)'}; padding:10px 14px; border-radius:12px; max-width:70%; font-size:0.85rem; color:#FFF;">
+                                    ${escapeHtml(m.text)}
+                                </div>
+                            `;
+                        }
                     });
                     box.scrollTop = box.scrollHeight;
                 });
