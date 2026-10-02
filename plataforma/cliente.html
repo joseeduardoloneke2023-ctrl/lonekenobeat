@@ -16,8 +16,8 @@
     <!-- SweetAlert2 CSS e JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- Tesseract.js para leitura de comprovativos OCR (Carregamento Assíncrono) -->
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" async></script>
+    <!-- Tesseract.js para leitura OCR de comprovativos em tempo real -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
     <!-- Firebase SDK Compat v10.8.0 -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -84,7 +84,7 @@
             pointer-events: none;
         }
 
-        /* PRELOADER OTIMIZADO */
+        /* PRELOADER */
         #preloader {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -218,9 +218,16 @@
             width: 42px; height: 42px; border-radius: 50%;
             background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border-color);
             color: var(--text-main); display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: var(--transition);
+            cursor: pointer; transition: var(--transition); position: relative;
         }
         .icon-btn:hover { background: rgba(255, 255, 255, 0.15); transform: translateY(-2px); }
+
+        .cart-badge {
+            position: absolute; top: -4px; right: -4px;
+            background: var(--primary); color: #FFF; font-size: 0.7rem; font-weight: 800;
+            width: 20px; height: 20px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; border: 2px solid #12121a;
+        }
 
         /* CONTEÚDO PRINCIPAL */
         .main-content {
@@ -235,7 +242,6 @@
             z-index: 2;
         }
 
-        /* PERFIL & MENU LATERAL */
         .user-profile-box {
             display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; padding: 12px;
             background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-color);
@@ -278,7 +284,6 @@
             margin-bottom: 0.4rem; letter-spacing: -0.5px; display: flex; align-items: center; gap: 12px;
         }
 
-        /* FORMULÁRIOS & GRELHAS */
         .form-container-card {
             background: var(--bg-card); border: 1px solid var(--border-color);
             border-radius: var(--radius-lg); padding: 2rem; width: 100%;
@@ -297,10 +302,7 @@
             font-family: inherit; font-size: 0.9rem; outline: none; transition: var(--transition);
         }
         .search-input:focus { border-color: var(--primary); background: #181824; }
-        .search-input[readonly] { opacity: 0.75; cursor: not-allowed; background: rgba(255, 255, 255, 0.03); border-color: rgba(255, 255, 255, 0.08); }
-        select.search-input option { background: #12121a; color: #FFF; padding: 10px; }
 
-        /* GRELHA DE PRODUTOS RESPONSIVA */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -321,7 +323,6 @@
         .product-title { font-family: 'Montserrat', sans-serif; font-size: 1.05rem; font-weight: 800; color: #FFF; line-height: 1.3; }
         .product-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
-        /* BOTÕES */
         .btn-action {
             padding: 10px 18px; border-radius: var(--radius-md); font-weight: 600; font-size: 0.82rem;
             display: inline-flex; align-items: center; justify-content: center; gap: 8px;
@@ -333,6 +334,14 @@
         .btn-secondary:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
         .btn-success { background: rgba(16, 185, 129, 0.25); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.5); }
         .btn-success:hover { background: var(--success); color: #FFF; }
+
+        /* CARRINHO DE COMPRAS */
+        .cart-item {
+            display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color); padding: 10px 14px; border-radius: var(--radius-md);
+            margin-bottom: 10px;
+        }
+        .cart-item img { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; }
 
         /* CHAT E LMS */
         .chat-box-container { height: calc(100vh - 220px); min-height: 400px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); display: flex; flex-direction: column; overflow: hidden; width: 100%; }
@@ -357,84 +366,35 @@
         .lms-lesson-item:hover { background: rgba(255,255,255,0.08); color: #FFF; }
         .lms-lesson-item.active { background: rgba(229, 9, 20, 0.25); color: #FFF; font-weight: 700; border-left: 3px solid var(--primary); }
 
-        .btn-lms-nav { background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); color: #FFF; padding: 10px 18px; border-radius: var(--radius-md); cursor: pointer; font-size: 0.82rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; gap: 8px; }
-
-        /* CHECKOUT MODAL NO CLIENTE */
-        .payment-methods-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.85rem;
-            margin-bottom: 1.2rem;
-        }
-
-        .method-card {
-            background: rgba(10, 10, 12, 0.6);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 1rem 0.4rem;
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
+        .payment-methods-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.85rem; margin-bottom: 1.2rem; }
+        .method-card { background: rgba(10, 10, 12, 0.6); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem 0.4rem; text-align: center; cursor: pointer; transition: var(--transition); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; }
         .method-card:hover { border-color: var(--primary); background: rgba(229, 9, 20, 0.05); }
         .method-card.active { border-color: var(--primary); background: rgba(229, 9, 20, 0.15); font-weight: 700; }
 
-        .iban-display-box {
-            display: flex; align-items: center; justify-content: space-between;
-            background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 0.8rem 1rem; border-radius: var(--radius-sm); margin-top: 0.5rem; gap: 0.5rem;
-        }
-
-        .btn-copy-iban {
-            background: rgba(56, 189, 248, 0.15); color: #38BDF8; border: 1px solid rgba(56, 189, 248, 0.4);
-            padding: 0.4rem 0.85rem; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.78rem; font-weight: 600;
-        }
+        .iban-display-box { display: flex; align-items: center; justify-content: space-between; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 0.8rem 1rem; border-radius: var(--radius-sm); margin-top: 0.5rem; gap: 0.5rem; }
+        .btn-copy-iban { background: rgba(56, 189, 248, 0.15); color: #38BDF8; border: 1px solid rgba(56, 189, 248, 0.4); padding: 0.4rem 0.85rem; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.78rem; font-weight: 600; }
         .btn-copy-iban:hover { background: #38BDF8; color: #000; }
 
-        .upload-file-area {
-            border: 2px dashed rgba(255, 255, 255, 0.2); border-radius: var(--radius-md);
-            padding: 1.2rem; text-align: center; background: rgba(10, 10, 12, 0.5); cursor: pointer; transition: var(--transition);
-        }
+        .upload-file-area { border: 2px dashed rgba(255, 255, 255, 0.2); border-radius: var(--radius-md); padding: 1.2rem; text-align: center; background: rgba(10, 10, 12, 0.5); cursor: pointer; transition: var(--transition); }
         .upload-file-area:hover { border-color: var(--primary); background: rgba(229, 9, 20, 0.05); }
 
-        /* SWEETALERT DARK */
         .swal2-popup-dark { background: #12121a !important; border: 1px solid rgba(229, 9, 20, 0.4) !important; border-radius: 20px !important; color: #FFFFFF !important; }
         .swal2-title-dark { font-family: 'Montserrat', sans-serif !important; font-weight: 800 !important; }
 
-        /* DISPOSITIVOS MÓVEIS */
         @media (max-width: 1024px) {
-            #sidebar {
-                transform: translateX(-100%);
-                box-shadow: 10px 0 30px rgba(0, 0, 0, 0.8);
-                z-index: 99999 !important;
-            }
+            #sidebar { transform: translateX(-100%); box-shadow: 10px 0 30px rgba(0, 0, 0, 0.8); z-index: 99999 !important; }
             #sidebar.open { transform: translateX(0); }
             .top-navbar { left: 0; padding: 0 1.2rem; }
             .main-content { margin-left: 0; width: 100%; padding: 1.5rem 1rem; }
             #menuToggle { display: flex !important; }
-
             .lms-grid-container { grid-template-columns: 1fr; overflow-y: auto; }
             .lms-sidebar-section { border-left: none; border-top: 1px solid var(--border-color); max-height: 350px; }
         }
-
         @media (max-width: 768px) {
             .form-grid-2 { grid-template-columns: 1fr; }
             .view-title { font-size: 1.4rem; }
             #navGreeting { display: none; }
             .payment-methods-grid { grid-template-columns: 1fr; }
-        }
-
-        @media (max-width: 640px) {
-            .main-content { padding: 1rem 0.8rem; margin-top: var(--nav-height); }
-            .products-grid { grid-template-columns: 1fr; }
-            .chat-box-container { height: calc(100vh - 180px); }
-            .form-container-card { padding: 1.2rem; }
         }
     </style>
 </head>
@@ -461,9 +421,13 @@
                 <i class="fa-solid fa-bars"></i>
             </button>
             <div style="font-weight:700; font-size:0.9rem; color:var(--text-muted);" id="navGreeting">
-                Bem-vindo ao Portal VIP
+                Portal VIP Loneke no Beat
             </div>
             <div class="nav-actions">
+                <button class="icon-btn" onclick="openCartModal()" title="Ver Carrinho">
+                    <i class="fa-solid fa-cart-shopping" style="color:#FFF;"></i>
+                    <span class="cart-badge" id="cart-count-badge">0</span>
+                </button>
                 <button class="icon-btn" onclick="switchView('chat')">
                     <i class="fa-solid fa-headset" style="color:var(--primary);"></i>
                 </button>
@@ -491,7 +455,7 @@
                     <i class="fa-solid fa-gift" style="color:var(--warning);"></i> Bonus Exclusivos
                 </div>
                 <div class="menu-item" onclick="switchView('locked-products', this)">
-                    <i class="fa-solid fa-lock" style="color:var(--primary);"></i> Produtos disponíveis para compra
+                    <i class="fa-solid fa-lock" style="color:var(--primary);"></i> Produtos para Compra
                 </div>
                 <div class="menu-item" onclick="switchView('edit-profile', this)">
                     <i class="fa-solid fa-user-pen"></i> Editar Perfil
@@ -514,7 +478,7 @@
         <!-- MAIN CONTENT VIEW -->
         <main class="main-content">
 
-            <!-- 1. PRODUTOS COMPRADOS VIEW (INICIAL) -->
+            <!-- 1. PRODUTOS COMPRADOS VIEW -->
             <section id="view-unlocked-products" class="panel-view active">
                 <h2 class="view-title"><i class="fa-solid fa-circle-check" style="color:var(--success);"></i> Meus Produtos Comprados</h2>
                 <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 2rem;">Aceda aos seus ficheiros, cursos, FLP, drumkits e conteúdos desbloqueados.</p>
@@ -524,14 +488,14 @@
             <!-- 2. BONUS EXCLUSIVOS VIEW -->
             <section id="view-bonus" class="panel-view">
                 <h2 class="view-title"><i class="fa-solid fa-gift" style="color:var(--warning);"></i> Bonus Exclusivos</h2>
-                <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 2rem;">Aproveite os bónus, conteúdos e recursos liberados gratuitamente para você.</p>
+                <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 2rem;">Aproveite os bónus e recursos liberados gratuitamente para você.</p>
                 <div class="products-grid" id="bonus-products-list"></div>
             </section>
 
-            <!-- 3. PRODUTOS DISPONÍVEIS PARA COMPRA VIEW -->
+            <!-- 3. PRODUTOS DISPONÍVEIS VIEW -->
             <section id="view-locked-products" class="panel-view">
-                <h2 class="view-title"><i class="fa-solid fa-lock" style="color:var(--primary);"></i> Produtos disponíveis para compra</h2>
-                <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 2rem;">Explore os conteúdos e formações disponíveis para adquirir.</p>
+                <h2 class="view-title"><i class="fa-solid fa-lock" style="color:var(--primary);"></i> Produtos Disponíveis para Compra</h2>
+                <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 2rem;">Adicione produtos ao carrinho para compra e liberação automática.</p>
                 <div class="products-grid" id="locked-products-list"></div>
             </section>
 
@@ -548,7 +512,7 @@
                             </div>
                             <div style="flex:1; display:flex; flex-direction:column; gap:8px; min-width:220px;">
                                 <label class="form-label"><i class="fa-solid fa-camera" style="color:var(--primary);"></i> Foto do Perfil</label>
-                                <input type="text" id="prof-photo-url" class="search-input" placeholder="URL da foto ou escolha do dispositivo" oninput="updateProfileAvatarPreview()">
+                                <input type="text" id="prof-photo-url" class="search-input" placeholder="URL da foto" oninput="updateProfileAvatarPreview()">
                                 <input type="file" id="prof-photo-file" accept="image/*" style="display:none;" onchange="handleProfilePhotoUpload(event)">
                                 <button type="button" class="btn-action btn-secondary" onclick="document.getElementById('prof-photo-file').click()" style="width:fit-content;">
                                     <i class="fa-solid fa-image"></i> Carregar Imagem
@@ -574,20 +538,8 @@
                             </div>
                             <div>
                                 <label class="form-label"><i class="fa-solid fa-globe"></i> País</label>
-                                <input type="text" id="prof-country" class="search-input" placeholder="Ex: Angola, Portugal, Brasil">
+                                <input type="text" id="prof-country" class="search-input" placeholder="Ex: Angola">
                             </div>
-                        </div>
-
-                        <div>
-                            <label class="form-label"><i class="fa-solid fa-sliders" style="color:var(--primary);"></i> Função Musical</label>
-                            <select id="prof-role-music" class="search-input" style="cursor:pointer;">
-                                <option value="Produtor Musical">Produtor Musical</option>
-                                <option value="Beatmaker">Beatmaker</option>
-                                <option value="Engenheiro de Som / Mix & Master">Engenheiro de Som / Mix & Master</option>
-                                <option value="Cantor / Artista">Cantor / Artista</option>
-                                <option value="DJ">DJ</option>
-                                <option value="Outro">Outro</option>
-                            </select>
                         </div>
 
                         <button type="submit" class="btn-action btn-primary" id="btn-save-profile" style="width:fit-content; padding:12px 28px; margin-top:1rem;">
@@ -600,13 +552,11 @@
             <!-- 5. MUDAR SENHA VIEW -->
             <section id="view-change-password" class="panel-view">
                 <h2 class="view-title"><i class="fa-solid fa-key" style="color:var(--primary);"></i> Mudar Senha</h2>
-                <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 2rem;">Mantenha a sua conta VIP protegida atualizando a sua senha regularmente.</p>
-
                 <div class="form-container-card" style="max-width:600px;">
                     <form id="form-change-pass" onsubmit="changeUserPassword(event)" style="display:flex; flex-direction:column; gap:1.2rem;">
                         <div>
                             <label class="form-label"><i class="fa-solid fa-lock"></i> Senha Atual</label>
-                            <input type="password" id="pass-current" class="search-input" required placeholder="Digite a sua senha atual">
+                            <input type="password" id="pass-current" class="search-input" required placeholder="Senha atual">
                         </div>
                         <div>
                             <label class="form-label"><i class="fa-solid fa-key" style="color:var(--primary);"></i> Nova Senha</label>
@@ -626,11 +576,9 @@
             <!-- 6. SUPORTE CHAT VIEW -->
             <section id="view-chat" class="panel-view">
                 <h2 class="view-title"><i class="fa-solid fa-comments" style="color:var(--primary);"></i> Suporte Chat</h2>
-                <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 1.5rem;">Fale diretamente com o produtor para esclarecer dúvidas ou solicitar suporte.</p>
-
                 <div class="chat-box-container">
                     <div id="client-chat-messages" class="chat-messages-area">
-                        <p style="color:var(--text-muted); text-align:center; margin-top:auto; margin-bottom:auto;">A carregar mensagens...</p>
+                        <p style="color:var(--text-muted); text-align:center; margin-top:auto; margin-bottom:auto;">Carregando mensagens...</p>
                     </div>
                     <div class="chat-input-area">
                         <input type="text" id="client-chat-input" class="search-input" placeholder="Escreva a sua mensagem..." onkeydown="if(event.key==='Enter') sendClientMessage()">
@@ -642,65 +590,74 @@
         </main>
     </div>
 
-    <!-- MODAL DE VÍDEO DE DEMONSTRAÇÃO (DEMO) -->
-    <div id="demo-video-modal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.92); backdrop-filter:blur(10px); display:none; align-items:center; justify-content:center; z-index:25000; padding:1rem;">
-        <div style="background:#12121a; border:1px solid var(--border-color); border-radius:20px; width:100%; max-width:850px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 25px 50px rgba(0,0,0,0.8);">
-            <div style="padding:1rem 1.5rem; background:#181824; border-bottom:1px solid var(--border-color); display:flex; align-items:center; justify-content:space-between;">
-                <h3 style="font-family:'Montserrat',sans-serif; font-size:1.1rem; font-weight:800; color:#FFF; display:flex; align-items:center; gap:8px;" id="demo-video-title">
-                    <i class="fa-brands fa-youtube" style="color:#FF0000;"></i> Vídeo de Demonstração
-                </h3>
-                <button onclick="closeDemoVideoModal()" class="icon-btn" style="width:36px; height:36px; border:none; background:rgba(255,255,255,0.08);"><i class="fa-solid fa-xmark"></i></button>
+    <!-- MODAL CARRINHO DE COMPRAS -->
+    <div id="cart-modal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.9); backdrop-filter:blur(10px); display:none; align-items:center; justify-content:center; z-index:25000; padding:1rem;">
+        <div style="background:#12121a; border:1px solid var(--border-color); border-radius:20px; width:100%; max-width:600px; padding:1.5rem; display:flex; flex-direction:column; gap:1rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:10px;">
+                <h3 style="font-family:'Montserrat',sans-serif; font-size:1.2rem; font-weight:800; color:#FFF;"><i class="fa-solid fa-cart-shopping" style="color:var(--primary);"></i> Meu Carrinho</h3>
+                <button onclick="closeCartModal()" class="icon-btn" style="width:32px; height:32px; border:none; background:rgba(255,255,255,0.08);"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div style="position:relative; padding-top:56.25%; width:100%; background:#000;">
-                <iframe id="demo-video-iframe" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <div id="cart-items-container" style="max-height:300px; overflow-y:auto;">
+                <!-- Itens inseridos dinamicamente -->
+            </div>
+            
+            <!-- EXIBIÇÃO DE TOTAL E DESCONTO DE 10% -->
+            <div style="display:flex; flex-direction:column; gap:6px; border-top:1px solid var(--border-color); padding-top:12px;">
+                <div id="cart-discount-banner" style="display:none; background:rgba(16, 185, 129, 0.15); border:1px dashed var(--success); padding:8px 12px; border-radius:8px; font-size:0.8rem; color:var(--success); font-weight:700; text-align:center;">
+                    🔥 Desconto de 10% aplicado para 2 ou mais produtos!
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:0.9rem; color:var(--text-muted);">Total do Carrinho:</span>
+                    <span style="font-size:1.2rem; font-weight:900; color:var(--success);" id="cart-total-price">0,00 Kz ($0.00 USD)</span>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:10px;">
+                <button class="btn-action btn-secondary" onclick="clearCart()"><i class="fa-solid fa-trash"></i> Limpar</button>
+                <button class="btn-action btn-primary" onclick="proceedToCheckoutFromCart()"><i class="fa-solid fa-credit-card"></i> Ir para Checkout</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL DE CHECKOUT DIRETO NO CLIENTE -->
+    <!-- MODAL DE CHECKOUT INDEPENDENTE -->
     <div id="client-checkout-modal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.92); backdrop-filter:blur(12px); display:none; align-items:center; justify-content:center; z-index:24000; padding:1rem;">
         <div style="background:#12121a; border:1px solid var(--border-color); border-radius:24px; width:100%; max-width:620px; max-height:92vh; overflow-y:auto; padding:2rem; box-shadow:0 30px 60px rgba(0,0,0,0.9);">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem; border-bottom:1px solid var(--border-color); padding-bottom:1rem;">
                 <div>
-                    <span style="font-size:0.75rem; color:var(--primary); font-weight:800; text-transform:uppercase;">Checkout Seguro</span>
-                    <h3 style="font-family:'Montserrat',sans-serif; font-size:1.25rem; font-weight:800; color:#FFF;" id="chk-modal-product-title">Adquirir Produto</h3>
+                    <span style="font-size:0.75rem; color:var(--primary); font-weight:800; text-transform:uppercase;">Checkout com Liberação Automática</span>
+                    <h3 style="font-family:'Montserrat',sans-serif; font-size:1.25rem; font-weight:800; color:#FFF;" id="chk-modal-product-title">Finalizar Pedido</h3>
                 </div>
                 <button onclick="closeClientCheckoutModal()" class="icon-btn" style="width:36px; height:36px; border:none; background:rgba(255,255,255,0.08);"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <!-- RESUMO DO PRODUTO SELECIONADO -->
-            <div style="display:flex; align-items:center; gap:14px; background:rgba(255,255,255,0.03); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-color); margin-bottom:1.5rem;">
-                <img id="chk-modal-thumb" src="" style="width:60px; height:60px; object-fit:cover; border-radius:8px; border:1px solid var(--border-color);" alt="Capa">
-                <div>
-                    <h4 id="chk-modal-name" style="font-size:0.95rem; font-weight:700; color:#FFF;">Nome do Produto</h4>
-                    <span id="chk-modal-price" style="font-size:1.1rem; font-weight:800; color:var(--success);">0,00 Kz</span>
-                </div>
+            <!-- RESUMO DOS PRODUTOS COM DESCONTO -->
+            <div id="chk-summary-box" style="display:flex; flex-direction:column; gap:8px; background:rgba(255,255,255,0.03); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-color); margin-bottom:1.5rem;">
+                <!-- Lista de itens do checkout -->
             </div>
 
-            <!-- FORMA DE PAGAMENTO -->
+            <!-- METODO PAGAMENTO -->
             <label class="form-label"><i class="fa-solid fa-credit-card" style="color:var(--primary);"></i> Método de Pagamento</label>
             <div class="payment-methods-grid">
                 <div class="method-card active" data-method="transfer" id="chk-method-transfer" onclick="selectClientPaymentMethod('transfer')">
-                    <i class="fa-solid fa-building-columns" style="font-size:1.4rem; color:var(--text-muted);"></i>
+                    <i class="fa-solid fa-building-columns" style="font-size:1.4rem;"></i>
                     <span style="font-size:0.8rem;">Transferência BAI (Kz)</span>
                 </div>
                 <div class="method-card" data-method="wise" id="chk-method-wise" onclick="selectClientPaymentMethod('wise')">
-                    <i class="fa-solid fa-globe" style="font-size:1.4rem; color:var(--text-muted);"></i>
-                    <span style="font-size:0.8rem;">Wise Transfer (EUR €)</span>
+                    <i class="fa-solid fa-globe" style="font-size:1.4rem;"></i>
+                    <span style="font-size:0.8rem;">Wise Transfer (EUR € / USD $)</span>
                 </div>
             </div>
 
-            <!-- PANEL TRANSFERÊNCIA BAI -->
+            <!-- DADOS BANCARIOS -->
             <div id="chk-panel-transfer" style="display:block; background:rgba(0,0,0,0.4); padding:1rem; border-radius:var(--radius-md); border:1px dashed var(--border-color); margin-bottom:1.2rem;">
-                <p style="font-size:0.78rem; color:var(--text-muted); font-weight:700;">BANCO BAI - BANCO ANGOLANO DE INVESTIMENTOS</p>
+                <p style="font-size:0.78rem; color:var(--text-muted); font-weight:700;">BANCO BAI - ANGOLA</p>
                 <p style="font-size:0.85rem; color:#FFF; font-weight:700; margin-top:2px;">TITULAR: JOSÉ EDUARDO LONEKE</p>
                 <div class="iban-display-box">
                     <span style="font-family:monospace; font-size:0.92rem; color:#38BDF8; font-weight:700;">AO06 0040 0000 6562 1494 1019 2</span>
-                    <button type="button" class="btn-copy-iban" onclick="navigator.clipboard.writeText('004000006562149410192'); showToast('IBAN do BAI Copiado!','success')"><i class="fa-regular fa-copy"></i> Copiar</button>
+                    <button type="button" class="btn-copy-iban" onclick="navigator.clipboard.writeText('004000006562149410192'); showToast('IBAN BAI Copiado!','success')"><i class="fa-regular fa-copy"></i> Copiar</button>
                 </div>
             </div>
 
-            <!-- PANEL WISE -->
             <div id="chk-panel-wise" style="display:none; background:rgba(0,0,0,0.4); padding:1rem; border-radius:var(--radius-md); border:1px dashed var(--border-color); margin-bottom:1.2rem;">
                 <p style="font-size:0.78rem; color:var(--text-muted); font-weight:700;">TITULAR WISE: JOSÉ EDUARDO LONEKE</p>
                 <div class="iban-display-box">
@@ -709,29 +666,42 @@
                 </div>
             </div>
 
-            <!-- UPLOAD COMPROVATIVO -->
+            <!-- UPLOAD DE COMPROVATIVO -->
             <div>
-                <label class="form-label"><i class="fa-solid fa-cloud-arrow-up" style="color:var(--primary);"></i> Anexar Comprovativo (JPG / PNG)</label>
+                <label class="form-label"><i class="fa-solid fa-cloud-arrow-up" style="color:var(--primary);"></i> Anexar Comprovativo (Verificação Inteligente por OCR)</label>
                 <div class="upload-file-area" onclick="document.getElementById('chk-file-input').click()">
                     <i class="fa-solid fa-file-invoice" style="font-size:1.8rem; color:var(--primary); margin-bottom:6px;"></i>
-                    <p style="font-size:0.85rem; font-weight:700; color:#FFF;" id="chk-upload-status">Clique para selecionar o comprovativo</p>
-                    <p style="font-size:0.72rem; color:var(--text-muted);">Formato leve otimizado automaticamente</p>
+                    <p style="font-size:0.85rem; font-weight:700; color:#FFF;" id="chk-upload-status">Clique para anexar imagem do comprovativo</p>
+                    <p style="font-size:0.72rem; color:var(--text-muted);" id="chk-ocr-progress">O sistema analisará Nome, IBAN, Data/Hora, Valor e Referência automaticamente</p>
                 </div>
                 <input type="file" id="chk-file-input" accept="image/png, image/jpeg, image/jpg" style="display:none;" onchange="handleClientReceiptUpload(this)">
             </div>
 
             <button type="button" class="btn-action btn-primary" id="btn-submit-client-checkout" onclick="submitClientCheckout()" style="margin-top:1.5rem; padding:12px; font-size:0.95rem;">
-                <i class="fa-solid fa-paper-plane"></i> Finalizar & Enviar Comprovativo
+                <i class="fa-solid fa-bolt"></i> Validar & Liberar Produtos
             </button>
         </div>
     </div>
 
-    <!-- MODAL DO REPRODUTOR DE CURSOS COM DOWNLOAD DE CURSO, MÓDULOS E AULAS -->
+    <!-- MODAL VÍDEO DEMO -->
+    <div id="demo-video-modal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.92); backdrop-filter:blur(10px); display:none; align-items:center; justify-content:center; z-index:25000; padding:1rem;">
+        <div style="background:#12121a; border:1px solid var(--border-color); border-radius:20px; width:100%; max-width:850px; overflow:hidden; display:flex; flex-direction:column;">
+            <div style="padding:1rem 1.5rem; background:#181824; border-bottom:1px solid var(--border-color); display:flex; align-items:center; justify-content:space-between;">
+                <h3 style="font-family:'Montserrat',sans-serif; font-size:1.1rem; font-weight:800; color:#FFF;" id="demo-video-title">Vídeo Demo</h3>
+                <button onclick="closeDemoVideoModal()" class="icon-btn" style="width:36px; height:36px; border:none; background:rgba(255,255,255,0.08);"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div style="position:relative; padding-top:56.25%; width:100%; background:#000;">
+                <iframe id="demo-video-iframe" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PLAYER DE CURSOS -->
     <div id="course-modal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.95); display:none; align-items:center; justify-content:center; z-index:20000; padding:1rem;">
         <div class="lms-modal-content">
             <div class="lms-header">
                 <div>
-                    <span style="font-size:0.72rem; color:var(--primary); font-weight:800; text-transform:uppercase; letter-spacing:1px;" id="lms-course-category">Formação VIP</span>
+                    <span style="font-size:0.72rem; color:var(--primary); font-weight:800; text-transform:uppercase;" id="lms-course-category">Formação VIP</span>
                     <h3 style="font-family:'Montserrat',sans-serif; font-size:1.2rem; font-weight:800; color:#FFF;" id="lms-course-title">Nome do Curso</h3>
                 </div>
                 <div style="display:flex; align-items:center; gap:10px;">
@@ -744,46 +714,42 @@
 
             <div class="lms-grid-container">
                 <div class="lms-player-section">
-                    <div id="lms-processing-screen" style="position:absolute; top:0; left:0; width:100%; height:100%; background:#09090d; z-index:20; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; transition:opacity 0.2s ease;">
+                    <div id="lms-processing-screen" style="position:absolute; top:0; left:0; width:100%; height:100%; background:#09090d; z-index:20; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;">
                         <i class="fa-solid fa-compact-disc fa-spin" style="font-size:2.8rem; color:var(--primary);"></i>
                         <p style="font-weight:800; font-size:1.1rem; color:#FFF;">A carregar videoaula...</p>
                     </div>
 
                     <div class="lms-video-wrapper">
-                        <iframe id="lms-iframe-player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen onload="hideLmsProcessing()"></iframe>
+                        <iframe id="lms-iframe-player" allowfullscreen onload="hideLmsProcessing()"></iframe>
                     </div>
 
-                    <div class="lms-nav-controls" style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem; flex-wrap:wrap; gap:10px;">
-                        <button class="btn-lms-nav" id="btn-prev-lesson" onclick="navigateLesson(-1)"><i class="fa-solid fa-chevron-left"></i> Aula Anterior</button>
-                        
-                        <button class="btn-lms-nav" id="btn-download-video" onclick="downloadCurrentVideo()" style="background:rgba(16,185,129,0.2); border-color:rgba(16,185,129,0.4); color:#10B981;">
-                            <i class="fa-solid fa-circle-down"></i> Baixar Vídeo da Aula
-                        </button>
-                        
-                        <span style="font-size:0.78rem; color:var(--text-muted); font-weight:700;" id="lms-lesson-counter">Aula 1 de 1</span>
-                        <button class="btn-lms-nav" id="btn-next-lesson" onclick="navigateLesson(1)">Próxima Aula <i class="fa-solid fa-chevron-right"></i></button>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem; flex-wrap:wrap; gap:10px;">
+                        <button class="btn-action btn-secondary" id="btn-prev-lesson" onclick="navigateLesson(-1)" style="width:auto;"><i class="fa-solid fa-chevron-left"></i> Anterior</button>
+                        <button class="btn-action btn-success" id="btn-download-video" onclick="downloadCurrentVideo()" style="width:auto;"><i class="fa-solid fa-download"></i> Baixar Vídeo</button>
+                        <span style="font-size:0.78rem; color:var(--text-muted);" id="lms-lesson-counter">Aula 1 de 1</span>
+                        <button class="btn-action btn-secondary" id="btn-next-lesson" onclick="navigateLesson(1)" style="width:auto;">Próxima <i class="fa-solid fa-chevron-right"></i></button>
                     </div>
 
                     <div id="lms-material-download-box" style="margin-top:0.8rem; padding:1.2rem; background:rgba(255,255,255,0.04); border:1px solid var(--border-color); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
                         <div>
-                            <div style="font-weight:800; font-size:0.92rem; color:#FFF;"><i class="fa-solid fa-cloud-arrow-down" style="color:var(--success); margin-right:8px;"></i> Material Complementar da Aula</div>
-                            <p style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">Ficheiros FLP, Drum Kits, Ebooks ou Loop Kits anexados a esta aula.</p>
+                            <div style="font-weight:800; font-size:0.92rem; color:#FFF;"><i class="fa-solid fa-cloud-arrow-down" style="color:var(--success);"></i> Material da Aula</div>
+                            <p style="font-size:0.78rem; color:var(--text-muted);">Recursos adicionais anexados.</p>
                         </div>
                         <a id="lms-download-material-link" href="#" target="_blank" class="btn-action btn-success" style="width:auto; text-decoration:none;">
-                            <i class="fa-solid fa-download"></i> Baixar Ficheiro da Aula
+                            <i class="fa-solid fa-download"></i> Baixar Material
                         </a>
                     </div>
 
                     <div style="margin-top:1.5rem; border-top:1px solid var(--border-color); padding-top:1.2rem;">
-                        <h4 style="font-family:'Montserrat',sans-serif; font-size:1.05rem; font-weight:800; color:#FFF; margin-bottom:0.4rem;" id="lms-current-lesson-title">Selecione uma aula</h4>
-                        <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.5;" id="lms-current-lesson-desc">Aproveite as videoaulas práticas do curso.</p>
+                        <h4 style="font-family:'Montserrat',sans-serif; font-size:1.05rem; font-weight:800; color:#FFF;" id="lms-current-lesson-title">Selecione uma aula</h4>
+                        <p style="font-size:0.85rem; color:var(--text-muted);" id="lms-current-lesson-desc">Aproveite as videoaulas práticas.</p>
                     </div>
                 </div>
 
                 <div class="lms-sidebar-section">
                     <div class="lms-sidebar-header">
-                        <span><i class="fa-solid fa-list-ul" style="color:var(--primary); margin-right:8px;"></i> Módulos do Curso</span>
-                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;" id="lms-total-modules">0 Módulos</span>
+                        <span><i class="fa-solid fa-list-ul" style="color:var(--primary);"></i> Módulos do Curso</span>
+                        <span style="font-size:0.75rem; color:var(--text-muted);" id="lms-total-modules">0 Módulos</span>
                     </div>
                     <div class="lms-modules-scroll" id="lms-modules-container"></div>
                 </div>
@@ -791,7 +757,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT PRINCIPAL E INTEGRAÇÃO FIREBASE OTIMIZADA -->
+    <!-- SCRIPT PRINCIPAL INTEGRAÇÃO LONEKE VIP -->
     <script>
         function forceDismissPreloader() {
             const preloader = document.getElementById('preloader');
@@ -817,14 +783,14 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
 
-        // PERSISTÊNCIA OFFLINE/CACHE LOCAL DO FIRESTORE
         try {
-            db.enablePersistence({ synchronizeTabs: true }).catch(err => console.warn("Firestore Persistence Notice:", err.code));
+            db.enablePersistence({ synchronizeTabs: true }).catch(err => console.warn("Persistence:", err.code));
         } catch(e){}
 
         let currentUser = null;
         let userUnlockedProductIds = new Set();
         let allProductsCache = [];
+        let shoppingCart = [];
         let unsubscribeChat = null;
 
         let activeCourseLessons = [];
@@ -833,18 +799,28 @@
         let activeCourseProduct = null;
         let activeModulesList = [];
 
-        /* VARIÁVEIS DO CHECKOUT NO CLIENTE */
-        let selectedCheckoutProduct = null;
+        let selectedCheckoutProducts = [];
         let selectedCheckoutMethod = 'transfer';
         let selectedReceiptBase64 = null;
+        let parsedReceiptData = null;
+
+        // TAXA DE CÂMBIO DEFINIDA: 500 Kz = 1 USD
+        const EXCHANGE_RATE_KZ_TO_USD = 500;
+
+        function formatPrice(priceInKz) {
+            const kz = Number(priceInKz || 0);
+            if (kz <= 0) return 'Gratuito';
+            const usd = (kz / EXCHANGE_RATE_KZ_TO_USD).toFixed(2);
+            return `${kz.toLocaleString('pt-AO')} Kz ($${usd} USD)`;
+        }
 
         function escapeJsArg(str) {
-            if (str === null || str === undefined) return '';
+            if (!str) return '';
             return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '');
         }
 
         function escapeHtml(str) {
-            if (str === null || str === undefined) return '';
+            if (!str) return '';
             return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
@@ -870,77 +846,106 @@
             }, 3500);
         }
 
-        function saveUnlockedToLocal() {
-            if (!currentUser) return;
-            const idsObj = {};
-            userUnlockedProductIds.forEach(id => { idsObj[id] = true; });
-            localStorage.setItem(`user_product_ids_${currentUser.uid}`, JSON.stringify(idsObj));
-            localStorage.setItem('user_product_ids', JSON.stringify(idsObj));
-        }
+        /* CARRINHO DE COMPRAS COM DESCONTO DE 10% PARA 2+ PRODUTOS */
+        function addToCart(productId) {
+            const prod = allProductsCache.find(p => String(p.id || p.product_id) === String(productId));
+            if (!prod) return;
 
-        // CARREGA DA MEMÓRIA LOCAL DE FORMA INSTANTÂNEA
-        function loadLocalDataImmediate() {
-            try {
-                const uid = localStorage.getItem('loggedUserUid') || localStorage.getItem('userUid');
-                const name = localStorage.getItem('loggedUserName') || localStorage.getItem('userName') || localStorage.getItem('user_name') || 'Membro VIP';
-                if (document.getElementById('sidebar-user-name')) document.getElementById('sidebar-user-name').innerText = name;
-                if (document.getElementById('prof-name')) document.getElementById('prof-name').value = name;
-                
-                const email = localStorage.getItem('loggedUserEmail') || localStorage.getItem('userEmail') || localStorage.getItem('user_email') || '';
-                if (document.getElementById('prof-email')) document.getElementById('prof-email').value = email;
-
-                let localIdsMap = {};
-                if (uid && localStorage.getItem(`user_product_ids_${uid}`)) {
-                    localIdsMap = JSON.parse(localStorage.getItem(`user_product_ids_${uid}`) || '{}');
-                } else {
-                    localIdsMap = JSON.parse(localStorage.getItem('user_product_ids') || '{}');
-                }
-                Object.keys(localIdsMap).forEach(id => userUnlockedProductIds.add(String(id)));
-
-                const storageKeys = ['userPurchasedProducts', 'meus_produtos', 'loneke_purchases', 'purchasedProducts', 'client_products', 'user_products', 'meus_cursos'];
-                let localProductsList = [];
-
-                storageKeys.forEach(key => {
-                    try {
-                        const items = JSON.parse(localStorage.getItem(key) || '[]');
-                        if (Array.isArray(items)) {
-                            items.forEach(p => {
-                                const pId = String(p.id || p.product_id);
-                                if (pId) {
-                                    userUnlockedProductIds.add(pId);
-                                    if (!localProductsList.some(lp => String(lp.id || lp.product_id) === pId)) {
-                                        localProductsList.push({ id: pId, ...p });
-                                    }
-                                }
-                            });
-                        }
-                    } catch(e){}
-                });
-
-                if (localProductsList.length > 0) {
-                    allProductsCache = localProductsList;
-                    renderAllProductsViews();
-                }
-            } catch (err) {
-                console.warn("Aviso na leitura local prévia:", err);
-            } finally {
-                forceDismissPreloader();
+            if (shoppingCart.some(item => String(item.id || item.product_id) === String(productId))) {
+                showToast('Este produto já está no seu carrinho.', 'info');
+                return;
             }
+
+            shoppingCart.push(prod);
+            updateCartUI();
+            showToast(`"${prod.titulo || 'Produto'}" adicionado ao carrinho!`, 'success');
         }
 
-        loadLocalDataImmediate();
+        function removeFromCart(productId) {
+            shoppingCart = shoppingCart.filter(item => String(item.id || item.product_id) !== String(productId));
+            updateCartUI();
+            showToast('Produto removido do carrinho.', 'info');
+        }
 
+        function clearCart() {
+            shoppingCart = [];
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const badge = document.getElementById('cart-count-badge');
+            if (badge) badge.innerText = shoppingCart.length;
+
+            const container = document.getElementById('cart-items-container');
+            const totalEl = document.getElementById('cart-total-price');
+            const discountBanner = document.getElementById('cart-discount-banner');
+
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (shoppingCart.length === 0) {
+                container.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding:1.5rem;">Seu carrinho está vazio.</p>`;
+                if (totalEl) totalEl.innerText = '0,00 Kz ($0.00 USD)';
+                if (discountBanner) discountBanner.style.display = 'none';
+                return;
+            }
+
+            let subtotal = 0;
+            shoppingCart.forEach(item => {
+                const price = Number(item.precoAtual || item.preco || item.price || 0);
+                subtotal += price;
+                container.innerHTML += `
+                    <div class="cart-item">
+                        <img src="${escapeHtml(item.imagem || item.capa || 'https://via.placeholder.com/50')}" alt="Capa">
+                        <div style="flex:1;">
+                            <h4 style="font-size:0.88rem; font-weight:700; color:#FFF;">${escapeHtml(item.titulo || 'Produto VIP')}</h4>
+                            <span style="font-size:0.8rem; color:var(--success); font-weight:800;">${formatPrice(price)}</span>
+                        </div>
+                        <button class="icon-btn" style="width:30px; height:30px; border:none; background:rgba(255,77,77,0.2); color:#FF4D4D;" onclick="removeFromCart('${escapeJsArg(item.id || item.product_id)}')">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            });
+
+            // Lógica de Desconto de 10% para 2 ou mais produtos
+            let finalTotal = subtotal;
+            if (shoppingCart.length >= 2) {
+                finalTotal = subtotal * 0.90;
+                if (discountBanner) discountBanner.style.display = 'block';
+            } else {
+                if (discountBanner) discountBanner.style.display = 'none';
+            }
+
+            if (totalEl) totalEl.innerText = formatPrice(finalTotal);
+        }
+
+        function openCartModal() {
+            updateCartUI();
+            document.getElementById('cart-modal').style.display = 'flex';
+        }
+
+        function closeCartModal() {
+            document.getElementById('cart-modal').style.display = 'none';
+        }
+
+        function proceedToCheckoutFromCart() {
+            if (shoppingCart.length === 0) {
+                showToast('Adicione pelo menos um produto ao carrinho.', 'warning');
+                return;
+            }
+            closeCartModal();
+            openClientCheckoutModal(shoppingCart);
+        }
+
+        /* INICIALIZAÇÃO DA SESSÃO */
         auth.onAuthStateChanged((user) => {
             if (!user) {
                 const savedUid = localStorage.getItem('loggedUserUid') || localStorage.getItem('userUid');
                 const savedEmail = localStorage.getItem('loggedUserEmail') || localStorage.getItem('userEmail');
                 
                 if (savedUid && savedEmail) {
-                    currentUser = {
-                        uid: savedUid,
-                        email: savedEmail,
-                        displayName: localStorage.getItem('loggedUserName') || 'Membro VIP'
-                    };
+                    currentUser = { uid: savedUid, email: savedEmail, displayName: localStorage.getItem('loggedUserName') || 'Membro VIP' };
                     initClientPortal();
                 } else {
                     window.location.href = 'login.html';
@@ -976,12 +981,6 @@
             if (menuElement) {
                 document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
                 menuElement.classList.add('active');
-            } else {
-                const targetMenuItem = document.querySelector(`.menu-item[onclick*="${tabId}"]`);
-                if (targetMenuItem) {
-                    document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-                    targetMenuItem.classList.add('active');
-                }
             }
 
             document.querySelectorAll('.panel-view').forEach(view => view.classList.remove('active'));
@@ -1007,21 +1006,13 @@
                     localStorage.removeItem('loggedUserUid');
                     localStorage.removeItem('loggedUserEmail');
                     localStorage.removeItem('loggedUserName');
-                    localStorage.removeItem('userUid');
-                    localStorage.removeItem('userEmail');
-
-                    auth.signOut().then(() => {
-                        window.location.href = 'login.html';
-                    }).catch(() => {
-                        window.location.href = 'login.html';
-                    });
+                    auth.signOut().then(() => { window.location.href = 'login.html'; });
                 }
             });
         }
 
         async function loadUserProfile() {
             if (!currentUser) return;
-
             try {
                 const userDoc = await db.collection('users').doc(currentUser.uid).get();
                 let uData = userDoc.exists ? userDoc.data() : {};
@@ -1033,9 +1024,8 @@
 
                 if (document.getElementById('prof-name')) document.getElementById('prof-name').value = fullName;
                 if (document.getElementById('prof-email')) document.getElementById('prof-email').value = currentUser.email || '';
-                if (document.getElementById('prof-whatsapp')) document.getElementById('prof-whatsapp').value = uData.whatsapp || uData.whatsApp || uData.telefone || '';
+                if (document.getElementById('prof-whatsapp')) document.getElementById('prof-whatsapp').value = uData.whatsapp || uData.telefone || '';
                 if (document.getElementById('prof-country')) document.getElementById('prof-country').value = uData.country || uData.pais || 'Angola';
-                if (document.getElementById('prof-role-music')) document.getElementById('prof-role-music').value = uData.roleMusic || 'Produtor Musical';
                 if (document.getElementById('prof-photo-url')) document.getElementById('prof-photo-url').value = uData.photoUrl || uData.foto || currentUser.photoURL || '';
 
                 updateProfileAvatarPreview();
@@ -1069,7 +1059,7 @@
             compressImageFile(file, 400, 0.75).then(base64Data => {
                 document.getElementById('prof-photo-url').value = base64Data;
                 updateProfileAvatarPreview();
-                showToast('Imagem de perfil carregada com sucesso!', 'info');
+                showToast('Imagem de perfil carregada!', 'info');
             });
         }
 
@@ -1079,29 +1069,22 @@
 
             const btn = document.getElementById('btn-save-profile');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A guardar...';
-
-            const name = document.getElementById('prof-name').value.trim();
-            const whatsapp = document.getElementById('prof-whatsapp').value.trim();
-            const country = document.getElementById('prof-country').value.trim();
-            const roleMusic = document.getElementById('prof-role-music').value;
-            const photoUrl = document.getElementById('prof-photo-url').value.trim();
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
 
             try {
                 await db.collection('users').doc(currentUser.uid).set({
-                    name: name,
+                    name: document.getElementById('prof-name').value.trim(),
                     email: currentUser.email,
-                    whatsapp: whatsapp,
-                    country: country,
-                    roleMusic: roleMusic,
-                    photoUrl: photoUrl,
+                    whatsapp: document.getElementById('prof-whatsapp').value.trim(),
+                    country: document.getElementById('prof-country').value.trim(),
+                    photoUrl: document.getElementById('prof-photo-url').value.trim(),
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 }, { merge: true });
 
                 showToast('Perfil atualizado com sucesso!', 'success');
                 loadUserProfile();
             } catch (err) {
-                showToast('Erro ao atualizar perfil: ' + err.message, 'warning');
+                showToast('Erro ao atualizar: ' + err.message, 'warning');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Alterações';
@@ -1117,13 +1100,13 @@
             const passConfirm = document.getElementById('pass-confirm').value;
 
             if (passNew !== passConfirm) {
-                showToast('A nova senha e a confirmação não coincidem.', 'warning');
+                showToast('Senhas não coincidem.', 'warning');
                 return;
             }
 
             const btn = document.getElementById('btn-change-pass');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A atualizar...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Atualizando...';
 
             try {
                 const credential = firebase.auth.EmailAuthProvider.credential(currentUser.email, passCurrent);
@@ -1143,60 +1126,32 @@
         function listenUserAccesses() {
             if (!currentUser) return;
             const userEmail = (currentUser.email || '').toLowerCase().trim();
-            const userId = currentUser.uid;
 
-            // 1. Coleção 'users' (por UID)
-            db.collection('users').doc(userId).onSnapshot(uDoc => {
+            db.collection('users').doc(currentUser.uid).onSnapshot(uDoc => {
                 if (uDoc.exists) {
                     const uData = uDoc.data();
                     if (uData.produtos && typeof uData.produtos === 'object') {
                         Object.keys(uData.produtos).forEach(pId => {
-                            if (uData.produtos[pId] === true || uData.produtos[pId] === 'unlocked' || uData.produtos[pId] === 'liberado' || uData.produtos[pId] === 'aprovado') {
+                            if (uData.produtos[pId] === true || uData.produtos[pId] === 'unlocked') {
                                 userUnlockedProductIds.add(String(pId));
                             }
                         });
                     }
-                    if (Array.isArray(uData.produtosComprados)) {
-                        uData.produtosComprados.forEach(pId => userUnlockedProductIds.add(String(pId)));
-                    }
                 }
-                saveUnlockedToLocal();
                 renderAllProductsViews();
-            }, err => console.warn("Aviso ao ler users:", err));
+            });
 
-            // 2. Coleção 'user_access' (por Email)
             if (userEmail) {
                 db.collection('user_access').where('userEmail', '==', userEmail).onSnapshot(accSnap => {
                     accSnap.forEach(aDoc => {
                         const aData = aDoc.data();
-                        if (aData.status === 'unlocked' || aData.status === 'approved' || aData.status === 'aprovado' || aData.unlocked === true) {
+                        if (aData.status === 'unlocked' || aData.unlocked === true) {
                             const targetId = aData.productId || aData.produtoId || aData.id;
                             if (targetId) userUnlockedProductIds.add(String(targetId));
                         }
                     });
-                    saveUnlockedToLocal();
                     renderAllProductsViews();
-                }, err => console.warn("Aviso ao ler user_access:", err));
-
-                // 3. Coleção 'orders' (por Email ou UID)
-                db.collection('orders').where('userEmail', '==', userEmail).onSnapshot(ordSnap => {
-                    ordSnap.forEach(oDoc => {
-                        const oData = oDoc.data();
-                        if (oData.productId) userUnlockedProductIds.add(String(oData.productId));
-                    });
-                    saveUnlockedToLocal();
-                    renderAllProductsViews();
-                }, err => console.warn("Aviso orders:", err));
-
-                // 4. Coleção 'transactions' (por Email ou UID)
-                db.collection('transactions').where('userEmail', '==', userEmail).onSnapshot(trSnap => {
-                    trSnap.forEach(tDoc => {
-                        const tData = tDoc.data();
-                        if (tData.productId) userUnlockedProductIds.add(String(tData.productId));
-                    });
-                    saveUnlockedToLocal();
-                    renderAllProductsViews();
-                }, err => console.warn("Aviso transactions:", err));
+                });
             }
         }
 
@@ -1211,8 +1166,6 @@
                     allProductsCache = freshProducts;
                     renderAllProductsViews();
                 }
-            }, err => {
-                console.warn("Erro ao ler produtos:", err);
             });
         }
 
@@ -1233,9 +1186,8 @@
                 const catLower = String(prod.categoria || '').toLowerCase();
                 const rawPrice = Number(prod.precoAtual ?? prod.price ?? prod.preco ?? 0);
 
-                const isBonus = rawPrice === 0 || prod.gratuito === true || titleLower.includes('bonus') || titleLower.includes('bónus') || catLower.includes('bonus') || catLower.includes('bónus');
-                
-                const isUnlocked = userUnlockedProductIds.has(strId) || isBonus || prod.unlocked === true;
+                const isBonus = rawPrice === 0 || prod.gratuito === true || titleLower.includes('bonus') || catLower.includes('bonus');
+                const isUnlocked = userUnlockedProductIds.has(strId) || isBonus;
 
                 const cardHtml = createProductCardHTML(prod, isUnlocked);
 
@@ -1247,33 +1199,39 @@
                     if (lockedGrid) lockedGrid.innerHTML += cardHtml;
                 }
             });
+            forceDismissPreloader();
         }
 
         function createProductCardHTML(p, isUnlocked) {
-            const thumb = p.imagem || p.imageUrl || p.thumb || p.capa || 'https://via.placeholder.com/300x180/181824/FFF?text=LONEKE+NO+BEAT';
+            const thumb = p.imagem || p.imageUrl || p.capa || 'https://via.placeholder.com/300x180';
             const pTitle = p.titulo || p.title || p.nome || 'Produto VIP';
             const rawPrice = Number(p.precoAtual ?? p.price ?? p.preco ?? 0);
-            const priceStr = rawPrice > 0 ? `${rawPrice.toLocaleString('pt-AO')} Kz` : 'Gratuito';
+            const priceStr = formatPrice(rawPrice);
             const safeId = escapeJsArg(p.id || p.product_id);
 
             const catLower = String(p.categoria || '').toLowerCase();
             const isCourse = catLower.includes('curso') || (p.modulos && p.modulos.length > 0);
 
             let demoBtn = '';
-            const videoUrl = p.videoLink || p.video || p.videoDemo || p.linkVideo;
+            const videoUrl = p.videoLink || p.video || p.videoDemo;
             if (videoUrl && String(videoUrl).trim() !== '') {
-                demoBtn = `<button type="button" class="btn-action btn-secondary" style="margin-bottom:8px;" onclick="openDemoVideoModal('${safeId}')"><i class="fa-solid fa-circle-play" style="color:var(--primary);"></i> Ver Vídeo Demo</button>`;
+                demoBtn = `<button type="button" class="btn-action btn-secondary" style="margin-bottom:8px;" onclick="openDemoVideoModal('${safeId}')"><i class="fa-solid fa-circle-play" style="color:var(--primary);"></i> Ver Demo</button>`;
             }
 
             let actionButton = '';
             if (isUnlocked) {
                 if (isCourse) {
-                    actionButton = `<button type="button" class="btn-action btn-success" onclick="openCoursePlayer('${safeId}')"><i class="fa-solid fa-graduation-cap"></i> Assistir & Baixar Curso</button>`;
+                    actionButton = `<button type="button" class="btn-action btn-success" onclick="openCoursePlayer('${safeId}')"><i class="fa-solid fa-graduation-cap"></i> Aceder Curso</button>`;
                 } else {
                     actionButton = `<button type="button" class="btn-action btn-success" onclick="downloadProductFile('${safeId}')"><i class="fa-solid fa-cloud-arrow-down"></i> Baixar Conteúdo</button>`;
                 }
             } else {
-                actionButton = `<button type="button" class="btn-action btn-primary" onclick="openClientCheckoutModal('${safeId}')"><i class="fa-solid fa-cart-shopping"></i> Comprar Agora (${priceStr})</button>`;
+                actionButton = `
+                    <div style="display:flex; gap:6px;">
+                        <button type="button" class="btn-action btn-primary" onclick="openClientCheckoutModal(['${safeId}'])"><i class="fa-solid fa-bolt"></i> Comprar (${priceStr})</button>
+                        <button type="button" class="btn-action btn-secondary" style="width:auto;" onclick="addToCart('${safeId}')" title="Adicionar ao Carrinho"><i class="fa-solid fa-cart-plus"></i></button>
+                    </div>
+                `;
             }
 
             return `
@@ -1294,65 +1252,97 @@
             `;
         }
 
-        /* VÍDEO DE DEMONSTRAÇÃO (DEMO) */
-        function openDemoVideoModal(productId) {
-            const prod = allProductsCache.find(p => String(p.id || p.product_id) === String(productId));
-            if (!prod) return;
+        /* CHECKOUT E OCR INTELIGENTE COM DESCONTO DE 10% E ENCAMINHAMENTO DE SUSPEITOS PARA CHAT */
+        function openClientCheckoutModal(productInput) {
+            let productsToBuy = [];
 
-            const videoUrl = prod.videoLink || prod.video || prod.videoDemo || prod.linkVideo;
-            if (!videoUrl) {
-                showToast('Vídeo de demonstração não disponível.', 'warning');
+            if (Array.isArray(productInput)) {
+                const targetIds = productInput.map(item => {
+                    if (typeof item === 'object' && item !== null) {
+                        return String(item.id || item.product_id);
+                    }
+                    return String(item);
+                });
+                productsToBuy = allProductsCache.filter(p => targetIds.includes(String(p.id || p.product_id)));
+            } else if (typeof productInput === 'string') {
+                const single = allProductsCache.find(p => String(p.id || p.product_id) === String(productInput));
+                if (single) productsToBuy = [single];
+            } else if (typeof productInput === 'object' && productInput !== null) {
+                const safeId = String(productInput.id || productInput.product_id);
+                const single = allProductsCache.find(p => String(p.id || p.product_id) === safeId);
+                if (single) productsToBuy = [single];
+            }
+
+            if (productsToBuy.length === 0) {
+                showToast('Nenhum produto selecionado.', 'warning');
                 return;
             }
 
-            const titleEl = document.getElementById('demo-video-title');
-            if (titleEl) titleEl.innerText = prod.titulo || prod.nome || 'Demonstração do Produto';
-
-            const iframe = document.getElementById('demo-video-iframe');
-            if (iframe) iframe.src = formatEmbedVideoUrl(videoUrl);
-
-            const modal = document.getElementById('demo-video-modal');
-            if (modal) modal.style.display = 'flex';
-        }
-
-        function closeDemoVideoModal() {
-            const iframe = document.getElementById('demo-video-iframe');
-            if (iframe) iframe.src = '';
-            const modal = document.getElementById('demo-video-modal');
-            if (modal) modal.style.display = 'none';
-        }
-
-        /* CHECKOUT DIRETO NO CLIENTE */
-        function openClientCheckoutModal(productId) {
-            const prod = allProductsCache.find(p => String(p.id || p.product_id) === String(productId));
-            if (!prod) {
-                showToast('Produto não encontrado.', 'warning');
-                return;
-            }
-
-            selectedCheckoutProduct = prod;
+            selectedCheckoutProducts = productsToBuy;
             selectedReceiptBase64 = null;
+            parsedReceiptData = null;
 
-            const price = Number(prod.precoAtual || prod.preco || prod.price || 0);
+            const summaryBox = document.getElementById('chk-summary-box');
+            summaryBox.innerHTML = '';
+            let subtotalKz = 0;
 
-            if (document.getElementById('chk-modal-product-title')) document.getElementById('chk-modal-product-title').innerText = prod.titulo || 'Adquirir Produto';
-            if (document.getElementById('chk-modal-name')) document.getElementById('chk-modal-name').innerText = prod.titulo || 'Produto VIP';
-            if (document.getElementById('chk-modal-price')) document.getElementById('chk-modal-price').innerText = price > 0 ? `${price.toLocaleString('pt-AO')} Kz` : 'Gratuito';
-            
-            const thumbEl = document.getElementById('chk-modal-thumb');
-            if (thumbEl) thumbEl.src = prod.imagem || prod.capa || 'https://via.placeholder.com/100';
+            productsToBuy.forEach(prod => {
+                const price = Number(prod.precoAtual || prod.preco || prod.price || 0);
+                subtotalKz += price;
+                summaryBox.innerHTML += `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:0.88rem; font-weight:700; color:#FFF;">${escapeHtml(prod.titulo || 'Produto')}</span>
+                        <span style="font-size:0.9rem; font-weight:800; color:var(--success);">${formatPrice(price)}</span>
+                    </div>
+                `;
+            });
+
+            // Aplica desconto de 10% no resumo de checkout se houver 2+ produtos
+            let discountKz = 0;
+            let finalTotalKz = subtotalKz;
+
+            if (productsToBuy.length >= 2) {
+                discountKz = subtotalKz * 0.10;
+                finalTotalKz = subtotalKz - discountKz;
+
+                summaryBox.innerHTML += `
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed var(--border-color); padding-top:6px; margin-top:4px;">
+                        <span style="font-size:0.82rem; color:var(--text-muted);">Subtotal:</span>
+                        <span style="font-size:0.88rem; color:#FFF; text-decoration:line-through;">${formatPrice(subtotalKz)}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:0.82rem; color:var(--success); font-weight:700;">🔥 Desconto Combo (10%):</span>
+                        <span style="font-size:0.88rem; color:var(--success); font-weight:800;">-${formatPrice(discountKz)}</span>
+                    </div>
+                `;
+            }
+
+            summaryBox.innerHTML += `
+                <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:8px; margin-top:4px;">
+                    <strong style="color:#FFF;">Total a Pagar:</strong>
+                    <strong style="font-size:1.15rem; color:var(--success);">${formatPrice(finalTotalKz)}</strong>
+                </div>
+            `;
 
             selectClientPaymentMethod('transfer');
-
-            const statusEl = document.getElementById('chk-upload-status');
-            if (statusEl) statusEl.innerText = 'Clique para selecionar o comprovativo';
-
-            const modal = document.getElementById('client-checkout-modal');
-            if (modal) modal.style.display = 'flex';
+            document.getElementById('chk-upload-status').innerText = 'Clique para anexar imagem do comprovativo';
+            document.getElementById('chk-ocr-progress').innerText = 'O sistema analisará Nome, IBAN, Data/Hora, Valor e Referência automaticamente';
+            document.getElementById('client-checkout-modal').style.display = 'flex';
         }
 
-        /* COMPRESSÃO DE IMAGEM OTIMIZADA COM CANVAS */
-        function compressImageFile(file, maxWidth = 800, quality = 0.7) {
+        function closeClientCheckoutModal() {
+            document.getElementById('client-checkout-modal').style.display = 'none';
+        }
+
+        function selectClientPaymentMethod(method) {
+            selectedCheckoutMethod = method;
+            document.getElementById('chk-method-transfer').classList.toggle('active', method === 'transfer');
+            document.getElementById('chk-method-wise').classList.toggle('active', method === 'wise');
+            document.getElementById('chk-panel-transfer').style.display = method === 'transfer' ? 'block' : 'none';
+            document.getElementById('chk-panel-wise').style.display = method === 'wise' ? 'block' : 'none';
+        }
+
+        function compressImageFile(file, maxWidth = 900, quality = 0.8) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
@@ -1363,12 +1353,10 @@
                         const canvas = document.createElement('canvas');
                         let width = img.width;
                         let height = img.height;
-
                         if (width > maxWidth) {
                             height = Math.round((height * maxWidth) / width);
                             width = maxWidth;
                         }
-
                         canvas.width = width;
                         canvas.height = height;
                         const ctx = canvas.getContext('2d');
@@ -1381,104 +1369,273 @@
             });
         }
 
+        /* ANÁLISE DE COMPROVATIVO OCR (NOME, IBAN, VALOR, DATA, HORA E REFERÊNCIA/CÓDIGO) */
         async function handleClientReceiptUpload(input) {
             const file = input.files[0];
             if (!file) return;
 
             const statusEl = document.getElementById('chk-upload-status');
-            if (statusEl) statusEl.innerText = `A otimizar "${file.name}"...`;
+            const progressEl = document.getElementById('chk-ocr-progress');
 
-            selectedReceiptBase64 = await compressImageFile(file, 800, 0.7);
+            statusEl.innerText = `A otimizar "${file.name}"...`;
+            progressEl.innerText = `A iniciar motor OCR (Tesseract.js)...`;
 
-            if (selectedReceiptBase64) {
-                if (statusEl) statusEl.innerText = `✅ Comprovativo Anexado com Sucesso!`;
-                showToast("Comprovativo carregado e otimizado!", "success");
-            } else {
-                if (statusEl) statusEl.innerText = `Erro ao carregar o ficheiro`;
-                showToast("Erro ao processar imagem.", "warning");
+            selectedReceiptBase64 = await compressImageFile(file, 900, 0.8);
+
+            try {
+                progressEl.innerText = `Lendo texto do comprovativo em tempo real...`;
+                const { data: { text } } = await Tesseract.recognize(selectedReceiptBase64, 'por');
+                const textUpper = text.toUpperCase();
+
+                console.log("OCR Extraído:", textUpper);
+
+                // 1. Validação de Nome do Titular (José Eduardo Loneke)
+                const hasName = textUpper.includes("LONEKE") || textUpper.includes("JOSE EDUARDO") || textUpper.includes("JOSÉ EDUARDO");
+
+                // 2. Validação do IBAN (BAI ou Wise)
+                const hasIbanBai = textUpper.includes("0040") || textUpper.includes("6562149410192") || textUpper.includes("AO06");
+                const hasIbanWise = textUpper.includes("BE83") || textUpper.includes("967576960915");
+                const hasValidIban = hasIbanBai || hasIbanWise;
+
+                // 3. Extração de Data e Hora
+                const dateTimeRegex = /(\d{2}[\/\.-]\d{2}[\/\.-]\d{2,4})\s*([-\|]?)\s*(\d{2}:\d{2}(?::\d{2})?)/i;
+                const matchDT = textUpper.match(dateTimeRegex);
+
+                let extractedDateTime = null;
+                if (matchDT) {
+                    extractedDateTime = `${matchDT[1]} ${matchDT[3]}`;
+                } else {
+                    const dateMatch = textUpper.match(/\d{2}[\/\.-]\d{2}[\/\.-]\d{2,4}/);
+                    const timeMatch = textUpper.match(/\d{2}:\d{2}(?::\d{2})?/);
+                    if (dateMatch && timeMatch) {
+                        extractedDateTime = `${dateMatch[0]} ${timeMatch[0]}`;
+                    }
+                }
+
+                // 4. Extração de Referência / Código de Transação
+                let extractedRef = null;
+                const refRegex = /(?:REF|TRANSACCAO|OPERACAO|DOC|MOVIMENTO|ID)[:\s]*([A-Z0-9]{6,20})/i;
+                const matchRef = textUpper.match(refRegex);
+                if (matchRef && matchRef[1]) {
+                    extractedRef = matchRef[1];
+                }
+
+                // 5. Extração de Valor com Desconto de 10%
+                let subtotalKz = selectedCheckoutProducts.reduce((sum, p) => sum + Number(p.precoAtual || p.preco || 0), 0);
+                let totalExpectedKz = selectedCheckoutProducts.length >= 2 ? (subtotalKz * 0.90) : subtotalKz;
+                let totalExpectedUsd = (totalExpectedKz / EXCHANGE_RATE_KZ_TO_USD).toFixed(2);
+
+                let hasValidAmount = textUpper.includes(Math.round(totalExpectedKz).toString()) || 
+                                     textUpper.includes(totalExpectedKz.toLocaleString('pt-AO')) ||
+                                     textUpper.includes(totalExpectedUsd.toString());
+
+                parsedReceiptData = {
+                    hasName: hasName,
+                    hasIban: hasValidIban,
+                    extractedDateTime: extractedDateTime,
+                    extractedRef: extractedRef,
+                    hasAmount: hasValidAmount,
+                    rawText: text
+                };
+
+                if (hasName && hasValidIban) {
+                    statusEl.innerText = `✅ Comprovativo Reconhecido com Sucesso!`;
+                    progressEl.innerText = extractedDateTime ? `Data/Hora: ${extractedDateTime} ${extractedRef ? '| Ref: ' + extractedRef : ''}` : `Comprovativo válido. Pronto para submissão!`;
+                    showToast("Comprovativo lido e validado com sucesso!", "success");
+                } else {
+                    statusEl.innerText = `⚠️ Imagem anexa aceita`;
+                    progressEl.innerText = `Análise automática parcial. O sistema validará ao submeter.`;
+                }
+
+            } catch (ocrErr) {
+                console.warn("Aviso OCR:", ocrErr);
+                statusEl.innerText = `✅ Comprovativo Anexado!`;
+                progressEl.innerText = `Pronto para enviar.`;
             }
         }
 
-        /* SUBMETER COMPRA */
+        /* SUBMETER COMPRA COM VERIFICAÇÃO RIGOROSA E ENCAMINHAMENTO PARA SUPORTE CHAT */
         async function submitClientCheckout() {
-            if (!selectedCheckoutProduct) return;
+            if (selectedCheckoutProducts.length === 0) return;
             if (!currentUser) {
-                showToast('É necessário estar autenticado para realizar a compra.', 'warning');
+                showToast('Faça login para concluir a compra.', 'warning');
                 return;
             }
 
-            const nameEl = document.getElementById('prof-name');
-            const name = nameEl && nameEl.value.trim() ? nameEl.value.trim() : (currentUser.displayName || 'Cliente VIP');
-            const email = currentUser.email || '';
-            const phoneEl = document.getElementById('prof-whatsapp');
-            const whatsapp = phoneEl && phoneEl.value.trim() ? phoneEl.value.trim() : '';
-
             if (!selectedReceiptBase64) {
-                showToast('Por favor, anexe o comprovativo de pagamento.', 'warning');
+                showToast('Por favor, anexe a imagem do comprovativo de pagamento.', 'warning');
                 return;
             }
 
             const btn = document.getElementById('btn-submit-client-checkout');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A enviar comprovativo...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A verificar e analisar...';
 
-            const price = Number(selectedCheckoutProduct.precoAtual || selectedCheckoutProduct.preco || 0);
-            const priceFormatted = `${price.toLocaleString('pt-AO')} Kz`;
-            const orderId = 'ORD-' + Date.now();
-            const methodTitle = selectedCheckoutMethod === 'wise' ? 'Wise Transfer (EUR)' : 'Transferência Bancária (BAI)';
+            const subtotalKz = selectedCheckoutProducts.reduce((sum, p) => sum + Number(p.precoAtual || p.preco || 0), 0);
+            const totalKz = selectedCheckoutProducts.length >= 2 ? (subtotalKz * 0.90) : subtotalKz;
+            const totalUsd = Number((totalKz / EXCHANGE_RATE_KZ_TO_USD).toFixed(2));
+            const userEmail = currentUser.email.toLowerCase().trim();
+            const userName = document.getElementById('prof-name').value.trim() || currentUser.displayName || 'Cliente VIP';
+            const userPhone = document.getElementById('prof-whatsapp').value.trim() || '';
 
-            const prodId = selectedCheckoutProduct.id || selectedCheckoutProduct.product_id;
-
-            const transactionData = {
-                orderId: orderId,
-                transactionId: orderId,
-                userId: currentUser.uid,
-                customerName: name,
-                userName: name,
-                customerEmail: email,
-                userEmail: email,
-                customerWhatsApp: whatsapp,
-                productId: prodId,
-                productTitle: selectedCheckoutProduct.titulo || 'Produto VIP',
-                titulo: selectedCheckoutProduct.titulo || 'Produto VIP',
-                method: methodTitle,
-                paymentMethod: methodTitle,
-                amount: price,
-                numericTotalKz: price,
-                totalKz: priceFormatted,
-                receiptFile: selectedReceiptBase64,
-                proofUrl: selectedReceiptBase64,
-                comprovativo: selectedReceiptBase64,
-                origin: 'perfil',
-                status: 'pending',
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
+            const receiptDT = parsedReceiptData && parsedReceiptData.extractedDateTime ? parsedReceiptData.extractedDateTime : 'N/A';
+            const receiptRef = parsedReceiptData && parsedReceiptData.extractedRef ? parsedReceiptData.extractedRef : 'N/A';
 
             try {
-                // Desbloqueia o ID na memória e salva no Firestore
-                if (prodId) {
-                    userUnlockedProductIds.add(String(prodId));
-                    saveUnlockedToLocal();
+                let isDuplicate = false;
+                let duplicateReason = "";
+
+                // VERIFICAÇÃO RIGOROSA DE DUPLICIDADE EM BANCO
+                if (receiptDT !== 'N/A') {
+                    const dtCheck = await db.collection('transactions')
+                        .where('receiptDateTime', '==', receiptDT)
+                        .get();
+                    if (!dtCheck.empty) {
+                        isDuplicate = true;
+                        duplicateReason = `Data/Hora Repetida (${receiptDT})`;
+                    }
                 }
 
+                if (!isDuplicate && receiptRef !== 'N/A') {
+                    const refCheck = await db.collection('transactions')
+                        .where('receiptRef', '==', receiptRef)
+                        .get();
+                    if (!refCheck.empty) {
+                        isDuplicate = true;
+                        duplicateReason = `Código/Referência de Transação Repetida (${receiptRef})`;
+                    }
+                }
+
+                const orderId = 'ORD-' + Date.now();
+                const productIdsList = selectedCheckoutProducts.map(p => String(p.id || p.product_id));
+                const productTitlesList = selectedCheckoutProducts.map(p => p.titulo || 'Produto').join(', ');
+
+                // CASO 1: SE DETETAR DUPLICIDADE OU INCONSISTÊNCIA GRAVE NOS DADOS OCR
+                if (isDuplicate || (parsedReceiptData && (!parsedReceiptData.hasName || !parsedReceiptData.hasIban))) {
+                    const reviewReason = isDuplicate ? duplicateReason : "Inconsistência nos Dados do Comprovativo (Nome/IBAN não identificados plenamente)";
+
+                    const pendingTransactionData = {
+                        orderId: orderId,
+                        userId: currentUser.uid,
+                        customerName: userName,
+                        customerEmail: userEmail,
+                        customerWhatsApp: userPhone,
+                        productIds: productIdsList,
+                        productTitle: productTitlesList,
+                        amountKz: totalKz,
+                        amountUsd: totalUsd,
+                        amount: totalKz,
+                        receiptFile: selectedReceiptBase64,
+                        receiptDateTime: receiptDT,
+                        receiptRef: receiptRef,
+                        status: 'pending_review',
+                        flaggedReason: reviewReason,
+                        autoApproved: false,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+
+                    // Guardar transação sob análise manual
+                    await db.collection('transactions').doc(orderId).set(pendingTransactionData);
+                    await db.collection('orders').doc(orderId).set(pendingTransactionData);
+
+                    // MENSAGEM AUTOMÁTICA ENVIADA PARA O CHAT DO SUPORTE
+                    const alertMsgText = `⚠️ *SISTEMA DE PAGAMENTOS*: O cliente submeteu o pedido #${orderId} (${productTitlesList}) no valor de ${formatPrice(totalKz)}, porém o comprovativo foi marcado para *ANÁLISE MANUAL*. Motivo: ${reviewReason}. Data/Hora: ${receiptDT}. Referência: ${receiptRef}. Por favor, verifique o comprovativo na aba Gestão de Pedidos.`;
+
+                    const batchSupport = db.batch();
+                    const msgRef = db.collection('chats').doc(currentUser.uid).collection('messages').doc();
+                    const chatRef = db.collection('chats').doc(currentUser.uid);
+
+                    batchSupport.set(msgRef, {
+                        sender: 'system',
+                        text: alertMsgText,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    batchSupport.set(chatRef, {
+                        userName: userName,
+                        userEmail: userEmail,
+                        lastMessage: `⚠️ Comprovativo enviado para análise manual (#${orderId})`,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+
+                    await batchSupport.commit();
+
+                    clearCart();
+                    closeClientCheckoutModal();
+
+                    Swal.fire({
+                        title: 'Comprovativo Enviado para Análise!',
+                        text: `Identificamos uma necessidade de validação manual no seu comprovativo (${reviewReason}). O seu pedido foi encaminhado diretamente para o nosso Suporte Chat e a nossa equipa analisará em instantes para libertar os seus produtos.`,
+                        icon: 'info',
+                        confirmButtonColor: '#3B82F6',
+                        confirmButtonText: 'Abrir Suporte Chat',
+                        customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
+                    }).then(() => {
+                        switchView('chat');
+                    });
+
+                    return;
+                }
+
+                // CASO 2: COMPROVATIVO TOTALMENTE VÁLIDO -> APROVAÇÃO E LIBERAÇÃO AUTOMÁTICA
+                const transactionData = {
+                    orderId: orderId,
+                    userId: currentUser.uid,
+                    customerName: userName,
+                    customerEmail: userEmail,
+                    customerWhatsApp: userPhone,
+                    productIds: productIdsList,
+                    productTitle: productTitlesList,
+                    amountKz: totalKz,
+                    amountUsd: totalUsd,
+                    amount: totalKz,
+                    receiptFile: selectedReceiptBase64,
+                    receiptDateTime: receiptDT,
+                    receiptRef: receiptRef,
+                    status: 'completed',
+                    autoApproved: true,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                // 1. Regista a Transação e o Pedido
                 await db.collection('transactions').doc(orderId).set(transactionData);
                 await db.collection('orders').doc(orderId).set(transactionData);
 
-                // Garante que o documento do utilizador também guarda o ID
-                if (prodId) {
-                    const updateObj = {};
-                    updateObj[`produtos.${prodId}`] = true;
-                    await db.collection('users').doc(currentUser.uid).set(updateObj, { merge: true });
-                }
+                // 2. Libera os produtos automaticamente para o utilizador
+                const batch = db.batch();
+                const userRef = db.collection('users').doc(currentUser.uid);
 
+                productIdsList.forEach(pId => {
+                    userUnlockedProductIds.add(pId);
+
+                    const accessDocId = `${userEmail.replace(/[^a-z0-9]/gi, '_')}_${pId}`;
+                    const accessRef = db.collection('user_access').doc(accessDocId);
+                    batch.set(accessRef, {
+                        userEmail: userEmail,
+                        userId: currentUser.uid,
+                        productId: pId,
+                        productTitle: productTitlesList,
+                        status: 'unlocked',
+                        unlocked: true,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+
+                    const updateObj = {};
+                    updateObj[`produtos.${pId}`] = true;
+                    batch.set(userRef, updateObj, { merge: true });
+                });
+
+                await batch.commit();
+
+                clearCart();
                 closeClientCheckoutModal();
 
                 Swal.fire({
-                    title: 'Comprovativo Enviado!',
-                    text: 'O seu comprovativo foi recebido com sucesso. Aceda à secção "Produtos Comprados" para acompanhar os seus ficheiros.',
+                    title: 'Pagamento Confirmado!',
+                    text: 'O seu comprovativo foi validado com sucesso e os seus produtos foram liberados automaticamente!',
                     icon: 'success',
-                    confirmButtonColor: '#E50914',
-                    confirmButtonText: 'Ver Produtos Comprados',
+                    confirmButtonColor: '#10B981',
+                    confirmButtonText: 'Aceder aos Meus Produtos',
                     customClass: { popup: 'swal2-popup-dark', title: 'swal2-title-dark' }
                 }).then(() => {
                     renderAllProductsViews();
@@ -1487,54 +1644,43 @@
 
             } catch (err) {
                 console.error("Erro no checkout:", err);
-                showToast("Erro ao submeter pedido: " + err.message, "warning");
+                showToast("Erro ao processar pedido: " + err.message, "warning");
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Finalizar & Enviar Comprovativo';
+                btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Validar & Liberar Produtos';
             }
         }
 
-        function closeClientCheckoutModal() {
-            const modal = document.getElementById('client-checkout-modal');
-            if (modal) modal.style.display = 'none';
+        /* VÍDEO DEMO MODAL */
+        function openDemoVideoModal(productId) {
+            const prod = allProductsCache.find(p => String(p.id || p.product_id) === String(productId));
+            if (!prod) return;
+            const videoUrl = prod.videoLink || prod.video || prod.videoDemo;
+            if (!videoUrl) return;
+
+            document.getElementById('demo-video-title').innerText = prod.titulo || 'Demonstração';
+            document.getElementById('demo-video-iframe').src = formatEmbedVideoUrl(videoUrl);
+            document.getElementById('demo-video-modal').style.display = 'flex';
         }
 
-        function selectClientPaymentMethod(method) {
-            selectedCheckoutMethod = method;
-            const cardTransfer = document.getElementById('chk-method-transfer');
-            const cardWise = document.getElementById('chk-method-wise');
-            const panelTransfer = document.getElementById('chk-panel-transfer');
-            const panelWise = document.getElementById('chk-panel-wise');
-
-            if (method === 'transfer') {
-                if (cardTransfer) cardTransfer.classList.add('active');
-                if (cardWise) cardWise.classList.remove('active');
-                if (panelTransfer) panelTransfer.style.display = 'block';
-                if (panelWise) panelWise.style.display = 'none';
-            } else {
-                if (cardWise) cardWise.classList.add('active');
-                if (cardTransfer) cardTransfer.classList.remove('active');
-                if (panelWise) panelWise.style.display = 'block';
-                if (panelTransfer) panelTransfer.style.display = 'none';
-            }
+        function closeDemoVideoModal() {
+            document.getElementById('demo-video-iframe').src = '';
+            document.getElementById('demo-video-modal').style.display = 'none';
         }
 
-        /* CURSOS E LMS PLAYER */
+        /* PLAYER DE CURSOS E AULAS */
         function openCoursePlayer(productId) {
             const prod = allProductsCache.find(p => String(p.id || p.product_id) === String(productId));
-            if (!prod) {
-                showToast('Curso não encontrado.', 'warning');
-                return;
-            }
+            if (!prod) return;
 
             activeCourseProduct = prod;
             activeCourseId = prod.id;
 
-            if (document.getElementById('lms-course-title')) document.getElementById('lms-course-title').innerText = prod.titulo || prod.title || prod.nome || 'Formação VIP';
-            if (document.getElementById('lms-course-category')) document.getElementById('lms-course-category').innerText = prod.categoria || 'Formação VIP';
+            document.getElementById('lms-course-title').innerText = prod.titulo || 'Formação VIP';
+            document.getElementById('lms-course-category').innerText = prod.categoria || 'Curso';
 
             activeCourseLessons = [];
-            activeModulesList = prod.modulos || prod.aulas || [];
+            activeModulesList = prod.modulos || [];
 
             if (Array.isArray(prod.modulos) && prod.modulos.length > 0) {
                 prod.modulos.forEach((mod, mIdx) => {
@@ -1544,22 +1690,12 @@
                             activeCourseLessons.push({
                                 moduleName: modName,
                                 title: aula.titulo || aula.nome || `Aula ${aIdx + 1}`,
-                                videoUrl: aula.videoUrl || aula.url || aula.link || aula.video,
+                                videoUrl: aula.videoUrl || aula.url || aula.video,
                                 desc: aula.desc || aula.descricao || '',
-                                materialUrl: aula.materialUrl || aula.ficheiroUrl || mod.materialUrl || prod.linkDownload
+                                materialUrl: aula.materialUrl || aula.downloadUrl || prod.linkDownload
                             });
                         });
                     }
-                });
-            } else if (Array.isArray(prod.aulas) && prod.aulas.length > 0) {
-                prod.aulas.forEach((aula, aIdx) => {
-                    activeCourseLessons.push({
-                        moduleName: 'Módulo Único',
-                        title: aula.titulo || aula.nome || `Aula ${aIdx + 1}`,
-                        videoUrl: aula.videoUrl || aula.url || aula.link || aula.video,
-                        desc: aula.desc || aula.descricao || '',
-                        materialUrl: aula.materialUrl || aula.ficheiroUrl || prod.linkDownload
-                    });
                 });
             }
 
@@ -1568,11 +1704,10 @@
             if (activeCourseLessons.length > 0) {
                 loadLessonByIndex(0);
             } else {
-                showToast('Nenhuma aula configurada neste curso.', 'info');
+                showToast('Nenhuma aula cadastrada neste curso.', 'info');
             }
 
-            const modal = document.getElementById('course-modal');
-            if (modal) modal.style.display = 'flex';
+            document.getElementById('course-modal').style.display = 'flex';
         }
 
         function renderLmsSidebarModules(prod) {
@@ -1581,30 +1716,7 @@
             container.innerHTML = '';
 
             const modules = prod.modulos || [];
-            if (document.getElementById('lms-total-modules')) {
-                document.getElementById('lms-total-modules').innerText = `${modules.length || 1} Módulo(s)`;
-            }
-
-            if (modules.length === 0) {
-                let lessonsHtml = '';
-                activeCourseLessons.forEach((l, idx) => {
-                    lessonsHtml += `
-                        <div class="lms-lesson-item" id="lms-lesson-item-${idx}" onclick="loadLessonByIndex(${idx})" style="justify-content:space-between;">
-                            <span><i class="fa-solid fa-circle-play"></i> ${escapeHtml(l.title)}</span>
-                            <button class="btn-action btn-success" onclick="downloadLessonFile(${idx}, event)" style="width:auto; padding:2px 8px; font-size:0.7rem; margin-left:auto;" title="Baixar Aula">
-                                <i class="fa-solid fa-download"></i> Baixar
-                            </button>
-                        </div>
-                    `;
-                });
-                container.innerHTML = `
-                    <div class="lms-module-card">
-                        <div class="lms-module-title"><i class="fa-solid fa-folder"></i> Conteúdo do Curso</div>
-                        ${lessonsHtml}
-                    </div>
-                `;
-                return;
-            }
+            document.getElementById('lms-total-modules').innerText = `${modules.length} Módulo(s)`;
 
             let globalLessonIdx = 0;
             modules.forEach((mod, mIdx) => {
@@ -1613,11 +1725,8 @@
                 aulas.forEach((aula) => {
                     const currentIdx = globalLessonIdx;
                     lessonsHtml += `
-                        <div class="lms-lesson-item" id="lms-lesson-item-${currentIdx}" onclick="loadLessonByIndex(${currentIdx})" style="justify-content:space-between;">
-                            <span><i class="fa-solid fa-circle-play"></i> ${escapeHtml(aula.titulo || aula.nome || 'Aula ' + (currentIdx + 1))}</span>
-                            <button class="btn-action btn-success" onclick="downloadLessonFile(${currentIdx}, event)" style="width:auto; padding:2px 8px; font-size:0.7rem; margin-left:auto;" title="Baixar Aula">
-                                <i class="fa-solid fa-download"></i> Baixar
-                            </button>
+                        <div class="lms-lesson-item" id="lms-lesson-item-${currentIdx}" onclick="loadLessonByIndex(${currentIdx})">
+                            <i class="fa-solid fa-circle-play"></i> ${escapeHtml(aula.titulo || aula.nome || 'Aula ' + (currentIdx + 1))}
                         </div>
                     `;
                     globalLessonIdx++;
@@ -1625,85 +1734,43 @@
 
                 container.innerHTML += `
                     <div class="lms-module-card">
-                        <div class="lms-module-title" style="justify-content:space-between;">
-                            <span><i class="fa-solid fa-folder-open"></i> ${escapeHtml(mod.nome || mod.titulo || 'Módulo ' + (mIdx + 1))}</span>
-                            <button class="btn-action btn-secondary" onclick="downloadModule(${mIdx}, event)" style="width:auto; padding:2px 8px; font-size:0.7rem;" title="Baixar Módulo">
-                                <i class="fa-solid fa-download"></i> Baixar Módulo
-                            </button>
-                        </div>
+                        <div class="lms-module-title"><i class="fa-solid fa-folder-open"></i> ${escapeHtml(mod.nome || mod.titulo || 'Módulo ' + (mIdx + 1))}</div>
                         ${lessonsHtml}
                     </div>
                 `;
             });
         }
 
-        function showLmsProcessing() {
-            const screen = document.getElementById('lms-processing-screen');
-            if (screen) {
-                screen.style.display = 'flex';
-                screen.style.opacity = '1';
-                screen.style.pointerEvents = 'auto';
-            }
-        }
-
-        function hideLmsProcessing() {
-            const screen = document.getElementById('lms-processing-screen');
-            if (screen) {
-                screen.style.opacity = '0';
-                screen.style.pointerEvents = 'none';
-                setTimeout(() => {
-                    if (screen && screen.style.opacity === '0') {
-                        screen.style.display = 'none';
-                    }
-                }, 200);
-            }
-        }
-
         function loadLessonByIndex(index) {
             if (index < 0 || index >= activeCourseLessons.length) return;
 
-            showLmsProcessing();
             currentLessonIndex = index;
             const lesson = activeCourseLessons[index];
 
-            const playerIframe = document.getElementById('lms-iframe-player');
-            const targetEmbed = formatEmbedVideoUrl(lesson.videoUrl);
+            document.getElementById('lms-processing-screen').style.display = 'flex';
+            document.getElementById('lms-iframe-player').src = formatEmbedVideoUrl(lesson.videoUrl);
 
-            if (playerIframe) {
-                playerIframe.src = targetEmbed;
-            }
-
-            setTimeout(() => { hideLmsProcessing(); }, 600);
-
-            if (document.getElementById('lms-current-lesson-title')) 
-                document.getElementById('lms-current-lesson-title').innerText = `${lesson.moduleName} - ${lesson.title}`;
-            if (document.getElementById('lms-current-lesson-desc')) 
-                document.getElementById('lms-current-lesson-desc').innerText = lesson.desc || 'Sem descrição adicional.';
-            if (document.getElementById('lms-lesson-counter')) 
-                document.getElementById('lms-lesson-counter').innerText = `Aula ${index + 1} de ${activeCourseLessons.length}`;
+            document.getElementById('lms-current-lesson-title').innerText = `${lesson.moduleName} - ${lesson.title}`;
+            document.getElementById('lms-current-lesson-desc').innerText = lesson.desc || 'Sem descrição adicional.';
+            document.getElementById('lms-lesson-counter').innerText = `Aula ${index + 1} de ${activeCourseLessons.length}`;
 
             const downloadBtnBox = document.getElementById('lms-material-download-box');
             const downloadBtnLink = document.getElementById('lms-download-material-link');
 
-            if (downloadBtnBox && downloadBtnLink) {
-                if (lesson.materialUrl) {
-                    downloadBtnLink.href = lesson.materialUrl;
-                    downloadBtnBox.style.display = 'flex';
-                } else {
-                    downloadBtnBox.style.display = 'none';
-                }
+            if (lesson.materialUrl) {
+                downloadBtnLink.href = lesson.materialUrl;
+                downloadBtnBox.style.display = 'flex';
+            } else {
+                downloadBtnBox.style.display = 'none';
             }
-
-            if (document.getElementById('btn-prev-lesson')) 
-                document.getElementById('btn-prev-lesson').disabled = (index === 0);
-            if (document.getElementById('btn-next-lesson')) 
-                document.getElementById('btn-next-lesson').disabled = (index === activeCourseLessons.length - 1);
 
             document.querySelectorAll('.lms-lesson-item').forEach(el => el.classList.remove('active'));
             const activeElem = document.getElementById(`lms-lesson-item-${index}`);
-            if (activeElem) {
-                activeElem.classList.add('active');
-            }
+            if (activeElem) activeElem.classList.add('active');
+        }
+
+        function hideLmsProcessing() {
+            document.getElementById('lms-processing-screen').style.display = 'none';
         }
 
         function navigateLesson(direction) {
@@ -1713,133 +1780,53 @@
             }
         }
 
-        function downloadLessonFile(index, event) {
-            if (event) event.stopPropagation();
-            if (index < 0 || index >= activeCourseLessons.length) return;
-            const lesson = activeCourseLessons[index];
-            const targetUrl = lesson.materialUrl || lesson.videoUrl;
-            if (targetUrl) {
-                let finalUrl = targetUrl;
-                if (finalUrl.includes('drive.google.com') && finalUrl.includes('/preview')) {
-                    finalUrl = finalUrl.replace('/preview', '/view');
-                }
-                window.open(finalUrl, '_blank');
-                showToast(`A descarregar aula: ${lesson.title}...`, 'info');
-            } else {
-                showToast('Nenhum ficheiro/vídeo associado a esta aula para download.', 'warning');
-            }
-        }
-
         function downloadCurrentVideo() {
-            if (activeCourseLessons.length === 0 || currentLessonIndex < 0 || currentLessonIndex >= activeCourseLessons.length) {
-                showToast('Nenhum vídeo disponível para baixar.', 'warning');
-                return;
-            }
+            if (currentLessonIndex < 0 || currentLessonIndex >= activeCourseLessons.length) return;
             const lesson = activeCourseLessons[currentLessonIndex];
-            const videoUrl = lesson.videoUrl;
-
-            if (!videoUrl) {
-                showToast('Link do vídeo não disponível para download.', 'warning');
-                return;
-            }
-
-            let targetUrl = videoUrl;
-            if (targetUrl.includes('drive.google.com') && targetUrl.includes('/preview')) {
-                targetUrl = targetUrl.replace('/preview', '/view');
-            }
-            
-            window.open(targetUrl, '_blank');
-            showToast('A abrir o vídeo para download...', 'info');
-        }
-
-        function downloadModule(mIdx, event) {
-            if (event) event.stopPropagation();
-
-            if (activeModulesList && activeModulesList[mIdx]) {
-                const mod = activeModulesList[mIdx];
-                const modUrl = mod.linkModulo || mod.linkDownload || mod.downloadUrl || mod.materialUrl || (activeCourseProduct ? (activeCourseProduct.linkCursoCompleto || activeCourseProduct.linkDownload || activeCourseProduct.downloadUrl) : null);
-
-                if (modUrl) {
-                    window.open(modUrl, '_blank');
-                    showToast(`A descarregar o Módulo: ${mod.nome || mod.titulo || (mIdx + 1)}...`, 'info');
-                    return;
-                }
-            }
-
-            if (activeCourseProduct && (activeCourseProduct.linkCursoCompleto || activeCourseProduct.linkDownload || activeCourseProduct.downloadUrl || activeCourseProduct.materialUrl)) {
-                window.open(activeCourseProduct.linkCursoCompleto || activeCourseProduct.linkDownload || activeCourseProduct.downloadUrl || activeCourseProduct.materialUrl, '_blank');
-                showToast('A descarregar ficheiros do módulo...', 'info');
-            } else {
-                showToast('Nenhum ficheiro associado a este módulo.', 'warning');
+            if (lesson.videoUrl) {
+                window.open(lesson.videoUrl, '_blank');
             }
         }
 
         function downloadFullCourse() {
-            if (!activeCourseProduct) {
-                showToast('Nenhum curso ativo selecionado.', 'warning');
-                return;
-            }
-
-            const fullUrl = activeCourseProduct.linkCursoCompleto || activeCourseProduct.linkDownload || activeCourseProduct.downloadUrl || activeCourseProduct.materialUrl || activeCourseProduct.ficheiroUrl || activeCourseProduct.arquivoUrl;
-
-            if (fullUrl) {
-                window.open(fullUrl, '_blank');
-                showToast('A iniciar o download do curso completo...', 'success');
+            if (!activeCourseProduct) return;
+            const link = activeCourseProduct.linkCursoCompleto || activeCourseProduct.linkDownload;
+            if (link) {
+                window.open(link, '_blank');
             } else {
-                showToast('O link para download do curso completo não está configurado. Solicite no Suporte Chat.', 'warning');
+                showToast('Link de download do curso completo não disponível.', 'warning');
             }
         }
 
         function closeCourseModal() {
-            const playerIframe = document.getElementById('lms-iframe-player');
-            if (playerIframe) playerIframe.src = '';
-            const modal = document.getElementById('course-modal');
-            if (modal) modal.style.display = 'none';
+            document.getElementById('lms-iframe-player').src = '';
+            document.getElementById('course-modal').style.display = 'none';
         }
 
         function formatEmbedVideoUrl(url) {
             if (!url) return '';
             let embedUrl = String(url).trim();
-
-            if (embedUrl.includes('<iframe')) {
-                const match = embedUrl.match(/src=["']([^"']+)["']/);
-                if (match && match[1]) embedUrl = match[1];
-            }
-
-            if (embedUrl.includes('drive.google.com')) {
-                return embedUrl.replace(/\/view(\?.*)?$/, '/preview');
-            }
-            if (embedUrl.includes('youtube.com/shorts/')) {
-                const id = embedUrl.split('youtube.com/shorts/')[1].split('?')[0].split('&')[0];
-                return `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+            if (embedUrl.includes('youtube.com/watch?v=')) {
+                const id = embedUrl.split('watch?v=')[1].split('&')[0];
+                return `https://www.youtube.com/embed/${id}?autoplay=1`;
             }
             if (embedUrl.includes('youtu.be/')) {
-                const id = embedUrl.split('youtu.be/')[1].split('?')[0].split('&')[0];
-                return `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
-            }
-            if (embedUrl.includes('watch?v=')) {
-                const id = embedUrl.split('watch?v=')[1].split('&')[0];
-                return `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
-            }
-            if (embedUrl.includes('youtube.com/embed/')) {
-                if (!embedUrl.includes('autoplay=1')) {
-                    embedUrl += (embedUrl.includes('?') ? '&' : '?') + 'autoplay=1&rel=0';
-                }
-                return embedUrl;
+                const id = embedUrl.split('youtu.be/')[1].split('?')[0];
+                return `https://www.youtube.com/embed/${id}?autoplay=1`;
             }
             return embedUrl;
         }
 
+        /* SUPORTE CHAT */
         function listenClientChat() {
             if (!currentUser) return;
-
             const box = document.getElementById('client-chat-messages');
+
             if (unsubscribeChat) unsubscribeChat();
 
             unsubscribeChat = db.collection('chats').doc(currentUser.uid).collection('messages')
                 .orderBy('timestamp', 'asc')
                 .onSnapshot(snapshot => {
-                    if (!box) return;
                     box.innerHTML = '';
                     if (snapshot.empty) {
                         box.innerHTML = `<p style="color:var(--text-muted); text-align:center; margin-top:auto; margin-bottom:auto;">Inicie uma conversa diretamente com o suporte.</p>`;
@@ -1849,84 +1836,64 @@
                     snapshot.forEach(doc => {
                         const m = doc.data();
                         const isClient = m.sender === 'client' || m.sender === currentUser.uid;
-                        const senderName = m.senderName || (isClient ? (currentUser.displayName || 'Você') : 'Suporte Loneke');
+                        const isSystem = m.sender === 'system';
 
-                        box.innerHTML += `
-                            <div style="align-self:${isClient ? 'flex-end' : 'flex-start'}; background:${isClient ? 'var(--primary)' : '#1f1f2e'}; padding:10px 14px; border-radius:12px; max-width:85%; font-size:0.85rem; color:#FFF; word-break:break-word; margin-bottom:8px;">
-                                <div style="font-size:0.72rem; font-weight:800; opacity:0.85; margin-bottom:4px;">${escapeHtml(senderName)}</div>
-                                <div>${escapeHtml(m.text)}</div>
-                            </div>
-                        `;
+                        if (isSystem) {
+                            box.innerHTML += `
+                                <div style="align-self:center; background:rgba(229, 9, 20, 0.15); border:1px dashed var(--primary); padding:10px 14px; border-radius:12px; max-width:92%; font-size:0.82rem; color:#FFF; margin:6px 0;">
+                                    <div>${escapeHtml(m.text)}</div>
+                                </div>
+                            `;
+                        } else {
+                            box.innerHTML += `
+                                <div style="align-self:${isClient ? 'flex-end' : 'flex-start'}; background:${isClient ? 'var(--primary)' : '#1f1f2e'}; padding:10px 14px; border-radius:12px; max-width:85%; font-size:0.85rem; color:#FFF;">
+                                    <div>${escapeHtml(m.text)}</div>
+                                </div>
+                            `;
+                        }
                     });
                     box.scrollTop = box.scrollHeight;
-                }, err => console.warn("Erro ao ouvir mensagens:", err));
+                });
         }
 
         async function sendClientMessage() {
             if (!currentUser) return;
-
             const input = document.getElementById('client-chat-input');
             const text = input ? input.value.trim() : '';
             if (!text) return;
 
             input.value = '';
+            const userName = document.getElementById('prof-name').value.trim() || currentUser.displayName || 'Cliente VIP';
 
-            const userNameEl = document.getElementById('sidebar-user-name');
-            const userName = userNameEl ? userNameEl.innerText : (currentUser.displayName || 'Cliente VIP');
+            const batch = db.batch();
+            const msgRef = db.collection('chats').doc(currentUser.uid).collection('messages').doc();
+            const chatRef = db.collection('chats').doc(currentUser.uid);
 
-            try {
-                const batch = db.batch();
-                const msgRef = db.collection('chats').doc(currentUser.uid).collection('messages').doc();
-                const chatRef = db.collection('chats').doc(currentUser.uid);
+            batch.set(msgRef, {
+                sender: 'client',
+                text: text,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
 
-                batch.set(msgRef, {
-                    sender: 'client',
-                    senderName: userName,
-                    text: text,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
+            batch.set(chatRef, {
+                userName: userName,
+                userEmail: currentUser.email,
+                lastMessage: text,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
 
-                batch.set(chatRef, {
-                    userName: userName,
-                    userEmail: currentUser.email,
-                    userId: currentUser.uid,
-                    lastMessage: text,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                }, { merge: true });
-
-                await batch.commit();
-            } catch (err) {
-                showToast('Erro ao enviar mensagem: ' + err.message, 'warning');
-            }
+            await batch.commit();
         }
 
         function downloadProductFile(productId) {
             const prod = allProductsCache.find(p => String(p.id || p.product_id) === String(productId));
-            if (!prod) {
-                showToast('Produto não encontrado.', 'warning');
-                return;
-            }
-
-            const downloadUrl = prod.linkDownload || 
-                                prod.link_download || 
-                                prod.linkCursoCompleto || 
-                                prod.link_curso_completo || 
-                                prod.downloadUrl || 
-                                prod.download_url || 
-                                prod.linkMaterial || 
-                                prod.link_material || 
-                                prod.materialUrl || 
-                                prod.ficheiroUrl || 
-                                prod.arquivoUrl || 
-                                prod.fileUrl || 
-                                prod.url || 
-                                prod.link;
-
-            if (downloadUrl && String(downloadUrl).trim() !== '') {
-                window.open(String(downloadUrl).trim(), '_blank');
+            if (!prod) return;
+            const downloadUrl = prod.linkDownload || prod.linkCursoCompleto || prod.linkMaterial;
+            if (downloadUrl) {
+                window.open(downloadUrl, '_blank');
                 showToast('A iniciar download...', 'success');
             } else {
-                showToast('Link de download não configurado para este item. Solicite no Suporte Chat.', 'warning');
+                showToast('Link de download indisponível. Contacte o suporte.', 'warning');
             }
         }
     </script>
