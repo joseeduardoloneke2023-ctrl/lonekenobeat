@@ -174,9 +174,7 @@
             gap: 0.4rem;
         }
 
-        .floating-video-header i.icon-play {
-            color: var(--primary);
-        }
+        .floating-video-header i.icon-play { color: var(--primary); }
 
         .btn-video-toggle {
             background: transparent;
@@ -188,9 +186,7 @@
             padding: 2px 5px;
         }
 
-        .btn-video-toggle:hover {
-            color: var(--white);
-        }
+        .btn-video-toggle:hover { color: var(--white); }
 
         .floating-video-body {
             transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
@@ -323,6 +319,25 @@
         }
         .upload-file-area:hover { border-color: var(--primary); background: rgba(229, 9, 20, 0.05); }
 
+        /* CAIXA DE ALERTA DE COMPROVATIVO INVÁLIDO / REPETIDO */
+        .duplicate-alert-box {
+            display: none;
+            margin-top: 1.25rem;
+            padding: 1.25rem;
+            background: rgba(229, 9, 20, 0.12);
+            border: 1px dashed var(--primary);
+            border-radius: var(--radius-md);
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+        .duplicate-alert-box p {
+            font-size: 0.88rem;
+            color: #FF5555;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+
         .whatsapp-support-box {
             margin-top: 2rem; padding: 1.25rem;
             background: rgba(37, 211, 102, 0.08); border: 1px dashed rgba(37, 211, 102, 0.4);
@@ -444,9 +459,7 @@
                 bottom: 15px;
                 right: 15px;
             }
-            .floating-video-header span {
-                font-size: 0.68rem;
-            }
+            .floating-video-header span { font-size: 0.68rem; }
         }
         
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -568,6 +581,14 @@
                             </div>
                             <input type="file" id="receiptTransferInput" accept="image/png, image/jpeg, image/jpg" style="display: none;" onchange="handleReceiptFileSelection(this, 'transfer')">
                         </div>
+
+                        <!-- CAIXA DE ALERTA PARA DUPLICAÇÃO OU FALHA DE VALIDAÇÃO -->
+                        <div id="duplicateAlertBoxTransfer" class="duplicate-alert-box">
+                            <p id="duplicateAlertTextTransfer"><i class="fa-solid fa-triangle-exclamation"></i> Este comprovativo já foi utilizado ou não pôde ser validado.</p>
+                            <button type="button" class="btn-whatsapp-negotiate" onclick="openWhatsAppNegotiation()" style="margin-top: 0;">
+                                <i class="fa-brands fa-whatsapp"></i> Falar com o Suporte no WhatsApp
+                            </button>
+                        </div>
                     </div>
 
                     <!-- WISE (EURO €) -->
@@ -605,6 +626,14 @@
                                 <p style="font-size: 0.75rem; color: var(--text-secondary);">Formatos aceites: JPG, PNG (Máx. 1MB)</p>
                             </div>
                             <input type="file" id="receiptWiseInput" accept="image/png, image/jpeg, image/jpg" style="display: none;" onchange="handleReceiptFileSelection(this, 'wise')">
+                        </div>
+
+                        <!-- CAIXA DE ALERTA WISE -->
+                        <div id="duplicateAlertBoxWise" class="duplicate-alert-box">
+                            <p id="duplicateAlertTextWise"><i class="fa-solid fa-triangle-exclamation"></i> Este comprovativo já foi utilizado ou não pôde ser validado.</p>
+                            <button type="button" class="btn-whatsapp-negotiate" onclick="openWhatsAppNegotiation()" style="margin-top: 0;">
+                                <i class="fa-brands fa-whatsapp"></i> Falar com o Suporte no WhatsApp
+                            </button>
                         </div>
                     </div>
 
@@ -672,8 +701,7 @@
     </main>
 
     <div class="payment-screen-overlay" id="paymentOverlay">
-        <div class="payment-modal" id="paymentModalContent">
-        </div>
+        <div class="payment-modal" id="paymentModalContent"></div>
     </div>
 
 <script src="produtos.js"></script>
@@ -683,14 +711,14 @@
     const API_URL = "https://rouxavcvorjiwhpjhsye.supabase.co/functions/v1/api-v1";
     const LONEKE_WHATSAPP_NUM = "244924034159";
     
-    // REDIRECIONA PARA CLIENTE.HTML DENTRO DA PASTA PLATAFORMA
     const USER_PANEL_URL = "plataforma/cliente.html"; 
     const NOTIFICATION_EMAIL = "suporte@lonekenobeat.com";
 
-    // DADOS BANCÁRIOS (BANCO BAI)
+    // DADOS BANCÁRIOS (BANCO BAI & WISE)
     const BAI_RAW_IBAN = "004000006562149410192";
     const BAI_FORMATTED_IBAN = "AO06 0040 0000 6562 1494 1019 2";
     const BAI_HOLDER_NAME = "JOSÉ EDUARDO LONEKE";
+    const WISE_IBAN = "BE83967576960915";
 
     let selectedMethod = "transfer"; 
     let cart = [];
@@ -702,7 +730,16 @@
     let selectedFileBase64 = null;
     let isFileValidated = false;
 
-    // Função para minimizar ou expandir o vídeo flutuante
+    // Metadados extraídos do OCR para gravação e prevenção de duplicados
+    let extractedReceiptMetadata = {
+        dateStr: null,
+        timeStr: null,
+        fullDateTimeStr: null,
+        ibanFound: null,
+        extractedAmount: null,
+        signature: null
+    };
+
     function toggleFloatingVideo() {
         const widget = document.getElementById("floatingVideoWidget");
         const icon = document.querySelector("#btnToggleVideoIcon i");
@@ -716,7 +753,6 @@
         }
     }
 
-    // Captura parâmetros da URL e inicializa o checkout
     document.addEventListener("DOMContentLoaded", async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const affCode = urlParams.get('ref') || urlParams.get('aff') || urlParams.get('afiliado');
@@ -801,46 +837,63 @@
         }
     }
 
-    // ENVIO DE NOTIFICAÇÃO POR E-MAIL COM TODOS OS DADOS DO CLIENTE E DOS PRODUTOS
-    async function sendPurchaseNotificationEmail(orderData) {
-        try {
-            const payload = {
-                _subject: `🛒 Nova Compra Realizada - ${orderData.customerName} (${orderData.orderId})`,
-                _template: "table",
-                _captcha: "false",
-                "ID do Pedido": orderData.orderId,
-                "Nome do Cliente": orderData.customerName,
-                "E-mail do Cliente": orderData.customerEmail,
-                "Senha de Acesso (E-mail)": orderData.customerEmail,
-                "WhatsApp": orderData.customerWhatsApp,
-                "Método de Pagamento": orderData.method,
-                "Valor Pago": orderData.totalKz,
-                "Produtos Adquiridos": orderData.itemsSummary,
-                "Comprovativo (Base64/Link)": orderData.proofUrl || "Comprovativo Anexado",
-                "Data da Transação": new Date().toLocaleString('pt-PT')
-            };
+    // EXTRAÇÃO DE DATA E HORA DO TEXTO DO OCR
+    function extractDateFromOCR(text) {
+        const dateRegex = /\b(\d{1,2})[\/\.\-](\d{1,2})[\/\.\-](\d{2,4})\b/;
+        const match = text.match(dateRegex);
+        return match ? match[0] : null;
+    }
 
-            await fetch(`https://formsubmit.co/ajax/${NOTIFICATION_EMAIL}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                },
-                body: JSON.stringify(payload)
-            });
-            console.log("Notificação enviada com sucesso para " + NOTIFICATION_EMAIL);
+    function extractTimeFromOCR(text) {
+        const timeRegex = /\b([01]?\d|2[0-3])[:\.](\d{2})(?:[:\.](\d{2}))?\b/;
+        const match = text.match(timeRegex);
+        return match ? match[0] : null;
+    }
+
+    // VERIFICAÇÃO DE DUPLICAÇÃO DE COMPROVATIVO NO FIREBASE (DATA + HORA + VALOR OU ASSINATURA)
+    async function checkReceiptDuplicationInFirestore(signature, dateTimeStr) {
+        if (!window.firebaseDb || !window.firebaseCollection || !window.firebaseGetDocs || !window.firebaseQuery || !window.firebaseWhere) {
+            return false;
+        }
+
+        try {
+            // 1. Pesquisa por assinatura exata na coleção de transações
+            if (signature) {
+                const txRef = window.firebaseCollection(window.firebaseDb, "transactions");
+                const qSig = window.firebaseQuery(txRef, window.firebaseWhere("receiptSignature", "==", signature));
+                const snapSig = await window.firebaseGetDocs(qSig);
+                if (!snapSig.empty) return true;
+            }
+
+            // 2. Pesquisa por Data/Hora na coleção de transações
+            if (dateTimeStr) {
+                const txRef = window.firebaseCollection(window.firebaseDb, "transactions");
+                const qDT = window.firebaseQuery(txRef, window.firebaseWhere("receiptDateTime", "==", dateTimeStr));
+                const snapDT = await window.firebaseGetDocs(qDT);
+                if (!snapDT.empty) return true;
+            }
+
+            return false;
         } catch (err) {
-            console.warn("Erro ao enviar notificação de e-mail:", err);
+            console.warn("Aviso ao consultar duplicados no Firestore:", err);
+            return false;
         }
     }
 
-    // LEITURA OCR E VALIDAÇÃO DO COMPROVATIVO (FOCADO NO NOME JOSE EDUARDO LONEKE E VALOR)
+    // LEITURA OCR E VALIDAÇÃO COMPLETA DO COMPROVATIVO (NOME, DATA, HORA, VALOR, IBAN E DUPLICADOS)
     async function handleReceiptFileSelection(input, method) {
         const file = input.files[0];
         if (!file) return;
 
         const statusElementId = method === 'wise' ? 'uploadWiseStatusText' : 'uploadStatusText';
+        const alertBoxId = method === 'wise' ? 'duplicateAlertBoxWise' : 'duplicateAlertBoxTransfer';
+        const alertTextId = method === 'wise' ? 'duplicateAlertTextWise' : 'duplicateAlertTextTransfer';
+
         const statusEl = document.getElementById(statusElementId);
+        const alertBoxEl = document.getElementById(alertBoxId);
+        const alertTextEl = document.getElementById(alertTextId);
+
+        if (alertBoxEl) alertBoxEl.style.display = "none";
 
         if (file.size > 1048576) {
             showToast("O ficheiro excede o tamanho máximo de 1MB.", "error");
@@ -862,11 +915,19 @@
                 const rawOCR = result.data.text || "";
                 const cleanOCR = normalizeText(rawOCR);
 
-                // 1. VERIFICAÇÃO DO NOME DO TITULAR (JOSÉ EDUARDO LONEKE)
+                // 1. VERIFICAÇÃO DO NOME DO TITULAR
                 const hasName = cleanOCR.includes("LONEKE") || 
                                 (cleanOCR.includes("JOSE") && cleanOCR.includes("EDUARDO"));
 
-                // 2. VERIFICAÇÃO DO VALOR TOTAL
+                // 2. VERIFICAÇÃO DO IBAN / BANCO
+                let hasIban = false;
+                if (method === 'wise') {
+                    hasIban = cleanOCR.includes("BE83") || cleanOCR.includes("9675") || cleanOCR.includes("7696") || cleanOCR.includes("0915") || cleanOCR.includes("WISE");
+                } else {
+                    hasIban = cleanOCR.includes("0040") || cleanOCR.includes("6562") || cleanOCR.includes("1494") || cleanOCR.includes("1019") || cleanOCR.includes("BAI");
+                }
+
+                // 3. VERIFICAÇÃO DO VALOR TOTAL
                 const expectedTotal = getExpectedNumericTotal(method);
                 const expectedDigits = expectedTotal.toString();
                 const cleanDigitsOCR = cleanOCR.replace(/\D/g, '');
@@ -875,30 +936,70 @@
                                   cleanOCR.includes(expectedTotal.toLocaleString('pt-PT')) || 
                                   cleanDigitsOCR.includes(expectedDigits);
 
-                // Valida principalmente se o NOME e o VALOR foram identificados no comprovativo
+                // 4. EXTRAÇÃO DE DATA E HORA
+                const extractedDate = extractDateFromOCR(rawOCR);
+                const extractedTime = extractTimeFromOCR(rawOCR);
+                const fullDateTime = (extractedDate && extractedTime) ? `${extractedDate} ${extractedTime}` : (extractedDate || extractedTime || null);
+
+                // Gera uma assinatura digital da transação extraída
+                const receiptSig = `${extractedDate || 'NODATE'}_${extractedTime || 'NOTIME'}_${expectedDigits}_${method}`;
+
+                extractedReceiptMetadata = {
+                    dateStr: extractedDate,
+                    timeStr: extractedTime,
+                    fullDateTimeStr: fullDateTime,
+                    ibanFound: hasIban,
+                    extractedAmount: expectedTotal,
+                    signature: receiptSig
+                };
+
+                // 5. VERIFICAÇÃO DE COMPROVATIVO DUPLICADO NO BANCO DE DADOS
+                const isDuplicate = await checkReceiptDuplicationInFirestore(receiptSig, fullDateTime);
+
+                if (isDuplicate) {
+                    isFileValidated = false;
+                    selectedFileBase64 = null;
+                    input.value = "";
+                    if (statusEl) statusEl.innerText = "❌ Comprovativo Repetido / Duplicado";
+
+                    const errorMsg = `⚠️ Este comprovativo (Data/Hora: ${fullDateTime || 'Identificada'}) já foi utilizado anteriormente no sistema!`;
+                    if (alertTextEl) alertTextEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${errorMsg} Não é possível enviar o mesmo comprovativo duas vezes.`;
+                    if (alertBoxEl) alertBoxEl.style.display = "block";
+
+                    showToast(errorMsg + " Entre em contacto via WhatsApp caso necessite de ajuda.", "error");
+                    return;
+                }
+
+                // VALIDAÇÃO FINAL DOS CRITÉRIOS (NOME + VALOR)
                 if (hasName && hasAmount) {
                     isFileValidated = true;
-                    if (statusEl) statusEl.innerText = `✅ ${file.name} (Validado - Nome e Valor O.K.)`;
-                    showToast("Comprovativo validado com sucesso!", "success");
+                    if (statusEl) statusEl.innerText = `✅ ${file.name} (Validado - Nome, Valor e Data O.K.)`;
+                    if (alertBoxEl) alertBoxEl.style.display = "none";
+                    showToast("Comprovativo validado e verificado com sucesso!", "success");
                 } else {
                     isFileValidated = false;
                     selectedFileBase64 = null;
                     input.value = "";
-                    if (statusEl) statusEl.innerText = "❌ Comprovativo Rejeitado";
+                    if (statusEl) statusEl.innerText = "❌ Comprovativo Inconsistente";
 
-                    let errorMsg = "Comprovativo inválido! ";
+                    let errorMsg = "Comprovativo não aprovado! ";
                     if (!hasName) errorMsg += "O nome (José Eduardo Loneke) não foi identificado no comprovativo. ";
-                    else if (!hasAmount) errorMsg += `O valor impresso não corresponde a ${expectedTotal.toLocaleString('pt-PT')} ${method === 'wise' ? '€' : 'Kz'}. `;
+                    else if (!hasAmount) errorMsg += `O valor lido não corresponde a ${expectedTotal.toLocaleString('pt-PT')} ${method === 'wise' ? '€' : 'Kz'}. `;
 
-                    showToast(errorMsg + "Se a imagem estiver difícil de ler, fale com o suporte via WhatsApp.", "error");
+                    if (alertTextEl) alertTextEl.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> ${errorMsg}`;
+                    if (alertBoxEl) alertBoxEl.style.display = "block";
+
+                    showToast(errorMsg + "Fale com o suporte no WhatsApp para concluir manualmente.", "error");
                 }
 
             } catch (ocrErr) {
                 isFileValidated = false;
                 selectedFileBase64 = null;
                 input.value = "";
-                if (statusEl) statusEl.innerText = "❌ Erro ao ler comprovativo";
-                showToast("Não foi possível ler o ficheiro. Certifique-se de carregar uma imagem nítida.", "error");
+                if (statusEl) statusEl.innerText = "❌ Erro na Leitura do Comprovativo";
+                if (alertTextEl) alertTextEl.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> Não foi possível ler a imagem. Certifique-se de carregar um comprovativo nítido.`;
+                if (alertBoxEl) alertBoxEl.style.display = "block";
+                showToast("Não foi possível processar o ficheiro. Envie uma imagem nítida ou fale com o suporte.", "error");
             }
         };
         reader.readAsDataURL(file);
@@ -1138,7 +1239,6 @@
 
         const totalItemsCount = cart.reduce((acc, current) => acc + current.quantity, 0);
 
-        // REGRA DO DESCONTO: APRECE SE TIVER 2 OU MAIS PRODUTOS NO CARRINHO
         if (totalItemsCount >= 2) {
             if(discountContainer) discountContainer.style.display = "block";
             const btnApply = document.getElementById("btnApplyDiscount25");
@@ -1180,9 +1280,11 @@
                 const activePanel = document.getElementById(`panel-${selectedMethod}`);
                 if (activePanel) activePanel.style.display = "block";
 
-                // Limpa estado do comprovativo ao alterar método
                 selectedFileBase64 = null;
                 isFileValidated = false;
+
+                document.querySelectorAll('.duplicate-alert-box').forEach(el => el.style.display = 'none');
+
                 const statusTransfer = document.getElementById("uploadStatusText");
                 const statusWise = document.getElementById("uploadWiseStatusText");
                 if (statusTransfer) statusTransfer.innerText = "Clique para selecionar o comprovativo Bancário";
@@ -1218,11 +1320,10 @@
     }
 
     function openWhatsAppNegotiation() {
-        const targetUrl = `https://wa.me/${LONEKE_WHATSAPP_NUM}?text=Olá Loneke no Beat, preciso de ajuda com o meu checkout!`;
+        const targetUrl = `https://wa.me/${LONEKE_WHATSAPP_NUM}?text=Olá Loneke no Beat, preciso de ajuda com a verificação do meu comprovativo!`;
         window.open(targetUrl, '_blank');
     }
 
-    // CRIA CONTA COM O EMAIL COMO UTILIZADOR E TAMBÉM COMO SENHA
     async function createOrLoginUserAccount(email, name, fullWhatsApp) {
         const password = email; 
         let uid = null;
@@ -1250,7 +1351,6 @@
 
         if (!uid) uid = email.replace(/[^a-zA-Z0-9]/g, "_");
 
-        // REGISTO DE SESSÃO DO UTILIZADOR EM TODAS AS CHAVES DE LOCALSTORAGE RELEVANTES
         localStorage.setItem('loggedUserUid', uid);
         localStorage.setItem('loggedUserEmail', email);
         localStorage.setItem('loggedUserName', name);
@@ -1283,6 +1383,38 @@
         return uid;
     }
 
+    async function sendPurchaseNotificationEmail(orderData) {
+        try {
+            const payload = {
+                _subject: `🛒 Nova Compra Realizada - ${orderData.customerName} (${orderData.orderId})`,
+                _template: "table",
+                _captcha: "false",
+                "ID do Pedido": orderData.orderId,
+                "Nome do Cliente": orderData.customerName,
+                "E-mail do Cliente": orderData.customerEmail,
+                "Senha de Acesso": orderData.customerEmail,
+                "WhatsApp": orderData.customerWhatsApp,
+                "Método de Pagamento": orderData.method,
+                "Valor Pago": orderData.totalKz,
+                "Produtos Adquiridos": orderData.itemsSummary,
+                "Data/Hora do Comprovativo": orderData.receiptDateTime || "N/A",
+                "Comprovativo (Base64/Link)": orderData.proofUrl || "Comprovativo Anexado",
+                "Data da Transação": new Date().toLocaleString('pt-PT')
+            };
+
+            await fetch(`https://formsubmit.co/ajax/${NOTIFICATION_EMAIL}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+        } catch (err) {
+            console.warn("Erro ao enviar notificação de e-mail:", err);
+        }
+    }
+
     async function handleMainCheckoutClick() {
         const name = document.getElementById("customerName").value.trim();
         const email = document.getElementById("customerEmail").value.trim();
@@ -1298,7 +1430,7 @@
 
         if (selectedMethod === "transfer" || selectedMethod === "wise") {
             if (!selectedFileBase64 || !isFileValidated) {
-                showToast("Por favor, carregue um comprovativo válido para finalizar.", "error");
+                showToast("Por favor, carregue um comprovativo válido e não duplicado para finalizar.", "error");
                 return;
             }
         }
@@ -1326,7 +1458,6 @@
 
         const docId = await createOrLoginUserAccount(customerEmail, customerName, customerWhatsApp);
 
-        // 1. FORMATAÇÃO UNIFICADA DOS PRODUTOS COMPRADOS
         const purchasedItemsFormatted = cart.map(item => ({
             id: String(item.id || item.product_id),
             product_id: String(item.product_id || item.id),
@@ -1343,7 +1474,6 @@
             purchasedAt: new Date().toISOString()
         }));
 
-        // 2. GUARDA EM TODAS AS CHAVES POSSÍVEIS DO LOCALSTORAGE PARA GARANTIR LEITURA IMEDIATA EM PLATAFORMA/CLIENTE.HTML
         const storageKeys = [
             'userPurchasedProducts', 
             'meus_produtos', 
@@ -1367,7 +1497,6 @@
             localStorage.setItem(key, JSON.stringify(existing));
         });
 
-        // Map de IDs para verificação rápida de acesso desbloqueado
         let prodIdsMap = {};
         try { prodIdsMap = JSON.parse(localStorage.getItem('user_product_ids') || "{}"); } catch(e){}
         purchasedItemsFormatted.forEach(p => { 
@@ -1376,7 +1505,6 @@
         });
         localStorage.setItem('user_product_ids', JSON.stringify(prodIdsMap));
 
-        // 3. REGISTO NO FIREBASE FIRESTORE
         try {
             if (window.firebaseDb && window.firebaseDoc && window.firebaseSetDoc) {
                 let userProdutosMap = {};
@@ -1386,7 +1514,6 @@
                     const itemCategory = item.categoria || item.category || 'cursos';
                     userProdutosMap[prodId] = true;
 
-                    // Subcoleção de compras do utilizador
                     const userProdRef = window.firebaseDoc(window.firebaseDb, "users", docId, "purchases", prodId);
                     await window.firebaseSetDoc(userProdRef, {
                         id: prodId, 
@@ -1402,7 +1529,6 @@
                         addedAt: new Date().toISOString()
                     }, { merge: true });
 
-                    // Acesso global do produto
                     const accessDocId = `${docId}_${prodId}`;
                     const accessRef = window.firebaseDoc(window.firebaseDb, "user_access", accessDocId);
                     await window.firebaseSetDoc(accessRef, {
@@ -1421,7 +1547,6 @@
                     }, { merge: true });
                 }
 
-                // Atualiza mapa de produtos no perfil principal do utilizador
                 const mainUserRef = window.firebaseDoc(window.firebaseDb, "users", docId);
                 await window.firebaseSetDoc(mainUserRef, {
                     produtos: userProdutosMap,
@@ -1433,6 +1558,7 @@
                 const itemsSummaryStr = cart.map(item => `${item.titulo} (x${item.quantity})`).join("; ");
                 const primaryItem = cart[0] || {};
 
+                // Registo completo com a assinatura e data do comprovativo para prevenir duplicados futuros
                 const orderTransactionData = {
                     orderId: orderId,
                     transactionId: orderId,
@@ -1452,6 +1578,10 @@
                     receiptFile: selectedFileBase64 || null,
                     proofUrl: selectedFileBase64 || null,
                     comprovativo: selectedFileBase64 || null,
+                    receiptSignature: extractedReceiptMetadata.signature || null,
+                    receiptDateTime: extractedReceiptMetadata.fullDateTimeStr || null,
+                    receiptDate: extractedReceiptMetadata.dateStr || null,
+                    receiptTime: extractedReceiptMetadata.timeStr || null,
                     affiliateRef: affiliateRef,
                     affiliateCode: affiliateRef,
                     affiliateCommission: Math.floor(numericTotalKz * 0.5),
@@ -1461,11 +1591,9 @@
                     unlocked: true
                 };
 
-                // Regista simultaneamente em 'orders' e 'transactions'
                 await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDb, "orders", orderId), orderTransactionData);
                 await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDb, "transactions", orderId), orderTransactionData);
 
-                // ENVIA O E-MAIL COM DETALHES DO CLIENTE, SENHA, PRODUTOS E COMPROVATIVO
                 await sendPurchaseNotificationEmail({
                     orderId: orderId,
                     customerName: customerName,
@@ -1474,6 +1602,7 @@
                     method: methodTitle,
                     totalKz: tkz,
                     itemsSummary: itemsSummaryStr,
+                    receiptDateTime: extractedReceiptMetadata.fullDateTimeStr,
                     proofUrl: selectedFileBase64 || "Sem ficheiro anexado"
                 });
             }
@@ -1496,7 +1625,6 @@
         }, 2000);
     }
 
-    // LIMPA O CARRINHO E REDIRECIONA DIRETO PARA O PAINEL DO CLIENTE
     function clearCartAndExit() {
         localStorage.removeItem('loneke_cart');
         window.location.href = USER_PANEL_URL;
