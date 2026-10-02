@@ -25,6 +25,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 
+    <!-- Carregamento dos Depoimentos do arquivo depoimento.js localizado na raiz -->
+    <script src="../depoimento.js"></script>
+
     <style>
         :root {
             --primary: #E50914;
@@ -511,6 +514,9 @@
                 <div class="menu-item" onclick="switchView('tutorials', this)">
                     <i class="fa-solid fa-circle-play" style="color:var(--info);"></i> Aulas de como usar o painel
                 </div>
+                <div class="menu-item" onclick="switchView('testimonials', this)">
+                    <i class="fa-solid fa-users-viewfinder" style="color:#FFD700;"></i> Depoimentos dos Clientes
+                </div>
                 <div class="menu-item" onclick="switchView('bonus', this)">
                     <i class="fa-solid fa-gift" style="color:var(--warning);"></i> Bonus Exclusivos
                 </div>
@@ -609,21 +615,31 @@
                 </div>
             </section>
 
-            <!-- 3. BONUS EXCLUSIVOS VIEW -->
+            <!-- 3. DEPOIMENTOS DOS CLIENTES VIEW (NOVA SEÇÃO) -->
+            <section id="view-testimonials" class="panel-view">
+                <h2 class="view-title"><i class="fa-solid fa-users-viewfinder" style="color:#FFD700;"></i> Depoimentos dos Clientes</h2>
+                <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 2rem;">Veja o feedback e a experiência real de outros produtores e clientes que utilizam as nossas ferramentas.</p>
+                
+                <div class="vertical-video-grid" id="testimonials-list">
+                    <!-- Vídeos injetados dinamicamente via depoimento.js -->
+                </div>
+            </section>
+
+            <!-- 4. BONUS EXCLUSIVOS VIEW -->
             <section id="view-bonus" class="panel-view">
                 <h2 class="view-title"><i class="fa-solid fa-gift" style="color:var(--warning);"></i> Bonus Exclusivos</h2>
                 <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 2rem;">Aproveite os bónus e recursos liberados gratuitamente para você.</p>
                 <div class="products-grid" id="bonus-products-list"></div>
             </section>
 
-            <!-- 4. PRODUTOS DISPONÍVEIS VIEW -->
+            <!-- 5. PRODUTOS DISPONÍVEIS VIEW -->
             <section id="view-locked-products" class="panel-view">
                 <h2 class="view-title"><i class="fa-solid fa-lock" style="color:var(--primary);"></i> Produtos Disponíveis para Compra</h2>
                 <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 2rem;">Adicione produtos ao carrinho para compra e liberação automática.</p>
                 <div class="products-grid" id="locked-products-list"></div>
             </section>
 
-            <!-- 5. EDITAR PERFIL VIEW -->
+            <!-- 6. EDITAR PERFIL VIEW -->
             <section id="view-edit-profile" class="panel-view">
                 <h2 class="view-title"><i class="fa-solid fa-user-pen" style="color:var(--primary);"></i> Editar Perfil</h2>
                 <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 2rem;">Mantenha as suas informações pessoais atualizadas.</p>
@@ -673,7 +689,7 @@
                 </div>
             </section>
 
-            <!-- 6. MUDAR SENHA VIEW -->
+            <!-- 7. MUDAR SENHA VIEW -->
             <section id="view-change-password" class="panel-view">
                 <h2 class="view-title"><i class="fa-solid fa-key" style="color:var(--primary);"></i> Mudar Senha</h2>
                 <div class="form-container-card" style="max-width:600px;">
@@ -697,7 +713,7 @@
                 </div>
             </section>
 
-            <!-- 7. SUPORTE CHAT VIEW -->
+            <!-- 8. SUPORTE CHAT VIEW -->
             <section id="view-chat" class="panel-view">
                 <h2 class="view-title"><i class="fa-solid fa-comments" style="color:var(--primary);"></i> Suporte Chat</h2>
                 <div class="chat-box-container">
@@ -970,6 +986,38 @@
             }, 3500);
         }
 
+        /* RENDERIZAÇÃO DOS DEPOIMENTOS EM VÍDEO (VERTICAL 9:16) */
+        function renderTestimonialsView() {
+            const container = document.getElementById('testimonials-list');
+            if (!container) return;
+
+            const data = (window.depoimentosData && Array.isArray(window.depoimentosData)) ? window.depoimentosData : [];
+            if (data.length === 0) {
+                container.innerHTML = `<p style="color:var(--text-muted); text-align:center; grid-column: 1/-1;">Nenhum depoimento encontrado.</p>`;
+                return;
+            }
+
+            container.innerHTML = data.map((item, index) => {
+                const videoUrl = item.midia;
+                return `
+                    <div class="vertical-video-card">
+                        <div class="vertical-video-wrapper">
+                            <iframe src="${escapeHtml(videoUrl)}" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen 
+                                    frameborder="0"></iframe>
+                        </div>
+                        <div class="vertical-video-body">
+                            <span style="font-size:0.72rem; color:#FFD700; font-weight:800; text-transform:uppercase;">
+                                <i class="fa-solid fa-star"></i> Depoimento ${index + 1}
+                            </span>
+                            <h4 class="vertical-video-title">Cliente Satisfeito #${index + 1}</h4>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
         /* CARRINHO DE COMPRAS COM DESCONTO DE 10% PARA 2+ PRODUTOS */
         function addToCart(productId) {
             const prod = allProductsCache.find(p => String(p.id || p.product_id) === String(productId));
@@ -1087,6 +1135,7 @@
             loadUserProfile();
             listenUserAccesses();
             loadProductsCatalog();
+            renderTestimonialsView();
         }
 
         function toggleSidebar(forceState) {
@@ -1112,6 +1161,7 @@
             if (targetView) targetView.classList.add('active');
 
             if (tabId === 'chat') listenClientChat();
+            if (tabId === 'testimonials') renderTestimonialsView();
         }
 
         function logoutUser() {
