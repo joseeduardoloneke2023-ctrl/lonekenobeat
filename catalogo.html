@@ -766,17 +766,19 @@
                         <button class="tab-btn" data-category="drumkits">Drum Kits</button>
                         <button class="tab-btn" data-category="plugins">Plugins, Livrarias & Daw</button>
 
-
                         <button class="tab-btn" data-category="flp">FLP</button>
                         <button class="tab-btn" data-category="loops">Loop Kits</button>
                         <button class="tab-btn" data-category="cursos">Cursos</button>
                         <button class="tab-btn" data-category="ebooks">E-books</button>
                     
-                        <!-- Filtro Dinâmico de Sub-categoria para Plugins -->
+                        <!-- Filtro Dinâmico de Sub-categoria para Plugins, Livrarias & DAW -->
                         <select id="pluginSubFilter" class="plugin-select-filter" onchange="onPluginSubFilterChange(this.value)">
-                            <option value="todos">Todos os Plugins</option>
+                            <option value="todos">Todos os Plugins & DAWs</option>
                             <option value="mix_master">Mix & Master (VST)</option>
                             <option value="instrumentos">Instrumentos (VSTi)</option>
+                            <option value="kontakt">Livrarias Kontakt</option>
+                            <option value="daw">DAWs</option>
+                            <option value="mac">Plugins & DAW para Mac</option>
                         </select>
 
                     </div>
@@ -1084,19 +1086,27 @@
         let filteredProducts = produtos.filter(prod => {
             const normProdCat = (prod.categoria || '').toLowerCase().replace(/\s+/g, '');
             const prodTipo = (prod.tipoPlugin || '').toLowerCase();
+            const prodTitulo = (prod.titulo || '').toLowerCase();
+            const prodDesc = (prod.descricao || '').toLowerCase();
             
             let matchCategory = false;
 
             if (selectedCategory === 'all') {
                 matchCategory = true;
             } else if (selectedCategory === 'plugins') {
-                if (normProdCat.includes('plugin') || normProdCat.includes('livraria') || normProdCat.includes('daw')) {
+                if (normProdCat.includes('plugin') || normProdCat.includes('livraria') || normProdCat.includes('daw') || normProdCat.includes('vst')) {
                     if (pluginSubGroup === 'todos') {
                         matchCategory = true;
                     } else if (pluginSubGroup === 'mix_master') {
                         matchCategory = prodTipo.includes('mix') || normProdCat.includes('mix');
                     } else if (pluginSubGroup === 'instrumentos') {
-                        matchCategory = prodTipo.includes('instrumento') || normProdCat.includes('vsti') || normProdCat.includes('instrumento');
+                        matchCategory = prodTipo.includes('instrumento') || normProdCat.includes('vsti') || prodTipo.includes('vsti');
+                    } else if (pluginSubGroup === 'kontakt') {
+                        matchCategory = prodTipo.includes('kontakt') || normProdCat.includes('kontakt') || prodTitulo.includes('kontakt') || prodDesc.includes('kontakt');
+                    } else if (pluginSubGroup === 'daw') {
+                        matchCategory = prodTipo.includes('daw') || normProdCat.includes('daw') || prodTitulo.includes('daw') || prodDesc.includes('daw') || prodTitulo.includes('fl studio') || prodTitulo.includes('cubase') || prodTitulo.includes('logic') || prodTitulo.includes('ableton');
+                    } else if (pluginSubGroup === 'mac') {
+                        matchCategory = prodTipo.includes('mac') || normProdCat.includes('mac') || prodTipo.includes('apple') || prodTitulo.includes('mac') || prodDesc.includes('mac') || prodTitulo.includes('macos') || prodDesc.includes('macos');
                     }
                 }
             } else {
