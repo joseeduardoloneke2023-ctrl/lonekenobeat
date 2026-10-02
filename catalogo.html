@@ -767,9 +767,9 @@
                         <button class="tab-btn" data-category="plugins">Plugins, Livrarias & Daw</button>
 
                         <button class="tab-btn" data-category="flp">FLP</button>
-                        <button class="tab-btn" data-category="loops">Loop Kits</button>
                         <button class="tab-btn" data-category="cursos">Cursos</button>
-                        <button class="tab-btn" data-category="ebooks">E-books</button>
+                        <button class="tab-btn" data-category="drumkitsdosartistas">Drumkits dos Artista</button>
+
                     
                         <!-- Filtro Dinâmico de Sub-categoria para Plugins, Livrarias & DAW -->
                         <select id="pluginSubFilter" class="plugin-select-filter" onchange="onPluginSubFilterChange(this.value)">
@@ -816,10 +816,9 @@
                 <h7>Categorias</h7>
                 <ul>
                     <li><a href="catalogo.html?cat=beats">Beats</a></li>
-                    <li><a href="catalogo.html?cat=drumkitscomaulas">Drum Kits com Aulas</a></li>
-                    <li><a href="catalogo.html?cat=drumkitssemaulas">Drum Kits sem Aulas</a></li>
-                    <li><a href="catalogo.html?cat=drumkitsartista">Drum Kits Artista</a></li>
-                    <li><a href="catalogo.html?cat=loops">Loop Kits</a></li>
+                    <li><a href="catalogo.html?cat=drumkits">Drum Kits</a></li>
+                    <li><a href="catalogo.html?cat=drumkitsdosartistas">Drum Kits dos Artistas</a></li>
+                    <li><a href="catalogo.html?cat=plugins">Plugins & DAWs</a></li>
                     <li><a href="catalogo.html?cat=flp">FLP Projects</a></li>
                     <li><a href="catalogo.html?cat=cursos">Cursos Online</a></li>
                 </ul>
@@ -1109,6 +1108,8 @@
                         matchCategory = prodTipo.includes('mac') || normProdCat.includes('mac') || prodTipo.includes('apple') || prodTitulo.includes('mac') || prodDesc.includes('mac') || prodTitulo.includes('macos') || prodDesc.includes('macos');
                     }
                 }
+            } else if (selectedCategory === 'drumkits') {
+                matchCategory = (normProdCat === 'drumkits' || normProdCat === 'drumkit');
             } else {
                 matchCategory = normProdCat.includes(selectedCategory);
             }
