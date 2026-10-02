@@ -323,6 +323,63 @@
         .product-title { font-family: 'Montserrat', sans-serif; font-size: 1.05rem; font-weight: 800; color: #FFF; line-height: 1.3; }
         .product-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
+        /* ESTILOS PARA VÍDEOS VERTICAIS (9:16) */
+        .vertical-video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .vertical-video-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .vertical-video-card:hover {
+            transform: translateY(-4px);
+            background: var(--bg-card-hover);
+            border-color: rgba(255,255,255,0.25);
+        }
+
+        .vertical-video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 177.78%; /* Proporção 9:16 */
+            background: #000;
+        }
+
+        .vertical-video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .vertical-video-body {
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: var(--bg-card);
+            flex: 1;
+        }
+
+        .vertical-video-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #FFF;
+            line-height: 1.3;
+        }
+
         .btn-action {
             padding: 10px 18px; border-radius: var(--radius-md); font-weight: 600; font-size: 0.82rem;
             display: inline-flex; align-items: center; justify-content: center; gap: 8px;
@@ -451,6 +508,9 @@
                 <div class="menu-item active" onclick="switchView('unlocked-products', this)">
                     <i class="fa-solid fa-unlock-keyhole" style="color:var(--success);"></i> Produtos Comprados
                 </div>
+                <div class="menu-item" onclick="switchView('tutorials', this)">
+                    <i class="fa-solid fa-circle-play" style="color:var(--info);"></i> Aulas de como usar o painel
+                </div>
                 <div class="menu-item" onclick="switchView('bonus', this)">
                     <i class="fa-solid fa-gift" style="color:var(--warning);"></i> Bonus Exclusivos
                 </div>
@@ -485,21 +545,85 @@
                 <div class="products-grid" id="unlocked-products-list"></div>
             </section>
 
-            <!-- 2. BONUS EXCLUSIVOS VIEW -->
+            <!-- 2. AULAS DE COMO USAR O PAINEL VIEW -->
+            <section id="view-tutorials" class="panel-view">
+                <h2 class="view-title"><i class="fa-solid fa-graduation-cap" style="color:var(--info);"></i> Aulas de como usar o painel</h2>
+                <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 2rem;">Assista aos vídeos tutoriais passo a passo para aprender a navegar e utilizar a plataforma.</p>
+                
+                <div class="vertical-video-grid">
+                    <!-- VÍDEO 1: COMO COMPRAR UM PRODUTO (CLOUDINARY) -->
+                    <div class="vertical-video-card">
+                        <div class="vertical-video-wrapper">
+                            <iframe src="https://player.cloudinary.com/embed/?cloud_name=lel7b08p&public_id=COMO_COMPRAR_UM_PRODUTO" 
+                                    allow="autoplay; fullscreen; encrypted-media; picture-in-picture" 
+                                    allowfullscreen 
+                                    frameborder="0"></iframe>
+                        </div>
+                        <div class="vertical-video-body">
+                            <span style="font-size:0.72rem; color:var(--info); font-weight:800; text-transform:uppercase;"><i class="fa-solid fa-play"></i> Tutorial 1</span>
+                            <h4 class="vertical-video-title">Como Comprar um Produto</h4>
+                        </div>
+                    </div>
+
+                    <!-- VÍDEO 2: COMO RECUPERAR A SENHA DA SUA CONTA (YOUTUBE SHORTS) -->
+                    <div class="vertical-video-card">
+                        <div class="vertical-video-wrapper">
+                            <iframe src="https://www.youtube.com/embed/Ei7sOyLvpXI" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen 
+                                    frameborder="0"></iframe>
+                        </div>
+                        <div class="vertical-video-body">
+                            <span style="font-size:0.72rem; color:var(--info); font-weight:800; text-transform:uppercase;"><i class="fa-solid fa-play"></i> Tutorial 2</span>
+                            <h4 class="vertical-video-title">Como Recuperar a Senha da Sua Conta</h4>
+                        </div>
+                    </div>
+
+                    <!-- VÍDEO 3: COMO ME ENVIAR MENSAGEM E EDITAR O SEU PERFIL (YOUTUBE SHORTS) -->
+                    <div class="vertical-video-card">
+                        <div class="vertical-video-wrapper">
+                            <iframe src="https://www.youtube.com/embed/napq2MZK0Hs" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen 
+                                    frameborder="0"></iframe>
+                        </div>
+                        <div class="vertical-video-body">
+                            <span style="font-size:0.72rem; color:var(--info); font-weight:800; text-transform:uppercase;"><i class="fa-solid fa-play"></i> Tutorial 3</span>
+                            <h4 class="vertical-video-title">Como Me Enviar Mensagem e Editar o Seu Perfil</h4>
+                        </div>
+                    </div>
+
+                    <!-- VÍDEO 4: COMO BAIXAR OS PRODUTOS COMPRADOS (YOUTUBE SHORTS) -->
+                    <div class="vertical-video-card">
+                        <div class="vertical-video-wrapper">
+                            <iframe src="https://www.youtube.com/embed/pvtoCBUzVL4" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen 
+                                    frameborder="0"></iframe>
+                        </div>
+                        <div class="vertical-video-body">
+                            <span style="font-size:0.72rem; color:var(--info); font-weight:800; text-transform:uppercase;"><i class="fa-solid fa-play"></i> Tutorial 4</span>
+                            <h4 class="vertical-video-title">Como Baixar os Produtos Comprados</h4>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. BONUS EXCLUSIVOS VIEW -->
             <section id="view-bonus" class="panel-view">
                 <h2 class="view-title"><i class="fa-solid fa-gift" style="color:var(--warning);"></i> Bonus Exclusivos</h2>
                 <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 2rem;">Aproveite os bónus e recursos liberados gratuitamente para você.</p>
                 <div class="products-grid" id="bonus-products-list"></div>
             </section>
 
-            <!-- 3. PRODUTOS DISPONÍVEIS VIEW -->
+            <!-- 4. PRODUTOS DISPONÍVEIS VIEW -->
             <section id="view-locked-products" class="panel-view">
                 <h2 class="view-title"><i class="fa-solid fa-lock" style="color:var(--primary);"></i> Produtos Disponíveis para Compra</h2>
                 <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 2rem;">Adicione produtos ao carrinho para compra e liberação automática.</p>
                 <div class="products-grid" id="locked-products-list"></div>
             </section>
 
-            <!-- 4. EDITAR PERFIL VIEW -->
+            <!-- 5. EDITAR PERFIL VIEW -->
             <section id="view-edit-profile" class="panel-view">
                 <h2 class="view-title"><i class="fa-solid fa-user-pen" style="color:var(--primary);"></i> Editar Perfil</h2>
                 <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom: 2rem;">Mantenha as suas informações pessoais atualizadas.</p>
@@ -549,7 +673,7 @@
                 </div>
             </section>
 
-            <!-- 5. MUDAR SENHA VIEW -->
+            <!-- 6. MUDAR SENHA VIEW -->
             <section id="view-change-password" class="panel-view">
                 <h2 class="view-title"><i class="fa-solid fa-key" style="color:var(--primary);"></i> Mudar Senha</h2>
                 <div class="form-container-card" style="max-width:600px;">
@@ -573,7 +697,7 @@
                 </div>
             </section>
 
-            <!-- 6. SUPORTE CHAT VIEW -->
+            <!-- 7. SUPORTE CHAT VIEW -->
             <section id="view-chat" class="panel-view">
                 <h2 class="view-title"><i class="fa-solid fa-comments" style="color:var(--primary);"></i> Suporte Chat</h2>
                 <div class="chat-box-container">
@@ -1806,6 +1930,10 @@
         function formatEmbedVideoUrl(url) {
             if (!url) return '';
             let embedUrl = String(url).trim();
+            if (embedUrl.includes('youtube.com/shorts/')) {
+                const id = embedUrl.split('youtube.com/shorts/')[1].split('?')[0];
+                return `https://www.youtube.com/embed/${id}?autoplay=1`;
+            }
             if (embedUrl.includes('youtube.com/watch?v=')) {
                 const id = embedUrl.split('watch?v=')[1].split('&')[0];
                 return `https://www.youtube.com/embed/${id}?autoplay=1`;
