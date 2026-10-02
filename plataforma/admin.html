@@ -675,15 +675,11 @@
                     </div>
                 </div>
 
-                <div id="plugin-subcat-container" style="display:none; background:rgba(255,255,255,0.02); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
-                    <label class="form-label" style="color:var(--primary);"><i class="fa-solid fa-sliders"></i> Subcategoria do Plugin (`tipoPlugin`)</label>
+                <!-- Subcategoria Dinâmica adaptável por Categoria -->
+                <div id="subcat-container" style="display:none; background:rgba(255,255,255,0.02); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+                    <label class="form-label" style="color:var(--primary);"><i class="fa-solid fa-sliders"></i> Subcategoria do Produto (`tipoPlugin` / `subcategoria`)</label>
                     <select id="p-tipoPlugin" class="search-input" style="cursor:pointer;">
-                        <option value="">-- Selecione a Subcategoria do Plugin --</option>
-                        <option value="mix_master">Mix & Master (VST)</option>
-                        <option value="instrumentos">Instrumentos (VSTi)</option>
-                        <option value="kontakt">Livrarias Kontakt</option>
-                        <option value="daw">DAWs</option>
-                        <option value="mac">Plugins & DAW para Mac</option>
+                        <!-- Preenchido dinamicamente via Javascript conforme a Categoria -->
                     </select>
                 </div>
 
@@ -936,7 +932,6 @@
                 .replace(/(^-|-$)+/g, '');
         }
 
-        /* VISUALIZAR COMPROVATIVO COM DADOS OCR EXTRAÍDOS E BOTÃO DE APROVAÇÃO RÁPIDA */
         function viewReceipt(url, txId, email, productIdsJson, productTitle, receiptDT, receiptRef, flaggedReason) {
             if (!url) {
                 showToast('Nenhum comprovativo anexado a esta transação.', 'warning');
@@ -997,25 +992,56 @@
         }
 
         function toggleCursosSection() {
-            const cat = document.getElementById('p-categoria').value;
-            const container = document.getElementById('cursos-section');
-            const pluginSubContainer = document.getElementById('plugin-subcat-container');
+            const cat = document.getElementById('p-categoria').value.toLowerCase();
+            const cursosContainer = document.getElementById('cursos-section');
+            const subcatContainer = document.getElementById('subcat-container');
+            const selectSubcat = document.getElementById('p-tipoPlugin');
 
             if (cat === 'cursos') {
-                if (container) container.style.display = 'block';
+                if (cursosContainer) cursosContainer.style.display = 'block';
                 if (document.querySelectorAll('.modulo-card').length === 0 && typeof addModuloUI === 'function') {
                     addModuloUI();
                 }
             } else {
-                if (container) container.style.display = 'none';
+                if (cursosContainer) cursosContainer.style.display = 'none';
             }
 
+            // Alternador dinâmico do formulário no Admin para suportar subcategorias por Categoria
             if (cat === 'plugins') {
-                if (pluginSubContainer) pluginSubContainer.style.display = 'block';
+                if (subcatContainer) subcatContainer.style.display = 'block';
+                selectSubcat.innerHTML = `
+                    <option value="">-- Selecione a Subcategoria do Plugin --</option>
+                    <option value="mix_master">Mix & Master (VST)</option>
+                    <option value="instrumentos">Instrumentos (VSTi)</option>
+                    <option value="kontakt">Livrarias Kontakt</option>
+                    <option value="daw">DAWs</option>
+                    <option value="mac">Plugins & DAW para Mac</option>
+                `;
+            } else if (cat === 'drumkits' || cat === 'drumkitsdosartistas') {
+                if (subcatContainer) subcatContainer.style.display = 'block';
+                selectSubcat.innerHTML = `
+                    <option value="">-- Selecione o Tipo de Drum Kit --</option>
+                    <option value="com_aulas">Drum Kit com Aulas</option>
+                    <option value="sem_aulas">Drum Kit sem Aulas</option>
+                `;
+            } else if (cat === 'flp') {
+                if (subcatContainer) subcatContainer.style.display = 'block';
+                selectSubcat.innerHTML = `
+                    <option value="">-- Selecione o Tipo de Projecto FLP --</option>
+                    <option value="melodia">Projecto de Melodia</option>
+                    <option value="mix_master">Projecto de Mix e Master</option>
+                    <option value="afrobeat">Projecto de Beat: Afrobeat</option>
+                    <option value="ghetto_zouk">Projecto de Beat: Ghetto Zouk</option>
+                    <option value="afro_house">Projecto de Beat: Afro House</option>
+                    <option value="semba">Projecto de Beat: Semba</option>
+                    <option value="amapiano">Projecto de Beat: Amapiano</option>
+                    <option value="kuduro">Projecto de Beat: Kuduro</option>
+                    <option value="trap">Projecto de Beat: Dark / Melodic Trap</option>
+                    <option value="drill">Projecto de Beat: Drill / R&B</option>
+                `;
             } else {
-                if (pluginSubContainer) pluginSubContainer.style.display = 'none';
-                const selectTipo = document.getElementById('p-tipoPlugin');
-                if (selectTipo) selectTipo.value = '';
+                if (subcatContainer) subcatContainer.style.display = 'none';
+                if (selectSubcat) selectSubcat.value = '';
             }
         }
 
@@ -1213,6 +1239,8 @@
                 }
                 catSelect.value = catVal || 'cursos';
 
+                toggleCursosSection(); // Carrega as opções de subcategoria corretas no select
+
                 if (document.getElementById('p-tipoPlugin')) {
                     document.getElementById('p-tipoPlugin').value = p.tipoPlugin || p.subcategoria || '';
                 }
@@ -1238,7 +1266,6 @@
                     document.getElementById('img-preview-container').style.display = 'none';
                 }
 
-                toggleCursosSection();
                 document.getElementById('modulos-list').innerHTML = '';
                 if ((p.categoria === 'cursos' || p.category === 'cursos') && Array.isArray(p.modulos) && p.modulos.length > 0) {
                     p.modulos.forEach(mod => {
@@ -1436,7 +1463,6 @@
                     document.getElementById('kpi-revenue').innerText = totalRevenue.toLocaleString('pt-AO') + ' Kz';
                     document.getElementById('kpi-sales-pending').innerText = pendingCount;
 
-                    // Atualiza o indicador numérico da barra lateral
                     const badge = document.getElementById('sidebar-pending-badge');
                     if (badge) {
                         badge.innerText = pendingCount;
@@ -1461,7 +1487,6 @@
             }).catch(() => document.getElementById('kpi-users').innerText = '0');
         }
 
-        /* VENDAS PENDENTES SINCRO COM CHECKOUT DO CLIENTE E OCR INTELIGENTE */
         function loadPendingSales() {
             const tbody = document.getElementById('pending-sales-table-body');
             if (!tbody) return;
@@ -1503,7 +1528,6 @@
                         const phone = t.customerWhatsApp || t.whatsapp || 'N/A';
                         const productTitle = t.productTitle || t.titulo || 'Produto VIP';
                         
-                        // Garante a leitura de múltiplos IDs de produto (Array ou String)
                         const rawProductIds = t.productIds || t.productId || t.produtoId || '';
                         const productIdsJson = JSON.stringify(rawProductIds);
 
@@ -1594,7 +1618,6 @@
                 });
         }
 
-        /* APROVAÇÃO MULTI-PRODUTO COMPATÍVEL COM O CHECKOUT CLIENTE */
         async function approveCheckoutSale(txId, email, productIdsInput, productTitle) {
             if (!email || email === 'N/A') {
                 showToast('E-mail inválido para liberar acesso.', 'warning');
