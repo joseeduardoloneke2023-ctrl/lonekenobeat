@@ -922,6 +922,7 @@
         }
         const db = firebase.firestore();
         const auth = firebase.auth();
+        const storage = firebase.storage();
 
         try {
             db.enablePersistence({ synchronizeTabs: true }).catch(err => console.warn("Persistence:", err.code));
@@ -942,6 +943,7 @@
         let selectedCheckoutProducts = [];
         let selectedCheckoutMethod = 'transfer';
         let selectedReceiptBase64 = null;
+        let selectedReceiptFile = null;
         let parsedReceiptData = null;
 
         // TAXA DE CÂMBIO DEFINIDA: 500 Kz = 1 USD
@@ -1454,6 +1456,7 @@
 
             selectedCheckoutProducts = productsToBuy;
             selectedReceiptBase64 = null;
+            selectedReceiptFile = null;
             parsedReceiptData = null;
 
             const summaryBox = document.getElementById('chk-summary-box');
@@ -1548,6 +1551,8 @@
             const file = input.files[0];
             if (!file) return;
 
+            selectedReceiptFile = file;
+
             const statusEl = document.getElementById('chk-upload-status');
             const progressEl = document.getElementById('chk-ocr-progress');
 
@@ -1636,7 +1641,7 @@
                 return;
             }
 
-            if (!selectedReceiptBase64) {
+            if (!selectedReceiptBase64 && !selectedReceiptFile) {
                 showToast('Por favor, anexe a imagem do comprovativo de pagamento.', 'warning');
                 return;
             }
@@ -1656,6 +1661,21 @@
             const receiptRef = parsedReceiptData && parsedReceiptData.extractedRef ? parsedReceiptData.extractedRef : 'N/A';
 
             try {
+                // Upload para Firebase Storage para manter link direto e leve (se disponível)
+                let proofUrl = '';
+                if (selectedReceiptFile) {
+                    try {
+                        const cleanFileName = selectedReceiptFile.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+                        const fileRef = storage.ref(`receipts/${Date.now()}_${cleanFileName}`);
+                        const snapshot = await fileRef.put(selectedReceiptFile);
+                        proofUrl = await snapshot.ref.getDownloadURL();
+                    } catch (stErr) {
+                        console.warn("Upload do comprovativo via Storage omitido/fallback base64:", stErr);
+                    }
+                }
+
+                const finalReceiptProof = proofUrl || selectedReceiptBase64 || '';
+
                 let isDuplicate = false;
                 let duplicateReason = "";
 
@@ -1699,7 +1719,9 @@
                         amountKz: totalKz,
                         amountUsd: totalUsd,
                         amount: totalKz,
-                        receiptFile: selectedReceiptBase64,
+                        proofUrl: finalReceiptProof,
+                        comprovativo: finalReceiptProof,
+                        receiptFile: finalReceiptProof,
                         receiptDateTime: receiptDT,
                         receiptRef: receiptRef,
                         status: 'pending_review',
@@ -1763,7 +1785,9 @@
                     amountKz: totalKz,
                     amountUsd: totalUsd,
                     amount: totalKz,
-                    receiptFile: selectedReceiptBase64,
+                    proofUrl: finalReceiptProof,
+                    comprovativo: finalReceiptProof,
+                    receiptFile: finalReceiptProof,
                     receiptDateTime: receiptDT,
                     receiptRef: receiptRef,
                     status: 'completed',
