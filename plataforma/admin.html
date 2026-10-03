@@ -797,6 +797,9 @@
         const auth = firebase.auth();
         const storage = firebase.storage();
 
+        // Mapa de memória para prevenir que Base64 estrague o HTML
+        let pendingSalesMap = {};
+
         let editingProductId = null; 
         let activeChatUserId = null;
         let unsubscribeDashboard = null;
@@ -857,7 +860,7 @@
             return String(str)
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
+                .replace/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
         }
@@ -932,7 +935,23 @@
                 .replace(/(^-|-$)+/g, '');
         }
 
-        function viewReceipt(url, txId, email, productIdsJson, productTitle, receiptDT, receiptRef, flaggedReason) {
+        // Função otimizada que lê os dados do comprovativo em memória via ID da Transação
+        function viewReceiptByTxId(txId) {
+            const t = pendingSalesMap[txId];
+            if (!t) {
+                showToast('Transação não encontrada na memória.', 'warning');
+                return;
+            }
+
+            const url = t.proofUrl || t.receiptFile || t.comprovativo || '';
+            const email = (t.userEmail || t.customerEmail || t.email || 'N/A').toLowerCase().trim();
+            const productTitle = t.productTitle || t.titulo || 'Produto VIP';
+            const rawProductIds = t.productIds || t.productId || t.produtoId || '';
+            const productIdsJson = JSON.stringify(rawProductIds);
+            const receiptDT = t.receiptDateTime || 'N/A';
+            const receiptRef = t.receiptRef || 'N/A';
+            const flaggedReason = t.flaggedReason || '';
+
             if (!url) {
                 showToast('Nenhum comprovativo anexado a esta transação.', 'warning');
                 return;
@@ -1006,7 +1025,6 @@
                 if (cursosContainer) cursosContainer.style.display = 'none';
             }
 
-            // Alternador dinâmico do formulário no Admin para suportar subcategorias por Categoria
             if (cat === 'plugins') {
                 if (subcatContainer) subcatContainer.style.display = 'block';
                 selectSubcat.innerHTML = `
@@ -1239,7 +1257,7 @@
                 }
                 catSelect.value = catVal || 'cursos';
 
-                toggleCursosSection(); // Carrega as opções de subcategoria corretas no select
+                toggleCursosSection();
 
                 if (document.getElementById('p-tipoPlugin')) {
                     document.getElementById('p-tipoPlugin').value = p.tipoPlugin || p.subcategoria || '';
@@ -1487,6 +1505,7 @@
             }).catch(() => document.getElementById('kpi-users').innerText = '0');
         }
 
+        // CARREGAMENTO OTIMIZADO DE VENDAS PENDENTES COM MAPA DE MEMÓRIA
         function loadPendingSales() {
             const tbody = document.getElementById('pending-sales-table-body');
             if (!tbody) return;
@@ -1495,8 +1514,12 @@
             tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:2rem;"><i class="fa-solid fa-spinner fa-spin"></i> Buscando pedidos no banco...</td></tr>`;
 
             unsubscribePendingSales = db.collection('transactions')
+                .orderBy('createdAt', 'desc')
+                .limit(100)
                 .onSnapshot(snapshot => {
                     tbody.innerHTML = '';
+                    pendingSalesMap = {}; // Limpa e atualiza cache em memória
+
                     if (snapshot.empty) {
                         tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhum pedido de checkout registrado.</td></tr>`;
                         return;
@@ -1507,7 +1530,10 @@
 
                     snapshot.forEach(doc => {
                         const d = doc.data();
-                        docsList.push({ id: doc.id, ...d });
+                        const itemData = { id: doc.id, ...d };
+                        docsList.push(itemData);
+                        pendingSalesMap[doc.id] = itemData; // Salva em memória para o modal abrir rápido
+
                         const st = (d.status || 'pending').toLowerCase();
                         if (st === 'pending' || st === 'pendente' || st === 'pending_review') {
                             pendingCounter++;
@@ -1519,8 +1545,6 @@
                         badge.innerText = pendingCounter;
                         badge.style.display = pendingCounter > 0 ? 'inline-block' : 'none';
                     }
-
-                    docsList.sort((a, b) => parseFirebaseDate(b.createdAt) - parseFirebaseDate(a.createdAt));
 
                     docsList.forEach(t => {
                         const txId = t.id;
@@ -1536,10 +1560,6 @@
                         const status = (t.status || 'pending').toLowerCase();
                         const proof = t.proofUrl || t.receiptFile || t.comprovativo || '';
 
-                        const dtReceipt = t.receiptDateTime || 'N/A';
-                        const refReceipt = t.receiptRef || 'N/A';
-                        const flaggedReason = t.flaggedReason || '';
-                        
                         const dateFormatted = t.createdAt ? parseFirebaseDate(t.createdAt).toLocaleString('pt-AO') : 'Recente';
                         const isPending = (status === 'pending' || status === 'pendente' || status === 'aguardando');
                         const isPendingReview = (status === 'pending_review');
@@ -1560,15 +1580,11 @@
                         const safeProductIdsJson = escapeJsArg(productIdsJson);
                         const safeProductTitle = escapeJsArg(productTitle);
                         const safeTxId = escapeJsArg(txId);
-                        const safeProof = escapeJsArg(proof);
-                        const safeDt = escapeJsArg(dtReceipt);
-                        const safeRef = escapeJsArg(refReceipt);
-                        const safeReason = escapeJsArg(flaggedReason);
 
                         let proofDisplay = '';
                         if (proof) {
                             proofDisplay = `
-                                <button class="btn-action btn-secondary" style="padding: 5px 12px; font-size:0.75rem;" onclick="viewReceipt('${safeProof}', '${safeTxId}', '${safeEmail}', '${safeProductIdsJson}', '${safeProductTitle}', '${safeDt}', '${safeRef}', '${safeReason}')">
+                                <button class="btn-action btn-secondary" style="padding: 5px 12px; font-size:0.75rem;" onclick="viewReceiptByTxId('${safeTxId}')">
                                     <i class="fa-solid fa-image" style="color:var(--info);"></i> Comprovativo & OCR
                                 </button>
                             `;
@@ -2170,44 +2186,31 @@
             }
         }
 
+        // CARREGAMENTO OTIMIZADO DA LISTA DE CHATS
         function loadChatUsers() {
             const chatUsersList = document.getElementById('chat-users-list');
             if (unsubscribeChatList) unsubscribeChatList();
 
             unsubscribeChatList = db.collection('chats')
-                .onSnapshot(async snapshot => {
+                .orderBy('updatedAt', 'desc')
+                .limit(50)
+                .onSnapshot(snapshot => {
                     if (snapshot.empty) {
                         chatUsersList.innerHTML = `<p style="padding:1rem; color:var(--text-muted); font-size:0.8rem; text-align:center;">Nenhuma conversa iniciada.</p>`;
                         return;
                     }
 
-                    const chatsData = [];
+                    let html = '';
                     snapshot.docs.forEach(doc => {
-                        chatsData.push({ id: doc.id, ...doc.data() });
-                    });
-
-                    chatsData.sort((a, b) => parseFirebaseDate(b.updatedAt) - parseFirebaseDate(a.updatedAt));
-
-                    const chatItemsPromises = chatsData.map(async c => {
-                        const isActive = c.id === activeChatUserId ? 'active' : '';
-                        let userEmail = c.userEmail || c.email || '';
-
-                        if (!userEmail) {
-                            try {
-                                const uDoc = await db.collection('users').doc(c.id).get();
-                                if (uDoc.exists) {
-                                    const uData = uDoc.data();
-                                    userEmail = uData.email || uData.userEmail || '';
-                                }
-                            } catch(e) {}
-                        }
-
+                        const c = doc.data();
+                        const isActive = doc.id === activeChatUserId ? 'active' : '';
+                        const userEmail = c.userEmail || c.email || '';
                         const userName = c.userName || 'Cliente VIP';
                         const safeUserName = escapeJsArg(userName);
                         const safeUserEmail = escapeJsArg(userEmail);
 
-                        return `
-                            <div class="chat-user-item ${isActive}" onclick="selectChatUser('${c.id}', '${safeUserName}', '${safeUserEmail}')">
+                        html += `
+                            <div class="chat-user-item ${isActive}" onclick="selectChatUser('${doc.id}', '${safeUserName}', '${safeUserEmail}')">
                                 <div class="avatar-box" style="width:36px; height:36px; font-size:0.9rem;"><i class="fa-solid fa-user"></i></div>
                                 <div style="overflow:hidden; width:100%;">
                                     <strong style="font-size:0.88rem; display:block; text-overflow:ellipsis; white-space:nowrap; overflow:hidden;">${escapeHtml(userName)}</strong>
@@ -2218,8 +2221,7 @@
                         `;
                     });
 
-                    const itemsHtmlArr = await Promise.all(chatItemsPromises);
-                    chatUsersList.innerHTML = itemsHtmlArr.join('');
+                    chatUsersList.innerHTML = html;
                 });
         }
 
