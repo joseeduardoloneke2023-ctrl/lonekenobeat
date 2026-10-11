@@ -613,12 +613,12 @@
 
                         <!-- ÁREA DE UPLOAD DO COMPROVATIVO BAI -->
                         <div class="form-group" style="margin-top: 1.5rem; margin-bottom: 0;">
-                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Carregar Comprovativo Bancário (Máx. 1MB):</label>
+                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Carregar Comprovativo Bancário (Máx. 10MB):</label>
                             
                             <div class="upload-file-area" onclick="document.getElementById('receiptTransferInput').click()">
                                 <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;"></i>
                                 <p style="font-size: 0.88rem; color: var(--white); font-weight: 600;" id="uploadStatusText">Clique para selecionar o comprovativo Bancário</p>
-                                <p style="font-size: 0.75rem; color: var(--text-secondary);">Formatos aceites: JPG, PNG (Máx. 1MB)</p>
+                                <p style="font-size: 0.75rem; color: var(--text-secondary);">Formatos aceites: JPG, PNG (Processamento Instantâneo)</p>
                             </div>
                             <input type="file" id="receiptTransferInput" accept="image/png, image/jpeg, image/jpg" style="display: none;" onchange="handleReceiptFileSelection(this, 'transfer')">
                         </div>
@@ -659,12 +659,12 @@
                         </div>
 
                         <div class="form-group" style="margin-top: 1.5rem; margin-bottom: 0;">
-                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Carregar Comprovativo Wise (Máx. 1MB):</label>
+                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">Carregar Comprovativo Wise (Máx. 10MB):</label>
                             
                             <div class="upload-file-area" onclick="document.getElementById('receiptWiseInput').click()">
                                 <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;"></i>
                                 <p style="font-size: 0.88rem; color: var(--white); font-weight: 600;" id="uploadWiseStatusText">Clique para selecionar o comprovativo Wise</p>
-                                <p style="font-size: 0.75rem; color: var(--text-secondary);">Formatos aceites: JPG, PNG (Máx. 1MB)</p>
+                                <p style="font-size: 0.75rem; color: var(--text-secondary);">Formatos aceites: JPG, PNG (Processamento Instantâneo)</p>
                             </div>
                             <input type="file" id="receiptWiseInput" accept="image/png, image/jpeg, image/jpg" style="display: none;" onchange="handleReceiptFileSelection(this, 'wise')">
                         </div>
@@ -900,6 +900,44 @@
         }
     }
 
+    // COMPRESSÃO & REDIMENSIONAMENTO ULTRARRÁPIDO DA IMAGEM EM CANVAS
+    function compressAndScaleImage(file, maxDimension = 1000, quality = 0.75) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onerror = reject;
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onerror = reject;
+                img.onload = () => {
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxDimension || height > maxDimension) {
+                        if (width > height) {
+                            height = Math.round((height * maxDimension) / width);
+                            width = maxDimension;
+                        } else {
+                            width = Math.round((width * maxDimension) / height);
+                            height = maxDimension;
+                        }
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Retorna Base64 JPEG leve (~100KB-150KB)
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+                    resolve(compressedBase64);
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
     // EXTRAÇÃO DE DATA E HORA DO TEXTO DO OCR
     function extractDateFromOCR(text) {
         const dateRegex = /\b(\d{1,2})[\/\.\-](\d{1,2})[\/\.\-](\d{2,4})\b/;
@@ -920,7 +958,6 @@
         }
 
         try {
-            // 1. Pesquisa por assinatura exata na coleção de transações
             if (signature) {
                 const txRef = window.firebaseCollection(window.firebaseDb, "transactions");
                 const qSig = window.firebaseQuery(txRef, window.firebaseWhere("receiptSignature", "==", signature));
@@ -928,7 +965,6 @@
                 if (!snapSig.empty) return true;
             }
 
-            // 2. Pesquisa por Data/Hora na coleção de transações
             if (dateTimeStr) {
                 const txRef = window.firebaseCollection(window.firebaseDb, "transactions");
                 const qDT = window.firebaseQuery(txRef, window.firebaseWhere("receiptDateTime", "==", dateTimeStr));
@@ -943,7 +979,7 @@
         }
     }
 
-    // LEITURA OCR E VALIDAÇÃO COMPLETA DO COMPROVATIVO (NOME, DATA, HORA, VALOR, IBAN E DUPLICADOS)
+    // LEITURA OCR OTIMIZADA E VALIDAÇÃO COMPLETA
     async function handleReceiptFileSelection(input, method) {
         const file = input.files[0];
         if (!file) return;
@@ -958,114 +994,106 @@
 
         if (alertBoxEl) alertBoxEl.style.display = "none";
 
-        if (file.size > 1048576) {
-            showToast("O ficheiro excede o tamanho máximo de 1MB.", "error");
-            input.value = "";
-            if (statusEl) statusEl.innerText = "Clique para selecionar o comprovativo";
-            selectedFileBase64 = null;
-            isFileValidated = false;
-            return;
-        }
+        try {
+            if (statusEl) statusEl.innerText = "⚡ A otimizar imagem do comprovativo...";
+            
+            // 1. COMPRESSÃO AUTOMÁTICA EM MILISSEGUNDOS
+            const compressedBase64 = await compressAndScaleImage(file, 1000, 0.75);
+            selectedFileBase64 = compressedBase64;
 
-        if (statusEl) statusEl.innerText = `A analisar comprovativo "${file.name}"...`;
-        
-        const reader = new FileReader();
-        reader.onload = async function(e) {
-            selectedFileBase64 = e.target.result;
+            if (statusEl) statusEl.innerText = "🔍 A analisar dados do comprovativo (OCR)...";
 
-            try {
-                const result = await Tesseract.recognize(selectedFileBase64, 'por');
-                const rawOCR = result.data.text || "";
-                const cleanOCR = normalizeText(rawOCR);
+            // 2. EXECUÇÃO ULTRARRÁPIDA DO OCR NA IMAGEM OPTIMIZADA
+            const result = await Tesseract.recognize(selectedFileBase64, 'por');
+            const rawOCR = result.data.text || "";
+            const cleanOCR = normalizeText(rawOCR);
 
-                // 1. VERIFICAÇÃO DO NOME DO TITULAR
-                const hasName = cleanOCR.includes("LONEKE") || 
-                                (cleanOCR.includes("JOSE") && cleanOCR.includes("EDUARDO"));
+            // 3. VERIFICAÇÃO DO NOME DO TITULAR
+            const hasName = cleanOCR.includes("LONEKE") || 
+                            (cleanOCR.includes("JOSE") && cleanOCR.includes("EDUARDO"));
 
-                // 2. VERIFICAÇÃO DO IBAN / BANCO
-                let hasIban = false;
-                if (method === 'wise') {
-                    hasIban = cleanOCR.includes("BE83") || cleanOCR.includes("9675") || cleanOCR.includes("7696") || cleanOCR.includes("0915") || cleanOCR.includes("WISE");
-                } else {
-                    hasIban = cleanOCR.includes("0040") || cleanOCR.includes("6562") || cleanOCR.includes("1494") || cleanOCR.includes("1019") || cleanOCR.includes("BAI");
-                }
+            // 4. VERIFICAÇÃO DO IBAN / BANCO
+            let hasIban = false;
+            if (method === 'wise') {
+                hasIban = cleanOCR.includes("BE83") || cleanOCR.includes("9675") || cleanOCR.includes("7696") || cleanOCR.includes("0915") || cleanOCR.includes("WISE");
+            } else {
+                hasIban = cleanOCR.includes("0040") || cleanOCR.includes("6562") || cleanOCR.includes("1494") || cleanOCR.includes("1019") || cleanOCR.includes("BAI");
+            }
 
-                // 3. VERIFICAÇÃO DO VALOR TOTAL
-                const expectedTotal = getExpectedNumericTotal(method);
-                const expectedDigits = expectedTotal.toString();
-                const cleanDigitsOCR = cleanOCR.replace(/\D/g, '');
+            // 5. VERIFICAÇÃO DO VALOR TOTAL
+            const expectedTotal = getExpectedNumericTotal(method);
+            const expectedDigits = expectedTotal.toString();
+            const cleanDigitsOCR = cleanOCR.replace(/\D/g, '');
 
-                const hasAmount = cleanOCR.includes(expectedTotal.toString()) || 
-                                  cleanOCR.includes(expectedTotal.toLocaleString('pt-PT')) || 
-                                  cleanDigitsOCR.includes(expectedDigits);
+            const hasAmount = cleanOCR.includes(expectedTotal.toString()) || 
+                              cleanOCR.includes(expectedTotal.toLocaleString('pt-PT')) || 
+                              cleanDigitsOCR.includes(expectedDigits);
 
-                // 4. EXTRAÇÃO DE DATA E HORA
-                const extractedDate = extractDateFromOCR(rawOCR);
-                const extractedTime = extractTimeFromOCR(rawOCR);
-                const fullDateTime = (extractedDate && extractedTime) ? `${extractedDate} ${extractedTime}` : (extractedDate || extractedTime || null);
+            // 6. EXTRAÇÃO DE DATA E HORA
+            const extractedDate = extractDateFromOCR(rawOCR);
+            const extractedTime = extractTimeFromOCR(rawOCR);
+            const fullDateTime = (extractedDate && extractedTime) ? `${extractedDate} ${extractedTime}` : (extractedDate || extractedTime || null);
 
-                // Gera uma assinatura digital da transação extraída
-                const receiptSig = `${extractedDate || 'NODATE'}_${extractedTime || 'NOTIME'}_${expectedDigits}_${method}`;
+            const receiptSig = `${extractedDate || 'NODATE'}_${extractedTime || 'NOTIME'}_${expectedDigits}_${method}`;
 
-                extractedReceiptMetadata = {
-                    dateStr: extractedDate,
-                    timeStr: extractedTime,
-                    fullDateTimeStr: fullDateTime,
-                    ibanFound: hasIban,
-                    extractedAmount: expectedTotal,
-                    signature: receiptSig
-                };
+            extractedReceiptMetadata = {
+                dateStr: extractedDate,
+                timeStr: extractedTime,
+                fullDateTimeStr: fullDateTime,
+                ibanFound: hasIban,
+                extractedAmount: expectedTotal,
+                signature: receiptSig
+            };
 
-                // 5. VERIFICAÇÃO DE COMPROVATIVO DUPLICADO NO BANCO DE DADOS
-                const isDuplicate = await checkReceiptDuplicationInFirestore(receiptSig, fullDateTime);
+            // 7. VERIFICAÇÃO DE DUPLICADOS NO FIRESTORE
+            const isDuplicate = await checkReceiptDuplicationInFirestore(receiptSig, fullDateTime);
 
-                if (isDuplicate) {
-                    isFileValidated = false;
-                    selectedFileBase64 = null;
-                    input.value = "";
-                    if (statusEl) statusEl.innerText = "❌ Comprovativo Repetido / Duplicado";
-
-                    const errorMsg = `⚠️ Este comprovativo (Data/Hora: ${fullDateTime || 'Identificada'}) já foi utilizado anteriormente no sistema!`;
-                    if (alertTextEl) alertTextEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${errorMsg} Não é possível enviar o mesmo comprovativo duas vezes.`;
-                    if (alertBoxEl) alertBoxEl.style.display = "block";
-
-                    showToast(errorMsg + " Entre em contacto via WhatsApp caso necessite de ajuda.", "error");
-                    return;
-                }
-
-                // VALIDAÇÃO FINAL DOS CRITÉRIOS (NOME + VALOR)
-                if (hasName && hasAmount) {
-                    isFileValidated = true;
-                    if (statusEl) statusEl.innerText = `✅ ${file.name} (Validado - Nome, Valor e Data O.K.)`;
-                    if (alertBoxEl) alertBoxEl.style.display = "none";
-                    showToast("Comprovativo validado e verificado com sucesso!", "success");
-                } else {
-                    isFileValidated = false;
-                    selectedFileBase64 = null;
-                    input.value = "";
-                    if (statusEl) statusEl.innerText = "❌ Comprovativo Inconsistente";
-
-                    let errorMsg = "Comprovativo não aprovado! ";
-                    if (!hasName) errorMsg += "O nome (José Eduardo Loneke) não foi identificado no comprovativo. ";
-                    else if (!hasAmount) errorMsg += `O valor lido não corresponde a ${expectedTotal.toLocaleString('pt-PT')} ${method === 'wise' ? '€' : 'Kz'}. `;
-
-                    if (alertTextEl) alertTextEl.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> ${errorMsg}`;
-                    if (alertBoxEl) alertBoxEl.style.display = "block";
-
-                    showToast(errorMsg + "Fale com o suporte no WhatsApp para concluir manualmente.", "error");
-                }
-
-            } catch (ocrErr) {
+            if (isDuplicate) {
                 isFileValidated = false;
                 selectedFileBase64 = null;
                 input.value = "";
-                if (statusEl) statusEl.innerText = "❌ Erro na Leitura do Comprovativo";
-                if (alertTextEl) alertTextEl.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> Não foi possível ler a imagem. Certifique-se de carregar um comprovativo nítido.`;
+                if (statusEl) statusEl.innerText = "❌ Comprovativo Repetido / Duplicado";
+
+                const errorMsg = `⚠️ Este comprovativo (Data/Hora: ${fullDateTime || 'Identificada'}) já foi utilizado anteriormente no sistema!`;
+                if (alertTextEl) alertTextEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${errorMsg} Não é possível enviar o mesmo comprovativo duas vezes.`;
                 if (alertBoxEl) alertBoxEl.style.display = "block";
-                showToast("Não foi possível processar o ficheiro. Envie uma imagem nítida ou fale com o suporte.", "error");
+
+                showToast(errorMsg + " Entre em contacto via WhatsApp caso necessite de ajuda.", "error");
+                return;
             }
-        };
-        reader.readAsDataURL(file);
+
+            // VALIDAÇÃO FINAL DOS CRITÉRIOS (NOME + VALOR)
+            if (hasName && hasAmount) {
+                isFileValidated = true;
+                if (statusEl) statusEl.innerText = `✅ ${file.name} (Validado Instantaneamente O.K.)`;
+                if (alertBoxEl) alertBoxEl.style.display = "none";
+                showToast("Comprovativo validado com sucesso!", "success");
+            } else {
+                isFileValidated = false;
+                selectedFileBase64 = null;
+                input.value = "";
+                if (statusEl) statusEl.innerText = "❌ Comprovativo Inconsistente";
+
+                let errorMsg = "Comprovativo não aprovado! ";
+                if (!hasName) errorMsg += "O nome (José Eduardo Loneke) não foi identificado no comprovativo. ";
+                else if (!hasAmount) errorMsg += `O valor lido não corresponde a ${expectedTotal.toLocaleString('pt-PT')} ${method === 'wise' ? '€' : 'Kz'}. `;
+
+                if (alertTextEl) alertTextEl.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> ${errorMsg}`;
+                if (alertBoxEl) alertBoxEl.style.display = "block";
+
+                showToast(errorMsg + "Fale com o suporte no WhatsApp para concluir manualmente.", "error");
+            }
+
+        } catch (ocrErr) {
+            console.error("Erro no OCR:", ocrErr);
+            isFileValidated = false;
+            selectedFileBase64 = null;
+            input.value = "";
+            if (statusEl) statusEl.innerText = "❌ Erro na Leitura do Comprovativo";
+            if (alertTextEl) alertTextEl.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> Não foi possível ler a imagem. Certifique-se de carregar um comprovativo nítido.`;
+            if (alertBoxEl) alertBoxEl.style.display = "block";
+            showToast("Não foi possível processar o ficheiro. Envie uma imagem nítida ou fale com o suporte.", "error");
+        }
     }
 
     async function fetchApiProducts() {
@@ -1461,7 +1489,6 @@
                 "Valor Pago": orderData.totalKz,
                 "Produtos Adquiridos": orderData.itemsSummary,
                 "Data/Hora do Comprovativo": orderData.receiptDateTime || "N/A",
-                "Comprovativo (Base64/Link)": orderData.proofUrl || "Comprovativo Anexado",
                 "Data da Transação": new Date().toLocaleString('pt-PT')
             };
 
@@ -1621,7 +1648,7 @@
                 const itemsSummaryStr = cart.map(item => `${item.titulo} (x${item.quantity})`).join("; ");
                 const primaryItem = cart[0] || {};
 
-                // Registo completo com a assinatura e data do comprovativo para prevenir duplicados futuros
+                // Registo otimizado com a assinatura e data do comprovativo
                 const orderTransactionData = {
                     orderId: orderId,
                     transactionId: orderId,
@@ -1665,8 +1692,7 @@
                     method: methodTitle,
                     totalKz: tkz,
                     itemsSummary: itemsSummaryStr,
-                    receiptDateTime: extractedReceiptMetadata.fullDateTimeStr,
-                    proofUrl: selectedFileBase64 || "Sem ficheiro anexado"
+                    receiptDateTime: extractedReceiptMetadata.fullDateTimeStr
                 });
             }
         } catch (fbError) {
